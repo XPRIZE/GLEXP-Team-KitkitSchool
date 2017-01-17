@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Maktaba ya Kitkit Shule</string>
+    <string name="description">Media Controls</string>
+    <!--<string name="tutorial_title">How to use Todo School</string>-->
+    <!--<string name="musicvideo_title">Learning Songs</string>-->
+    <string name="tab_video">VIDEO</string>
+    <string name="tab_book">VITABU</string>
+    <!--<string name="tutorial_video1">Jinsi ya kutumia tabuleti</string>-->
+    <!--<string name="tutorial_video2">Jinsi ya kutunza tabuleti</string>-->
+    <!--<string name="tutorial_video3">Jinsi ya kuchaji tabuleti</string>-->
+    <!--<string name="tutorial_video4">Jinsi ya kutumia tabuleti darasani</string>-->
+    <!--<string name="tutorial_video5">Vitu vya kucheza na Kitkit Shule</string>-->
+    <string name="button_next">Nenda mbele</string>
+    <string name="button_cancel">Futa</string>
+    <string name="button_more">Zaidi</string>
+    <string name="button_less">Ficha</string>
+</resources>
