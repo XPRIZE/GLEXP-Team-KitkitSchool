@@ -1,0 +1,36 @@
+//
+//  CompletePopup.hpp
+//  enumaXprize
+//
+//  Created by Gunho Lee on 6/29/16.
+//
+//
+
+#ifndef CompletePopup_hpp
+#define CompletePopup_hpp
+
+#include <stdio.h>
+#include "cocos2d.h"
+
+USING_NS_CC;
+
+class CompletePopup : public Node
+{
+public:
+    CREATE_FUNC(CompletePopup);
+    virtual bool init() override;
+    
+    void show(float delay, std::function<void(void)> callback);
+    void dismiss();
+protected:
+    
+    Node *_mainView;
+    LayerColor *_backView;
+    
+    std::function<void(void)> _callback;
+    
+    
+    
+    
+};
+#endif /* CompletePopup_hpp */
