@@ -1,0 +1,41 @@
+* 2016년 9월 26일 월요일에 썼습니다. -- xenosoz
+* 먼 미래에서 보고 계신가요? 내용이 코드와 맞지 않다면 글을 고치거나 삭제해주세요. -- xenosoz
+
+
+Spelling
+========
+
+Spelling은 잠깐 나타났다가 사라진 단어를 알파벳 구슬을 맞추어 다시 만드는 게임입니다.
+
+화면 중앙에 게임판이 등장합니다. 게임판의 위쪽에는 그림이 있고, 아래쪽에는 알파벳 구슬로 이루어진 단어가 있습니다. 게임판이 자리를 잡고 나면 알파벳 구슬이 떨어져서 사라집니다. 구슬이 떨어진 자리에는 새 구슬을 끼워넣을 수 있도록 빈 자리가 남습니다.
+
+곧이어 플랫폼이 바닥에서 올라오는데, 이 위에는 알파벳 구슬이 여러개 놓여 있습니다. 구슬을 집어서 게임판의 빈 칸에 끼워넣습니다. 맞는 알파벳이라면 구슬은 그 자리에 남아있고, 틀린 알파벳이라면 플랫폼으로 다시 돌아옵니다. 단어를 완성하고 나면 다음 문제로 넘어갑니다.
+
+
+미해결 과제
+-----------
+
+1. 어떤 단어를 가르쳐야 할지 목록을 정해야 합니다.
+2. 단어에 맞는 그림을 확보해야 합니다.
+3. 구슬과 게임판이 세 글자 단어에 맞게 디자인 되어 있습니다. 네 글자 이상 하려면 프로젝트를 고쳐야 합니다.
+
+
+소스 코드 지름길
+----------------
+
+* 'Spelling'은 [Core/MainScene.*]
+* '알파벳 구슬' [BallNodes/*]
+* 화면 중앙에 '게임판' [ChildNodes/GameBoard.*]
+* 게임판의 위쪽에는 '그림'이 [ChildNodes/WordImage.*]
+* 알파벳 구슬이 떨어져서 사라집니다 "ejectBall()" [ChildNodes/BallSlot.*]
+* '플랫폼'이 [ChildNodes/Platform.*]
+* 이 위에는 '알파벳 구슬'이 [BallNodes/AnswerBall.*]
+* 맞는 알파벳이라면 구슬은 그 자리에 남고 "BestSlot->fillSlot()" [Core/MainScene.cpp]
+* 틀린 알파벳이라면 플랫폼으로 다시 돌아옵니다 "makePassive();" [BallNodes/AnswerBall.cpp]
+* '단어를 완성하고 나면' "It->OnAllSlotDidFill = [this] {" [Spelling/Core/MainScene.*]
+* '다음 문제로 넘어갑니다' "handleCorrectAnswer();" [Spelling/Core/MainScene.*]
+* 다음 '문제' [Models/MainWork.*]
+
+* 코드를 빨리 찍어내기 위해 외부 의존성 파일을 모아둔 곳 (좋은 습관은 아닙니다..) [Utils/MainNS.*]
+* 여러번 나오는 설정/리소스 [Utils/MainDepot.*]
+* 빌드 단위 자르기 [Spelling.*]

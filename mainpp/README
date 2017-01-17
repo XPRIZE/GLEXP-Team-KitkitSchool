@@ -1,0 +1,28 @@
+Todo School
+===========
+
+Copyright (c) 2016 Enuma, Inc. All rights reserved.
+
+
+Settings
+--------
+
+    export ANDROID_SDK_ROOT="path-to-android-sdk-macosx"
+    export ANT_ROOT="path-to-ant-1.9.7-or-higher"
+    export NDK_ROOT="path-to-android-ndk-r10d"
+    ...
+
+"$ANDROID_SDK_ROOT/platforms/android-19" should point to a proper directory.
+If not, consult Android SDK Manager by
+
+    $ android
+
+In the higher version of sdk, you might see "package org.apache.http does not exist" error. 
+If you just don't want to install android-19, find 'org.apache.http.legacy.jar' in $ANDROID_SDK_ROOT and copy it to 'cocos2d/cocos/platform/android/java/libs/'.
+
+
+Build
+-----
+
+$ cocos2d/download_deps.py
+$ cocos run -p android -j 4
