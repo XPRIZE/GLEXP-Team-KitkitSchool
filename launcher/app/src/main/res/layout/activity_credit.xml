@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="55sp"
+                android:text="Kitkit School"
+                android:layout_marginTop="120dp"
+                android:layout_marginBottom="140dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Creative Lead"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Sooin Lee"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Programming"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Dr. Gunho Lee\nHeyonGyu Yu\nSungwoo Kang\nTaihyun Hwang"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Art Design"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Dalrae Kim\nNesia Anindita\nHansang Jo"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Curriculum Design"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Dr. Hye Kyung Lee (Math)\nDr. Ji-hyun Philippa Kim (Literacy)"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Kiswahili Translation"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Immaculate Kyamanywa\nYiseul Choi"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Sound"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="David Franco"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Production"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Pam Vachatimanont\nDoohaeng Lee\nSangjun Park"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Quality Assurance"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Jinna Cha\nYeongji Choi"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="14sp"
+                    android:text="Operations"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:textAlignment="viewEnd"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="22sp"
+                    android:text="Eugine Chung\nJosephine Lai\nMike Jaffe\nYoutaeg Jeon\nHeesub Ahn"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="28sp"
+                android:text="Team Sponsor:"
+                android:layout_marginTop="120dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="22sp"
+                android:text="KOICA (Korea International Corporation Agency)"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="28sp"
+                android:text="Special Thanks to:"
+                android:layout_marginTop="100dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="22sp"
+                android:textAlignment="center"
+                android:text="Good Neighbors\nICRI (International Child Resource Institute)"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="28sp"
+                android:text="Creative Commons Attribution"
+                android:layout_marginTop="100dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="22sp"
+                android:text="Note: We’ll add attributions here if needed"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCreditText"
+                android:textSize="28sp"
+                android:text="Copyright 2017 @enuma, inc."
+                android:layout_marginTop="130dp"
+                android:layout_marginBottom="120dp"/>
+        </LinearLayout>
+    </ScrollView>
+    <ImageButton
+        android:id="@+id/close_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/xprize_credits_button_close"
+        android:padding="0dp"
+        android:background="@android:color/transparent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="22dp"
+        android:onClick="onClickClose"
+    />
+
+
+
+</RelativeLayout>

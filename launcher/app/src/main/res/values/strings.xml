@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">TodoSchoolLauncher</string>
+    <!--<string name="action_settings">Settings</string>-->
+    <!--<string name="action_close">Close</string>-->
+    <string name="tools_activity_title">Kitkit Shule Tools</string>
+    <string name="launcher_title">Kitkit School</string>
+    <string name="btn_setting">Setting</string>
+    <string name="btn_credit">Credit</string>
+    <string name="about_activity_title">About</string>
+    <string name="enuma_info">Enuma, Inc.\nhttp://enuma.com\nxpsupport@enuma.com</string>
+    <string name="password">Password</string>
+    <string name="cancel">Cancel</string>
+    <string name="go_setting">Go to Android Settings</string>
+    <string name="enter_password">Enter password</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="start">Start</string>
+    <string name="library">Library</string>
+    <string name="tools">Tools</string>
+</resources>
