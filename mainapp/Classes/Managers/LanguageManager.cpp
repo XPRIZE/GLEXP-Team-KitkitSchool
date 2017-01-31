@@ -31,6 +31,7 @@ void LanguageManager::init()
     auto defaultLang = LanguageType::SWAHILI;
 
     _langType = static_cast<LanguageType>(UserDefault::getInstance()->getIntegerForKey("Language", defaultLang));
+
     
 
     

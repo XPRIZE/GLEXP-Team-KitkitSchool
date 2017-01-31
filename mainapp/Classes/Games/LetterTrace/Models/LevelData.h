@@ -27,6 +27,9 @@ public:
 public:
     static LevelData defaultData();
     friend istream& operator>>(istream& IS, LevelData& LD);
+    
+    void checkData();
+    
 };
 
 END_NS_LETTERTRACE

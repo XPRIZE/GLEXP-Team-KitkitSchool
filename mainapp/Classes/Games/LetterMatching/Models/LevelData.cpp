@@ -11,6 +11,12 @@
 #include <Common/Basic/CommentStream.h>
 #include <cocos/cocos2d.h>
 
+// for data checking
+#include "Managers/UserManager.hpp"
+#include "3rdParty/CCNativeAlert.h"
+#include <Common/Sounds/Pam_enUS.h>
+#include <Common/Sounds/Imma_swTZ.h>
+
 using namespace std;
 using namespace cocos2d;
 
@@ -73,8 +79,62 @@ LevelData LevelData::defaultData() {
     CommentStream stream(s);
     stream >> it;
     
+    if (UserManager::getInstance()->isDebugMode()) {
+        it.checkData();
+    }
+    
     return it;
 }
+
+    
+void LevelData::checkData()
+{
+    
+    string errorList = "";
+    
+    for (auto it : levels_ ) {
+        auto key = it.first;
+        auto sheets = it.second;
+        auto lang = it.first.first;
+        auto level = it.first.second;
+        
+        for (auto sheet : sheets) {
+            for (int i = sheet.beginProblemID(); i<sheet.endProblemID(); i++) {
+                auto p = sheet.problemByID(i);
+                
+                for (auto piece : p.pieces) {
+
+                    SoundEffect sound;
+                    sound = sound || SoundEffect(piece.matchSound);
+                    sound = sound || SoundEffect("NumberMatching/Sound/" + piece.matchSound);
+                    sound = sound || SoundEffect("NumberMatching/Images/Letter/" + piece.matchSound);
+                    
+                    if (sound.bad()) errorList += "missing sound : ["+piece.matchSound+"] \n";
+                    
+                    if (piece.matchSound=="star.wav") errorList += "missing sound for : ["+piece.imageNameA+"] \n";
+                    
+                    {
+                        auto s = std::string("NumberMatching/Images/Letter/") + piece.imageNameA;
+                        if (!FileUtils::getInstance()->isFileExist(s)) errorList += "missing image : ["+piece.imageNameA+"] \n";
+                    }
+                    {
+                        auto s = std::string("NumberMatching/Images/Letter/") + piece.imageNameB;
+                        if (!FileUtils::getInstance()->isFileExist(s)) errorList += "missing image : ["+piece.imageNameB+"] \n";
+                    }
+          
+                }
+                
+                
+            }
+        }
+    }
+    
+    if (errorList.length()>0) {
+        NativeAlert::show("Error in LetterMatching_Levels.tsv", errorList, "OK");
+    }
+    
+}
+
 
 istream& operator>>(istream& stream, LevelData& data) {
     string languageTag;

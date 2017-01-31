@@ -65,7 +65,7 @@ namespace ComprehensionTest
             
             if (_questionText.find("Choose:") != std::string::npos)
             {
-                directionContent = "Select the picture that match the text";
+                directionContent = "Select the picture to match the text";
                 TodoUtil::replaceAll(_questionText, "Choose:", "");
                 _questionText = TodoUtil::trim(_questionText);
                 _questionTextFontSize = 80.f;

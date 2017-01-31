@@ -11,6 +11,11 @@
 #include "../Utils/MainDepot.h"
 #include <Common/Basic/CommentStream.h>
 
+// for data checking
+#include "Managers/UserManager.hpp"
+#include "3rdParty/CCNativeAlert.h"
+#include <Common/Sounds/Pam_enUS.h>
+#include <Common/Sounds/Imma_swTZ.h>
 
 BEGIN_NS_WORDTRACE
 
@@ -43,7 +48,62 @@ LevelData LevelData::defaultData() {
     CommentStream IS(S);
     IS >> It;
     
+    if (UserManager::getInstance()->isDebugMode()) {
+        It.checkData();
+    }
+    
     return It;
+}
+
+
+void LevelData::checkData()
+{
+    
+    string errorList = "";
+    
+    for (auto it : Levels ) {
+        auto key = it.first;
+        auto sheets = it.second;
+        auto lang = it.first.first;
+        auto level = it.first.second;
+        
+        for (auto sheet : sheets) {
+            for (int i = sheet.beginProblemID(); i<sheet.endProblemID(); i++) {
+                auto p = sheet.problemByID(i);
+                
+                SoundEffect s2;
+                string v;
+                string teaser;
+                
+                
+                if (lang=="en-US") {
+                    if (p.Text!="-") s2 = Pam_enUS().soundForWord(p.Text);
+                    v = "LetterTrace/BonusVideos.en/" + p.VideoFileName;
+                    teaser = "WordTrace/Teasers.en/"+p.TeaserFileName;
+                    
+                    
+                } else if (lang=="sw-TZ") {
+                    if (p.Text!="-") s2 = Imma_swTZ().soundForWord(p.Text);
+                    v = "LetterTrace/BonusVideos.sw/" + p.VideoFileName;
+                    teaser = "WordTrace/Teasers.sw/"+p.TeaserFileName;
+                    
+                } else {
+                    errorList += "wrong language code : ["+lang+"]\n";
+                    continue;
+                }
+                
+                if (p.Text!="-" && s2.bad()) errorList += "missing sound for word : ["+p.Text+"] ("+lang+")\n";
+                if (p.VideoFileName!="-" && !FileUtils::getInstance()->isFileExist(v)) errorList += "missing video : ["+p.VideoFileName+"] ("+lang+")\n";
+                if (!FileUtils::getInstance()->isFileExist(teaser)) errorList += "missing image : ["+p.TeaserFileName+"] ("+lang+")\n";
+                
+            }
+        }
+    }
+    
+    if (errorList.length()>0) {
+        NativeAlert::show("Error in WordTrace_Levels.tsv", errorList, "OK");
+    }
+    
 }
 
 istream& operator>>(istream& IS, LevelData& LD) {

@@ -2,6 +2,7 @@
 #include "MainScene.h"
 #include <string>
 #include "SimpleAudioEngine.h"
+#include "Common/Controls/TodoLoadingScene.hpp"
 
 USING_NS_CC;
 
@@ -103,7 +104,13 @@ void AppDelegate::applicationWillEnterForeground() {
     if (book.length()>0 && book!=MainScene::currentBook) {
         MainScene::clearLaunchString();
         MainScene::currentBook = book;
-        auto scene = MainScene::createBookScene(book);
-        Director::getInstance()->replaceScene(scene);
+        
+        std::function<Scene*(void)> creator = [book]() {
+            auto scene = MainScene::createBookScene(book);
+            return scene;
+        };
+        
+        Director::getInstance()->replaceScene(TodoLoadingScene::createScene(creator));
+
     }
 }

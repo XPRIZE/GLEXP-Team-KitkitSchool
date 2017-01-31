@@ -32,7 +32,7 @@ namespace ComprehensionTest
             ImageAnswerItem();
             CREATE_FUNC(ImageAnswerItem);
             
-            void initImage(std::string imagePath, float marginX = 0.f, float marginY = 0.f);
+            bool initImage(std::string imagePath, float marginX = 0.f, float marginY = 0.f);
             void setLetterByIndex(int index);
             std::string getId();
             std::function<void()> onCheckTarget;

@@ -218,3 +218,38 @@ bool TodoBook::readFile(string prefix)
     return true;
 }
 
+string TodoBook::checkData()
+{
+    string ret = "";
+    
+    auto titleImage = imagePrefix + titleImageFilename;
+    if (!FileUtils::getInstance()->isFileExist(titleImage)) ret+= "missing title image ["+titleImageFilename+"]\n";
+    
+    auto titleAudio = imagePrefix + titleAudioFilename;
+    if (!FileUtils::getInstance()->isFileExist(titleImage)) ret+= "missing title audio ["+titleAudioFilename+"]\n";
+    
+    for (auto p : pages) {
+        auto pageImage = imagePrefix + p.pageImageFilename;
+        if (!FileUtils::getInstance()->isFileExist(pageImage)) ret += "missing page image ["+p.pageImageFilename+"]\n";
+        
+        for (auto para : p.paragraphs) {
+            for (auto s : para.sentences) {
+                
+                auto audioPath = filePrefix+"page/"+s.sentenceAudioFilename;
+                if (!FileUtils::getInstance()->isFileExist(audioPath)) ret += "missing sentence audio ["+s.sentenceAudioFilename+"]\n";
+                
+                for (auto w : s.words) {
+                    if (w.wordAudioFilename=="-") continue;
+                    auto wordAudioPath = filePrefix+"word/"+w.wordAudioFilename;
+                    if (!FileUtils::getInstance()->isFileExist(wordAudioPath)) ret += "missing word audio ["+w.wordAudioFilename+"]\n";
+                    
+                }
+                
+                
+            }
+        }
+    }
+    
+    return ret;
+    
+}

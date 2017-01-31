@@ -359,6 +359,8 @@ void StarFallScene::refreshActiveTextForSanity() {
     }
     
     if (ExactHitNode) {
+        StarFallDepot().soundForKeyInput().play();
+        
         // NB(xenosoz, 2016): Try word sound first, and then hit
         SoundEffect SE = Depot.soundForWord(ExactHitNode->TitleText());
         SE = SE || Depot.soundForTextHit();

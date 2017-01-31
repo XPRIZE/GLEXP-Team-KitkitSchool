@@ -38,7 +38,7 @@ namespace ComprehensionTest
             return true;
         }
         
-        void ImageAnswerItem::initImage(std::string imagePath, float marginX, float marginY)
+        bool ImageAnswerItem::initImage(std::string imagePath, float marginX, float marginY)
         {
             _id = imagePath;
             
@@ -51,7 +51,11 @@ namespace ComprehensionTest
             addChild(_background);
             
             auto image = Sprite::create("ComprehensionTest/Image/" + imagePath);
-            if (image == nullptr) { NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK"); return; }
+            if (image == nullptr)
+            {
+                NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK");
+                return false;
+            }
             
             float widthFactor = (kImageSize.width - kImageAbsPadding) / image->getContentSize().width;
             float heightFactor = (kImageSize.height - kImageAbsPadding) / image->getContentSize().height;
@@ -104,6 +108,8 @@ namespace ComprehensionTest
             };
             
             this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+            
+            return true;
         }
         
         void ImageAnswerItem::setLetterByIndex(int index)

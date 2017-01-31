@@ -30,6 +30,9 @@ public:
     
 public:
     static LevelData defaultData();
+    
+    void checkData();
+    
     friend std::istream& operator>>(std::istream& stream, LevelData& data);
 };
 

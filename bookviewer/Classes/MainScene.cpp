@@ -60,7 +60,11 @@ string getDocumentsPath()
         return "";
     }
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+
+    
     string path = FileUtils::getInstance()->getWritablePath();
+    
+    //return path + "../work/xprize_books/game_books/";
     return path + "Books/";
 #else
     return "BookData/";
@@ -111,6 +115,8 @@ Scene* MainScene::createBookScene(std::string bookfolder)
         bv->setScale(sceneScale);
         bv->viewTitle();
         scene->addChild(bv);
+    } else {
+        exit(0);
     }
     
     return scene;
@@ -313,12 +319,49 @@ bool MainScene::showBook(std::string bookfolder)
     bool ret = book->readFile(bookPath);
     if (ret)
     {
+        
+
+        
         auto scene = Scene::create();
         auto bv = BookView::create(fixedSize, bookPath);
         bv->setScale(sceneScale);
         bv->viewTitle();
         scene->addChild(bv);
         Director::getInstance()->pushScene(scene);
+        
+#if  (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+        auto err = book->checkData();
+        if (err.length()>0) {
+            
+            auto layer = Node::create();
+            layer->setContentSize(fixedSize);
+            auto c = LayerColor::create(Color4B(0, 0, 0, 200));
+            layer->addChild(c);
+            auto w = TodoUtil::createLabel(err, 50, Size::ZERO, "fonts/Seshat.otf", Color4B::WHITE);
+            auto wsize = w->getContentSize();
+            w->setPosition(Vec2(fixedSize.width/2, fixedSize.height/2));
+            layer->addChild(w);
+            
+            auto b = Button::create();
+            b->setTitleText("OK");
+            b->setTitleFontName("fonts/Seshat.otf");
+            b->setTitleColor(Color3B::WHITE);
+            b->setTitleFontSize(150);
+            b->setPosition(Vec2(fixedSize.width/2, 100));
+            b->addClickEventListener([layer](Ref*) {
+                layer->removeFromParent();
+            });
+            
+            layer->addChild(b);
+            
+            
+            
+            scene->addChild(layer);
+            
+        }
+        
+#endif
+        
         return true;
     }
     

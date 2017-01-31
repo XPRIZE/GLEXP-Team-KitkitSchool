@@ -104,5 +104,8 @@ public:
     
     void addCreditPage();
     
+    string checkData();
+    
+    
 };
 #endif /* TodoBook_hpp */

@@ -21,7 +21,7 @@ using cocos2d::experimental::ui::VideoPlayer;
 
 namespace {
     // XXX: Do we need the default video file?
-    string DefaultVideoFilePath = "LetterTrace/BonusVideos.en_US/quail.mp4";
+    string DefaultVideoFilePath = "LetterTrace/BonusVideos.en/empty.m4v";
 }
 
 
@@ -75,7 +75,20 @@ void BonusVideoPlayer::clear() {
 }
 
 void BonusVideoPlayer::play() {
-    TheVideoPlayer->play();
+    
+    auto file = TheVideoPlayer->getFileName();
+    if (FileUtils::getInstance()->isFileExist(file)) {
+        TheVideoPlayer->play();
+    } else {
+        if (OnPlayDidEnd) {
+        
+            runAction(Sequence::create(DelayTime::create(5.0), CallFunc::create([this]() {
+                OnPlayDidEnd(this);
+            }), nullptr));
+            
+            
+        }
+    }
 }
     
 void BonusVideoPlayer::stop() {

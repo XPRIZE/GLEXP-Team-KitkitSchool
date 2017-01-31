@@ -140,7 +140,7 @@ SoundEffect MainDepot::soundForWord(const string& Word) const {
 SoundEffect MainDepot::soundForLetterBetweenWords() const {
     if (LanguageManager::getInstance()->isEnglish()) {
         string P = assetPrefix() + "/TempSounds";
-        return SoundEffect(P + "/Is_For.wav");
+        return SoundEffect(P + "/Is_For.m4a");
     }
 
     if (LanguageManager::getInstance()->isSwahili()) {
@@ -150,7 +150,7 @@ SoundEffect MainDepot::soundForLetterBetweenWords() const {
 
     // NB(xenosoz, 2016): Fallback to English sound.
     string P = assetPrefix() + "/TempSounds";
-    return SoundEffect(P + "/Is_For.wav");
+    return SoundEffect(P + "/Is_For.m4a");
 }
 
 SoundEffect MainDepot::soundForTraceEnd() const {

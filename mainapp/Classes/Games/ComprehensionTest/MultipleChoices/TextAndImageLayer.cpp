@@ -40,8 +40,8 @@ namespace ComprehensionTest
             for (int i = 0; i < imagePaths.size(); i++)
             {
                 ImageAnswerItem* item = ImageAnswerItem::create();
-                item->initImage(imagePaths[i]);
-                item->setLetterByIndex(i);
+                bool bInit = item->initImage(imagePaths[i]);
+                if (bInit) item->setLetterByIndex(i);
                 
                 float posX = item->getContentSize().width * i;
                 float posY = item->getContentSize().height / 2;

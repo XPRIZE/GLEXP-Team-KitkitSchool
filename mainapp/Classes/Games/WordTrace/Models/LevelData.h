@@ -27,6 +27,8 @@ public:
 
 public:
     static LevelData defaultData();
+    void checkData();
+    
     friend istream& operator>>(istream& IS, LevelData& LD);
 };
 

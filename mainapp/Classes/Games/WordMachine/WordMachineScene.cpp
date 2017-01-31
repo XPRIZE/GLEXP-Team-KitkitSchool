@@ -37,6 +37,17 @@ namespace {
 
         return Pam_enUS().soundForLetterName(Letter);
     }
+    
+    SoundEffect soundForPhonic(const char c) {
+        if (LanguageManager::getInstance()->isSwahili())
+            return Imma_swTZ().soundForLetterName(string{c});
+        
+        auto path = StringUtils::format("WordMachine/Phonic/%c_sound.m4a", tolower(c));
+        
+        return SoundEffect(path);
+        
+    }
+    
 }  // unnamed namespace
 
 
@@ -154,13 +165,35 @@ bool WordMachineScene::init(int levelID)
                 for (int i=worksheet.beginProblemID(); i<worksheet.endProblemID(); i++) {
                     auto p = worksheet.problemByID(i);
                     std::string resPath = "WordMachine/WordCards/";
-                    auto sound = resPath + p.sound;
-                    if (!FileUtils::getInstance()->isFileExist(sound)) {
+                    {
+                        auto sound = resPath + p.sound;
                         
-                        if (find(_missings.begin(), _missings.end(), p.sound)==_missings.end()) {
-                            _missings.push_back(p.sound);
+                        if (!FileUtils::getInstance()->isFileExist(sound)) {
+                            if (find(_missings.begin(), _missings.end(), p.sound)==_missings.end()) {
+                                _missings.push_back(p.sound);
+                            }
                         }
                     }
+                    {
+                        auto image = resPath + p.goodImage;
+                        
+                        if (!FileUtils::getInstance()->isFileExist(image)) {
+                            if (find(_missings.begin(), _missings.end(), p.goodImage)==_missings.end()) {
+                                _missings.push_back(p.goodImage);
+                            }
+                        }
+                    }
+                    {
+                        auto image = resPath + p.badImage;
+                        
+                        if (!FileUtils::getInstance()->isFileExist(image)) {
+                            if (find(_missings.begin(), _missings.end(), p.badImage)==_missings.end()) {
+                                _missings.push_back(p.badImage);
+                            }
+                        }
+                    }
+                    
+                    
                 }
             }
     
@@ -537,12 +570,16 @@ void WordMachineScene::startMachine()
         }
         w->start(velocity);
 
-        soundForLetterName(string{c}).preload();
+        //soundForLetterName(string{c}).preload();
+        soundForPhonic(c).preload();
+
+        
         
         auto nextWork = [this, trigger, w, c, slowdownAfter] {
             w->stop(c, slowdownAfter, CallFunc::create([this, trigger, c]{
 
-                soundForLetterName(string{c}).play();
+                //soundForLetterName(string{c}).play();
+                soundForPhonic(c).play();
                 
                 _numSpinningWheels -= 1;
                 trigger();

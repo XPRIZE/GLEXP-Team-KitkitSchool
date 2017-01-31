@@ -10,7 +10,7 @@
 #include "Pam_enUS.h"
 #include <cocos/deprecated/CCString.h>
 #include <string>
-
+#include <cocos/platform/CCFileUtils.h>
 
 BEGIN_NS_TODOSCHOOL
 
@@ -37,7 +37,11 @@ SoundEffect Pam_enUS::soundForLetterName(const std::string& Letter) const {
 }
 
 SoundEffect Pam_enUS::soundForWord(const std::string& Word) const {
-    return SoundEffect(assetPrefix() + format("/Words/%s.wav", Word.c_str()));
+    auto path = assetPrefix() + format("/Words/%s.wav", Word.c_str());
+    if (!cocos2d::FileUtils::getInstance()->isFileExist(path)) {
+        path = assetPrefix() + format("/Words/%s.m4a", Word.c_str());
+    }
+    return SoundEffect(path.c_str());
 }
 
 

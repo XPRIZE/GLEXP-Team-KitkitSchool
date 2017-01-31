@@ -71,8 +71,8 @@ namespace ComprehensionTest
             for (int i = 0; i < imagePaths.size(); i++)
             {
                 ImageAnswerItem* item = ImageAnswerItem::create();
-                item->initImage(imagePaths[i], 30.f, 50.f);
-                item->setLetterByIndex(i);
+                bool bInit = item->initImage(imagePaths[i], 30.f, 50.f);
+                if (bInit) item->setLetterByIndex(i);
                 
                 float posX = item->getContentSize().width * (i % kMaxNumbersPerLine);
                 float posY = totalSize.height - item->getContentSize().height * (i / kMaxNumbersPerLine);
