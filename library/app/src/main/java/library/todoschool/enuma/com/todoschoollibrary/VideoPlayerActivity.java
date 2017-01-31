@@ -3,6 +3,7 @@ package library.todoschool.enuma.com.todoschoollibrary;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -52,10 +53,14 @@ import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
 
-public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
+public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, /*MediaPlayer.OnPreparedListener, */ VideoControllerView.MediaPlayerControl {
 
     SurfaceView videoSurface;
     MediaPlayer player;
+    boolean isPaused;
+    int currentPosition;
+
+
     VideoControllerView controller;
     SeekBar volumeSeekbar;
     AudioManager audioManager;
@@ -111,9 +116,11 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     }
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 |View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -153,31 +160,38 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             }
         });
 
-
+        player = new MediaPlayer();
+        controller = new VideoControllerView(this);
+        initControls();
+        controller.setMediaPlayer(this);
+        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
 
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
         SurfaceHolder videoHolder = videoSurface.getHolder();
         videoHolder.addCallback(this);
 
-        player = new MediaPlayer();
-        controller = new VideoControllerView(this);
-        initControls();
+
+
+        isPaused = true;
+        currentPosition = 0;
 
         Bundle bundle = getIntent().getExtras();
         videoList = (ArrayList< MainActivity.VideoData>)bundle.getSerializable("videoArray");
         libPath = bundle.getString("libPath");
         curVideoIndex = bundle.getInt("currentVideoIndex");
 
-        try {
-            MainActivity.VideoData curVideo = videoList.get(curVideoIndex);
-            setCurrentVideo(curVideo);
-            setNextVideo();
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
 
-        }
-        Log.d("videoactivity","variable set");
+        player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+
+                return false;
+            }
+        });
+
+
+
 
         videoSurface.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -220,6 +234,60 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
+        try {
+            MainActivity.VideoData curVideo = videoList.get(curVideoIndex);
+            setCurrentVideo(curVideo);
+            setNextVideo();
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
+
+        }
+
+        if (isPaused) {
+            start();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (player!=null) {
+            player.release();
+        }
+        player = null;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(isPlaying()) {
+            pause();
+        }
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    |View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        }
+
+
+    }
+
     private void setCurrentVideo(MainActivity.VideoData video)
     {
 //        String videoPath = bundle.getString("videoPath");
@@ -248,6 +316,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
         infoTV.setText(info);
 
         try {
+
             player.reset();
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -259,10 +328,19 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 //                player.setDataSource(this, Uri.parse("android.resource://"+getPackageName()+"/"+videoInt));
                 //player.setDataSource(getAssets().openFd(video.filename));
                 //player.setDataSource(getAssets().openFd(video.filename).getFileDescriptor());
-                player.setDataSource(getAssets().openFd(video.filename));
+                //player.setDataSource(getAssets().openFd(video.filename));
+                AssetFileDescriptor fd = getAssets().openFd(video.filename);
+                player.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+
             }
 
-            player.setOnPreparedListener(this);
+//            player.setOnPreparedListener(this);
+  //          player.prepareAsync();
+
+            player.prepare();
+
+
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -307,7 +385,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
                     curVideoIndex++;
                     setCurrentVideo(nextVideo);
                     setNextVideo();
-                    player.prepareAsync();
+                    start();
                 }
             });
 
@@ -315,9 +393,11 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    nextLinearLayout.setVisibility(View.VISIBLE);
-                    Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-                    nextLinearLayout.startAnimation(fadeInAnimation);
+                    if (!mediaPlayer.isPlaying()) {
+                        nextLinearLayout.setVisibility(View.VISIBLE);
+                        Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+                        nextLinearLayout.startAnimation(fadeInAnimation);
+                    }
                 }
             });
 
@@ -345,15 +425,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //Log.d("VideoPlayerActivity", "onPause");
-        if(isPlaying()) {
-            //Log.d("VideoPlayerActivity", "pause video");
-            pause();
-        }
-    }
+
 
     private void initControls()
     {
@@ -473,23 +545,27 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        player.setDisplay(holder);
-        player.prepareAsync();
+        if (player!=null) {
+            player.setDisplay(holder);
+        }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
+        if (player!=null) {
+
+        }
     }
     // End SurfaceHolder.Callback
 
     // Implement MediaPlayer.OnPreparedListener
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        controller.setMediaPlayer(this);
-        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-        player.start();
-    }
+//    @Override
+//    public void onPrepared(MediaPlayer mp) {
+//        controller.setMediaPlayer(this);
+//        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+//        player.start();
+//    }
     // End MediaPlayer.OnPreparedListener
 
     // Implement VideoMediaController.MediaPlayerControl
@@ -530,6 +606,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     @Override
     public void pause() {
+        isPaused = true;
+        currentPosition = player.getCurrentPosition();
         player.pause();
     }
 
@@ -540,8 +618,15 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     @Override
     public void start() {
+        if (isPaused) {
+            if (currentPosition<0) currentPosition = 0;
+            if (currentPosition>player.getDuration()-10) currentPosition = player.getDuration()-10;
+            player.seekTo(currentPosition);
+            isPaused = false;
+        }
         player.start();
     }
+
 
     @Override
     public boolean isFullScreen() {

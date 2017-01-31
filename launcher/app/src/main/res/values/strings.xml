@@ -2,7 +2,7 @@
     <string name="app_name">TodoSchoolLauncher</string>
     <!--<string name="action_settings">Settings</string>-->
     <!--<string name="action_close">Close</string>-->
-    <string name="tools_activity_title">Kitkit Shule Tools</string>
+    <string name="tools_activity_title">Kitkit School Tools</string>
     <string name="launcher_title">Kitkit School</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_credit">Credit</string>
