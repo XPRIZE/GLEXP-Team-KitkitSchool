@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="525dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="0dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/iv_background"
+        android:layout_width="817.6dp"
+        android:layout_height="456.4dp"
+        android:background="@drawable/drawingpad_popup_window"
+        android:padding="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/v_pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"></android.support.v4.view.ViewPager>
+
+        <ImageView
+            android:id="@+id/bt_left"
+            android:layout_width="31.85dp"
+            android:layout_height="66.5dp"
+            android:layout_marginLeft="5.6dp"
+            android:src="@drawable/drawingpad_popup_window_arrow_left"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/bt_right"
+            android:layout_width="31.85dp"
+            android:layout_height="66.5dp"
+            android:layout_marginRight="5.6dp"
+            android:src="@drawable/drawingpad_popup_window_arrow_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/v_close"
+        android:layout_width="64.4dp"
+        android:layout_height="66.85dp"
+        android:layout_marginBottom="408.8dp"
+        android:layout_marginLeft="773.5dp"
+        android:src="@drawable/selector_popup_close"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_background" />
+
+</android.support.constraint.ConstraintLayout>

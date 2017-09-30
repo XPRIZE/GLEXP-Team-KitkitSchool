@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/drawingpad_background"
+    tools:context=".activity.DrawingColoringActivity">
+
+    <ImageView
+        android:id="@+id/v_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/selector_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/v_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="161dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/selector_drawing_bg_select"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/v_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="39dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/selector_save"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.enuma.drawingcoloring.view.base.LockableScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="159.5dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="121dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/layout_pen_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layout_pen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_select_pen_effect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </FrameLayout>
+    </com.enuma.drawingcoloring.view.base.LockableScrollView>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="132dp"
+        android:background="@drawable/drawingpad_paper_white_"
+        android:paddingBottom="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/scrollView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <FrameLayout
+            android:id="@+id/layout_drawing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.enuma.drawingcoloring.view.ViewDrawingColoring
+                android:id="@+id/v_drawing_coloring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/iv_coloring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_save_effect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="132dp"
+        android:paddingBottom="6dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/scrollView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+</android.support.constraint.ConstraintLayout>

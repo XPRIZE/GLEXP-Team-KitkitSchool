@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="pen_normal_margin_top">6dp</dimen>
+    <dimen name="pen_normal_margin_left">-54dp</dimen>
+</resources>
