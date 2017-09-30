@@ -16,4 +16,24 @@
     <string name="start">Start</string>
     <string name="library">Library</string>
     <string name="tools">Tools</string>
+    <string name="btn_upload">Upload logs</string>
+    <string name="btn_clear_appdata">Clear app data</string>
+    <string name="setting_activity_title">Settings</string>
+    <string name="btn_pretest">Pre-test</string>
+    <string name="btn_posttest">Post-test</string>
+    <string name="select_language">Select language</string>
+    <string name="btn_changeLanguage">Change language</string>
+    <string name="select_user">Select user</string>
+    <string name="unlock_all">Unlock all</string>
+    <string name="add_100_stars">Add 100 stars</string>
+    <string name="add_1000_stars">Add 1000 stars</string>
+
+    <string name="drums">Drums</string>
+    <string name="marimba">Xylophone</string>
+    <string name="drawing">Drawing</string>
+    <string name="coloring">Coloring</string>
+    <string name="camera">Camera</string>
+    <string name="album">Album</string>
+    <string name="blackboard">Black Board</string>
+
 </resources>

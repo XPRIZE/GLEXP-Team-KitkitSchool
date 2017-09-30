@@ -12,6 +12,8 @@ import android.util.Log;
 public class LockScreenReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+
+
         Log.d("LockScreenReceiver","broadcast received");
 
         String action = intent.getAction();
@@ -23,8 +25,15 @@ public class LockScreenReceiver extends BroadcastReceiver {
 //            Intent i = new Intent(context, LockScreenActivity.class);
 //            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            context.startActivity(i);
-            Intent i =  context.getPackageManager().getLaunchIntentForPackage("com.enuma.todoschoollockscreen");
-            context.startActivity(i);
+            try {
+                Intent i =  context.getPackageManager().getLaunchIntentForPackage("com.enuma.todoschoollockscreen");
+                context.startActivity(i);
+
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
 }

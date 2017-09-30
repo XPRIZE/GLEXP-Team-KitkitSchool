@@ -59,7 +59,7 @@ public class PasswordDialogFragment extends DialogFragment {
         passwordEditText = (EditText) dialogView.findViewById(R.id.password);
 
         builder.setView(dialogView)
-                .setPositiveButton(R.string.go_setting, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.setting_activity_title, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d("tag",passwordEditText.getText().toString());
                         if(passwordEditText.getText().toString().equals("2019")) {

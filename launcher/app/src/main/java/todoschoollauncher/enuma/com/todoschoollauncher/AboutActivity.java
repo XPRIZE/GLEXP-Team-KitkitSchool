@@ -1,6 +1,7 @@
 package todoschoollauncher.enuma.com.todoschoollauncher;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -12,11 +13,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.enuma.kitkitlogger.KitKitLogger;
+import com.enuma.kitkitlogger.KitKitLoggerActivity;
+
+
 /**
  * Created by ingtellect on 1/10/17.
  */
 
-public class AboutActivity extends AppCompatActivity implements PasswordDialogFragment.PasswordDialogListener {
+public class AboutActivity extends KitKitLoggerActivity implements PasswordDialogFragment.PasswordDialogListener {
+
+    private static final String TAG = "AboutActivity";
+//    private Context cntx = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,9 @@ public class AboutActivity extends AppCompatActivity implements PasswordDialogFr
 
         }
 
+//        cntx = this.getBaseContext();
+        //listLogFiles();
+
     }
 
     private void hideStatusbar() {
@@ -80,7 +91,8 @@ public class AboutActivity extends AppCompatActivity implements PasswordDialogFr
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.android.settings");
+//        Intent i = getPackageManager().getLaunchIntentForPackage("com.android.settings");
+        Intent i = new Intent(AboutActivity.this, SettingActivity.class);
         startActivity(i);
     }
 
@@ -88,4 +100,12 @@ public class AboutActivity extends AppCompatActivity implements PasswordDialogFr
     public void onDialogNegativeClick(DialogFragment dialog) {
         dialog.dismiss();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        KitKitLogger logger = ((LauncherApplication)getApplication()).getLogger();
+        logger.tagScreen("AboutActivity");
+    }
+
 }

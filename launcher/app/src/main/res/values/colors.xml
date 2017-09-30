@@ -5,4 +5,6 @@
     <color name="colorAccent">#26A5FF</color>
     <color name="colorDialog">#26A5FF</color>
     <color name="colorCreditText">#f7f7f7</color>
+    <color name="coinNumberText">#FDDB68</color>
+    <color name="coinNumberTextDisabled">#D9D9D9</color>
 </resources>

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/lib/todoschoollauncher.enuma.com.todoschoollauncher"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#5269C4"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -16,108 +22,163 @@
             android:id="@+id/toolbar_title"
             android:textColor="#ffffff"
             android:textSize="30sp"/>
+        <FrameLayout
+            android:id="@+id/coin_layout_tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="40dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/daily_coinstatus_bg"/>
+            <ImageView
+                android:id="@+id/image_coin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/daily_coinstatus_coin"
+                android:padding="0dp"
+                android:background="@android:color/transparent" />
+            <TextView
+                android:id="@+id/textView_numCoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FEFEFE"
+                android:textSize="35sp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="15dp" />
+        </FrameLayout>
+
     </android.support.v7.widget.Toolbar>
 
-    <!--<ImageButton-->
-        <!--android:id="@+id/button_gallery"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:scaleType="fitXY"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:padding="0dp"-->
-        <!--android:layout_marginBottom="3dp"-->
-        <!--/>-->
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:background="@drawable/tools_activity_bg">
+        android:orientation="vertical"
+        android:background="@drawable/tools_image_background">
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </Space>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginRight="67dp">
-            <FrameLayout
+            android:orientation="horizontal">
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:id="@+id/app_drum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/xprize_image_icon_tools_photo_camera_shadow"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:padding="0dp" />
-                <ImageButton
-                    android:id="@+id/button_camera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/xprize_image_icon_tools_camera"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:padding="0dp"
-                    android:layout_marginBottom="10dp" />
-            </FrameLayout>
-            <TextView
-                android:id="@+id/camera_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="30sp"
-                android:textColor="#6b6b6b"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="67dp">
-            <FrameLayout
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:id="@+id/app_marimba"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/xprize_image_icon_tools_photo_camera_shadow"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:padding="0dp" />
-                <ImageButton
-                    android:id="@+id/button_gallery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/xprize_image_icon_tools_photo"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:padding="0dp"
-                    android:layout_marginBottom="10dp" />
-            </FrameLayout>
-            <TextView
-                android:id="@+id/gallery_textView"
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:id="@+id/app_blackboard"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="30sp"
-                android:textColor="#6b6b6b"/>
+                android:layout_height="wrap_content">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:id="@+id/app_drawing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
 
         </LinearLayout>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </Space>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:id="@+id/app_coloring"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+            <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0">
+            </todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" >
+            </Space>
+        </LinearLayout>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </Space>
     </LinearLayout>
-    <!--<ImageButton-->
-        <!--android:id="@+id/button_setting"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:scaleType="fitXY"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:padding="0dp"-->
-        <!--android:layout_marginBottom="3dp"-->
-        <!--/>-->
+
 </LinearLayout>
