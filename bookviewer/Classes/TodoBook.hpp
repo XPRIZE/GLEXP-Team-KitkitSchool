@@ -20,6 +20,7 @@ enum class TDBookLayout
     Portrait,
     Portrait_Traditional,
     Landscape,
+    Square,
 };
 
 enum class TDBookType

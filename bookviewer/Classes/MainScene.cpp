@@ -5,7 +5,7 @@
 #include "Utils/TodoUtil.h"
 #include "TodoBook.hpp"
 #include "BookView.hpp"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

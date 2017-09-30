@@ -7,9 +7,9 @@
 //
 
 #include "CompletePopup.hpp"
-#include "ui/uiButton.h"
+#include "ui/UIButton.h"
 #include "MainScene.h"
-
+#include "SimpleAudioEngine.h"
 
 bool CompletePopup::init() {
     if (!Node::init()) return false;
@@ -110,7 +110,13 @@ void CompletePopup::show(float delay, std::function<void(void)> callback) {
     
     
     
- 
+    
+    scheduleOnce([](float) {
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Common/SFX_ChildrenCheerNew.m4a");
+        
+    }, delay+0.1, "wowSound");;
+    
+    
     _callback = callback;
     
 }

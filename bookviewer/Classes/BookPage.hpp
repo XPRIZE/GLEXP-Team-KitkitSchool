@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "cocos2d.h"
 #include <vector>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "TodoBook.hpp"
 
 
@@ -84,7 +84,7 @@ protected:
     string _titleAudioPath;
     
     
-    bool _isPortrait;
+    bool _hasBackCover;
     TDBookLayout _bookLayout;
     bool _withAudio;
     float _timePage, _timeSentence;

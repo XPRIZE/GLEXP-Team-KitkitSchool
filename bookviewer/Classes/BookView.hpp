@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "cocos2d.h"
 #include <vector>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "TodoBook.hpp"
 #include "BookPage.hpp"
 
@@ -29,6 +29,7 @@ public:
     static BookView* create(const Size &size, std::string &bookPath);
     virtual bool init(const Size &size, std::string &bookPath);
     virtual void onExit() override;
+    void onEnter() override;
     
     void setBook(TodoBook *book);
     TodoBook* getBook() { return _book; }
@@ -61,11 +62,12 @@ protected:
     BookPage *_currentPageView;
     TDBookLayout _bookLayout;
     
-    bool _isPortrait;
+    //bool _isPortrait;
     
     
     ui::Button *_prevButton, *_nextButton;
     Vec2 _prevButtonPos, _nextButtonPos;
+    bool _buttonEnabled;
     
 
     

@@ -14,6 +14,7 @@
 #include "Common/Controls/ProgressIndicator.hpp"
 #include "Managers/GameSoundManager.h"
 #include "CCAppController.hpp"
+#include "Managers/LogManager.hpp"
 
 using namespace ui;
 
@@ -54,6 +55,8 @@ bool BookView::init(const Size &size, std::string &bookPath)
     
     GameSoundManager::getInstance()->stopAllEffects();
     GameSoundManager::getInstance()->unloadAllEffect();
+    
+    _buttonEnabled = false;
     
     // for memory release
     Director::getInstance()->getTextureCache()->removeUnusedTextures();
@@ -112,11 +115,13 @@ bool BookView::init(const Size &size, std::string &bookPath)
         auto keyListener = EventListenerKeyboard::create();
         keyListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event) {
             if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE) {
+                LogManager::getInstance()->logEvent(_book->bookTitle, "esc_pressed", "", _currentPage);
                 this->popBookScene();
             }
         };
         backBtn->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyListener, backBtn);
         backBtn->addClickEventListener([this](Ref*){
+            LogManager::getInstance()->logEvent(_book->bookTitle, "back_pressed", "", _currentPage);
             GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/SFX_GUIBack.m4a");
             this->popBookScene();
         });
@@ -175,6 +180,12 @@ bool BookView::init(const Size &size, std::string &bookPath)
     
 }
 
+void BookView::onEnter()
+{
+    Node::onEnter();
+    LogManager::getInstance()->tagScreen(_book->bookTitle);
+
+}
 
 void BookView::onExit()
 {
@@ -190,7 +201,7 @@ void BookView::setBook(TodoBook *book)
 {
     _book = book;
     _bookLayout = book->bookLayout;
-    _isPortrait = (_bookLayout==TDBookLayout::Portrait || _bookLayout==TDBookLayout::Portrait_Traditional);
+    //_isPortrait = (_bookLayout==TDBookLayout::Portrait || _bookLayout==TDBookLayout::Portrait_Traditional);
     
     
     
@@ -263,8 +274,10 @@ void BookView::viewPage(int page)
 void BookView::nextPage()
 {
     
+    if (!_buttonEnabled) return;
+    
     if (_currentPage+1>=_book->pages.size()) {
-        
+        LogManager::getInstance()->logEvent(_book->bookTitle, "finish_read", "", _currentPage);
         CompletePopup::create()->show(0.0, [](){
             CCAppController::sharedAppController()->handleGameComplete(1);
             //TodoSchoolBackButton::popGameScene();
@@ -340,6 +353,8 @@ void BookView::previousPage()
 {
     
 
+    if (!_buttonEnabled) return;
+    
     hidePageButton();
     
     if (true) {
@@ -417,21 +432,26 @@ void BookView::previousPage()
 
 void BookView::showPageButton()
 {
+    
+    _buttonEnabled = true;
+    
     _prevButton->setVisible(_currentPage>=0);
     
     _prevButton->setPositionX(-_prevButton->getContentSize().width/2);
-    _prevButton->runAction(Sequence::create(DelayTime::create(0.0),
+    _prevButton->runAction(Sequence::create(DelayTime::create(1.0),
                                             EaseBounceOut::create(MoveTo::create(0.2, _prevButtonPos)), nullptr));
     
     
     _nextButton->setVisible(true);
     _nextButton->setPositionX(getContentSize().width+_nextButton->getContentSize().width/2);
-    _nextButton->runAction(Sequence::create(DelayTime::create(0.0),
+    _nextButton->runAction(Sequence::create(DelayTime::create(1.0),
                                             EaseBounceOut::create(MoveTo::create(0.2, _nextButtonPos)), nullptr));
 }
 
 void BookView::hidePageButton()
 {
+    _buttonEnabled = false;
+    
     _prevButton->setPosition(_prevButtonPos);
     _prevButton->runAction(MoveBy::create(0.1, Vec2(-_prevButton->getContentSize().width, 0)));
     
@@ -458,6 +478,7 @@ void BookView::popBookScene()
         
     } else {
         if (_finishReading) {
+            LogManager::getInstance()->logEvent(_book->bookTitle, "finish_read", "", _currentPage);
             CompletePopup::create()->show(0.0, [](){
                 CCAppController::sharedAppController()->handleGameComplete(1);
                 //TodoSchoolBackButton::popGameScene();

@@ -47,6 +47,8 @@ void TodoBook::readData(string &filedata)
             auto layout = row[4];
             if (layout == "portrait") bookLayout = TDBookLayout::Portrait;
             else if (layout == "portrait_traditional") bookLayout = TDBookLayout::Portrait_Traditional;
+            else if (layout == "square") bookLayout = TDBookLayout::Square;
+            else if (layout == "landscape") bookLayout = TDBookLayout::Landscape;
             else bookLayout = TDBookLayout::Landscape;
             bookType = (row[5] == "text") ? TDBookType::TextOnly : TDBookType::WithAudio;
             
