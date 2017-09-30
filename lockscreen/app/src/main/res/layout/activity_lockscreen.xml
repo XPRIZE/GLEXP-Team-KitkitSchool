@@ -18,15 +18,22 @@
             android:layout_height="wrap_content"
             android:src="@drawable/xprize_image_battery_10"/>
         <ImageView
-            android:id="@+id/battery_half_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/xprize_image_battery_50"/>
-        <ImageView
-            android:id="@+id/battery_full_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/xprize_image_battery_100"/>
+            android:id="@+id/battery_indicator"
+            android:layout_width="69dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/battery_indicator"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/battery_half_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/xprize_image_battery_50"/>-->
+        <!--<ImageView-->
+            <!--android:id="@+id/battery_full_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/xprize_image_battery_100"/>-->
     </FrameLayout>
     <ImageView
         android:id="@+id/battery_charging_image"

@@ -1,26 +1,33 @@
 package com.enuma.todoschoollockscreen;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.TimeZone;
+
+import android.content.res.Resources;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.text.format.Time;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.enuma.kitkitlogger.KitKitLoggerActivity;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
-public class LockScreenActivity extends Activity {
+public class LockScreenActivity extends KitKitLoggerActivity {
 
     TextView clockTextView;
     ImageView chargingIcon;
@@ -78,44 +85,8 @@ public class LockScreenActivity extends Activity {
 
         setDate();
 
-//        registerReceiver(_batteryinfo, new IntentFilter(Intent.ACTION_POWER_CONNECTED));
-//        registerReceiver(_batteryinfo, new IntentFilter(Intent.ACTION_POWER_DISCONNECTED));
-
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = registerReceiver(_batteryinfo, ifilter);
-
-        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                status == BatteryManager.BATTERY_STATUS_FULL;
-
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        int batteryPct = java.lang.Math.round(level / (float)scale * 100);
-
-//        Log.d("LockScreen","battery status : "+status + " battery level : " + batteryPct);
-
-        View lowBattery = findViewById(R.id.battery_low_image);
-        View halfBattery = findViewById(R.id.battery_half_image);
-        View fullBattery = findViewById(R.id.battery_full_image);
-
-        if (batteryPct <= 10) {
-            lowBattery.setVisibility(View.VISIBLE);
-            halfBattery.setVisibility(View.GONE);
-            fullBattery.setVisibility(View.GONE);
-        }
-        else if(batteryPct < 100) {
-            lowBattery.setVisibility(View.GONE);
-            halfBattery.setVisibility(View.VISIBLE);
-            fullBattery.setVisibility(View.GONE);
-
-        }
-        else {
-            lowBattery.setVisibility(View.GONE);
-            halfBattery.setVisibility(View.GONE);
-            fullBattery.setVisibility(View.VISIBLE);
-
-        }
 
         chargingIcon = (ImageView) findViewById(R.id.battery_charging_image);
 
@@ -127,8 +98,18 @@ public class LockScreenActivity extends Activity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateBatteryStatus();
+
+    }
+
+
     private void setDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d", getCurrentLocale());
         sdf.setTimeZone(TimeZone.getDefault());
         String currentDateandTime = sdf.format(new Date());
 
@@ -174,5 +155,70 @@ public class LockScreenActivity extends Activity {
     public void unlockScreen(View view) {
         //Instead of using finish(), this totally destroys the process
         android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
+    private void updateBatteryStatus() {
+        //        registerReceiver(_batteryinfo, new IntentFilter(Intent.ACTION_POWER_CONNECTED));
+//        registerReceiver(_batteryinfo, new IntentFilter(Intent.ACTION_POWER_DISCONNECTED));
+
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = registerReceiver(_batteryinfo, ifilter);
+
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
+
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        int batteryPct = java.lang.Math.round(level / (float)scale * 100);
+
+//        Log.d("LockScreen","battery status : "+status + " battery level : " + batteryPct);
+
+        View batteryIndicator = findViewById(R.id.battery_indicator);
+
+        if (batteryPct >= 20) {
+            batteryIndicator.setVisibility(View.VISIBLE);
+            Resources r = getResources();
+            float maxWidthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 69, r.getDisplayMetrics());
+            int widthPx = (int)(maxWidthPx * batteryPct / 100.f);
+            batteryIndicator.getLayoutParams().width = widthPx;
+
+        }
+        else {
+            batteryIndicator.setVisibility(View.GONE);
+        }
+
+//        View lowBattery = findViewById(R.id.battery_low_image);
+//        View halfBattery = findViewById(R.id.battery_half_image);
+//        View fullBattery = findViewById(R.id.battery_full_image);
+//
+//        if (batteryPct <= 10) {
+//            lowBattery.setVisibility(View.VISIBLE);
+//            halfBattery.setVisibility(View.GONE);
+//            fullBattery.setVisibility(View.GONE);
+//        }
+//        else if(batteryPct < 100) {
+//            lowBattery.setVisibility(View.GONE);
+//            halfBattery.setVisibility(View.VISIBLE);
+//            fullBattery.setVisibility(View.GONE);
+//
+//        }
+//        else {
+//            lowBattery.setVisibility(View.GONE);
+//            halfBattery.setVisibility(View.GONE);
+//            fullBattery.setVisibility(View.VISIBLE);
+//
+//        }
     }
 }
