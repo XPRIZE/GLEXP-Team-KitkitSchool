@@ -27,6 +27,7 @@ proj.android/kit-libs/com-crashlytics-sdk-android_crashlytics/local.properties
 proj.android/kit-libs/com-crashlytics-sdk-android_crashlytics-core/local.properties
 proj.android/kit-libs/com-crashlytics-sdk-android_crashlytics-ndk/local.properties
 proj.android/kit-libs/io-fabric-sdk-android_fabric/local.properties
+proj.android/obj/
 ant.properties
 
 # proj.android-studio
