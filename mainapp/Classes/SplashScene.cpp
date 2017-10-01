@@ -8,7 +8,11 @@
 
 #include "SplashScene.hpp"
 #include "Menu/MainScene.hpp"
-#include "Menu/MainScene2.hpp"
+#include "CCAppController.hpp"
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#include "platform/android/jni/JniHelper.h"
+#endif
 
 using namespace cocos2d;
 
@@ -56,6 +60,14 @@ bool SplashScene::init()
 void SplashScene::onEnter() {
     Layer::onEnter();
     
+    std::string test = SplashScene::getLaunchString();
+    if (test.length()>0) {
+        SplashScene::clearLaunchString();
+        CCAppController::sharedAppController()->startQuiz("", 0, test);
+        return;
+    }
+
+    
     // Wait for 0.5 seconds to load main scene
     this->scheduleOnce(schedule_selector(SplashScene::finishSplash), 0.2f);
 }
@@ -66,4 +78,40 @@ void SplashScene::finishSplash(float dt) {
 
     
     Director::getInstance()->replaceScene(MainScene::createScene());
+}
+
+
+string SplashScene::getLaunchString() {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    
+    JniMethodInfo t;
+    std:: string a("");
+    if (JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "getLaunchString", "()Ljava/lang/String;"))
+    {
+        jstring jstr = (jstring)t.env->CallStaticObjectMethod(t.classID, t.methodID);
+        a = JniHelper::jstring2string(jstr);
+        t.env->DeleteLocalRef(jstr);
+        return a;
+    }
+    return "";
+    
+#else
+    return "";
+    
+#endif
+}
+
+void SplashScene::clearLaunchString() {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    // get Documents directory path
+    JniMethodInfo t;
+    if (JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "clearLaunchString", "()V"))
+    {
+        t.env->CallStaticVoidMethod(t.classID, t.methodID);
+        t.env->DeleteLocalRef(t.classID);
+    }
+    
+    return;
+#endif
+    
 }

@@ -41,7 +41,21 @@ SoundEffect::SoundEffect(const std::string& EffectPath)
         Bad = true;
     }
 }
+
+void SoundEffect::setPath(const std::string &path)
+{
+    EffectPath = path;
+    SoundID = -1;
+    Bad = false;
     
+    if (!EffectPath.empty() && !fileExist(EffectPath)) {
+        // NB(xenosoz, 2016): Check for missing sound effects
+        CCLOGERROR("File does not exist for SoundEffect: %s", EffectPath.c_str());
+        Bad = true;
+    }
+}
+
+
 SoundEffect::operator bool() const {
     return !empty() && !bad();
 }

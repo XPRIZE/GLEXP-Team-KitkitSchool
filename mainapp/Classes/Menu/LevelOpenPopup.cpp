@@ -75,8 +75,8 @@ void LevelOpenPopup::setup(std::string levelID)
     bg->addChild(egg);
     
     string panelName = "todoschool_pretest_panel_";
-    if (cur->categoryLevel==0) panelName += "prek.png";
-    else if (cur->category=='L') panelName += "english.png";
+//    if (cur->categoryLevel==0) panelName += "prek.png";
+    if (cur->category=='L') panelName += "english.png";
     else panelName += "math.png";
     auto panel = Sprite::create(folder+panelName);
     panel->setPosition(popupSize.width/2, popupSize.height-100);

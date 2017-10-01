@@ -9,8 +9,11 @@
 #include "TodoLoadingScene.hpp"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
-#include "Managers/UserManager.hpp"
-#include "Managers/CurriculumManager.hpp"
+//#include "Managers/UserManager.hpp"
+//#include "Managers/CurriculumManager.hpp"
+#include <string>
+
+using namespace std;
 
 
 Scene* TodoLoadingScene::createScene(std::function<Scene*(void)> creator, float loadingTime, float fadeOutTime)
@@ -100,43 +103,45 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
 //    Sprite* loadingImage = Sprite::create(eng ? "System/todoschool_BI.png" : "System/todoshule_BI.png");
     
     
-    auto levelID = UserManager::getInstance()->getCurrentLevelID();
-    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
+//    auto levelID = UserManager::getInstance()->getCurrentLevelID();
+//    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     
     
     string loadingFile;
-    if (cur) {
-        loadingFile = StringUtils::format("BirdAnimation/Loading/%c%d.png", cur->category, cur->categoryLevel);
-    } else {
-        loadingFile = "System/transition_yellowbird.png";
-    }
+//    if (cur) {
+//        loadingFile = StringUtils::format("BirdAnimation/Loading/%c%d.png", cur->category, cur->categoryLevel);
+//    } else {
+//        loadingFile = "System/transition_yellowbird.png";
+//    }
+    loadingFile = "System/xprize_image_loading.png";
+    
     
     Sprite *loadingImage = Sprite::create(loadingFile);
     
     loadingImage->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    loadingImage->setPosition(winSize/2.f);
+    loadingImage->setPosition(winSize/2.f + Size(0, 50));
     addChild(loadingImage);
     
     Size imageSize = loadingImage->getContentSize();
     
-    Sprite *loadingMark = Sprite::create("System/transition_ABC123.png");
-    loadingMark->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-    loadingMark->setPosition(Vec2(winSize.width/2-imageSize.width/2 - 20, winSize.height/2+imageSize.height/2));
-    addChild(loadingMark);
+//    Sprite *loadingMark = Sprite::create("System/transition_ABC123.png");
+//    loadingMark->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+//    loadingMark->setPosition(Vec2(winSize.width/2-imageSize.width/2 - 20, winSize.height/2+imageSize.height/2));
+//    addChild(loadingMark);
     
-    loadingMark->runAction(RepeatForever::create(
-                             Sequence::create(DelayTime::create(0.2),
-                                              MoveBy::create(0.0, Vec2(10, 0)),
-                                              DelayTime::create(0.2),
-                                              MoveBy::create(0.0, Vec2(-10, 0)), nullptr)));
+//    loadingMark->runAction(RepeatForever::create(
+//                             Sequence::create(DelayTime::create(0.2),
+//                                              MoveBy::create(0.0, Vec2(10, 0)),
+//                                              DelayTime::create(0.2),
+//                                              MoveBy::create(0.0, Vec2(-10, 0)), nullptr)));
     
     
     std::string loadingText = LanguageManager::getInstance()->isEnglish() ? "Loading..." : "Tafadhali subiri...";
     
-    Label *loadingLabel = Label::createWithTTF(loadingText, "fonts/TodoSchoolV2.ttf", 56);
+    Label *loadingLabel = Label::createWithTTF(loadingText, "fonts/TodoSchoolV2.ttf", 150);
     loadingLabel->setTextColor(Color4B(255, 240, 222, 255));
     loadingLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
-    loadingLabel->setPosition(Vec2(winSize.width/2, winSize.height/2 - imageSize.height/2 - 10));
+    loadingLabel->setPosition(Vec2(winSize.width/2, winSize.height/2 - imageSize.height/2 - 50));
     addChild(loadingLabel);
     
     

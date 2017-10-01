@@ -48,6 +48,9 @@ private:
     LanguageType _langType;
     
     std::map<std::string, std::string> _localizationMap;
+    std::map<std::string, std::string> _localizationMapEnglish;
+    std::map<std::string, std::string> _localizationMapSwahili;
+    
     void initLocalizationMap();
     
     

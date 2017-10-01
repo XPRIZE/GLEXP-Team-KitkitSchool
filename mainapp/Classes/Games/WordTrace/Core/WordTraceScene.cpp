@@ -33,7 +33,7 @@ namespace {
         return Point(MainDepot().gameSize().width/2.f, 1394.f) + traceFieldOffset();
     }
     Point midLineP() {
-        return Point(MainDepot().gameSize().width/2.f, 1051.25f) + traceFieldOffset();
+        return Point(MainDepot().gameSize().width/2.f, 1171.25f) + traceFieldOffset();
     }
     Point botLineP() {
         return Point(MainDepot().gameSize().width/2.f, 614.272f) + traceFieldOffset();

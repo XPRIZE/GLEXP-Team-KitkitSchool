@@ -1,6 +1,8 @@
 #include "AppDelegate.h"
 #include "SplashScene.hpp"
 #include "Managers/LogManager.hpp"
+#include "Managers/UserManager.hpp"
+
 #include "CCAppController.hpp"
 #include "SimpleAudioEngine.h"
 
@@ -121,8 +123,20 @@ void AppDelegate::applicationDidEnterBackground() {
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
+    
+    UserManager::getInstance()->refreshUsername();
     //Director::getInstance()->getOpenGLView()->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
     
     // if you use SimpleAudioEngine, it must resume here
     //CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    CCLOG("applicationWillEnterForeground");
+    auto test = SplashScene::getLaunchString();
+    CCLOG("applicationWillEnterForeground : %s",test.c_str());
+    if (test.length()>0) {
+        auto scene = SplashScene::createScene();
+        
+        Director::getInstance()->replaceScene(scene);
+
+    }
+    
 }

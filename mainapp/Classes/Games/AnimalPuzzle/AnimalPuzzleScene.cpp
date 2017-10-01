@@ -15,7 +15,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
@@ -88,7 +88,7 @@ bool AnimalPuzzleScene::init()
         return false;
     }
     
-    _touchEnabled = false;
+
     
     pickEffect().preload();
     snapEffect().preload();
@@ -183,7 +183,7 @@ void AnimalPuzzleScene::onStart()
     
 
 
-    setTouchEnabled(true);
+
     
     loadData(_currentLevel);
     _currentPuzzleIndex = 0;
@@ -264,11 +264,7 @@ void AnimalPuzzleScene::setLevel(int level)
     _currentLevel = level;
 }
 
-void AnimalPuzzleScene::setTouchEnabled(bool enabled)
-{
-    _touchEnabled = enabled;
 
-}
 
 void AnimalPuzzleScene::createPuzzle(int index)
 {
@@ -312,7 +308,7 @@ void AnimalPuzzleScene::createPuzzle(int index)
         //stencil->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         
         clip->setAlphaThreshold(1);
-        if (_currentLevel==1) {
+        if (_currentLevel<=16) {
             clip->setVisible(false);
         }
     } else {
@@ -369,7 +365,10 @@ void AnimalPuzzleScene::createPuzzle(int index)
             piece->_body->setVisible(true);
             piece->_shadow->setVisible(true);
             pickEffect().play();
-        }), EaseOut::create(MoveTo::create(0.5, Vec2(x, y)), 2.f), nullptr));
+        }), EaseOut::create(MoveTo::create(0.5, Vec2(x, y)), 2.f),
+                                          CallFunc::create([piece](){
+            piece->_touchEnabled = true;
+        }), nullptr));
         
 
         
@@ -522,12 +521,13 @@ bool AnimalPiece::init()
 
     _snapped = false;
     onSnapped = nullptr;
-    
+    _touchEnabled = false;
     
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
         if (_snapped) return false;
+        if (!_touchEnabled) return false;
         
         auto P = getParent();
         auto pos = P->convertToNodeSpace(T->getLocation());
@@ -575,8 +575,23 @@ bool AnimalPiece::init()
         
         if (_targetPos.distance(getPosition())<snapRadiusOnEnded) {
             this->snapTarget();
+        } else {
+            auto P = getParent();
+            auto pos = P->convertToWorldSpace(this->getPosition());
+            Vec2 loc = pos;
             
+            auto winSize = Director::getInstance()->getWinSize();
+            const auto margin = Size(50, 50);
+            
+            loc.x = MAX(margin.width, loc.x);
+            loc.x = MIN(winSize.width-margin.width, loc.x);
+            loc.y = MAX(margin.height, loc.y);
+            loc.y = MIN(winSize.height-margin.height, loc.y);
+            if (loc.distance(pos)>5) {
+                runAction(EaseOut::create(MoveTo::create(0.12, loc), 2.0));
+            }
         }
+        
         
         
         
@@ -653,6 +668,7 @@ void AnimalPiece::snapTarget()
     setPicked(false);
     _shadow->setVisible(false);
     _snapped = true;
+    _touchEnabled = false;
     
     if (onSnapped) {
         onSnapped();

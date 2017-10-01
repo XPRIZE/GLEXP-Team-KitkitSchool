@@ -251,7 +251,8 @@ void MainScene::handleSuccess() {
         if (OnSuccess)
             OnSuccess();
         
-        CCAppController::sharedAppController()->handleGameComplete(1);
+        exit(0);
+        //CCAppController::sharedAppController()->handleGameComplete(1);
         //TodoSchoolBackButton::popGameScene();
     });
 }

@@ -26,6 +26,7 @@ protected:
     const float Speed;
     const float AngularSpeed;
 
+    cocos2d::RefPtr<cocos2d::Sprite> GlowSprite;
     cocos2d::RefPtr<cocos2d::Sprite> WalkSprite;
     cocos2d::RefPtr<cocos2d::Sprite> RestSprite;
 
@@ -60,6 +61,7 @@ public:
     void moveIn(const Pose& TargetPose, float TotalDuration, float FadeDuration);
     void moveOut(const Pose& TargetPose, float TotalDuration, float FadeDuration);
     void rest();
+    void glow(bool on);
 
     cocos2d::Sprite* activeSprite();
     

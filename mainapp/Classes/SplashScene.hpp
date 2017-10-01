@@ -30,6 +30,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(SplashScene);
+    
+    static std::string getLaunchString();
+    static void clearLaunchString();
 };
 
 #endif /* SplashScene_hpp */

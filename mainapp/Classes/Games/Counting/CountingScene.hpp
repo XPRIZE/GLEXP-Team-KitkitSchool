@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "ChildNodes/AnswerPadMulti.hpp"
 #include "ChildNodes/CountingObject.hpp"
 #include "Models/LevelData.hpp"

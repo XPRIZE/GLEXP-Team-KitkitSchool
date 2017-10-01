@@ -9,7 +9,7 @@
 #include "SimpleAudioEngine.h"
 #include "NumberMatchingScene.hpp"
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "ButtonUtility.hpp"
 #include "Managers/GameSoundManager.h"
 #include "Common/Controls/CompletePopup.hpp"
@@ -375,7 +375,7 @@ void NumberMatchingScene::bindingEvents(NumberMatchingCard* card)
         card->stopParticle();
         card->isTouched = false;
         
-        if (card->isLinked) {
+        if (card->isLinked && !card->isMatchDone) {
             auto other = card->linkedTarget;
             
             other->stopParticle();
@@ -408,16 +408,15 @@ void NumberMatchingScene::bindingEvents(NumberMatchingCard* card)
                     }), nullptr));
                 }
             }), nullptr));
-        } else {
-            
-            card->runAction(ScaleTo::create(0.1f, _defaultScaleFactor));
-            
-
         }
-        
-
-        
-        
+        else {
+            auto nextPos = this->safePointForBoundary(card->getPosition());
+            auto rescaleAction = ScaleTo::create(0.1f, _defaultScaleFactor);
+            auto reposAction = EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f);
+            card->runAction(Spawn::create(rescaleAction, reposAction, nullptr));
+            
+            this->stompByNode(card);
+        }
     };
     
     listener->onTouchCancelled = [this, card](Touch* touch, Event* event) {
@@ -638,4 +637,79 @@ void NumberMatchingScene::addStarParticle(Node* targetNode)
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _particleEffect->setPosition(targetNode->getPosition());
     _gameNode->addChild(_particleEffect, ++_zOrder);
+}
+
+
+
+Point NumberMatchingScene::safePointForBoundary(Point point)
+{
+    // NB(xenosoz, 2017): Move point inside of the safe boundary (regarding the polar coordinates)
+    Rect boardRect = Rect(Point(0.f, 0.f), _gameNode->getContentSize());
+    Size cardSize = NumberMatchingCard::defaultSize();
+    
+    float alpha = .2f;
+    float beta = .1f;
+    Rect safeRect = Rect(cardSize.width * alpha,
+                         cardSize.height * beta,
+                         boardRect.size.width - cardSize.width * alpha * 2,
+                         boardRect.size.height - cardSize.height * beta * 2);
+    
+    float dist = Point(safeRect.getMidX(), safeRect.getMidY()).distance(point);
+    float theta = atan2(point.y - safeRect.getMidY(),
+                        point.x - safeRect.getMidX());
+    
+    float rx = (safeRect.size.width / 2.f) / cos(theta);
+    float ry = (safeRect.size.height / 2.f) / sin(theta);
+    float r = min(abs(rx), abs(ry));
+    
+    if (dist <= r) {
+        // NB(xenosoz, 2017): Point is already in the safe area.
+        return point;
+    }
+    
+    if (abs(rx) < abs(ry)) {
+        // NB(xenosoz, 2017): Hit the vertical wall
+        int sign = ((rx > 0) - (rx < 0));
+        return Point((safeRect.size.width / 2.f) * sign + safeRect.getMidX(),
+                     r * sin(theta) + safeRect.getMidY());
+    }
+    
+    // NB(xenosoz, 2017): Hit the horizontal wall (or both)
+    int sign = ((ry > 0) - (ry < 0));
+    Point newPoint = Point(r * cos(theta) + safeRect.getMidX(),
+                           (safeRect.size.height / 2.f) * sign + safeRect.getMidY());
+    return newPoint;
+}
+
+
+void NumberMatchingScene::stompByNode(Node* node)
+{
+    // NB(xenosoz, 2017): Prevent cards from stacking in one point (to prevent cheating)
+    
+    for (auto card : matchingCardList) {
+        if (!card || card == node || card->isMatchDone) { continue; }
+        
+        auto nodePos = node->getPosition();
+        auto cardPos = card->getPosition();
+        auto dir = (cardPos - nodePos).getNormalized();
+        if (dir.length() < .5f) {
+            // NB(xenosoz, 2017): Pick random direction for an exact match.
+            auto theta = random<float>(0.f, 2*M_PI);
+            dir.x = cos(theta);
+            dir.y = sin(theta);
+        }
+        
+        float r = [&] {
+            auto _ = NumberMatchingCard::defaultSize();
+            return min(_.width/2.f, _.height/2.f);
+        }();
+        auto d_0 = nodePos.distance(cardPos);
+        if (d_0 >= 2*r) { continue; }
+        
+        auto d_1 = (d_0 * d_0) / (4 * r) + r;
+        auto nextPos = nodePos + (dir * d_1 * 1.7f);
+        nextPos = this->safePointForBoundary(nextPos);
+        
+        card->runAction(EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f));
+    }
 }

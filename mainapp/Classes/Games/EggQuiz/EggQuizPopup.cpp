@@ -7,7 +7,7 @@
 //
 
 #include "EggQuizPopup.hpp"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 
 #include "Managers/LanguageManager.hpp"

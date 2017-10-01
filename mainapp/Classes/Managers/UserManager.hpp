@@ -32,18 +32,23 @@ public:
     bool isGameTestingMode() { return _gameTestingMode; }
     void setGameTestingMode(bool isTesting) { _gameTestingMode = isTesting; }
     
+    bool isResetAllowed() { return _allowReset; }
+    
     // First Official Version
     void resetStatus();
-    
+    void clearStatus();
     
 
+
+    void flushData();
     
+    string getCurrentLevelIDKey();
     string getCurrentLevelID();
     void setCurrentLevelID(string levelID);
     
-    int getCurrentDay();
-    void setCurrentDay(int day);
-    
+    string getCurrentDayKey(string levelID);
+    int getCurrentDay(string levelID);
+    void setCurrentDay(string levelID, int day);
     
     string getLevelOpenKey(string levelID);
     bool isLevelOpen(string levelID);
@@ -53,12 +58,32 @@ public:
     string getDayClearedKey(string levelID, int day);
     bool isDayCleared(string levelID, int day);
     void setDayCleared(string levelID, int day, bool isCleared = true);
+    
+    bool isDayInProgress(string levelID, int day);
+    void clearDayProgress(string levelID, int day);
+    
+    
+    
+    
     int numDayCleared(string levelID);
     float ratioDayCleared(string levelID);
     
     string getGameClearedKey(string levelID, int day, int gameIndex);
     bool isGameCleared(string levelID, int day, int gameIndex);
     void setGameCleared(string levelID, int day, int gameIndex, bool isCleared = true);
+    
+    //string getProgressDataKey();
+    //Json::Value getProgressData();
+    //void setProgressData(Json::Value json);
+    //std::string getKey();
+    
+    void refreshUsername();
+    const string getCurrentUsername();
+    void updateStars(int numStars);
+    int getStars();
+    void finishTutorial();
+    bool hasPlayedMenuTutorial();
+    
     
 private:
     
@@ -70,27 +95,27 @@ private:
     
     bool _debugMode;
     bool _gameTestingMode;
+    bool _allowReset;
+    
+    string _userName;
+    
+    
     
     
     
 public:
     // TZ test
-    void setCurrentUser(std::string classId, std::string studentId, std::string courseId);
-    std::string getClassId();
-    std::string getStudentId();
-    std::string getCourseId();
+    //void setCurrentUser(std::string classId, std::string studentId, std::string courseId);
+    //std::string getClassId();
+    //std::string getStudentId();
+    //std::string getCourseId();
     
-    void setCompletedGame(std::string gameName, int level);
-    bool isCompletedGame(std::string gameName, int level);
+    //void setCompletedGame(std::string gameName, int level);
+    //bool isCompletedGame(std::string gameName, int level);
     
-    void setBirdStatus(int birdType, int status);
-    int getBirdStatus(int birdType);
+    //void setBirdStatus(int birdType, int status);
+    //int getBirdStatus(int birdType);
     
-    
-private:
-    Json::Value getProgressData();
-    void setProgressData(Json::Value json);
-    std::string getKey();
     
 public:
     const std::string getAppVersion();

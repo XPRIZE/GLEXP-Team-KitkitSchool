@@ -19,7 +19,7 @@
 #include "../ChildNodes/Ant.h"
 #include "../ChildNodes/Beetle.h"
 #include "../ChildNodes/Cockroach.h"
-#include "../ChildNodes/LadyBug.h"
+#include "../ChildNodes/Ladybug.h"
 #include "../ChildNodes/Spider.h"
 #include "../ChildNodes/StagBeetle.h"
 

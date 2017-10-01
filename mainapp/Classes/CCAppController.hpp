@@ -35,9 +35,11 @@ public:
     
     void startGameWithLevelChoice(std::string gameName);
     bool startGame(std::string gameName, int level, bool checkOnly = false);
+    void startFreeChoiceGame(std::string gameName, int level);
     void startCurriculumGame(std::string levelID, int day, int gameIndex);
     void startBookScene(std::string bookFolder, bool replaceParent = false);
     void startComprehensionScene(std::string bookFolder, int set, bool replaceParent = false);
+    void startVideoScene(std::string filename, bool replaceParent = false);
     
     void startQuiz(std::string classroom, int studentNumber, std::string courseKind);
     void startEggQuiz(char category, int categoryLevel, bool isPreTest, std::function<void(bool)> callback);
@@ -52,7 +54,10 @@ public:
 private:
     PlayTimer* _playTimer;
     std::string _currentGame;
+    std::string _currentParam;
     int _currentLevel;
+    bool _isFreeChoice;
+    
     
     std::string _currentCurrLevelID;
     int _currentCurrDay;

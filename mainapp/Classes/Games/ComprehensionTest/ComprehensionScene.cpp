@@ -12,10 +12,11 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 #include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
 #include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
@@ -265,6 +266,8 @@ void ComprehensionScene::onStart()
 
 void ComprehensionScene::onSolve()
 {
+    StrictLogManager::shared()->comprehension_Solve(_bookFolder, _problemSetIndex, _currentProblem);
+    
     _blocker->setEnabled(true);
     _progressBar->setCurrent(_currentProblem+1, true);
     

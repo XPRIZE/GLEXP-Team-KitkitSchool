@@ -24,6 +24,8 @@ public:
     SoundEffect();
     SoundEffect(const std::string& EffectPath);
 
+    void setPath(const std::string& path);
+    
     operator bool() const;
     bool empty() const;
     bool bad() const;
@@ -65,6 +67,11 @@ public:
     
 
     static SoundEffect wowEffect() { return SoundEffect("Common/Sounds/Effect/SFX_ChildrenCheerNew.m4a"); }
+    
+    static SoundEffect lightEffect() { return SoundEffect("Common/Sounds/Effect/Light_on.m4a"); }
+    static SoundEffect starOutEffect() { return SoundEffect("Common/Sounds/Effect/UI_Treasure_Reward2.m4a"); }
+    static SoundEffect startInEffect() { return SoundEffect("Common/Sounds/Effect/UI_StarAdded.m4a"); }
+    
 
 };
 

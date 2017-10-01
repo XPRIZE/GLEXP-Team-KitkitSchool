@@ -39,18 +39,20 @@ bool TutorialVideoScene::init() {
     
     setContentSize(winSize);
     
+    LayerColor* white = LayerColor::create(cocos2d::Color4B::WHITE,winSize.width, winSize.height);
+    addChild(white);
+    
+    
     _videoNode = Node::create();
     _videoNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _videoNode->setPosition(winSize/2+Size(0, -50));
-    _videoNode->setScale(0.9);
     _videoNode->setContentSize(winSize);
     
     addChild(_videoNode);
     
     
-    _frame = Sprite::create("TutorialVideo/xprize_video.png");
+    _frame = Sprite::create("TutorialVideo/Xprize_tutorial-video_image_frame.png");
     _frame->setPosition(winSize/2+Size(0, -50));
-    _frame->setScale(0.9);
     
     //    it->setBlendFunc(BlendFunc::DISABLE);
     addChild(_frame);
@@ -61,11 +63,11 @@ bool TutorialVideoScene::init() {
     
     
     {
-        auto skip = ui::Button::create("TutorialVideo/video_button_skip.png");
+        auto skip = ui::Button::create("TutorialVideo/Xprize_tutorial-video_button_close.png");
         
-        skip->setPosition(Vec2(2560-170, 1800-50));
-        skip->setScale(1.0/0.9);
-        _frame->addChild(skip);
+        skip->setPosition(Vec2(winSize.width-150, winSize.height-150));
+        skip->setScale(0.6);
+        addChild(skip);
         skip->addTouchEventListener([this](Ref*,ui::Widget::TouchEventType e) {
             if (e == ui::Widget::TouchEventType::ENDED) {
                 Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(this->_creator)));

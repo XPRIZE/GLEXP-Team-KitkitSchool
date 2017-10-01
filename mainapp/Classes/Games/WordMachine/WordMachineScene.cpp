@@ -9,7 +9,7 @@
 #include "Managers/LanguageManager.hpp"
 #include "WordMachineScene.hpp"
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/UserManager.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"

@@ -80,7 +80,7 @@ BigLabel* MainDepot::createBonusTextLabel(const std::string& Text) const {
 }
 
 cocos2d::Label* MainDepot::createNextLabel() const {
-    Label* It = Label::createWithTTF("next", defaultFont(), 300.f);
+    Label* It = Label::createWithTTF(LanguageManager::getInstance()->isEnglish() ? "next" : "Inayofuata", defaultFont(), 300.f);
     It->setColor(Color3B(255, 249, 237));
     It->setOpacity(GLubyte(255 * .90f));
     

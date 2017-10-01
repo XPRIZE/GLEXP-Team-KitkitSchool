@@ -140,7 +140,8 @@ void CountField::updateCountObjects() {
     };
 }
 
-void CountField::handleEnabledValueUpdated(bool&) {
+void CountField::handleEnabledValueUpdated(bool& enabled) {
+
 }
 
 void CountField::handleAssetCountValueUpdated(size_t &) {

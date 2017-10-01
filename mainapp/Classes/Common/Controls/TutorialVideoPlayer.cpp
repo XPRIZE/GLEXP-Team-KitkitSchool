@@ -22,7 +22,7 @@ bool TutorialVideoPlayer::init()
     onCompleted = nullptr;
     
     auto winSize = getContentSize();
-    auto videoSize = Size(2048, 1536);
+    auto videoSize = Size(1682-76, 1207-76);
     
 
     auto bg = LayerColor::create(Color4B(0, 0, 0, 0), winSize.width, winSize.height);

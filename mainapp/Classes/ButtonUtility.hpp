@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 using namespace cocos2d::ui;

@@ -10,7 +10,7 @@
 #define TodoLoadingScene_hpp
 
 #include "cocos2d.h"
-#include "ui/uiButton.h"
+#include "ui/UIButton.h"
 USING_NS_CC;
 
 

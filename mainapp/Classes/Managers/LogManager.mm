@@ -27,7 +27,7 @@ bool LogManager::init(void)
     return true;
 }
 
-bool LogManager::logEvent(std::string eventName, std::string eventValue)
+bool LogManager::logEvent(std::string eventValue)
 {
     return NO;
 }
@@ -41,5 +41,15 @@ bool LogManager::logEventJson(std::string eventName, Json::Value json)
     NSString *nsJson = [NSString stringWithCString:eventValue.c_str() encoding:NSUTF8StringEncoding];
     
     NSLog(@"logEventJson %@ %@", nsEventName, nsJson);
+    return NO;
+}
+
+bool LogManager::logEvent(std::string category, std::string action, std::string label, double value)
+{
+    return NO;
+}
+
+bool LogManager::tagScreen(std::string screenName)
+{
     return NO;
 }

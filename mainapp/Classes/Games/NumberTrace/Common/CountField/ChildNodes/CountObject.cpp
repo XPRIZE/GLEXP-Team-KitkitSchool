@@ -30,6 +30,8 @@ CountObject::CountObject()
 bool CountObject::init() {
     if (!Super::init()) { return false; }
     
+
+    
     clear();
     return true;
 }
@@ -168,6 +170,37 @@ void CountObject::rest() {
     Moving.update(false);
 }
 
+void CountObject::glow(bool on) {
+    
+    if (on) {
+        if (!GlowSprite) {
+            GlowSprite = Sprite::create("NumberTrace/daily_mango_active_number_glow.png");
+            addChild(GlowSprite);
+            GlowSprite->setPosition(ThePose->Position);
+            GlowSprite->setOpacity(225);
+            auto fitScale = WalkSprite->getContentSize().width / GlowSprite->getContentSize().width;
+            GlowSprite->setScale(0);
+            
+            this->runAction(Sequence::create(DelayTime::create(random(0.1, 2.0)),
+                                             CallFunc::create([this, fitScale](){
+                if (!GlowSprite) return;
+                auto seq = Sequence::create(
+                                            EaseOut::create(ScaleTo::create(0.8, fitScale*0.9), 2.0),
+                                            EaseIn::create(ScaleTo::create(0.8, 0), 2.0),
+                                            DelayTime::create(random(2.5, 3.8)),
+                                            nullptr);
+                
+                GlowSprite->runAction(RepeatForever::create(seq));
+            }), NULL));
+            
+        }
+    } else {
+        if (GlowSprite) GlowSprite->removeFromParent();
+        GlowSprite = nullptr;
+    }
+}
+    
+    
 Sprite* CountObject::activeSprite() {
     return (Moving() ? WalkSprite.get() : RestSprite.get());
 }
@@ -212,7 +245,15 @@ bool CountObject::handleTouchBegan(cocos2d::Touch* T, cocos2d::Event* E) {
     if (!activeSprite()->getBoundingBox().containsPoint(PointInParentSpace))
         return DONT_CATCH_EVENT;
     
-    return CATCH_EVENT;
+    //return CATCH_EVENT;
+    auto Guard = NodeScopeGuard(this);
+    
+    glow(false);
+    
+    if (OnTouchUpInside)
+        OnTouchUpInside(this);
+
+    return DONT_CATCH_EVENT;
 }
 
 void CountObject::handleTouchMoved(cocos2d::Touch* T, cocos2d::Event* E) {
@@ -224,10 +265,10 @@ void CountObject::handleTouchEnded(cocos2d::Touch* T, cocos2d::Event* E) {
     if (!activeSprite()->getBoundingBox().containsPoint(PointInParentSpace))
         return;
 
-    auto Guard = NodeScopeGuard(this);
-
-    if (OnTouchUpInside)
-        OnTouchUpInside(this);
+//    auto Guard = NodeScopeGuard(this);
+//
+//    if (OnTouchUpInside)
+//        OnTouchUpInside(this);
 }
 
 void CountObject::handleTouchCancelled(cocos2d::Touch* T, cocos2d::Event* E) {

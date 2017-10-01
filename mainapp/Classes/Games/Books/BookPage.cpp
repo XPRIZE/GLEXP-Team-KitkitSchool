@@ -24,8 +24,11 @@ namespace BookPageSpace {
     const Size bigSize = Size(2480, 1800);
     const Size smallSize = Size(80, 1800);
     
+    const Size squareSize = Size(1520, 1520);
+    const Size squareImageSize = Size(909, 909);
     
 
+    const float squareMiddle = defaultSize.width/2 - squareSize.width/2;
     
     const float skewY = 10;
     const float turnDuration = 0.25;
@@ -178,9 +181,10 @@ void BookPage::setTitle(string title, string titleImagePath, string audioPath, T
     unscheduleUpdate();
     
     
-    _isPortrait = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
+    //_isPortrait = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
+    _hasBackCover = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
     
-    if (_isPortrait) {
+    if (layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional) {
         
         
         
@@ -287,7 +291,7 @@ void BookPage::setTitle(string title, string titleImagePath, string audioPath, T
         }
         
         
-    } else {
+    } else if (layout==TDBookLayout::Landscape) {
         
         _leftView = Node::create();
         _leftView->setContentSize(smallSize);
@@ -388,7 +392,66 @@ void BookPage::setTitle(string title, string titleImagePath, string audioPath, T
         
         
         
+    }  else if (layout==TDBookLayout::Square) {
+        
+        
+        _leftView = Node::create();
+        _leftView->setContentSize(squareSize);
+        _contentsView->addChild(_leftView);
+        
+        
+        
+        _leftCover = Node::create();
+        _leftCover->setContentSize(squareSize);
+        _leftView->addChild(_leftCover);
+        
+        
+        _rightView = Node::create();
+        _rightView->setContentSize(squareSize);
+        _rightView->setPosition(Vec2(squareMiddle, defaultSize.height/2 - squareSize.height/2));
+        _contentsView->addChild(_rightView);
+        
+        _rightCover = Node::create();
+        _rightCover->setContentSize(squareSize);
+        
+        auto coverBG = Sprite::create("Books/square/_alphabet_book_border.jpg");
+        coverBG->setPosition(squareSize/2);
+        _rightCover->addChild(coverBG);
+        _rightCover->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _rightCover->setPosition(Vec2(0, 0));
+        _rightView->addChild(_rightCover);
+        
+        
+        Vec2 imagePos = Vec2(squareSize.width/2, squareSize.height/2);
+        
+        
+        _imageView = Node::create();
+        _imageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        _imageView->setContentSize(squareImageSize);
+        _imageView->setPosition(imagePos);
+        _rightView->addChild(_imageView);
+        
+        
+        auto rightBinding = Sprite::create("Books/square/book_abc_insidespread_binding.png", Rect(171/2, 0, 171/2, 1520));
+        rightBinding->setPosition(Vec2(0, 0));
+        rightBinding->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _rightView->addChild(rightBinding);
+        
+//        Sprite *frame;
+//        if (layout==TDBookLayout::Portrait_Traditional) {
+//            frame = Sprite::create("Books/portrait_traditional/koreanbook_cover_illustration_frame.png");
+//        } else {
+//            frame = Sprite::create("Books/portrait/xprize_vertical_cover_illustration_frame.png");
+//        }
+//        
+//        frame->setPosition(imagePos);
+//        _rightView->addChild(frame);
+        
+        
+        
+        
     }
+    
     
     
     
@@ -424,7 +487,8 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
     _resourceFolder = folder;
     _bookLayout = layout;
     _withAudio = withAudio;
-    _isPortrait = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
+    //_isPortrait = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
+    _hasBackCover = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
     
     if (page->creditPage) {
         setCreditPage();
@@ -436,7 +500,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
 
 
     
-    if (_isPortrait) {
+    if (layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional) {
         
 
         
@@ -543,7 +607,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         _rightView->addChild(rightTexture);
         
         
-    } else {
+    } else if (layout==TDBookLayout::Landscape) {
 
         _leftView = Node::create();
         _leftView->setContentSize(bigSize);
@@ -653,6 +717,64 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         _rightView->addChild(rightTexture);
          
         
+    } else if (layout==TDBookLayout::Square) {
+        
+        
+        
+        _leftView = Node::create();
+        _leftView->setContentSize(squareSize);
+        _leftView->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+        _leftView->setPosition(Vec2(squareMiddle, defaultSize.height/2 - squareSize.height/2));
+        _contentsView->addChild(_leftView);
+        
+        _leftCover = Node::create();
+        _leftView->addChild(_leftCover);
+        
+        auto cl = LayerColor::create(Color4B::WHITE, squareSize.width, squareSize.height);
+        _leftView->addChild(cl);
+        
+        auto leftBinding = Sprite::create("Books/square/book_abc_insidespread_binding.png", Rect(0, 0, 171/2, 1520));
+        leftBinding->setPosition(Vec2(squareSize.width, 0));
+        leftBinding->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+        _leftView->addChild(leftBinding);
+        
+        
+        
+        
+        _rightView = Node::create();
+        _rightView->setContentSize(squareSize);
+        _rightView->setPosition(Vec2(squareMiddle, defaultSize.height/2 - squareSize.height/2));
+        _contentsView->addChild(_rightView);
+        
+        _rightCover = Node::create();
+        _rightView->addChild(_rightCover);
+        
+
+        
+        auto cr = LayerColor::create(Color4B::WHITE, squareSize.width, squareSize.height);
+        _rightView->addChild(cr);
+        
+        auto rightBinding = Sprite::create("Books/square/book_abc_insidespread_binding.png", Rect(171/2, 0, 171/2, 1520));
+        rightBinding->setPosition(Vec2(0, 0));
+        rightBinding->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _rightView->addChild(rightBinding);
+        
+        
+        _imageView = Node::create();
+        _imageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        _imageView->setContentSize(Size(1200, 1000));
+        _imageView->setPosition(Vec2(squareSize.width/2, squareSize.height/2 + 120));
+        _rightView->addChild(_imageView);
+        
+        
+        _textView = Node::create();
+        _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        _textView->setContentSize(Size(1200, 300));
+        _textView->setPosition(Vec2(squareSize.width/2, 200));
+        _rightView->addChild(_textView);
+        
+
+        
     }
     
     
@@ -738,9 +860,8 @@ void BookPage::setCreditPage()
         return str;
     };
     
-    bool portrait = _bookLayout==TDBookLayout::Portrait || _bookLayout==TDBookLayout::Portrait_Traditional;
-    
-    if (portrait) {
+
+    if (_bookLayout==TDBookLayout::Portrait || _bookLayout==TDBookLayout::Portrait_Traditional) {
         _leftView = Node::create();
         _leftView->setContentSize(halfSize);
         _leftView->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
@@ -853,7 +974,7 @@ void BookPage::setCreditPage()
         }
 
         
-    } else {
+    } else if (_bookLayout==TDBookLayout::Landscape) {
         
         
         _leftView = Node::create();
@@ -969,7 +1090,107 @@ void BookPage::setCreditPage()
         
 
 
+    }  else if (_bookLayout==TDBookLayout::Square) {
+        
+        
+        _leftView = Node::create();
+        _leftView->setContentSize(squareSize);
+        _leftView->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+        _leftView->setPosition(Vec2(squareMiddle, defaultSize.height/2 - squareSize.height/2));
+        _contentsView->addChild(_leftView);
+        
+        _leftCover = Node::create();
+        _leftView->addChild(_leftCover);
+        
+        auto cl = LayerColor::create(Color4B::WHITE, squareSize.width, squareSize.height);
+        _leftView->addChild(cl);
+        
+        auto leftBinding = Sprite::create("Books/square/book_abc_insidespread_binding.png", Rect(0, 0, 171/2, 1520));
+        leftBinding->setPosition(Vec2(squareSize.width, 0));
+        leftBinding->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+        _leftView->addChild(leftBinding);
+
+
+        
+        
+        _rightView = Node::create();
+        _rightView->setContentSize(squareSize);
+        _rightView->setPosition(Vec2(squareMiddle, defaultSize.height/2 - squareSize.height/2));
+        _contentsView->addChild(_rightView);
+        
+        _rightCover = Node::create();
+        _rightView->addChild(_rightCover);
+        
+        
+        
+        auto cr = LayerColor::create(Color4B::WHITE, squareSize.width, squareSize.height);
+        _rightView->addChild(cr);
+        
+        auto rightBinding = Sprite::create("Books/square/book_abc_insidespread_binding.png", Rect(171/2, 0, 171/2, 1520));
+        rightBinding->setPosition(Vec2(0, 0));
+        rightBinding->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _rightView->addChild(rightBinding);
+        
+
+        
+        auto textViewSize = Size(1200, 1200);
+        
+        
+        _textView = Node::create();
+        _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        _textView->setContentSize(textViewSize);
+        _textView->setPosition(squareSize/2);
+        _rightView->addChild(_textView);
+        
+        
+        
+        
+        
+        {
+            string titleTxt = getSentence(0);
+            Label* label = Label::createWithTTF(titleTxt, titleFont, 75, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+            label->setTextColor(Color4B(255, 249, 225, 255));
+            label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+            label->setPosition(Vec2(textViewSize.width/2, textViewSize.height - 450));
+            _textView->addChild(label);
+        }
+        
+        
+        {
+            string creditTxt = getSentence(1);
+            
+            Label* label = Label::createWithTTF(creditTxt, titleFont, 50, textViewSize, TextHAlignment::CENTER, TextVAlignment::TOP);
+            label->setTextColor(Color4B(54, 28, 14, 255));
+            label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+            label->setPosition(Vec2(textViewSize.width/2, textViewSize.height - 600));
+            _textView->addChild(label);
+        }
+        
+        {
+            string licenseTxt = getSentence(2);
+            
+            auto bottom = Label::createWithTTF(licenseTxt, titleFont, 25, Size(0, 0), TextHAlignment::CENTER, TextVAlignment::CENTER);
+            bottom->setTextColor(Color4B(54, 28, 14, 255));
+            bottom->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            bottom->setPosition(Size(squareSize.width/2, 50));
+            _rightView->addChild(bottom);
+            
+            auto cc = Sprite::create("Books/cc_logo.png");
+            cc->setPosition(Vec2(squareSize.width/2, bottom->getContentSize().height + 120));
+            _rightView->addChild(cc);
+            
+            auto enuma = Label::createWithTTF("(c) 2015 Enuma, Inc.", titleFont, 30);
+            enuma->setTextColor(Color4B(54, 28, 14, 255));
+            enuma->setPosition(cc->getPosition() + Vec2(0, cc->getContentSize().height/2 + 40));
+            _rightView->addChild(enuma);
+            
+        }
+        
+        
+        
     }
+    
+
     
     
     
@@ -985,7 +1206,9 @@ void BookPage::showRightHalf(bool animate)
         _rightView->setScale(0, 1);
         _rightView->setSkewY(skewY);
         if (!isTitlePage() && !isLastPage()) _rightCover->setVisible(false);
-        if (!isTitlePage() && !_isPortrait && isLastPage()) _rightCover->setVisible(false);
+        
+        
+        if (!isTitlePage() && !_hasBackCover && isLastPage()) _rightCover->setVisible(false);
         auto ani = Spawn::create(EaseIn::create(ScaleTo::create(turnDuration, 1, 1), turnEase),
                                  EaseIn::create(SkewTo::create(turnDuration, 0, 0), turnEase),
                                  nullptr);
@@ -1005,7 +1228,7 @@ void BookPage::showLeftHalf(bool animate)
         _leftView->setSkewY(-skewY);
         
         if (!isFirstPage() && !isCreditPage()) _leftCover->setVisible(false);
-        if (!_isPortrait && isCreditPage()) _leftCover->setVisible(false);
+        if (!_hasBackCover && isCreditPage()) _leftCover->setVisible(false);
         auto ani = Spawn::create(EaseIn::create(ScaleTo::create(turnDuration, 1, 1), turnEase),
                                  EaseIn::create(SkewTo::create(turnDuration, 0, 0), turnEase),
                                  nullptr);
@@ -1023,7 +1246,7 @@ void BookPage::hideRightHalf(bool animate)
     } else {
         _rightView->setScale(1, 1);
         if (!isTitlePage() && !isLastPage()) _rightCover->setVisible(false);
-        if (!isTitlePage() && !_isPortrait && isLastPage()) _rightCover->setVisible(false);
+        if (!isTitlePage() && !_hasBackCover && isLastPage()) _rightCover->setVisible(false);
         auto ani = Spawn::create(EaseOut::create(ScaleTo::create(turnDuration, 0, 1), turnEase),
                                  EaseOut::create(SkewTo::create(turnDuration, 0, skewY), turnEase),
                                  nullptr);
@@ -1040,7 +1263,7 @@ void BookPage::hideLeftHalf(bool animate)
     } else {
         _leftView->setScale(1, 1);
         if (!isFirstPage() && !isCreditPage()) _leftCover->setVisible(false);
-        if (!_isPortrait && isCreditPage()) _leftCover->setVisible(false);
+        if (!_hasBackCover && isCreditPage()) _leftCover->setVisible(false);
         auto ani = Spawn::create(EaseOut::create(ScaleTo::create(turnDuration, 0, 1), turnEase),
                                  EaseOut::create(SkewTo::create(turnDuration, 0, -skewY), turnEase),
                                  nullptr);

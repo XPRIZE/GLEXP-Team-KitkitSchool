@@ -10,6 +10,7 @@
 #include "Common/Controls/TodoLoadingScene.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Games/NumberTrace/NumberTrace.h"
+#include "Games/NumberTraceExt/NumberTraceExt.h"
 #include "Games/WoodenPuzzles/NumberPuzzle.h"
 #include "Games/FindTheMatch/FindTheMatch.h"
 #include "Games/NumberMatching/NumberMatchingScene.hpp"
@@ -25,6 +26,7 @@
 #include "Games/WoodenPuzzles/AlphabetPuzzle.h"
 #include "Games/WordMachine/WordMachineScene.hpp"
 #include "Games/LetterTrace/LetterTrace.h"
+#include "Games/LetterTracingCard/LetterTracingCard.h"
 #include "Games/WordTrace/WordTrace.h"
 #include "Games/StarFall/StarFall.h"
 #include "Games/Spelling/Spelling.h"
@@ -38,6 +40,13 @@
 #include "Games/ComprehensionTest/ComprehensionScene.hpp"
 #include "Games/SentenceMaker/SentenceMakerScene.hpp"
 #include "Games/EggQuiz/EggQuizScene.hpp"
+#include "Games/BirdPhonics/BirdPhonicsScene.hpp"
+#include "Games/SoundTrain/SoundTrainScene.hpp"
+#include "Games/PatternTrain/PatternTrainScene.hpp"
+#include "Games/NumberTrain/NumberTrainScene.hpp"
+#include "Games/ShapeMatching/ShapeMatchingScene.hpp"
+
+#include "Games/Video/GameVideoScene.hpp"
 
 #include "Menu/GradeSelector.hpp"
 #include "Menu/BookChoiceScene.hpp"
@@ -51,6 +60,7 @@
 #include "Managers/UserManager.hpp"
 #include "Managers/GameSoundManager.h"
 #include "Managers/CurriculumManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 #include "CustomDirector.h"
 #include "3rdParty/CCNativeAlert.h"
@@ -121,6 +131,7 @@ BookView* CCAppController::createBookView(std::string bookName)
 void CCAppController::startGameWithLevelChoice(std::string gameName)
 {
     _currentGame = "";
+    _currentParam = "";
     _currentLevel = 0;
     
     // bluecloud games
@@ -150,112 +161,137 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         vector<int> fishLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
         it->setChoices(fishLevels);
 
-    }else if (gameName=="DoubleDigit") {
+    } else if(gameName=="DoubleDigit"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
         it->setChoices(ddLevels);
         
-    }else if (gameName=="EquationMaker") {
+    } else if(gameName=="EquationMaker"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         it->setChoices(ddLevels);
         
-    } else if (gameName=="Tapping") {
+    } else if(gameName=="Tapping"){
         vector<int> ddLevels = { 1, 2, 3};
         it->setChoices(ddLevels);
-    }
-    else if (gameName == "TutorialTrace") {
+        
+    } else if(gameName == "TutorialTrace"){
         auto levels = TutorialTrace().getCandidateLevelIDs();
         it->setChoices(levels);
-    }
-    else if (gameName=="AnimalPuzzle") {
-        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7 };
+        
+    } else if (gameName=="AnimalPuzzle") {
+        vector<int> ddLevels;
+        for (int i=1; i<=40; i++) ddLevels.push_back(i);
         it->setChoices(ddLevels);
 
-    } else if (gameName=="HundredPuzzle") {
+    } else if(gameName=="HundredPuzzle"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
         it->setChoices(ddLevels);
         
-    } else if(gameName == "NumberTracing"){
+    } else if (gameName=="SoundTrain") {
+        vector<int> ddLevels;
+        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+        if (lang == "en-US") ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+        else if (lang == "sw-TZ") ddLevels = { 1, 2, 3, 4, 5};
+        it->setChoices(ddLevels);
         
+    } else if (gameName=="PatternTrain") {
+        vector<int> ddLevels = { 1, 2, 3, 4, 5};
+        it->setChoices(ddLevels);
+        
+    } else if (gameName=="ShapeMatching") {
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7 ,8, 9, 10, 11, 12};
+        it->setChoices(ddLevels);
+        
+    } else if (gameName=="NumberTrain") {
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,13,14,15,16,17,18};
+        it->setChoices(ddLevels);
+        
+    } else if(gameName == "NumberTracing"){
         it->setChoices(NumberTrace().getCandidateLevelIDs());
-
+        
+    } else if(gameName == "NumberTracingExt"){
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+        it->setChoices(ddLevels);
+        
     }else if(gameName == "NumberPuzzle"){
-
         it->setChoices(NumberPuzzle().getCandidateLevelIDs());
         
     }else if(gameName == "FindTheMatch"){
-
         it->setChoices(FindTheMatch().getCandidateLevelIDs());
         
     }else if(gameName == "NumberMatching"){
-        
         auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
         auto data = todoschool::numbermatching::LevelData::defaultData();
-        
         it->setChoices(data.levelIDsFor(lang));
 
     }else if(gameName == "Counting"){
-        
         using todoschool::counting::LevelData;
-        
         auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
         it->setChoices(LevelData::defaultData().levelIDsFor(lang));
 
     }else if(gameName == "MovingInsects"){
-
         it->setChoices(MovingInsects().getCandidateLevelIDs());
 
     }else if(gameName == "AlphabetPuzzle"){
-        
         it->setChoices(AlphabetPuzzle().getCandidateLevelIDs());
 
     }else if(gameName == "WordMachine"){
-
         using todoschool::wordmachine::LevelData;
-        
         auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-        
         it->setChoices(LevelData::defaultData().levelIDsFor(lang));
 
     }else if(gameName == "LetterTracing"){
-
         it->setChoices(LetterTrace().getCandidateLevelIDs());
 
+    }else if(gameName == "LetterTracingCard"){
+        vector<int> ddLevels;
+        if (LanguageManager::getInstance()->isEnglish())
+        {
+            ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+        }
+        else
+        {
+            ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+        }
+        it->setChoices(ddLevels);
+        
     }else if(gameName == "WordTracing"){
-
         it->setChoices(WordTrace().getCandidateLevelIDs());
 
     }else if(gameName == "Comprehension"){
-        
         vector<int> ddLevels = { 1 };
         it->setChoices(ddLevels);
         
     }else if(gameName == "StarFall"){
-
         it->setChoices(StarFall().getCandidateLevelIDs());
 
     }else if(gameName == "Spelling"){
-
         it->setChoices(Spelling().getCandidateLevelIDs());
 
     }else if(gameName == "LetterMatching"){
-        
         auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
         auto data = todoschool::lettermatching::LevelData::defaultData();
-        
         it->setChoices(data.levelIDsFor(lang));
         
-    }else if (gameName == "CompMatching") {
-        
+    }else if(gameName == "CompMatching"){
         vector<int> ddLevels = { 1 };
         it->setChoices(ddLevels);
         
-    }else if (gameName == "SentenceMaker") {
-        
+    }else if(gameName == "SentenceMaker"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
         it->setChoices(ddLevels);
-    } else if (gameName == "EggQuiz") {
+        
+    }else if(gameName == "EggQuiz"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20 };
         it->setChoices(ddLevels);
+        
+    }else if(gameName == "BirdPhonics"){
+        vector<int> ddLevels = { 1 };
+        it->setChoices(ddLevels);
+        
+    }else if(gameName == "ShapeMatching"){
+        vector<int> ddLevels = { 1 };
+        it->setChoices(ddLevels);
+        
     }
     
     //nextScene = it->minimalSceneByWrapping();
@@ -276,25 +312,31 @@ void CCAppController::startCurriculumGame(std::string levelID, int day, int game
     _currentCurrDay = day;
     _currentCurrGameIndex = gameIndex;
     
-
-    
     if (gameInfo.gameName=="Book") {
-     
         startBookScene(gameInfo.gameParameter+"/");
-        
-    } else if (gameInfo.gameName=="Comprehension") {
-        
+    }
+    else if (gameInfo.gameName=="Comprehension") {
         startComprehensionScene(gameInfo.gameParameter, gameInfo.gameLevel);
-        
-    } else {
+    }
+    else if (gameInfo.gameName=="Video") {
+        startVideoScene(gameInfo.gameParameter);
+    }
+    else {
         startGame(gameInfo.gameName, gameInfo.gameLevel);
     }
+}
+
+void CCAppController::startFreeChoiceGame(std::string gameName, int level)
+{
+ 
+    startGame(gameName, level);
+    _isFreeChoice = true; // this need to come after calling startGame()
     
 }
 
-
 bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
 {
+    _isFreeChoice = false;
     GameSoundManager::getInstance()->stopBGM();
     
     // for memory release
@@ -302,6 +344,7 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
 
     
     _currentGame = gameName;
+    _currentParam = "";
     _currentLevel = level;
     
     //Scene* nextScene;
@@ -318,7 +361,12 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             
             return builder.createScene();
         };
-        
+
+    }else if(gameName == "NumberTracingExt"){
+        creator = [level]() {
+            NumberTraceExt builder;
+            return builder.createScene(level);
+        };
 
     }else if(gameName == "NumberPuzzle"){
         creator = [level]() {
@@ -376,7 +424,23 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
         creator = [level]() {
             return AnimalPuzzleScene::createScene(level);
         };
-        
+    }
+    else if(gameName == "SoundTrain"){
+        creator = [level]() {
+            return todoschool::soundtrain::SoundTrainScene::createScene(level);
+        };
+    } else if(gameName == "PatternTrain"){
+        creator = [level]() {
+            return todoschool::patterntrain::PatternTrainScene::createScene(level);
+        };
+    } else if(gameName == "NumberTrain"){
+        creator = [level]() {
+            return NumberTrainScene::createScene(level);
+        };
+    } else if(gameName == "ShapeMatching"){
+        creator = [level]() {
+            return ShapeMatchingScene::createScene(level);
+        };
     } else if(gameName == "HundredPuzzle"){
         creator = [level]() {
             return HundredPuzzleScene::createScene(level);
@@ -489,6 +553,12 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             return builder.createScene();
         };
 
+    }else if(gameName == "LetterTracingCard"){
+        creator = [level]() {
+            LetterTracingCard builder;
+            return builder.createScene(level);
+        };
+        
     }else if(gameName == "WordTracing"){
         creator = [level]() {
             WordTrace builder;
@@ -554,6 +624,19 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             return EggQuizScene::createScene(level);
         };
         
+    } else if (gameName == "BirdPhonics") {
+        creator = [level]() {
+            return BirdPhonicsScene::createScene(level);
+        };
+        
+    } else if (gameName == "Video") {
+        if (checkOnly) {
+            return true;
+        }
+    } else if (gameName == "ShapeMatching") {
+        if (checkOnly) {
+            return true;
+        }
     }
     
     if (!creator) {
@@ -571,20 +654,10 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
     
     if (checkOnly) return true;
     
-    _playTimer->start();
-    
-    
-    Json::Value vl;
-    vl["class"] = UserManager::getInstance()->getClassId();
-    vl["student"] = UserManager::getInstance()->getStudentId();
-    vl["course"] = UserManager::getInstance()->getCourseId();
-    vl["timestamp"] = _playTimer->getCurrentTimeOfDouble();
-    vl["game"] = _currentGame;
-    vl["level"] = _currentLevel;
-    
-    LogManager::getInstance()->logEventJson("gameStart", vl);
     
 
+    StrictLogManager::shared()->game_Begin(_currentGame, _currentLevel);
+    _playTimer->start();
 
     
     if (level==1 && TutorialVideoScene::tutorialExists(gameName)) {
@@ -605,21 +678,66 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
 
 void CCAppController::handleGameQuit()
 {
-    if(_currentGame != ""){
-        Json::Value vl;
-        vl["class"] = UserManager::getInstance()->getClassId();
-        vl["student"] = UserManager::getInstance()->getStudentId();
-        vl["course"] = UserManager::getInstance()->getCourseId();
-        vl["timestamp"] = _playTimer->getCurrentTimeOfDouble();
-        vl["duration"] = _playTimer->stop(); _playTimer->start();
-        vl["game"] = _currentGame;
-        vl["level"] = _currentLevel;
+    if (_currentGame != "") {
+        double duration = _playTimer->stop();
+        _playTimer->start();
         
-        LogManager::getInstance()->logEventJson("gameQuit", vl);
+        if (_currentGame == "__BookView__") {
+            StrictLogManager::shared()->book_End_Quit(_currentParam, duration);
+        }
+        else if (_currentGame == "__Comprehension__") {
+            StrictLogManager::shared()->comprehension_End_Quit(_currentParam, _currentLevel, duration);
+        }
+        else if (_currentGame == "__GameVideo__") {
+            StrictLogManager::shared()->video_End_Quit(_currentParam, duration);
+        }
+        else {
+            StrictLogManager::shared()->game_End_Quit(_currentGame, _currentLevel, duration);
+        }
     }
     
     _currentGame = "";
+    _currentParam = "";
     _currentLevel = 0;
+    
+    ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
+}
+
+void CCAppController::handleGameComplete(int result)
+{
+    //UserManager::getInstance()->setCompletedGame(_currentGame, _currentLevel);
+    
+    if (_currentCurrLevelID!="") {
+        UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
+    }
+    
+    
+    double duration = _playTimer->stop();
+    _playTimer->start();
+    
+    if (_currentGame == "__BookView__") {
+        StrictLogManager::shared()->book_End_Complete(_currentParam, duration, result);
+    }
+    else if (_currentGame == "__Comprehension__") {
+        StrictLogManager::shared()->comprehension_End_Complete(_currentParam, _currentLevel, duration, result);
+    }
+    else if (_currentGame == "__GameVideo__") {
+        StrictLogManager::shared()->video_End_Complete(_currentParam, duration, result);
+    }
+    else {
+        StrictLogManager::shared()->game_End_Complete(_currentGame, _currentLevel, duration, result);
+    }
+    
+    
+    _currentGame = "";
+    _currentParam = "";
+    _currentLevel = 0;
+    
+    if (_isFreeChoice) {
+        auto stars = UserManager::getInstance()->getStars();
+        UserManager::getInstance()->updateStars(stars+1);
+    }
+    
     
     ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
 }
@@ -627,6 +745,13 @@ void CCAppController::handleGameQuit()
 
 void CCAppController::startBookScene(std::string bookFolder, bool replaceParent)
 {
+    StrictLogManager::shared()->book_Begin(bookFolder);
+    _playTimer->start();
+    
+    _currentGame = "__BookView__";
+    _currentParam = bookFolder;
+    _currentLevel = 0;
+
     
     GameSoundManager::getInstance()->stopBGM();
     
@@ -667,7 +792,11 @@ void CCAppController::startBookScene(std::string bookFolder, bool replaceParent)
 
 void CCAppController::startComprehensionScene(std::string bookFolder, int set, bool replaceParent)
 {
+    StrictLogManager::shared()->comprehension_Begin(bookFolder, set);
+    _playTimer->start();
 
+    _currentParam = bookFolder;
+    _currentLevel = set;
     
     GameSoundManager::getInstance()->stopBGM();
 
@@ -683,33 +812,30 @@ void CCAppController::startComprehensionScene(std::string bookFolder, int set, b
 }
 
 
-
-void CCAppController::handleGameComplete(int result)
+void CCAppController::startVideoScene(std::string filename, bool replaceParent)
 {
-    UserManager::getInstance()->setCompletedGame(_currentGame, _currentLevel);
+    StrictLogManager::shared()->video_Begin(filename);
+    _playTimer->start();
     
-    if (_currentCurrLevelID!="") {
-        UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
-    }
-    
-    Json::Value vl;
-    vl["class"] = UserManager::getInstance()->getClassId();
-    vl["student"] = UserManager::getInstance()->getStudentId();
-    vl["course"] = UserManager::getInstance()->getCourseId();
-    vl["timestamp"] = _playTimer->getCurrentTimeOfDouble();
-    vl["duration"] = _playTimer->stop(); _playTimer->start();
-    vl["game"] = _currentGame;
-    vl["level"] = _currentLevel;
-    vl["result"] = result;
-    
-    LogManager::getInstance()->logEventJson("gameComplete", vl);
-    
-    _currentGame = "";
+    _currentGame = "__GameVideo__";
+    _currentParam = filename;
     _currentLevel = 0;
-
     
-    ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
+    GameSoundManager::getInstance()->stopBGM();
+    
+    std::function<Scene*(void)> creator = [this, filename]() {
+        auto nextScene = GameVideoScene::createScene(filename);
+        
+        return nextScene;
+    };
+    
+    if (replaceParent) {
+        Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+    } else {
+        Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+    }
 }
+
 
 void CCAppController::startQuiz(std::string classroom, int studentNumber, std::string courseKind)
 {
@@ -728,19 +854,10 @@ void CCAppController::startQuiz(std::string classroom, int studentNumber, std::s
         }
         
         
+        StrictLogManager::shared()->game_Begin(_currentGame, _currentLevel);
         _playTimer->start();
-        
-        
-        Json::Value vl;
-        vl["class"] = UserManager::getInstance()->getClassId();
-        vl["student"] = UserManager::getInstance()->getStudentId();
-        vl["course"] = UserManager::getInstance()->getCourseId();
-        vl["timestamp"] = _playTimer->getCurrentTimeOfDouble();
-        vl["game"] = _currentGame;
-        vl["level"] = _currentLevel;
-        
-        LogManager::getInstance()->logEventJson("gameStart", vl);
-        
+
+
         auto nextScene = builder.createScene();
         return nextScene;
     };
@@ -758,6 +875,7 @@ void CCAppController::startEggQuiz(char category, int categoryLevel, bool isPreT
     if (level<1 || level>10) return;
     
     _currentGame = "EggQuiz";
+    _currentParam = "";
     _currentLevel = level;
     
     std::function<Scene*(void)> creator = [category, categoryLevel, isPreTest, callback]() {
@@ -775,21 +893,15 @@ void CCAppController::startEggQuiz(char category, int categoryLevel, bool isPreT
         
     };
     
+    
+    StrictLogManager::shared()->game_Begin(_currentGame, _currentLevel);
     _playTimer->start();
-    
-    
-    Json::Value vl;
-    vl["class"] = UserManager::getInstance()->getClassId();
-    vl["student"] = UserManager::getInstance()->getStudentId();
-    vl["course"] = UserManager::getInstance()->getCourseId();
-    vl["timestamp"] = _playTimer->getCurrentTimeOfDouble();
-    vl["game"] = _currentGame;
-    vl["level"] = _currentLevel;
-    
-    LogManager::getInstance()->logEventJson("gameStart", vl);
     
     Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
 }
+
+
+
 
 
 bool CCAppController::isDebug()

@@ -10,7 +10,8 @@
 #define TodoSchoolBackButton_hpp
 
 #include "cocos2d.h"
-#include "ui/uiButton.h"
+#include "ui/UIButton.h"
+#include <functional>
 
 USING_NS_CC;
 
@@ -22,6 +23,9 @@ public:
     void onEnter() override;
     
     static void popGameScene();
+
+    std::function<void(void)> onBack;
+    
     
 protected:
     void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);

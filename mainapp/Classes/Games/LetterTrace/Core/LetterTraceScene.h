@@ -28,6 +28,7 @@ class LetterTraceScene: public Scene {
     Sprite* BotGuide;
     
 public:
+    int LevelID;
     Sprite* Background;
     ProgressIndicator* TheProgressBar;
 

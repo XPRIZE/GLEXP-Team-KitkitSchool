@@ -175,8 +175,12 @@ void NumberTraceScene::handleCountWorkDidBecomeReady() {
 }
 
 void NumberTraceScene::handleTraceWorkDidEnd() {
-    if (TheCountField)
+    if (TheCountField) {
         TheCountField->Enabled.update(true);
+        for (auto obj : TheCountField->CountObjects) {
+            obj->glow(true);
+        }
+    }
     
     if (TheTraceField)
         TheTraceField->Enabled.update(false);

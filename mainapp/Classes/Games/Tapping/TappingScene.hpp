@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include <vector>
 #include <functional>
@@ -38,11 +38,11 @@ public:
     
     
     void setLevel(int level);
-    void setTouchEnabled(bool enabled);
+
     
 private:
 
-    void placeBalloon(int tapCount, Rect placeRect,  bool fadein = false, float delay = 0.f);
+    void placeBalloon(int tapCount, Rect placeRect,  bool isBubble = false, float delay = 0.f);
     void balloonPoped(TappingBalloon *balloon, bool touched = true);
     
     
@@ -69,6 +69,8 @@ public:
         
         _tapCount = 0;
         _maxTap = 0;
+        setCascadeOpacityEnabled(true);
+        
         return true;
         
     }
@@ -83,6 +85,8 @@ public:
     
     Vec2 getCenter();
     
+    
+    bool _touchEnabled;
     
 protected:
     

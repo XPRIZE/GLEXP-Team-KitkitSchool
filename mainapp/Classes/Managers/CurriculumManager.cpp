@@ -13,6 +13,9 @@
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
 
+#include "Games/LetterTracingCard/Utils/LetterTracingCardUtility.hpp"
+
+
 #include "CCAppController.hpp"
 
 #include "Utils/TodoUtil.h"
@@ -93,10 +96,27 @@ void CurriculumManager::loadData()
 
     auto loadGame = [&](GameDescription &game) {
         string entryType;
-        bool ret = (IS >> entryType >> game.gameName >> game.gameLevel >> game.gameParameter);
+        
+        string gameName, gameLevel, gameParam;
+        
+        bool ret = (IS >> entryType >> gameName >> gameLevel >> gameParam);
         if (!ret || entryType!="game") {
             CCLOGERROR("Unexpected input stream error in loadGame");
         }
+        
+        game.gameName = gameName;
+        
+        int gameLevelInt;
+        if (gameName=="LetterTracingCard") {
+            gameLevelInt = LetterTracingCardUtility::getLevelByLetter(gameLevel, LanguageManager::getInstance()->isEnglish());
+            
+        } else {
+            gameLevelInt = TodoUtil::stoi(gameLevel);
+        }
+        
+        game.gameLevel = gameLevelInt;
+        game.gameParameter = gameParam;
+        
   
         if (UserManager::getInstance()->isDebugMode()) {
             if (!CCAppController::sharedAppController()->gameExists(game.gameName)) {
@@ -120,6 +140,11 @@ void CurriculumManager::loadData()
                 GameDescription game;
                 loadGame(game);
                 day.games.push_back(game);
+            }
+            
+            if (day.numGames==1 && day.games.at(0).gameName=="EggQuiz") {
+                day.isEggQuiz = true;
+                
             }
             
         } else {
@@ -148,23 +173,23 @@ void CurriculumManager::loadData()
             LevelCurriculum level;
             loadLevel(level);
             
-            if (level.categoryLevel>=1) {
-                level.numDays++;
-                DayCurriculum quiz;
-                quiz.numGames = 1;
-                quiz.dayOrder = level.numDays;
-                quiz.isEggQuiz = true;
-                
-                GameDescription game;
-                game.gameName = "EggQuiz";
-                game.gameLevel = level.categoryLevel;
-                if (level.category=='M') game.gameLevel+=5;
-                
-                quiz.games.push_back(game);
-                
-                
-                level.days.push_back(quiz);
-            }
+//            if (level.categoryLevel>=1) {
+//                level.numDays++;
+//                DayCurriculum quiz;
+//                quiz.numGames = 1;
+//                quiz.dayOrder = level.numDays;
+//                quiz.isEggQuiz = true;
+//                
+//                GameDescription game;
+//                game.gameName = "EggQuiz";
+//                game.gameLevel = level.categoryLevel;
+//                if (level.category=='M') game.gameLevel+=5;
+//                
+//                quiz.games.push_back(game);
+//                
+//                
+//                level.days.push_back(quiz);
+//            }
             
             levels[level.levelID] = level;
         }

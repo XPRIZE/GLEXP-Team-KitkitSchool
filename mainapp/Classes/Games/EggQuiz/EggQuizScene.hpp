@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include <vector>
 #include <functional>
@@ -41,8 +41,8 @@ public:
     void onStart();
     
     void onSolve();
-    void onCorrect();
-    void onIncorrect();
+    void onCorrect(const std::string& answer, int answerIndex);
+    void onIncorrect(const std::string& correctAnswer, const string& myAnswer, int answerIndex);
     
     void onComplete();
 

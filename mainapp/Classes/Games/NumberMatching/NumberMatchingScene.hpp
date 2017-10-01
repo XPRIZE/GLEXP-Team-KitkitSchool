@@ -16,7 +16,7 @@
 #include "Models/Problem.hpp"
 
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include "Common/Controls/ProgressIndicator.hpp"
 
@@ -70,7 +70,10 @@ private:
     Node* createShiningParticle();
     */
     void addStarParticle(Node* targetNode);
-    
+
+    Point safePointForBoundary(Point point);
+    void stompByNode(Node* node);
+
     bool _nextTransition;
     
 public:

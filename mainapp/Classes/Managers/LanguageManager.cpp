@@ -29,6 +29,7 @@ void LanguageManager::init()
     auto defaultLang = LanguageType::ENGLISH;
 #endif
     auto defaultLang = LanguageType::SWAHILI;
+    //auto defaultLang = UserDefault::getInstance()->getStringForKey("appLanguage", "sw") == "en" ? LanguageType::ENGLISH : LanguageType::SWAHILI;
 
     _langType = static_cast<LanguageType>(UserDefault::getInstance()->getIntegerForKey("Language", defaultLang));
 
@@ -116,40 +117,138 @@ std::string LanguageManager::soundPathForWordFile(std::string& wordFile)
 std::string LanguageManager::getLocalizedString(std::string str)
 {
     
+    std::string localized;
+    
     switch (_langType) {
-        case ENGLISH: return str;  break;
-        case SWAHILI: return _localizationMap[str]; break;
+        case ENGLISH: localized = _localizationMapEnglish[str]; break;
+        case SWAHILI: localized = _localizationMapSwahili[str]; break;
     }
-    return "";
+    
+    if (localized.empty()) return str;
+    
+    return localized;
     
 }
 
 void LanguageManager::initLocalizationMap()
 {
-    _localizationMap["Stop the test"] = "Stop the test";
-    _localizationMap["Go back to test"] = "Go back to test";
+    _localizationMapEnglish["Stop the test"] = "Stop the test";
+    _localizationMapEnglish["Go back to test"] = "Go back to test";
     
     
-    _localizationMap["Great!"] = "Vizuri!";
+    _localizationMapSwahili["Great!"] = "Vizuri!";
     
-    _localizationMap["Are you ready for"] = "Je, uko tayari kwa";
-    _localizationMap["Prove it!"] = "Thibitisha!";
-    _localizationMap["Try and get 8 questions correct!"] = "Jaribu na toa majibu sahihi manane!";
-    _localizationMap["Challenge"] = "Jaribu";
-    _localizationMap["Congratulations!"] = "Hongera!";
-    _localizationMap["You passed!"] = "Umefaulu!";
-    _localizationMap["You failed"] = "Umeshindwa";
-    _localizationMap["Practice more and try again later."] = "Fanya mazoezi zaidi na rudi baadae.";
-    _localizationMap["Success!"] = "Mafanikio!";
-    _localizationMap["You are not ready."] = "Hauko tayari.";
-    _localizationMap["You need more practice."] = "Unahitaji mazoezi zaidi.";
-    _localizationMap["Welcome!"] = "Karibu!";
+    _localizationMapSwahili["Are you ready for"] = "Je, uko tayari kwa";
+    _localizationMapSwahili["Prove it!"] = "Thibitisha!";
+    _localizationMapSwahili["Try and get 8 questions correct!"] = "Jaribu na toa majibu sahihi manane!";
+    _localizationMapSwahili["Challenge"] = "Jaribu";
+    _localizationMapSwahili["Congratulations!"] = "Hongera!";
+    _localizationMapSwahili["You passed!"] = "Umefaulu!";
+    _localizationMapSwahili["You failed"] = "Umeshindwa";
+    _localizationMapSwahili["Practice more and try again later."] = "Fanya mazoezi zaidi na rudi baadae.";
+    _localizationMapSwahili["Success!"] = "Mafanikio!";
+    _localizationMapSwahili["You are not ready."] = "Hauko tayari.";
+    _localizationMapSwahili["You need more practice."] = "Unahitaji mazoezi zaidi.";
+    _localizationMapSwahili["Welcome!"] = "Karibu!";
     
-    _localizationMap["Start"] = "Anza";
-    _localizationMap["Next"] = "Nenda mbele";
-    _localizationMap["Back"] = "Rudi nyuma";
-    _localizationMap["OK"] = "OK";
-    _localizationMap["Error"] = "Hitilafu";
-    _localizationMap["Enter"] = "Chomeka";
-    _localizationMap["Clear"] = "Futa";
+    _localizationMapSwahili["Start"] = "Anza";
+    _localizationMapSwahili["Next"] = "Nenda mbele";
+    _localizationMapSwahili["Back"] = "Rudi nyuma";
+    _localizationMapSwahili["OK"] = "OK";
+    _localizationMapSwahili["Error"] = "Hitilafu";
+    _localizationMapSwahili["Enter"] = "Chomeka";
+    _localizationMapSwahili["Clear"] = "Futa";
+    
+    _localizationMapSwahili["English"] = "Kiswahili";
+    _localizationMapSwahili["Math"] = "Hesabu";
+    
+    _localizationMapEnglish["TutorialTrace"] = "Line Tracing";
+    _localizationMapSwahili["TutorialTrace"] = "Kufuatisha Mstari";
+    
+    _localizationMapEnglish["FindTheMatch"] = "Find the Pair";
+    _localizationMapSwahili["FindTheMatch"] = "Tafuta Sare";
+    
+    _localizationMapEnglish["NumberMatching"] = "Number Matching";
+    _localizationMapSwahili["NumberMatching"] = "Kufananisha Nambari";
+    
+    _localizationMapEnglish["Tapping"] = "Bubble Pop";
+    _localizationMapSwahili["Tapping"] = "Pasua Povu la Sabuni";
+    
+    _localizationMapEnglish["LetterMatching"] = "Literacy Matching";
+    _localizationMapSwahili["LetterMatching"] = "Kufananisha Kusoma na Kuandika";
+    
+    _localizationMapEnglish["AnimalPuzzle"] = "Animal Puzzle";
+    _localizationMapSwahili["AnimalPuzzle"] = "Fumbo la Picha";
+    
+    _localizationMapEnglish["PatternTrain"] = "Pattern Train";
+    _localizationMapSwahili["PatternTrain"] = "Reli ya Garimoshi";
+    
+    _localizationMapEnglish["Video"] = "Video";
+    _localizationMapSwahili["Video"] = "Video";
+    
+    _localizationMapEnglish["Counting"] = "Counting";
+    _localizationMapSwahili["Counting"] = "Kuhesabu";
+    
+    _localizationMapEnglish["EquationMaker"] = "Equation Maker";
+    _localizationMapSwahili["EquationMaker"] = "Kiumba Mlinganyo";
+    
+    _localizationMapEnglish["NumberTrain"] = "Number Train";
+    _localizationMapSwahili["NumberTrain"] = "Nambari ya Garimoshi";
+    
+    _localizationMapEnglish["AlphabetPuzzle"] = "Alphabet Puzzle";
+    _localizationMapSwahili["AlphabetPuzzle"] = "Fumbo la Alfabeti";
+    
+    _localizationMapEnglish["Book"] = "Book";
+    _localizationMapSwahili["Book"] = "Kitabu";
+    
+    _localizationMapEnglish["Comprehension"] = "Comprehension Questions";
+    _localizationMapSwahili["Comprehension"] = "Maswali ya Ufahamu";
+    
+    _localizationMapEnglish["DoubleDigit"] = "Double Digit Math";
+    _localizationMapSwahili["DoubleDigit"] = "Hisabati ya Tarakimu Mbili";
+    
+    _localizationMapEnglish["FishTank"] = "Fish Tank";
+    _localizationMapSwahili["FishTank"] = "Tangi ya Samaki";
+    
+    _localizationMapEnglish["HundredPuzzle"] = "100 Puzzle";
+    _localizationMapSwahili["HundredPuzzle"] = "Fumbo la Nambari 100";
+    
+    _localizationMapEnglish["LetterTracing"] = "Letter Tracing";
+    _localizationMapSwahili["LetterTracing"] = "Kufuatisha Herufi";
+    
+    _localizationMapEnglish["MovingInsects"] = "Bug Math";
+    _localizationMapSwahili["MovingInsects"] = "Mchezo wa Mdudu";
+    
+    _localizationMapEnglish["SentenceMaker"] = "Sentence Maker";
+    _localizationMapSwahili["SentenceMaker"] = "Kiumba Sentensi";
+    
+    _localizationMapEnglish["ShapeMatching"] = "Shape Matching";
+    _localizationMapSwahili["ShapeMatching"] = "Kufananisha Maumbo";
+    
+    _localizationMapEnglish["SoundTrain"] = "Sound Train";
+    _localizationMapSwahili["SoundTrain"] = "Sauti ya Garimoshi";
+    
+    _localizationMapEnglish["Spelling"] = "Spelling";
+    _localizationMapSwahili["Spelling"] = "Matamshi";
+    
+    _localizationMapEnglish["WordTracing"] = "Word Tracing";
+    _localizationMapSwahili["WordTracing"] = "Kufuatisha Maneno";
+    
+    _localizationMapEnglish["NumberTracing"] = "Learn to 10";
+    _localizationMapSwahili["NumberTracing"] = "Jifunze Mpaka 10";
+    
+    _localizationMapEnglish["StarFall"] = "Typing";
+    _localizationMapSwahili["StarFall"] = "Kuchapa";
+    
+    _localizationMapEnglish["WordMachine"] = "Word Machine";
+    _localizationMapSwahili["WordMachine"] = "Mashine ya Maneno";
+    
+    _localizationMapEnglish["NumberTracingExt"] = "Number Tracing";
+    _localizationMapSwahili["NumberTracingExt"] = "Kufuatisha Nambari";
+    
+    _localizationMapEnglish["LetterTracingCard"] = "Trace 3 Times";
+    _localizationMapSwahili["LetterTracingCard"] = "Fuatisha Mara 3";
+    
+    _localizationMapEnglish["NumberPuzzle"] = "Number Blocks";
+    _localizationMapSwahili["NumberPuzzle"] = "Fumbo la Nambari";
 }

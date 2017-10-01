@@ -12,7 +12,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Common/Basic/SoundEffect.h"
 #include "Managers/LanguageManager.hpp"
 #include "Utils/TodoUtil.h"
@@ -665,7 +665,24 @@ bool HundredPiece::init()
         if (_targetPos.distance(getPosition())<snapRadiusOnEnded) {
             setSnapped(true);
 
+        } else {
+            auto P = getParent();
+            auto pos = P->convertToWorldSpace(this->getPosition());
+            Vec2 loc = pos;
+            
+            auto winSize = Director::getInstance()->getWinSize();
+            const auto margin = Size(50, 50);
+            
+            loc.x = MAX(margin.width, loc.x);
+            loc.x = MIN(winSize.width-margin.width, loc.x);
+            loc.y = MAX(margin.height, loc.y);
+            loc.y = MIN(winSize.height-margin.height, loc.y);
+            if (loc.distance(pos)>5) {
+                runAction(EaseOut::create(MoveTo::create(0.12, loc), 2.0));
+            }
         }
+        
+
         
 
         

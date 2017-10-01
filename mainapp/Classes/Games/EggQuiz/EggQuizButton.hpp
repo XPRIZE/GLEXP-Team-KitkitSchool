@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <cocos2d.h>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include <string>
 

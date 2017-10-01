@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "cocos2d.h"
-#include "ui/uiButton.h"
+#include "ui/UIButton.h"
 #include "AnswerPadBase.hpp"
 
 USING_NS_CC;

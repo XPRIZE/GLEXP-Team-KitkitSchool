@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Models/LevelData.hpp"
 #include "Models/Worksheet.hpp"
 #include "LetterWheel.hpp"

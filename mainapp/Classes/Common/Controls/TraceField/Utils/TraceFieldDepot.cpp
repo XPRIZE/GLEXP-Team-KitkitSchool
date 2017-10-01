@@ -20,7 +20,8 @@ string TraceFieldDepot::assetPrefix() const {
 }
 
 string TraceFieldDepot::defaultFont() const {
-    return "fonts/TSAlphabets.ttf";
+//    return "fonts/TSAlphabets.ttf";
+    return "fonts/kitkitalphabet.ttf";
 }
 
 string TraceFieldDepot::cursorFilename() const {
@@ -80,7 +81,15 @@ SoundEffect TraceFieldDepot::soundForTrace() const {
 
 Json::Value TraceFieldDepot::jsonForGlyphArchive(string Str) {
     Json::Value JsonValue;
-    string GlyphName = "TSAlphabets";
+    string GlyphName;
+    if (Str == "1" || Str == "2" || Str == "3" || Str == "4" || Str == "5" || Str == "6" || Str == "7" || Str == "8" || Str == "9" || Str == "0")
+    {
+        GlyphName = "TSAlphabets";
+    }
+    else
+    {
+        GlyphName = "kitkitalphabet";
+    }
     
     // XXX
     string Filename;
@@ -101,7 +110,7 @@ Json::Value TraceFieldDepot::jsonForGlyphArchive(string Str) {
         CCLOGERROR("JSON reader parse error: %s", Filename.c_str());
         JsonValue.clear();
     }
-
+ 
     return JsonValue;
 }
 

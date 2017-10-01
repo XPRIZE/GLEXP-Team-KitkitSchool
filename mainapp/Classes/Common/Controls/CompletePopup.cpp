@@ -7,7 +7,7 @@
 //
 
 #include "CompletePopup.hpp"
-#include "ui/uiButton.h"
+#include "ui/UIButton.h"
 #include "Managers/LanguageManager.hpp"
 #include "Common/Basic/SoundEffect.h"
 
@@ -41,6 +41,10 @@ bool CompletePopup::init() {
     blocker->setContentSize(winSize);
     blocker->setTouchEnabled(true);
     blocker->setSwallowTouches(true);
+    blocker->addClickEventListener([this](Ref*){
+
+    });
+    
 
     addChild(blocker);
     
@@ -51,6 +55,12 @@ bool CompletePopup::init() {
     _mainView = Node::create();
     addChild(_mainView);
     _mainView->setContentSize(winSize);
+    
+    
+
+    
+    
+    
     
     auto bg = Sprite::create(folder+"game_effect_glow.png");
     bg->setPosition(winSize/2);
@@ -73,6 +83,25 @@ bool CompletePopup::init() {
     auto star = Sprite::create(folder+"game_effect_starmedal.png");
     star->setPosition(p);
     _mainView->addChild(star);
+    
+    {
+        auto *listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+        listener->onTouchBegan = [star, this](Touch* T, Event* E) {
+            auto P = star->getParent();
+            auto pos = P->convertToNodeSpace(T->getLocation());
+            if (star->getBoundingBox().containsPoint(pos)) {
+                SoundEffect::buttonEffect().play();
+                this->dismiss();
+                return true;
+            }
+            return false;
+        };
+        
+        this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, star);
+        
+    }
+
     
     const auto blinkTime = 0.3;
     

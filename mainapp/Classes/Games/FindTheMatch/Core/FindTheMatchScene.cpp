@@ -10,6 +10,7 @@
 #include "FindTheMatchScene.h"
 #include "../Utils/MainDepot.h"
 #include <Common/Basic/SoundEffect.h>
+#include "Common/Effects/FireworksEffect.hpp"
 
 #include "CCAppController.hpp"
 
@@ -228,6 +229,8 @@ void FindTheMatchScene::refreshChildNodes() {
 
                 Actions.pushBack(DelayTime::create(.1f));
                 Actions.pushBack(CallFunc::create([this] {
+                    FireworksEffect::fire();
+                    
                     MainDepot().soundForCardHit().play();
                     if (TheProgressBar)
                         TheProgressBar->setCurrent((int)WorkID - TheSheet().beginProblemID() + 1, true);
@@ -250,6 +253,7 @@ void FindTheMatchScene::refreshChildNodes() {
             Actions.pushBack(TheGameBoard->actionForPullCardToAnswerSlot(It));
             Actions.pushBack(CallFunc::create([this] {
                 MainDepot().soundForCardMiss().play();
+                FireworksEffect::miss();
             }));
             Actions.pushBack(DelayTime::create(durationForCardPause()));
             Actions.pushBack(CallFunc::create([this] {

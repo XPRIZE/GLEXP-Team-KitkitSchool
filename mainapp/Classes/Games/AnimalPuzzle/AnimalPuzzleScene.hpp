@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include <vector>
 #include <string>
@@ -41,8 +41,6 @@ public:
     void onPuzzleComplete();
     
     void setLevel(int level);
-    void setTouchEnabled(bool enabled);
-
     
     void createPuzzle(int index);
     void loadData(int level);
@@ -116,6 +114,7 @@ public:
     bool _snapped;
     
     Sprite *_ghost;
+    bool _touchEnabled;
     
     
     

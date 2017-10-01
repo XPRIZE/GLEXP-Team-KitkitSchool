@@ -13,7 +13,7 @@
 #include "LetterMatchingCard.hpp"
 
 #include "cocostudio/CocoStudio.h"
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include "Models/LevelData.hpp"
 #include "Models/Worksheet.hpp"
@@ -60,6 +60,8 @@ private:
     void initCardList();
     void addStarParticle(Node* targetNode);
 
+    Point safePointForBoundary(Point point);
+    void stompByNode(Node* node);
     
     bool _nextTransition;
     

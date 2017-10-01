@@ -33,7 +33,7 @@ namespace {
         return Point(MainDepot().gameSize().width/2.f, 1535.f) + traceFieldOffset();
     }
     Point midLineP() {
-        return Point(MainDepot().gameSize().width/2.f, 1081.f) + traceFieldOffset();
+        return Point(MainDepot().gameSize().width/2.f, 1200.f) + traceFieldOffset();
     }
     Point botLineP() {
         return Point(MainDepot().gameSize().width/2.f, 534.f) + traceFieldOffset();
@@ -359,8 +359,16 @@ void LetterTraceScene::beginTheWork() {
     float Delay = 0.f;
     const float DelayUnit = 1.2f;
 
-    Delay += (TraceWorkIndex() > 0 ? DelayUnit : DelayUnit / 2.f);
-    scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
+    if (LevelID > 4)
+    {
+        Delay += (TraceWorkIndex() > 0 ? DelayUnit : DelayUnit / 2.f);
+    }
+    else
+    {
+        Delay += DelayUnit / 4.f;
+    }
+    
+    scheduleOnce([this](float) {
         MainDepot().soundForLetter(TheTraceWork().TraceText).play();
     }, Delay, "beginTheWork_Delay_1");
 }
@@ -461,7 +469,17 @@ void LetterTraceScene::handleBonusWorkDidEnd() {
         return;
     }
 
-    showTrailer();
+    if (LevelID > 5)
+    {
+        showTrailer();
+    }
+    else
+    {
+        this->runAction(Sequence::create(DelayTime::create(0.5f), CallFunc::create([this]() {
+            auto Guard = NodeScopeGuard(this);
+            handleTrailerWorkDidEnd();
+        }), nullptr));
+    }
 }
 
 void LetterTraceScene::handleTrailerWorkDidEnd() {

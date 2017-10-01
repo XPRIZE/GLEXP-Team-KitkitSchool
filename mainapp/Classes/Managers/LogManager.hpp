@@ -18,11 +18,13 @@ public:
     LogManager(){};
     virtual bool init();
     virtual ~LogManager(){};
-    bool logEvent(std::string eventName, std::string eventValue);
+    
     bool logEventJson(std::string eventName, Json::Value json);
-
+    bool logEvent(std::string category, std::string action, std::string label, double value);
+    bool tagScreen(std::string screenName);
+    
 private:
-    std::string _installID;
+    bool logEvent(std::string eventValue);
 };
 
 #endif /* LogManager_hpp */

@@ -12,7 +12,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
 #include "Utils/TodoUtil.h"

@@ -9,29 +9,60 @@
 #include "CoopScene.hpp"
 #include "Bird.hpp"
 #include "LevelOpenPopup.hpp"
-#include "DaySelectPopup.hpp"
+#include "DailyScene.hpp"
+#include "GameSelectScene.hpp"
+
 
 #include "CustomDirector.h"
-#include "MainScene2.hpp"
+
 
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
 #include "Managers/CurriculumManager.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/LogManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 
+#include "Games/Video/GameVideoPlayer.hpp"
 
 #include "Utils/TodoUtil.h"
 
+#include "3rdParty/CCNativeAlert.h"
+
 namespace CoopSceneSpace {
     const Size coopSize = Size(2560, 1800);
+    const Size roomSize = Size(628, 540);
     const float birdScale = 0.7;
+    float coopScale;
+    
     
 
     const int glowZ = 2000;
     const int zoomZ = 3000;
     
+    
+
+    class Room : public Node
+    {
+    public:
+        CREATE_FUNC(Room);
+        
+        Sprite *nest, *shadow, *light, *cover;
+        
+        Bird *bird;
+        std::string levelID;
+        bool isLightUp;
+        
+        
+        
+        void setupRoom(LevelCurriculum &cur);
+        void addShadow(bool isEgg = false);
+        void turnLight(bool turnOn, bool animate = false);
+        
+    };
+
     
 
 };
@@ -40,6 +71,8 @@ using namespace CoopSceneSpace;
 
 Scene* CoopScene::createScene()
 {
+    StrictLogManager::shared()->courseChoice_Begin();
+
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -64,29 +97,30 @@ bool CoopScene::init()
         return false;
     }
 
+    _zoomLevel = 0;
+    
+    SoundEffect::lightEffect().preload();
+    
     setTouchEnabled(true);
     
     auto dirSize = Director::getInstance()->getWinSize();
     
-    float coopScale = MIN(dirSize.width / coopSize.width,
-                          dirSize.height / coopSize.height);
+    coopScale = MIN(dirSize.width / coopSize.width,
+                    dirSize.height / coopSize.height);
     
-    auto bg = Sprite::create("CoopScene/coop_bg.jpg");
-    bg->setScale(coopScale);
-    bg->setPosition(dirSize/2);
-    addChild(bg);
+
     
     _coopView = Node::create();
     _coopView->setContentSize(coopSize);
     _coopView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    
-
     _coopView->setScale(coopScale);
     _coopView->setPosition(dirSize/2.f);
     addChild(_coopView);
 
 
-    createBirds();
+    
+
+    setupCoop();
     
     
     _currentZ = 100;
@@ -102,12 +136,26 @@ bool CoopScene::init()
     
     bool isDebug = UserManager::getInstance()->isDebugMode();
     bool isGameTesting = UserManager::getInstance()->isGameTestingMode();
+    bool isResetAllowed = UserManager::getInstance()->isResetAllowed();
     
     
     
     
     if (!isDebug) {
         _debugView->setVisible(false);
+        
+        if (isResetAllowed) {
+            ui::Button* resetButton = ui::Button::create();
+            resetButton->setTitleText("reset");
+            resetButton->setTitleFontSize(50);
+            resetButton->setPosition(Vec2(dirSize.width-200, dirSize.height-100));
+            resetButton->addTouchEventListener([this](Ref*,ui::Widget::TouchEventType e) {
+                if (e == ui::Widget::TouchEventType::ENDED) {
+                    this->confirmReset();
+                }
+            }  );
+            this->addChild(resetButton);
+        }
     } else {
     
         Label* versionTitle = Label::createWithTTF("Version : "+UserManager::getInstance()->getAppVersion(), "fonts/OpenSans-Bold.ttf", 50);
@@ -122,10 +170,9 @@ bool CoopScene::init()
         resetButton->setTitleText("reset");
         resetButton->setTitleFontSize(50);
         resetButton->setPosition(Vec2(debugViewSize.width-200, debugViewSize.height/2));
-        resetButton->addTouchEventListener([](Ref*,ui::Widget::TouchEventType e) {
+        resetButton->addTouchEventListener([this](Ref*,ui::Widget::TouchEventType e) {
             if (e == ui::Widget::TouchEventType::ENDED) {
-                UserManager::getInstance()->resetStatus();
-                Director::getInstance()->popToRootScene();
+                this->confirmReset();
             }
         }  );
         _debugView->addChild(resetButton);
@@ -196,7 +243,7 @@ bool CoopScene::init()
                     auto txt = "Lang: " + langStr;
                     langButton->setTitleText(txt);
                     
-                    this->createBirds();
+                    this->setupCoop();
                 
                 }
             }  );
@@ -231,107 +278,178 @@ bool CoopScene::init()
     auto backButton = TodoSchoolBackButton::create();
     backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     backButton->setPosition(Vec2(25, dirSize.height-25));
+    backButton->onBack = [] {
+        StrictLogManager::shared()->courseChoice_End();
+    };
     addChild(backButton);
 
     return true;
 }
 
 
-
-void CoopScene::createBirds()
+void CoopScene::confirmReset()
 {
     
+    auto pSize = Size(500, 500);
+    auto popup = PopupBase::create(this, pSize);
     
+    auto textedit = ui::TextField::create("password to reset", "fonts/OpenSans-Bold.ttf", 50);
+    textedit->setPosition(Vec2(pSize.width*0.5, pSize.height*0.7));
+    popup->addChild(textedit);
+    
+    {
+        auto btn = ui::Button::create();
+        btn->setTitleText("Cancel");
+        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleColor(Color3B::WHITE);
+        btn->setTitleFontSize(50);
+        
+        btn->addClickEventListener([popup](Ref*) {
+            popup->dismiss(true);
+        });
+        
+        btn->setPosition(Vec2(pSize.width*0.25, pSize.height*0.3));
+        popup->addChild(btn);
+        
+    }
+    
+    {
+        auto btn = ui::Button::create();
+        btn->setTitleText("Reset");
+        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleColor(Color3B::WHITE);
+        btn->setTitleFontSize(50);
+        
+        btn->addClickEventListener([popup, textedit](Ref*) {
+            if (textedit->getString()=="2019") {
+                popup->dismiss(false);
+                NativeAlert::show("Playdata cleared!", "", "OK");
+                UserManager::getInstance()->resetStatus();
+                Director::getInstance()->popToRootScene();
+                
+            } else {
+                NativeAlert::show("Wrong Password!", "", "OK");
+            }
+        });
+        
+        btn->setPosition(Vec2(pSize.width*0.75, pSize.height*0.3));
+        popup->addChild(btn);
+    }
+    
+    
+
+    
+    popup->show(this, true);
+
+}
+
+void CoopScene::setupCoop()
+{
     _coopView->removeAllChildren();
+
     
-    birds.clear();
+    auto bg = Sprite::create("CoopScene/coop_bg.jpg");
+    bg->setPosition(coopSize/2);
+    _coopView->addChild(bg);
+
+    
+    _rooms.clear();
     
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+    
+    auto literacyCategory = Sprite::create("CoopScene/coop_woodpanel_title_literacy.png");
+    literacyCategory->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    literacyCategory->setPosition(Vec2(coopSize.width/4.f, coopSize.height - 105));
+    
+    auto literacyLabel = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("English"), 62, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+    literacyLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    literacyLabel->setPosition(literacyCategory->getContentSize()/2);
+    literacyCategory->addChild(literacyLabel);
+    
+    _coopView->addChild(literacyCategory);
+    
+    auto mathCategory = Sprite::create("CoopScene/coop_woodpanel_title_math.png");
+    mathCategory->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    mathCategory->setPosition(Vec2(coopSize.width/4.f*3, coopSize.height - 105));
+    auto mathLabel = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Math"), 62, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+    mathLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    mathLabel->setPosition(literacyCategory->getContentSize()/2);
+    mathCategory->addChild(mathLabel);
+
+    _coopView->addChild(mathCategory);
+    
+    _roofCover = Sprite::create("CoopScene/coop_roof_shade.png");
+    _roofCover->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+    _roofCover->setPosition(Vec2(coopSize.width/2, coopSize.height));
+    _coopView->addChild(_roofCover);
+    
+    int maxLiteracyLevel = -1;
+    int maxMathLevel = -1;
+    
+    for (auto it : CurriculumManager::getInstance()->levels) {
+        LevelCurriculum cur = it.second;
+        if (cur.lang!=lang) continue;
+    
+        bool open = UserManager::getInstance()->isLevelOpen(cur.levelID);
+        bool cleared = UserManager::getInstance()->isLevelCleared(cur.levelID);
+    
+       
+        
+        if (cur.categoryLevel==0 && cur.category=='L' && !open) {
+            UserManager::getInstance()->setLevelOpen(cur.levelID);
+        }
+        
+        
+        if (cleared) {
+            if (cur.category=='L') maxLiteracyLevel = cur.categoryLevel;
+            else if (cur.category=='M') maxMathLevel = cur.categoryLevel;
+            
+        }
+    }
+    
+    
     
     for (auto it : CurriculumManager::getInstance()->levels) {
         LevelCurriculum cur = it.second;
         if (cur.lang!=lang) continue;
         
-        bool isOpen = UserManager::getInstance()->isLevelOpen(cur.levelID);
-        if (cur.categoryLevel==0 && !isOpen) {
-            UserManager::getInstance()->setLevelOpen(cur.levelID);
-            isOpen = true;
-        }
+        Room *room = Room::create();
+        room->setupRoom(cur);
         
+        float x, y;
         
-        Bird* bird = Bird::create(cur.category, cur.categoryLevel, cur.levelID);
-
-        
-        
-        
-        
-        int x = cur.category=='L' ? 1-(cur.categoryLevel%2) : 2+(cur.categoryLevel%2);
-        int y = 2-(cur.categoryLevel/2);
-        Point p = Point(x, y);
-        
-        Vec2 panelPos = Vec2(coopSize.width/8.f*(1+2*p.x), 545*p.y);
-        bird->setPosition(panelPos+Vec2(0, 120));
-        if (isOpen) {
-            bird->setScale(birdScale);
-            bird->setStatus(Bird::BirdStatus::EGG_HATCHED);
-            bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(cur.levelID));
+        if (cur.category=='L') {
+            x = (1-(cur.categoryLevel%2)) * roomSize.width;
         } else {
-            bird->setStatus(Bird::BirdStatus::EGG);
+            x = coopSize.width - (2-cur.categoryLevel%2)*roomSize.width;
         }
+        y =  (2-(cur.categoryLevel/2)) * roomSize.height;
+        
+        room->setPosition(x, y);
+        _coopView->addChild(room);
+        
+        _rooms.push_back(room);
+        
+        auto bird = room->bird;
         
         
-        string nestName = (cur.category=='M') ? "coop_math_nest.png" : "coop_english_nest.png";
-        auto nest = Sprite::create("CoopScene/"+nestName);
-        nest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        nest->setPosition(panelPos + Vec2(0, 20));
-        _coopView->addChild(nest, _currentZ++);
-        
-        Sprite *shadow;
-        if (isOpen) {
-            shadow = Sprite::create("CoopScene/coop_bird_shadow.png");
-            shadow->setScale(bird->getBoundingBox().size.width / shadow->getContentSize().width);
-        } else {
-            shadow = Sprite::create("CoopScene/coop_egg_shadow.png");
-        }
-        
-        shadow->setPosition(bird->getPosition());
-        _coopView->addChild(shadow, _currentZ++, bird->getType());
-        
-        
-        
-        _coopView->addChild(bird, _currentZ++);
-        birds.push_back(bird);
-        
-
-        
-        
-        string panelFilename = cur.category=='L' ? "coop_woodpanel_english.png" : "coop_woodpanel_math.png";
-        if (cur.categoryLevel==0) panelFilename = "coop_woodpanel_prek.png";
-        auto panel = Sprite::create("CoopScene/"+panelFilename);
-        panel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        panel->setPosition(panelPos);
-        _coopView->addChild(panel, _currentZ++);
-        
-        auto panelLabel = TodoUtil::createLabel(cur.levelTitle, 42, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 236, 255));
-        panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        panelLabel->setPosition(panel->getContentSize()/2+Size(0, -5));
-        panel->addChild(panelLabel);
-    }
-    
-    
-    for (auto bird : birds) {
-        bird->onTouchBegan = [bird, this](){
+        bird->onTouchBegan = [bird, this, room](){
             if (!isTouchEnabled()) return;
+            if (!room->isLightUp) return;
             bird->runTouchAnimation();
-
+            
             
         };
         
-        bird->onTouchEnded = [this, bird]() {
+        bird->onTouchEnded = [this, room]() {
             
             
             if (!isTouchEnabled()) return;
+            if (!room->isLightUp) return;
+            
             setTouchEnabled(false);
+            
+            auto bird = room->bird;
             
             auto c = bird->getCategory();
             auto l = bird->getCategoryLevel();
@@ -342,23 +460,28 @@ void CoopScene::createBirds()
                 auto levelID = CurriculumManager::getInstance()->makeLevelID(lang, c, l);
                 
                 if (UserManager::getInstance()->isLevelOpen(levelID)) {
-
                     
-                    this->showDaySelectPopup(levelID);
+                    StrictLogManager::shared()->courseChoice_TouchAnimal(levelID);
+                    this->showDailyScene(levelID);
+                    
                     
                 } else {
-                    auto popup = LevelOpenPopup::create(this);
-                    popup->setup(levelID);
-                    popup->onloadCallback = CallFunc::create([this](){
-                        this->setTouchEnabled(true);
-                    });
+                    StrictLogManager::shared()->courseChoice_ShowNewAnimal(levelID);
+                    UserManager::getInstance()->setLevelOpen(levelID);
+                    this->hatchEgg(room);
                     
-                    popup->show(this, true);
-                    popup->onOpenLevel = [this, levelID, bird](){
-                        UserManager::getInstance()->setLevelOpen(levelID);
-                        this->hatchEgg(bird);
-                        
-                    };
+//                    auto popup = LevelOpenPopup::create(this);
+//                    popup->setup(levelID);
+//                    popup->onloadCallback = CallFunc::create([this](){
+//                        this->setTouchEnabled(true);
+//                    });
+//                    
+//                    popup->show(this, true);
+//                    popup->onOpenLevel = [this, levelID, room](){
+//                        UserManager::getInstance()->setLevelOpen(levelID);
+//                        this->hatchEgg(room);
+//                        
+//                    };
                     
                     
                 }
@@ -371,46 +494,126 @@ void CoopScene::createBirds()
             
         };
         
-        
-        
-        
     }
+    
+    
     
 
 }
+
+void CoopScene::onEnter()
+{
+    Layer::onEnter();
+    
+
+    auto levelID = UserManager::getInstance()->getCurrentLevelID();
+    
+    for (auto room : _rooms) {
+        auto bird = room->bird;
+        if (bird->getLevelID() == levelID && bird->getStatus() == Bird::BirdStatus::EGG_HATCHED) {
+            bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(room->levelID));
+            bird->loadAnimation();
+            bird->runTouchAnimation();
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+}
+
 
 void CoopScene::onEnterTransitionDidFinish()
 {
     Layer::onEnterTransitionDidFinish();
     
     GameSoundManager::getInstance()->playBGM("Common/Music/SFX_AllAnimals_IncAmbience.m4a");
+    setTouchEnabled(true);
     
-    checkLevelClear();
+    checkLight();
+    
+
+    setTouchEnabled(true);
+    
 }
 
-void CoopScene::hatchEgg(Bird *bird)
+
+void CoopScene::zoomIn(int level)
 {
+    if (level==_zoomLevel) return;
+    _zoomLevel = level;
+    
+    float targetScale;
+    Vec2 targetPos;
+    
+    auto dirSize = Director::getInstance()->getWinSize();
+    
+    
+    if (level==1) {
+        targetScale = 1.5*coopScale;
+        targetPos = dirSize/2.0 + Size(0, -dirSize.height/2);
+    } else {
+        targetScale = 1.0*coopScale;
+        targetPos = dirSize/2.0;
+    }
+    
+    auto coopSpawn = Spawn::create(MoveTo::create(0.4, targetPos), ScaleTo::create(0.4, targetScale), NULL);
+    _coopView->runAction(coopSpawn);
+    
+}
+
+
+void CoopScene::hatchEgg(CoopSceneSpace::Room *room)
+{
+    
+    auto bird = room->bird;
+    auto birdPosInRoom = bird->getPosition();
+    auto birdPosInCoop = this->convertToNodeSpace(room->convertToWorldSpace(bird->getPosition()));
+    
+    float birdScaleInCoop = 1.0;
+    Node *p = bird;
+    while (p!=nullptr) {
+        birdScaleInCoop *= p->getScale();
+        p = p->getParent();
+    }
+    
+    
+    bird->retain();
+    bird->removeFromParent();
+    bird->setPosition(birdPosInCoop);
+    bird->setScale(birdScaleInCoop);
+    this->addChild(bird);
+    bird->release();
+    
+    auto viewSize = this->getContentSize();
+    
     
     
     setTouchEnabled(false);
     
     float zoomTime = 1.0;
     const float zoomRate = 3.0;
-    auto orgZ = bird->getLocalZOrder();
-    _coopView->reorderChild(bird, zoomZ);
-    auto shadow = _coopView->getChildByTag(bird->getType());
-    shadow->removeFromParent();
+    
+    
+    room->shadow->removeFromParent();
     
     
     auto orgPos = bird->getPosition();
-    auto zoomPos = Vec2(coopSize.width/2, coopSize.height/2-350);
+    auto zoomPos = Vec2(viewSize.width/2, viewSize.height/2-350);
     auto spawn1 = Spawn::create(EaseIn::create(MoveTo::create(zoomTime, zoomPos), 3.0), EaseIn::create(ScaleTo::create(zoomTime, birdScale*zoomRate), 3.0), nullptr);
     auto spawn2 = Spawn::create(EaseIn::create(MoveTo::create(zoomTime, orgPos), 3.0), EaseIn::create(ScaleTo::create(zoomTime, birdScale), 3.0), nullptr);
     
     auto glow = Node::create();
     glow->setContentSize(coopSize);
     glow->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    glow->setPosition(coopSize/2);
+    
+    Vec2 glowWorldPos = viewSize/2;
+    Vec2 glowLocalPos = _coopView->convertToNodeSpace(glowWorldPos);
+    
+    glow->setPosition(glowLocalPos);
     glow->setScale(0);
     glow->setVisible(false);
     _coopView->addChild(glow, glowZ);
@@ -475,6 +678,7 @@ void CoopScene::hatchEgg(Bird *bird)
         auto cur = CurriculumManager::getInstance()->findCurriculum(bird->getCategory(), bird->getCategoryLevel());
         bird->setStatus(Bird::BirdStatus::EGG_HATCHED);
         bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(cur->levelID));
+        
 
         bird->setPosition(bird->getPosition()+Vec2(0, 100));
 
@@ -513,14 +717,30 @@ void CoopScene::hatchEgg(Bird *bird)
         FadeIn::create(0.5),
         DelayTime::create(1.0),
         spawn2,
-        CallFunc::create([this, bird, orgZ](){
+        CallFunc::create([this, room, bird, birdPosInRoom, s1, s2, s3, s4](){
         SoundEffect::particleEffect().play();
-        auto shadow = Sprite::create("CoopScene/coop_bird_shadow.png");
-        shadow->setScale(bird->getBoundingBox().size.width / shadow->getContentSize().width);
-        shadow->setPosition(bird->getPosition());
-        _coopView->addChild(shadow, orgZ, bird->getType());
         
-        _coopView->reorderChild(bird, orgZ);
+        bird->retain();
+        bird->removeFromParent();
+        bird->setPosition(birdPosInRoom);
+        room->addChild(bird);
+        bird->release();
+        
+        const auto blinkTime = 0.3;
+        
+        s1->runAction(RepeatForever::create(Sequence::create(DelayTime::create(random(0.0, blinkTime)), ScaleTo::create(blinkTime, 1.0), ScaleTo::create(blinkTime, 0.0), nullptr)));
+        
+        s2->runAction(RepeatForever::create(Sequence::create(DelayTime::create(random(0.0, blinkTime)), ScaleTo::create(blinkTime, 1.0), ScaleTo::create(blinkTime, 0.0), nullptr)));
+        
+        
+        s3->runAction(RepeatForever::create(Sequence::create(DelayTime::create(random(0.0, blinkTime)), ScaleTo::create(blinkTime, 1.0), ScaleTo::create(blinkTime, 0.0), nullptr)));
+        
+        s4->runAction(RepeatForever::create(Sequence::create(ScaleTo::create(blinkTime*2.3, 0.9), ScaleTo::create(blinkTime*2.3, 1.1), nullptr)));
+
+        
+        
+        room->addShadow();
+        
         
         setTouchEnabled(true);
         
@@ -533,65 +753,296 @@ void CoopScene::hatchEgg(Bird *bird)
 }
 
 
-void CoopScene::showDaySelectPopup(std::string levelID)
+void CoopScene::showDailyScene(std::string levelID)
 {
+    UserManager::getInstance()->setCurrentLevelID(levelID);
+    
     if (UserManager::getInstance()->isGameTestingMode()) {
-        UserManager::getInstance()->setCurrentLevelID(levelID);
-        ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
+        auto scene = GameSelectScene::createScene();
+        Director::getInstance()->pushScene(TransitionFade::create(0.8, scene));
+        setTouchEnabled(true);
+        //((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
         return;
     }
     
     
-    auto popup = DaySelectPopup::create(this, levelID);
-    popup->show();
+    auto dailyScene = DailyScene::createScene(levelID);
     
-    popup->onSelectDay = [this, levelID](int day) {
-        UserManager::getInstance()->setCurrentLevelID(levelID);
-        UserManager::getInstance()->setCurrentDay(day);
-        
-        ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
-    };
+    Director::getInstance()->pushScene(TransitionFade::create(0.8, dailyScene));
     
-    popup->onDismiss = [this]() {
-        setTouchEnabled(true);
-        GameSoundManager::getInstance()->playBGM("Common/Music/SFX_AllAnimals_IncAmbience.m4a");
-        
-    };
-    
-    /*
-    popup->onSelectDay = [this, levelID](int day) {
-        UserManager::getInstance()->setCurrentLevelID(levelID);
-        UserManager::getInstance()->setCurrentDay(day);
-        
-        addDayGameButtons(levelID, day, gameIcons);
-        
-        if (!UserManager::getInstance()->isDayCleared(levelID, day)) {
-            spawnGameEggs(0.3);
-        }
-        
-    };
-   */
+//    popup->show();
+//    
+//    popup->onSelectDay = [this, levelID](int day) {
+//        UserManager::getInstance()->setCurrentLevelID(levelID);
+//        UserManager::getInstance()->setCurrentDay(day);
+//        
+//        
+//        //((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
+//        auto scene = GameSelectScene::createScene();
+//        
+//        Director::getInstance()->pushScene(TransitionFade::create(0.8, scene));
+//        
+//    };
+//    
+//    popup->onDismiss = [this]() {
+//        setTouchEnabled(true);
+//        GameSoundManager::getInstance()->playBGM("Common/Music/SFX_AllAnimals_IncAmbience.m4a");
+//        
+//    };
     
     
 }
 
-void CoopScene::checkLevelClear()
+void CoopScene::checkLight()
 {
-    auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto u = UserManager::getInstance();
-    for (auto bird : birds) {
-        if (bird->getStatus() == Bird::BirdStatus::EGG_HATCHED) continue;
-        auto cl = bird->getCategoryLevel();
-        if (cl==0) continue;
+    int maxCleared_L = -1;
+    int maxCleared_M = -1;
+    
+    for (auto room : _rooms) {
+        auto bird = room->bird;
+        auto cat = bird->getCategory();
+        auto level = bird->getCategoryLevel();
+        if (UserManager::getInstance()->isLevelCleared(bird->getLevelID())) {
+            if (cat=='L') maxCleared_L = MAX(maxCleared_L, level);
+            else maxCleared_M = MAX(maxCleared_M, level);
+        }
+    }
+
+    int light_L = maxCleared_L;
+    int light_M = maxCleared_M;
+    
+    if (maxCleared_L<0 && maxCleared_M<0) {
+        light_L = 0;
+    } else if (maxCleared_L==0 && maxCleared_M<0) {
+        light_L = 0;
+        light_M = 0;
+    } else if (maxCleared_L==0 && maxCleared_M==0) {
+        light_L = 1;
+        light_M = 1;
+    } else {
+        light_L = (maxCleared_L>=3) ? 5 : maxCleared_L+1;
+        light_M = (maxCleared_M>=3) ? 5 : maxCleared_M+1;
+    }
+    
+    if (maxCleared_L>=0) {
         
-        auto previous = CurriculumManager::getInstance()->makeLevelID(lang, bird->getCategory(), cl-1);
-        
-        if (u->isLevelCleared(previous)) {
-            u->setLevelOpen(bird->getLevelID());
-            this->hatchEgg(bird);
-            return;
+        if (!UserManager::getInstance()->hasPlayedMenuTutorial()) {
+            
+            auto p = PopupBase::create(this);
+            
+            auto v = cocos2d::experimental::ui::VideoPlayer::create();
+            v->setContentSize(Size(1280, 904));
+            v->setPosition(this->getContentSize()/2);
+            p->addChild(v);
+            v->setFileName("TutorialVideo/xprize_library_open.m4v");
+            
+            
+            v->addEventListener([this, p](Ref*, cocos2d::experimental::ui::VideoPlayer::EventType E) {
+                switch (E) {
+                    case cocos2d::experimental::ui::VideoPlayer::EventType::PLAYING:
+                    case cocos2d::experimental::ui::VideoPlayer::EventType::PAUSED:
+                    case cocos2d::experimental::ui::VideoPlayer::EventType::STOPPED:
+                        break;
+                    case cocos2d::experimental::ui::VideoPlayer::EventType::COMPLETED: {
+                        
+                        
+                        p->dismiss(true);
+                        
+                        break;
+                    }
+                }
+            });
+            
+            p->show(this, true, 2.0);
+            v->scheduleOnce([v](float) {
+                v->play();
+            }, 3.0, "VideoPlay");
+            
+            
+            
+            
+        } else {
         }
         
+        
+        UserManager::getInstance()->finishTutorial();
+        
     }
+    
+    if (light_L<=0 && light_M<=0) {
+        zoomIn(1);
+    } else {
+        
+        _roofCover->setVisible(false);
+        zoomIn(0);
+    }
+    
+    bool newTurnOn = false;
+    
+    for (auto room : _rooms) {
+        auto bird = room->bird;
+        auto cat = bird->getCategory();
+        auto level = bird->getCategoryLevel();
+        
+        bool toTurnOn = false;
+        if (cat=='L' && level<=light_L && !room->isLightUp) toTurnOn = true;
+        if (cat=='M' && level<=light_M && !room->isLightUp) toTurnOn = true;
+        
+        if (toTurnOn) {
+            if (!room->isLightUp) newTurnOn = true;
+            room->turnLight(true, true);
+        }
+    }
+    
+    if (newTurnOn) SoundEffect::lightEffect().play();
+    
+
+    
+}
+
+
+///////////
+
+void Room::setupRoom(LevelCurriculum &cur)
+{
+    cover = nullptr;
+    light = nullptr;
+    isLightUp = false;
+    
+    bool isOpen = UserManager::getInstance()->isLevelOpen(cur.levelID);
+    
+    this->levelID = cur.levelID;
+    
+    
+    this->setContentSize(roomSize);
+    
+    if (cur.categoryLevel>0) {
+        
+        string panelFilename = cur.category=='L' ? "coop_woodpanel_level_literacy.png" : "coop_woodpanel_level_math.png";
+        //if (cur.categoryLevel==0) panelFilename = "coop_woodpanel_prek.png";
+        auto panel = Sprite::create("CoopScene/"+panelFilename);
+        
+        Vec2 panelPos = Vec2(panel->getContentSize().width/2.f+20, 520);
+        if (cur.category=='M') {
+            panelPos = Vec2(roomSize.width-panel->getContentSize().width/2.f-20, 520);
+        }
+        
+        
+        panel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+        panel->setPosition(panelPos);
+        this->addChild(panel);
+        
+        auto panelLabel = TodoUtil::createLabel(TodoUtil::itos(cur.categoryLevel), 70, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+        panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        panelLabel->setPosition(panel->getContentSize()/2+Size(0, -5));
+        panel->addChild(panelLabel);
+    }
+    
+    
+    bird = Bird::create(cur.category, cur.categoryLevel, cur.levelID);
+    
+//    int x = cur.category=='L' ? 1-(cur.categoryLevel%2) : 2+(cur.categoryLevel%2);
+//    int y = 2-(cur.categoryLevel/2);
+//    Point p = Point(x, y);
+    
+    Vec2 birdPos = Vec2(roomSize.width/2, 120);
+    bird->setPosition(birdPos);
+    if (isOpen) {
+        bird->setScale(birdScale);
+        bird->setStatus(Bird::BirdStatus::EGG_HATCHED);
+        bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(cur.levelID));
+        bird->loadAnimation();
+    } else {
+        bird->setStatus(Bird::BirdStatus::EGG);
+    }
+    
+//    
+//    string nestName = (cur.category=='M') ? "coop_math_nest.png" : "coop_english_nest.png";
+//    auto nest = Sprite::create("CoopScene/"+nestName);
+//    nest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+//    nest->setPosition(birdPos + Vec2(0, 20));
+//    this->addChild(nest);
+    
+    
+    addShadow(!isOpen);
+    
+    
+    
+    
+    this->addChild(bird);
+
+    
+    
+    
+    
+    light = Sprite::create("CoopScene/coop_cell_light.png");
+    light->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+    light->setPosition(roomSize.width/2, roomSize.height);
+    this->addChild(light);
+
+    cover = Sprite::create("CoopScene/coop_cell_shade.png");
+    cover->setOpacity(235);
+    cover->setAnchorPoint(Vec2::ZERO);
+    this->addChild(cover);
+
+    
+    
+    turnLight(false);
+}
+
+void Room::addShadow(bool isEgg)
+{
+    if (!isEgg) {
+        shadow = Sprite::create("CoopScene/coop_bird_shadow.png");
+        shadow->setScale(bird->getBoundingBox().size.width / shadow->getContentSize().width);
+    } else {
+        shadow = Sprite::create("CoopScene/coop_egg_shadow.png");
+    }
+    
+    shadow->setPosition(bird->getPosition());
+    this->addChild(shadow);
+
+}
+
+void Room::turnLight(bool turnOn, bool animate)
+{
+    if (isLightUp == turnOn) return;
+    
+    isLightUp = turnOn;
+    
+    auto lightOn = [this](bool on) {
+        light->setVisible(on);
+        cover->setVisible(!on);
+    };
+    
+    
+    if (!animate) {
+        lightOn(turnOn);
+    } else {
+        
+        auto seq = Sequence::create(DelayTime::create(random(0.1, 0.3)),
+                                    CallFunc::create([lightOn, turnOn](){ lightOn(turnOn); }),
+                                    DelayTime::create(random(0.02, 0.10)),
+                                    CallFunc::create([lightOn, turnOn](){ lightOn(!turnOn); }),
+                                    DelayTime::create(random(0.02, 0.10)),
+                                    CallFunc::create([lightOn, turnOn](){ lightOn(turnOn); }),
+                                    DelayTime::create(random(0.02, 0.10)),
+                                    CallFunc::create([lightOn, turnOn](){ lightOn(!turnOn); }),
+                                    DelayTime::create(random(0.20, 0.30)),
+                                    CallFunc::create([lightOn, turnOn](){
+            
+                                        lightOn(turnOn);
+                                    }),
+                                    nullptr);
+        
+        this->runAction(seq);
+        
+        
+        
+        
+    }
+    
+
+    
     
 }

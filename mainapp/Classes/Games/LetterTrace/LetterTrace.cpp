@@ -65,6 +65,7 @@ cocos2d::Scene* LetterTrace::createScene() {
     auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID);
 
     auto It = LetterTraceScene::create();
+    It->LevelID = LevelID;
     It->TheWorksheet.update(Sheet);
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;

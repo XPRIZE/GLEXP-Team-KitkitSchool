@@ -12,7 +12,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
 #include "Utils/TodoUtil.h"
@@ -41,7 +41,8 @@ namespace TappingSceneSpace {
     SoundEffect balloonPopEffect() { return SoundEffect("Tapping/SFX_Balloon-pop.m4a"); }
     SoundEffect bubblePopEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Star_Pop2.m4a"); }
     
-
+    const int balloonEndurance = 10;
+    
     
     
     
@@ -73,7 +74,6 @@ bool TappingScene::init()
         return false;
     }
     
-    _touchEnabled = false;
     
     
     auto winSize = getContentSize();
@@ -105,6 +105,21 @@ bool TappingScene::init()
     _progressBar->setPosition(Vec2(winSize.width/2, winSize.height - _progressBar->getContentSize().height));
     addChild(_progressBar);
     
+    
+
+    
+    _popCount = 0;
+    
+    
+    
+    // cache
+    for (int index = 1; index<=10; index++) {
+        string bodyName = "Tapping/tg_balloon"+TodoUtil::itos(index)+"_base.png";
+        string shadeName = "Tapping/tg_balloon"+TodoUtil::itos(index)+"_shading.png";
+        Sprite::create(bodyName);
+        Sprite::create(shadeName);
+    }
+    
     return true;
 }
 
@@ -127,32 +142,7 @@ void TappingScene::onStart()
     
 
 
-    setTouchEnabled(true);
     
-    _popCount = 0;
-    
-    if (_currentLevel==3) {
-        bubblePopEffect().preload();
-    } else {
-        balloonBlowEffect().preload();
-        balloonPopEffect().preload();
-    }
-    
-    if (_currentLevel==1) {
-        _progressBar->setMax(3);
-        _progressBar->setCurrent(_popCount+1);
-        placeBalloon(10, area1);
-    } else if (_currentLevel==2) {
-        _progressBar->setMax(10);
-        _progressBar->setCurrent(_popCount+1);
-        for (int i=0; i<5; i++) {
-            placeBalloon(10, area2);
-        }
-    } else if (_currentLevel==3) {
-        for (int i=0; i<6; i++) {
-            placeBalloon(1, area3, true, random(0.0, 5.0));
-        }
-    }
     
     
 //    _
@@ -174,15 +164,38 @@ void TappingScene::setLevel(int level)
     bg->setPosition(winSize/2);
     _bgNode->addChild(bg);
     
+    
+    if (_currentLevel==3) {
+        bubblePopEffect().preload();
+    } else {
+        balloonBlowEffect().preload();
+        balloonPopEffect().preload();
+    }
+    
+    if (_currentLevel==1) {
+        _progressBar->setMax(3);
+        _progressBar->setCurrent(_popCount+1);
+        placeBalloon(balloonEndurance, area1);
+    } else if (_currentLevel==2) {
+        _progressBar->setMax(10);
+        _progressBar->setCurrent(_popCount+1);
+        for (int i=0; i<5; i++) {
+            placeBalloon(balloonEndurance, area2);
+        }
+    } else if (_currentLevel==3) {
+        for (int i=0; i<6; i++) {
+            placeBalloon(1, area3, true, random(0.0, 5.0));
+        }
+    }
+    
+
+    
+    
 }
 
-void TappingScene::setTouchEnabled(bool enabled)
-{
-    _touchEnabled = enabled;
 
-}
 
-void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool fadein, float delay)
+void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, float delay)
 {
     
     const int placeTry = 10;
@@ -237,17 +250,23 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool fadein, float
     _gameNode->addChild(balloon);
     _balloons.push_back(balloon);
     
-    if (fadein) {
+    if (isBubble) {
         balloon->setOpacity(0);
         auto initDelay = DelayTime::create(random(0.0, 0.5) + delay);
         auto fadeinAction = FadeIn::create(0.2);
+        auto enableAction = CallFunc::create([balloon](){ balloon->_touchEnabled = true; });
         auto fadeoutAction = FadeOut::create(0.2);
         auto delayAction = DelayTime::create(2.5 + 3.0*(100-_popCount)/100.0);
-        auto seq = Sequence::create(initDelay, fadeinAction, delayAction, fadeoutAction, CallFunc::create([this, balloon](){
+        auto seq = Sequence::create(initDelay, fadeinAction, enableAction, delayAction, fadeoutAction, CallFunc::create([this, balloon](){
             balloonPoped(balloon, false);
         }), nullptr);
         balloon->runAction(seq);
-        
+    } else {
+        balloon->setOpacity(0);
+        balloon->runAction(Sequence::create(
+                                      FadeIn::create(random(0.3, 0.8)),
+                                      CallFunc::create([balloon](){ balloon->_touchEnabled = true; }),
+                                      nullptr));
     }
     
     balloon->OnPoped = [balloon, this]() {
@@ -260,6 +279,7 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool fadein, float
 
 void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
 {
+    balloon->_touchEnabled = false;
     
     auto p = balloon->getPosition();
     
@@ -289,7 +309,7 @@ void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
         _progressBar->setCurrent(_popCount+1, true);
         _popCount++;
         
-        popLabel(_popCount, 200, balloon->getCenter());
+        popLabel(_popCount*balloonEndurance, 200, balloon->getCenter());
         
         
         if (_popCount==3) {
@@ -309,7 +329,7 @@ void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
         _progressBar->setCurrent(_popCount+1, true);
         _popCount++;
         
-        popLabel(_popCount, 200, balloon->getCenter()  );
+        popLabel(_popCount*balloonEndurance, 200, balloon->getCenter()  );
         
         if (_popCount==10) {
             CompletePopup::create()->show(1.0, [](){
@@ -372,6 +392,7 @@ void TappingBalloon::setupBubble()
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
+        if (!this->_touchEnabled) return false;
         auto P = convertToNodeSpace(T->getLocation());
         if (_touchRect.containsPoint(P)) {
             _tapCount++;
@@ -409,6 +430,8 @@ void TappingBalloon::setupBalloon(int maxTap, cocos2d::Color3B color)
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
+        if (!this->_touchEnabled) return false;
+        
         auto P = convertToNodeSpace(T->getLocation());
         if (_touchRect.containsPoint(P)) {
             
@@ -451,6 +474,8 @@ void TappingBalloon::setupBalloon(int maxTap, cocos2d::Color3B color)
 
 void TappingBalloon::runPopAnimation()
 {
+    _touchEnabled = false;
+    
     if (_isBalloon) {
         
         balloonPopEffect().play();
@@ -508,7 +533,7 @@ void TappingBalloon::inflateBalloon(int count)
     string bodyName = "Tapping/tg_balloon"+TodoUtil::itos(index)+"_base.png";
     string shadeName = "Tapping/tg_balloon"+TodoUtil::itos(index)+"_shading.png";
     
-    setScale(scale);
+
     
     _body->setTexture(bodyName);
     _shade->setTexture(shadeName);
@@ -532,7 +557,21 @@ void TappingBalloon::inflateBalloon(int count)
 
     }
     
+    this->_touchEnabled = false;
     _touchRect = Rect(-bSize.width/2, -100, bSize.width, bSize.height);
+    
+    auto oldScale = getScale();
+    
+    setScale(oldScale*0.85);
+    this->runAction(Sequence::create(
+                                     EaseIn::create(ScaleTo::create(0.1, scale), 5.0),
+                                     CallFunc::create([this](){
+        this->_touchEnabled = true;
+    }),
+                                     nullptr));
+    
+                                     
+    
     
     
 }

@@ -251,7 +251,7 @@ Label* TodoUtil::createLabel(const std::string &text, float maxFontSize, Size bo
     
     TTFConfig ttfConfig(fontName.c_str(),maxFontSize,GlyphCollection::DYNAMIC);
     Label *label = Label::createWithTTF(ttfConfig, text);
-    label->setColor(Color3B(color));
+    label->setTextColor(color);
     label->setDimensions(boxSize.width, boxSize.height);
     label->setAlignment(hAlignment, vAlignment);
     

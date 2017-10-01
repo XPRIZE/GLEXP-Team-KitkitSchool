@@ -19,6 +19,8 @@ bool TodoSchoolBackButton::init()
         return false;
     }
     
+    onBack = nullptr;
+    
     return true;
     
 }
@@ -39,6 +41,8 @@ void TodoSchoolBackButton::onEnter() {
 void TodoSchoolBackButton::popGameScene()
 {
     
+
+    
     SoundEffect::menuBackEffect().play();
 
     CCAppController::sharedAppController()->handleGameQuit();
@@ -46,10 +50,15 @@ void TodoSchoolBackButton::popGameScene()
 
 void TodoSchoolBackButton::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event) {
     
+    if (!_touchEnabled) return;
+    
     if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE) {
+        if (onBack) {
+            onBack();
+        }
+        
         popGameScene();
         
-
     }
     
 }
@@ -60,6 +69,10 @@ void TodoSchoolBackButton::onTouched(Ref* pSender, ui::Widget::TouchEventType eE
     if (eEventType != ui::Widget::TouchEventType::ENDED) {
         return;
     }
+    if (!_touchEnabled) return;
     
+    if (onBack) {
+        onBack();
+    }
     popGameScene();
 }

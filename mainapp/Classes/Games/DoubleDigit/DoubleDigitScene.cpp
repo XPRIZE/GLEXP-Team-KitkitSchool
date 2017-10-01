@@ -11,7 +11,7 @@
 #include "Managers/GameSoundManager.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <string>
-#include "ui/uiWidget.h"
+#include "ui/UIWidget.h"
 #include "Common/Controls/CompletePopup.hpp"
 #include "CCAppController.hpp"
 

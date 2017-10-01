@@ -14,12 +14,13 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "ui/cocosGUI.h"
+#include "ui/CocosGUI.h"
 
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
 #include "Managers/CurriculumManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 
 #include "Utils/TodoUtil.h"
@@ -424,15 +425,18 @@ void EggQuizScene::onSolve()
     
 }
 
-void EggQuizScene::onCorrect()
+void EggQuizScene::onCorrect(const string& answer, int answerIndex)
 {
+    StrictLogManager::shared()->eggQuiz_CorrectAnswer(_currentProblemIndex, answer, answerIndex);
+
     _answerResult[_currentProblemIndex] = true;
     onSolve();
-    
 }
 
-void EggQuizScene::onIncorrect()
+void EggQuizScene::onIncorrect(const string& correctAnswer, const string& myAnswer, int answerIndex)
 {
+    StrictLogManager::shared()->eggQuiz_WrongAnswer(_currentProblemIndex, correctAnswer, myAnswer, answerIndex);
+
     _answerResult[_currentProblemIndex] = false;
     onSolve();
 }
@@ -888,12 +892,15 @@ Node* EggQuizScene::createLiteracyAnswerView()
 
         node->addChild(a);
         
+        auto correctAnswerString = P.correctAnswerString;
+        auto answerString = P.answerStrings[ai];
+
         bool correctAnswer = P.answerStrings[ai]==P.correctAnswerString;
         if (correctAnswer) foundCorrectAnswer = true;
         
         auto cp = _currentProblemIndex;
         
-        a->addClickEventListener([buttons, correctAnswer, cp, this](Ref*) {
+        a->addClickEventListener([buttons, correctAnswer, cp, correctAnswerString, answerString, i, this](Ref*) {
             if (!isTouchEnabled()) {
                 return;
             }
@@ -905,9 +912,9 @@ Node* EggQuizScene::createLiteracyAnswerView()
                 b->setTouchEnabled(false);
             }
             if (correctAnswer) {
-                this->onCorrect();
+                this->onCorrect(correctAnswerString, i);
             } else {
-                this->onIncorrect();
+                this->onIncorrect(correctAnswerString, answerString, i);
             }
         });
         
@@ -1453,7 +1460,7 @@ Node* EggQuizScene::createMathCountingView(int num, int step)
         
         for (int i=0; i<numSection; i++) {
             int numInRow = 10;
-            if (i==numSection-1) numInRow = num % 10;
+            if (i==numSection-1) numInRow = num - (step*i);
             
             auto section = Sprite::create("EggQuiz/Common/pretest_math_10set_outline.png");
             section->setPosition(viewSize.width/2, top - i*(sectionSize.height+space) - sectionSize.height/2);
@@ -1871,7 +1878,7 @@ Node* EggQuizScene::createMathAnswerView(AnswerType type, int answer, vector<int
                 
             });
             
-            btn->addClickEventListener([btn, this, answerLabel](Ref* sender) {
+            btn->addClickEventListener([btn, i, this, answerLabel](Ref* sender) {
                 if (!_touchEnabled) return;
                 
                 GameSoundManager::getInstance()->playEffectSound(touchEffect);
@@ -1881,9 +1888,9 @@ Node* EggQuizScene::createMathAnswerView(AnswerType type, int answer, vector<int
                     if (_answerString.length()==0) return;
                     
                     if (TodoUtil::stoi(_answerString) == _answer) {
-                        this->onCorrect();
+                        this->onCorrect(TodoUtil::itos(_answer), i);
                     } else {
-                        this->onIncorrect();
+                        this->onIncorrect(TodoUtil::itos(_answer), _answerString, i);
                     }
                     
                     
@@ -1926,14 +1933,14 @@ Node* EggQuizScene::createMathAnswerView(AnswerType type, int answer, vector<int
             bool correctAnswer = (choices[i]==answer);
             auto cp = _currentProblemIndex;
             
-            a->addClickEventListener([correctAnswer, cp, this](Ref*) {
+            a->addClickEventListener([correctAnswer, answer, choices, cp, i, this](Ref*) {
                 if (!isTouchEnabled()) return;
                 if (cp!=_currentProblemIndex) return;
                 
                 if (correctAnswer) {
-                    this->onCorrect();
+                    this->onCorrect(TodoUtil::itos(answer), i);
                 } else {
-                    this->onIncorrect();
+                    this->onIncorrect(TodoUtil::itos(answer), TodoUtil::itos(choices[i]), i);
                 }
             });
             
@@ -2142,11 +2149,17 @@ void EggQuizScene::passTest()
     
     GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/pretest_success.m4a");
     
+    
     if (_isPreTest) {
         popup->setPreCompleted(_quizCategory, _currentLevel);
     } else {
         popup->setPostCompleted(_quizCategory, _currentLevel);
     }
+    
+    this->runAction(Sequence::create(DelayTime::create(1.0),
+                                     CallFunc::create([](){SoundEffect::wowEffect().play();}),
+                                     nullptr
+                                     ));
     
     popup->show(this, true, CallFunc::create([this](){
         

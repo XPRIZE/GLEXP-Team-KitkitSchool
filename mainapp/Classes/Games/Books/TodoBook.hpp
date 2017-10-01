@@ -20,6 +20,7 @@ enum class TDBookLayout
     Portrait,
     Portrait_Traditional,
     Landscape,
+    Square,
 };
 
 enum class TDBookType
@@ -103,6 +104,9 @@ public:
     bool readFile(string prefix);
     
     void addCreditPage();
+    
+    string checkData();
+    
     
 };
 #endif /* TodoBook_hpp */

@@ -47,7 +47,7 @@ private:
     void clearInternals();
     void updateCountObjects();
 
-    void handleEnabledValueUpdated(bool&);
+    void handleEnabledValueUpdated(bool& enabled);
     void handleAssetCountValueUpdated(size_t&);
 
     void handleCountObjectReachedRestPoint(CountObject*);
