@@ -11,36 +11,42 @@
     android:layout_marginStart="5dp"
     android:layout_marginBottom="5dp">
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0px"
-        android:layout_weight="414">
+        android:layout_width="match_parent"
+        android:layout_height="226dp"
+    >
+
         <ImageButton
             android:id="@+id/video_image_button"
+            android:layout_width="360dp"
+            android:layout_height="226dp"
+            android:background="#fff"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:layout_width="360dp"
+            android:layout_height="226dp"
+            android:src="@drawable/library_icon_videoplay"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <TextView
+            android:id="@+id/video_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:padding="0px"
-            android:background="#fff"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/library_icon_videoplay"
-            android:adjustViewBounds="true"
-            android:layout_gravity="center"/>
+            android:textSize="20sp"
+            android:layout_marginStart="15dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginTop="10dp" />
     </FrameLayout>
-    <TextView
-        android:id="@+id/video_title"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:textSize="20sp"
-        android:layout_weight="120"
-        android:layout_marginStart="15dp"
-        android:gravity="center_vertical"
-        android:ellipsize="end"
-        android:maxLines="1"
-        />
+
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="0px"-->

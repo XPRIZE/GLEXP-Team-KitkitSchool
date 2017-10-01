@@ -7,7 +7,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <android.support.percent.PercentRelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="41dp"
@@ -16,23 +17,22 @@
             <TextView
                 android:id="@+id/book1_title_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="27sp"
+                android:layout_height="0dp"
+                android:textSize="22sp"
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
-                app:layout_heightPercent="6%"
+                android:layout_weight="6"
                 />
 
             <HorizontalScrollView
                 android:id="@+id/hsv"
                 android:layout_width="fill_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/book1_title_textView"
+                android:layout_height="0dp"
                 android:fillViewport="false"
                 android:measureAllChildren="false"
                 android:scrollbars="none"
-                app:layout_heightPercent="50%"
-                app:layout_widthPercent="100%">
+                android:layout_weight="50"
+                >
                 <LinearLayout
                     android:id="@+id/hsv_wrapper"
                     android:layout_width="wrap_content"
@@ -167,22 +167,19 @@
             <TextView
                 android:id="@+id/book2_title_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/hsv"
-                app:layout_heightPercent="6%"
+                android:layout_height="0dp"
+                android:layout_weight="6"
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="27sp" />
+                android:textSize="22sp" />
             <HorizontalScrollView
                 android:id="@+id/hsv2"
                 android:layout_width="fill_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/book2_title_textView"
+                android:layout_height="0dp"
+                android:layout_weight="50"
                 android:measureAllChildren="false"
                 android:scrollbars="none"
-                app:layout_heightPercent="50%"
                 android:fillViewport="false">
                 <LinearLayout
                     android:id="@+id/hsv2_wrapper"
@@ -197,22 +194,19 @@
             <TextView
                 android:id="@+id/book3_title_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/hsv2"
-                app:layout_heightPercent="6%"
+                android:layout_height="0dp"
+                android:layout_weight="6"
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="27sp" />
+                android:textSize="22sp" />
             <HorizontalScrollView
                 android:id="@+id/hsv3"
                 android:layout_width="fill_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/book3_title_textView"
                 android:measureAllChildren="false"
                 android:scrollbars="none"
-                app:layout_heightPercent="50%"
+                android:layout_height="0dp"
+                android:layout_weight="50"
                 android:fillViewport="false">
                 <LinearLayout
                     android:id="@+id/hsv3_wrapper"
@@ -227,22 +221,19 @@
             <TextView
                 android:id="@+id/book4_title_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/hsv3"
-                app:layout_heightPercent="6%"
+                android:layout_height="0dp"
+                android:layout_weight="6"
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="27sp" />
+                android:textSize="22sp" />
             <HorizontalScrollView
                 android:id="@+id/hsv4"
                 android:layout_width="fill_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/book4_title_textView"
+                android:layout_height="0dp"
+                android:layout_weight="50"
                 android:measureAllChildren="false"
                 android:scrollbars="none"
-                app:layout_heightPercent="50%"
                 android:fillViewport="false">
                 <LinearLayout
                     android:id="@+id/hsv4_wrapper"
@@ -254,36 +245,61 @@
                     android:paddingEnd="25dp">
                 </LinearLayout>
             </HorizontalScrollView>
-            <!--<TextView-->
-                <!--android:id="@+id/book5_title_textView"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentStart="true"-->
-                <!--android:layout_below="@id/hsv4"-->
-                <!--app:layout_heightPercent="6%"-->
-                <!--android:layout_marginStart="5dp"-->
-                <!--android:layout_marginBottom="5dp"-->
-                <!--android:textSize="27sp" />-->
-            <!--<HorizontalScrollView-->
-                <!--android:id="@+id/hsv5"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_alignParentStart="true"-->
-                <!--android:layout_below="@id/book5_title_textView"-->
-                <!--android:measureAllChildren="false"-->
-                <!--android:scrollbars="none"-->
-                <!--app:layout_heightPercent="43%"-->
-                <!--android:fillViewport="false">-->
-                <!--<LinearLayout-->
-                    <!--android:id="@+id/hsv5_wrapper"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:gravity="center_vertical"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:paddingStart="0dp"-->
-                    <!--android:paddingEnd="25dp">-->
-                <!--</LinearLayout>-->
-            <!--</HorizontalScrollView>-->
-        </android.support.percent.PercentRelativeLayout>
+            <TextView
+                android:id="@+id/book5_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="6"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="20dp"
+                android:textSize="22sp" />
+            <HorizontalScrollView
+                android:id="@+id/hsv5"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:measureAllChildren="false"
+                android:scrollbars="none"
+                android:fillViewport="false">
+                <LinearLayout
+                    android:id="@+id/hsv5_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="25dp">
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView
+                android:id="@+id/book6_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="6"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="20dp"
+                android:textSize="22sp" />
+            <HorizontalScrollView
+                android:id="@+id/hsv6"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:measureAllChildren="false"
+                android:scrollbars="none"
+                android:fillViewport="false">
+                <LinearLayout
+                    android:id="@+id/hsv6_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="25dp">
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
     </ScrollView>
 
 

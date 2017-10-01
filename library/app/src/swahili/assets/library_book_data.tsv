@@ -1,0 +1,113 @@
+# 데이터를 변경하려면:
+#     우선 Google Spreadsheet상에서 이 파일을 수정한 후에
+#     File > Download as > Tab-separated values (.tsv) 를 선택합니다.
+#     다운로드한 파일 이름을 library_book_data.tsv 으로 변경합니다.
+#     테스트할 기기의 Documents/Books에 tsv 파일과 thumbnail을 복사해 넣습니다.
+#          Category field는 코드에서 사용하는 부분이기 때문에 한번 추가 되면 변경하지 마시고 categoryname을 변경해주시기 바랍니다
+#id	category	categoryname	title	author	thumbnail	foldername
+sw_a	cate_1	Vitabu ya ABC	Aa	Philippa Kim and Yeongji Choi	book_sw_a.jpg	sw_a
+sw_b	cate_1	Vitabu ya ABC	Bb	Philippa Kim and Yeongji Choi	book_sw_b.jpg	sw_b
+sw_ch	cate_1	Vitabu ya ABC	Ch	Philippa Kim and Yeongji Choi	book_sw_ch.jpg	sw_ch
+sw_d	cate_1	Vitabu ya ABC	Dd	Philippa Kim and Yeongji Choi	book_sw_d.jpg	sw_d
+sw_e	cate_1	Vitabu ya ABC	Ee	Philippa Kim and Yeongji Choi	book_sw_e.jpg	sw_e
+sw_f	cate_1	Vitabu ya ABC	Ff	Philippa Kim and Yeongji Choi	book_sw_f.jpg	sw_f
+sw_g	cate_1	Vitabu ya ABC	Gg	Philippa Kim and Yeongji Choi	book_sw_g.jpg	sw_g
+sw_h	cate_1	Vitabu ya ABC	Hh	Philippa Kim and Yeongji Choi	book_sw_h.jpg	sw_h
+sw_i	cate_1	Vitabu ya ABC	Ii	Philippa Kim and Yeongji Choi	book_sw_i.jpg	sw_i
+sw_j	cate_1	Vitabu ya ABC	Jj	Philippa Kim and Yeongji Choi	book_sw_j.jpg	sw_j
+sw_k	cate_1	Vitabu ya ABC	Kk	Philippa Kim and Yeongji Choi	book_sw_k.jpg	sw_k
+sw_l	cate_1	Vitabu ya ABC	Ll	Philippa Kim and Yeongji Choi	book_sw_l.jpg	sw_l
+sw_m	cate_1	Vitabu ya ABC	Mm	Philippa Kim and Yeongji Choi	book_sw_m.jpg	sw_m
+sw_n	cate_1	Vitabu ya ABC	Nn	Philippa Kim and Yeongji Choi	book_sw_n.jpg	sw_n
+sw_o	cate_1	Vitabu ya ABC	Oo	Philippa Kim and Yeongji Choi	book_sw_o.jpg	sw_o
+sw_p	cate_1	Vitabu ya ABC	Pp	Philippa Kim and Yeongji Choi	book_sw_p.jpg	sw_p
+sw_r	cate_1	Vitabu ya ABC	Rr	Philippa Kim and Yeongji Choi	book_sw_r.jpg	sw_r
+sw_s	cate_1	Vitabu ya ABC	Ss	Philippa Kim and Yeongji Choi	book_sw_s.jpg	sw_s
+sw_t	cate_1	Vitabu ya ABC	Tt	Philippa Kim and Yeongji Choi	book_sw_t.jpg	sw_t
+sw_u	cate_1	Vitabu ya ABC	Uu	Philippa Kim and Yeongji Choi	book_sw_u.jpg	sw_u
+sw_v	cate_1	Vitabu ya ABC	Vv	Philippa Kim and Yeongji Choi	book_sw_v.jpg	sw_v
+sw_w	cate_1	Vitabu ya ABC	Ww	Philippa Kim and Yeongji Choi	book_sw_w.jpg	sw_w
+sw_y	cate_1	Vitabu ya ABC	Yy	Philippa Kim and Yeongji Choi	book_sw_y.jpg	sw_y
+sw_z	cate_1	Vitabu ya ABC	Zz	Philippa Kim and Yeongji Choi	book_sw_z.jpg	sw_z
+sw_sh	cate_1	Vitabu ya ABC	Sh	Philippa Kim and Yeongji Choi	book_sw_sh.jpg	sw_sh
+sw_ng1	cate_1	Vitabu ya ABC	Ng'	Philippa Kim and Yeongji Choi	book_sw_ng1.jpg	sw_ng1
+sw_ng	cate_1	Vitabu ya ABC	Ng	Philippa Kim and Yeongji Choi	book_sw_ng.jpg	sw_ng
+sw_ny	cate_1	Vitabu ya ABC	Ny	Philippa Kim and Yeongji Choi	book_sw_ny.jpg	sw_ny
+sw_th	cate_1	Vitabu ya ABC	Th	Philippa Kim and Yeongji Choi	book_sw_th.jpg	sw_th
+sw_gh	cate_1	Vitabu ya ABC	Gh	Philippa Kim and Yeongji Choi	book_sw_gh.jpg	sw_gh
+sw_dh	cate_1	Vitabu ya ABC	Dh	Philippa Kim and Yeongji Choi	book_sw_dh.jpg	sw_dh
+sw_101	cate_2	Wasomaji wa awali	Usafiri	Ursula Nafula	book_sw_101_page_0.png	sw_101
+sw_102	cate_2	Wasomaji wa awali	Chakula kitamu	Pam Vachatimanont	book_sw_102_page_0.png	sw_102
+sw_103	cate_2	Wasomaji wa awali	Mkubwa na mdogo	Pam Vachatimanont	book_sw_103_page_0.png	sw_103
+sw_104	cate_2	Wasomaji wa awali	Vitu na rangi	Caren Echesa	book_sw_104_page_0.png	sw_104
+sw_105	cate_2	Wasomaji wa awali	Barua	Philippa Kim	book_sw_105_page_0.png	sw_105
+sw_106	cate_2	Wasomaji wa awali	Familia yangu	Philippa Kim	book_sw_106_page_0.png	sw_106
+sw_107	cate_2	Wasomaji wa awali	Mwili	Philippa Kim	book_sw_107_page_0.png	sw_107
+sw_108	cate_2	Wasomaji wa awali	Sura	Philippa Kim	book_sw_108_page_0.png	sw_108
+sw_109	cate_2	Wasomaji wa awali	Ninavaa...	Philippa Kim and Immaculate Kyamanywa	book_sw_109_page_0.png	sw_109
+sw_110	cate_2	Wasomaji wa awali	Wanyama wa Kufuga	Philippa Kim and Immaculate Kyamanywa	book_sw_110_page_0.png	sw_110
+sw_111	cate_2	Wasomaji wa awali	Wanyama Pori	Philippa Kim and Immaculate Kyamanywa	book_sw_111_page_0.png	sw_111
+sw_112	cate_2	Wasomaji wa awali	Shule	Philippa Kim	book_sw_112_page_0.png	sw_112
+sw_113	cate_2	Wasomaji wa awali	Anga	Pam Vachatimanont and Emily Eshman	book_sw_113_page_0.png	sw_113
+sw_114	cate_2	Wasomaji wa awali	Mti	Philippa Kim	book_sw_114_page_0.png	sw_114
+sw_115	cate_2	Wasomaji wa awali	Maumbo	Philippa Kim	book_sw_115_page_0.png	sw_115
+sw_116	cate_2	Wasomaji wa awali	Umri	Philippa Kim and Immaculate Kyamanywa	book_sw_116_page_0.png	sw_116
+sw_117	cate_2	Wasomaji wa awali	Majira	Philippa Kim and Immaculate Kyamanywa	book_sw_117_page_0.png	sw_117
+sw_118	cate_2	Wasomaji wa awali	Enda, enda, enda!	Pam Vachatimanont and Emily Eshman	book_sw_118_page_0.png	sw_118
+sw_201	cate_3	Wasomaji wa ngazi ya mwanzo	Unafanya nini?	Nina Orange	book_sw_201_page_0.png	sw_201
+sw_202	cate_3	Wasomaji wa ngazi ya mwanzo	Sura na hisia	Philippa Kim	book_sw_202_page_0.png	sw_202
+sw_203	cate_3	Wasomaji wa ngazi ya mwanzo	Wanyama	Philippa Kim	book_sw_203_page_0.png	sw_203
+sw_204	cate_3	Wasomaji wa ngazi ya mwanzo	Panya	Pam Vachatimanont	book_sw_204_page_0.png	sw_204
+sw_205	cate_3	Wasomaji wa ngazi ya mwanzo	Dunia	Pam Vachatimanont	book_sw_205_page_0.png	sw_205
+sw_206	cate_3	Wasomaji wa ngazi ya mwanzo	Wanyama wanalia	Philippa Kim	book_sw_206_page_0.png	sw_206
+sw_207	cate_3	Wasomaji wa ngazi ya mwanzo	Maumbo yapo kila mahali!	Philippa Kim and Immaculate Kyamanywa	book_sw_207_page_0.png	sw_207
+sw_208	cate_3	Wasomaji wa ngazi ya mwanzo	Nani anakula maembe? 	Philippa Kim	book_sw_208_page_0.png	sw_208
+sw_209	cate_3	Wasomaji wa ngazi ya mwanzo	Nani ana meno? 	Zanele Buthelezi, Thembani Dladla, Clare Verbeek	book_sw_209_page_0.png	sw_209
+sw_210	cate_3	Wasomaji wa ngazi ya mwanzo	Ninaweza!	Philippa Kim	book_sw_210_page_0.png	sw_210
+sw_211	cate_3	Wasomaji wa ngazi ya mwanzo	Mtoto mchanga	Jong Kwon Youn	book_sw_211_page_0.png	sw_211
+sw_301	cate_4	Wasomaji wanaoendelea	Paka wangu yuko wapi?	Philippa Kim	book_sw_301_page_0.png	sw_301
+sw_302	cate_4	Wasomaji wanaoendelea	Mamba mwenye njaa	Christian G.	book_sw_302_page_0.png	sw_302
+sw_303	cate_4	Wasomaji wanaoendelea	Mpira wangu mwekundu	Marion Drew	book_sw_303_page_0.png	sw_303
+sw_304	cate_4	Wasomaji wanaoendelea	Rangi za upinde wa mvua	Caren Echesa	book_sw_304_page_0.png	sw_304
+sw_305	cate_4	Wasomaji wanaoendelea	Raketi yangu iko wapi?	Meera Tendolkar, Madhav Chavan	book_sw_305_page_0.png	sw_305
+sw_306	cate_4	Wasomaji wanaoendelea	Simba na panya	Philippa Kim	book_sw_306_page_0.png	sw_306
+sw_307	cate_4	Wasomaji wanaoendelea	Nina maemba mangapi?	Philippa Kim and Immaculate Kyamanywa	book_sw_307_page_0.png	sw_307
+sw_308	cate_4	Wasomaji wanaoendelea	Miguu	Philippa Kim and Immaculate Kyamanywa	book_sw_308_page_0.png	sw_308
+sw_309	cate_4	Wasomaji wanaoendelea	Tito, Tina na paka	Jong Kwon Youn	book_sw_309_page_0.png	sw_309
+sw_310	cate_4	Wasomaji wanaoendelea	Ninamsaidia mama yangu	Pam Vachatimanont and Emily Eshman	book_sw_310_page_0.png	sw_310
+sw_311	cate_4	Wasomaji wanaoendelea	Maumbo yako wapi?	Pam Vachatimanont and Emily Eshman	book_sw_311_page_0.png	sw_311
+sw_401	cate_5	Wasomaji wa muendelezo	Marafiki Wazuri	Philippa Kim	book_sw_401_page_0.png	sw_401
+sw_402	cate_5	Wasomaji wa muendelezo	Marafiki	Zimbili Dlamini and Hlengiwe Zondi	book_sw_402_page_0.png	sw_402
+sw_403	cate_5	Wasomaji wa muendelezo	Nitumie nini kusafiri?	Ursula Nafula	book_sw_403_page_0.png	sw_403
+sw_404	cate_5	Wasomaji wa muendelezo	Khalai azungumza na mimea	Ursula Nafula	book_sw_404_page_0.png	sw_404
+sw_406	cate_5	Wasomaji wa muendelezo	Ng'ombe wetu Pendo	Ruth Odondi	book_sw_406_page_0.png	sw_406
+sw_407	cate_5	Wasomaji wa muendelezo	Tito na Takasa	Sorit Gupto	book_sw_407_page_0.png	sw_407
+sw_501	cate_5	Wasomaji wa muendelezo	Ndoa ya panya	Philippa Kim	book_sw_501_page_0.png	sw_501
+sw_502	cate_5	Wasomaji wa muendelezo	Usiku unaingia kijijini	Robert Ekula	book_sw_502_page_0.png	sw_502
+sw_503	cate_5	Wasomaji wa muendelezo	Jua la saba	Kamundi Mutugi	book_sw_503_page_0.png	sw_503
+sw_504	cate_5	Wasomaji wa muendelezo	Mbweha na zabibu chachu	Kholeka Mabeta	book_sw_504_page_0.png	sw_504
+sw_505	cate_5	Wasomaji wa muendelezo	Tembo na vyura	Mozambican students	book_sw_505_page_0.png	sw_505
+sw_506	cate_5	Wasomaji wa muendelezo	Mungu anapatia wanyama miguu	Mutugi Kamundi	book_sw_506_page_0.png	sw_506
+sw_901	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Hadithi ya KOBE	Oh Jinwon	book_sw_901_page_0.jpg	sw_901
+sw_902	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Mwinuko Miaka Mitatu	Oh Jinwon	book_sw_902_page_0.jpg	sw_902
+sw_903	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Thamani ya mchele	Oh Jinwon	book_sw_903_page_0.jpg	sw_903
+sw_904	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Mtu alikuwa na tezi	Oh Jinwon	book_sw_904_page_0.jpg	sw_904
+sw_905	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Mwalimu na Asali	Oh Jinwon	book_sw_905_page_0.jpg	sw_905
+sw_906	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Bei ya Harufu	Oh Jinwon	book_sw_906_page_0.jpg	sw_906
+sw_907	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Chui na Sungura	Oh Jinwon	book_sw_907_page_0.jpg	sw_907
+sw_908	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Hadithi ya Dan-Kun	Oh Jinwon	book_sw_908_page_0.jpg	sw_908
+sw_909	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Mvivu na kinyago cha ng'ombe	Oh Jinwon	book_sw_909_page_0.jpg	sw_909
+sw_910	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Pepeo Nyekundu na Bluu	Oh Jinwon	book_sw_910_page_0.jpg	sw_910
+sw_911	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Jua na Mwezi	Oh Jinwon	book_sw_911_page_0.jpg	sw_911
+sw_912	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Chura aliyefanya Kinyume	Oh Jinwon	book_sw_912_page_0.jpg	sw_912
+sw_913	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Hung-bu na nul-bu	Oh Jinwon	book_sw_913_page_0.jpg	sw_913
+sw_914	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Safari ya Baba Panya	Oh Jinwon	book_sw_914_page_0.jpg	sw_914
+sw_915	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Hadithi ya Sim-chung	Oh Jinwon	book_sw_915_page_0.jpg	sw_915
+sw_916	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Mti wa matunda na tajiri	Oh Jinwon	book_sw_916_page_0.jpg	sw_916
+sw_917	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Hadithi ya Mchoyo	Oh Jinwon	book_sw_917_page_0.jpg	sw_917
+sw_918	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Konokono na Kijana	Oh Jinwon	book_sw_918_page_0.jpg	sw_918
+sw_919	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Jogoo Aliyerudisha Fadhila	Oh Jinwon	book_sw_919_page_0.jpg	sw_919
+sw_920	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Kaka Wawili Waliosaidiana	Oh Jinwon	book_sw_920_page_0.jpg	sw_920
+sw_921	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	Pipa la Maajabu	Oh Jinwon	book_sw_921_page_0.jpg	sw_921
+sw_922	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	KYONU na ZIKNYO	Oh Jinwon	book_sw_922_page_0.jpg	sw_922
+sw_923	cate_6	Hadithi za Korea zikisimuliwa na Bwana Oh na wanafunzi wake	KONZI na PAZI	Oh Jinwon	book_sw_923_page_0.jpg	sw_923

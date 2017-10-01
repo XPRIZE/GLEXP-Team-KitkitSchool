@@ -9,9 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,41 +17,35 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
+
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import android.app.Activity;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import com.enuma.kitkitlogger.KitKitLogger;
+import com.enuma.kitkitlogger.KitKitLoggerActivity;
 
 
-public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, /*MediaPlayer.OnPreparedListener, */ VideoControllerView.MediaPlayerControl {
+public class VideoPlayerActivity extends KitKitLoggerActivity implements SurfaceHolder.Callback, /*MediaPlayer.OnPreparedListener, */ VideoControllerView.MediaPlayerControl {
 
     SurfaceView videoSurface;
     MediaPlayer player;
@@ -70,6 +62,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     ArrayList<MainActivity.VideoData> videoList;
     int curVideoIndex;
     String libPath;
+    ScrollView scrollView;
+    MainActivity.VideoData currentVideo;
 
 
     public class SettingsContentObserver extends ContentObserver {
@@ -121,7 +115,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 |View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
@@ -129,6 +122,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
 
         setContentView(R.layout.activity_video_player);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.library_icon_back);
@@ -139,7 +133,21 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             }
         });
 
+        scrollView = (ScrollView)findViewById(R.id.scrollView);
+        scrollView.setVisibility(View.GONE);
+
+        Button closeButton = (Button)findViewById(R.id.button_close);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.setVisibility(View.GONE);
+            }
+        });
+
         Button expandButton = (Button)findViewById(R.id.expand_button);
+        expandButton.setVisibility(View.INVISIBLE);
+
+        /*
         expandButton.setText(R.string.button_more);
         expandButton.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_more),null,null,null);
 
@@ -147,18 +155,20 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             @Override
             public void onClick(View v) {
                 Button btn = (Button)v;
-                if (mLinearLayout.getVisibility()==View.GONE){
-                    expand();
-
-                    btn.setText(R.string.button_less);
-                    btn.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_less),null,null,null);
-                }else{
-                    collapse();
-                    btn.setText(R.string.button_more);
-                    btn.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_more),null,null,null);
-                }
+                scrollView.setVisibility(View.VISIBLE);
+//                if (mLinearLayout.getVisibility()==View.GONE){
+//                    expand();
+//
+//                    btn.setText(R.string.button_less);
+//                    btn.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_less),null,null,null);
+//                }else{
+//                    collapse();
+//                    btn.setText(R.string.button_more);
+//                    btn.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_more),null,null,null);
+//                }
             }
         });
+*/
 
         player = new MediaPlayer();
         controller = new VideoControllerView(this);
@@ -208,25 +218,25 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
         });
 
 
-        mLinearLayout = (LinearLayout)findViewById(R.id.expandable_layout);
-        mLinearLayout.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-
-                    @Override
-                    public boolean onPreDraw() {
-                        Log.d("videoactivity","predraw");
-                        mLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-                        mLinearLayout.setVisibility(View.GONE);
-
-                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                        Log.d("videoactivity","width spec : " + widthSpec + "height spec : "+heightSpec);
-                        mLinearLayout.measure(widthSpec, heightSpec);
-
-                        mAnimator = slideAnimator(0, mLinearLayout.getMeasuredHeight());
-                        return true;
-                    }
-                });
+//        mLinearLayout = (LinearLayout)findViewById(R.id.expandable_layout);
+//        mLinearLayout.getViewTreeObserver().addOnPreDrawListener(
+//                new ViewTreeObserver.OnPreDrawListener() {
+//
+//                    @Override
+//                    public boolean onPreDraw() {
+//                        Log.d("videoactivity","predraw");
+//                        mLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+//                        mLinearLayout.setVisibility(View.GONE);
+//
+//                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//                        Log.d("videoactivity","width spec : " + widthSpec + "height spec : "+heightSpec);
+//                        mLinearLayout.measure(widthSpec, heightSpec);
+//
+//                        mAnimator = slideAnimator(0, mLinearLayout.getMeasuredHeight());
+//                        return true;
+//                    }
+//                });
 
 
         mSettingsContentObserver = new SettingsContentObserver(this,new Handler(), volumeSeekbar);
@@ -259,10 +269,22 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     protected void onDestroy() {
         super.onDestroy();
 
+        try {
+            KitKitLogger logger = ((LibraryApplication)getApplication()).getLogger();
+            logger.logEvent("VideoPlayerActivity","exit_video",currentVideo.title,player.getCurrentPosition());
+
+        }
+        catch (NullPointerException ne) {
+            KitKitLogger logger = ((LibraryApplication)getApplication()).getLogger();
+            logger.logEvent("VideoPlayerActivity","exit_video","",0);
+        }
+
         if (player!=null) {
             player.release();
         }
         player = null;
+
+
     }
 
     @Override
@@ -274,20 +296,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     }
 
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    |View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
-        }
-
-
-    }
-
     private void setCurrentVideo(MainActivity.VideoData video)
     {
 //        String videoPath = bundle.getString("videoPath");
@@ -296,7 +304,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 //        String info = bundle.getString("videoInfo");
 
 
-        MainActivity.VideoData currentVideo = video;
+        currentVideo = video;
         String videoPath = libPath + File.separator + currentVideo.filename;
         //Log.d("VideoPlayerActivity","cur video path : " + videoPath);
         String videoTitle = currentVideo.title;
@@ -329,8 +337,19 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
                 //player.setDataSource(getAssets().openFd(video.filename));
                 //player.setDataSource(getAssets().openFd(video.filename).getFileDescriptor());
                 //player.setDataSource(getAssets().openFd(video.filename));
-                AssetFileDescriptor fd = getAssets().openFd(video.filename);
-                player.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+
+                try {
+                    AssetFileDescriptor fd = getAssets().openFd(video.filename);
+                    player.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+                }
+                catch (FileNotFoundException fe) {
+                    StringTokenizer tokenizer = new StringTokenizer(video.filename,".");
+                    String videoFilenameWithoutExtention = (String)tokenizer.nextElement();
+
+                    String uriString = "android.resource://" + getPackageName() + "/raw/" + videoFilenameWithoutExtention;
+                    player.setDataSource(getApplication(), Uri.parse(uriString));
+
+                }
 
             }
 
@@ -394,6 +413,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     if (!mediaPlayer.isPlaying()) {
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
                         nextLinearLayout.setVisibility(View.VISIBLE);
                         Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
                         nextLinearLayout.startAnimation(fadeInAnimation);
@@ -609,6 +630,10 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
         isPaused = true;
         currentPosition = player.getCurrentPosition();
         player.pause();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        KitKitLogger logger = ((LibraryApplication)getApplication()).getLogger();
+        logger.logEvent("VideoPlayerActivity","pause_video",currentVideo.title,player.getCurrentPosition());
+
     }
 
     @Override
@@ -618,6 +643,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     @Override
     public void start() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         if (isPaused) {
             if (currentPosition<0) currentPosition = 0;
             if (currentPosition>player.getDuration()-10) currentPosition = player.getDuration()-10;
@@ -625,6 +652,10 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             isPaused = false;
         }
         player.start();
+
+        KitKitLogger logger = ((LibraryApplication)getApplication()).getLogger();
+        logger.logEvent("VideoPlayerActivity","start_video",currentVideo.title,0);
+
     }
 
 

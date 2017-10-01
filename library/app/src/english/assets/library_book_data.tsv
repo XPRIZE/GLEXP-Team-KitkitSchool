@@ -1,0 +1,85 @@
+# 데이터를 변경하려면:
+#     우선 Google Spreadsheet상에서 이 파일을 수정한 후에
+#     File > Download as > Tab-separated values (.tsv) 를 선택합니다.
+#     다운로드한 파일 이름을 library_book_data.tsv 으로 변경합니다.
+#     테스트할 기기의 Documents/Books에 tsv 파일과 thumbnail을 복사해 넣습니다.
+#          Category field는 코드에서 사용하는 부분이기 때문에 한번 추가 되면 변경하지 마시고 categoryname을 변경해주시기 바랍니다
+#id	category	categoryname	title	author	thumbnail	foldername
+en_a	cate_1	ABC Readers	Aa	Pam Vachatimanont and Emily Eshman	book_en_a.jpg	en_a
+en_b	cate_1	ABC Readers	Bb	Pam Vachatimanont and Emily Eshman	book_en_b.jpg	en_b
+en_c	cate_1	ABC Readers	Ch	Pam Vachatimanont and Emily Eshman	book_en_c.jpg	en_c
+en_d	cate_1	ABC Readers	Dd	Pam Vachatimanont and Emily Eshman	book_en_d.jpg	en_d
+en_e	cate_1	ABC Readers	Ee	Pam Vachatimanont and Emily Eshman	book_en_e.jpg	en_e
+en_f	cate_1	ABC Readers	Ff	Pam Vachatimanont and Emily Eshman	book_en_f.jpg	en_f
+en_g	cate_1	ABC Readers	Gg	Pam Vachatimanont and Emily Eshman	book_en_g.jpg	en_g
+en_h	cate_1	ABC Readers	Hh	Pam Vachatimanont and Emily Eshman	book_en_h.jpg	en_h
+en_i	cate_1	ABC Readers	Ii	Pam Vachatimanont and Emily Eshman	book_en_i.jpg	en_i
+en_j	cate_1	ABC Readers	Jj	Pam Vachatimanont and Emily Eshman	book_en_j.jpg	en_j
+en_k	cate_1	ABC Readers	Kk	Pam Vachatimanont and Emily Eshman	book_en_k.jpg	en_k
+en_l	cate_1	ABC Readers	Ll	Pam Vachatimanont and Emily Eshman	book_en_l.jpg	en_l
+en_m	cate_1	ABC Readers	Mm	Pam Vachatimanont and Emily Eshman	book_en_m.jpg	en_m
+en_n	cate_1	ABC Readers	Nn	Pam Vachatimanont and Emily Eshman	book_en_n.jpg	en_n
+en_o	cate_1	ABC Readers	Oo	Pam Vachatimanont and Emily Eshman	book_en_o.jpg	en_o
+en_p	cate_1	ABC Readers	Pp	Pam Vachatimanont and Emily Eshman	book_en_p.jpg	en_p
+en_q	cate_1	ABC Readers	Qq	Pam Vachatimanont and Emily Eshman	book_en_q.jpg	en_q
+en_r	cate_1	ABC Readers	Rr	Pam Vachatimanont and Emily Eshman	book_en_r.jpg	en_r
+en_s	cate_1	ABC Readers	Ss	Pam Vachatimanont and Emily Eshman	book_en_s.jpg	en_s
+en_t	cate_1	ABC Readers	Tt	Pam Vachatimanont and Emily Eshman	book_en_t.jpg	en_t
+en_u	cate_1	ABC Readers	Uu	Pam Vachatimanont and Emily Eshman	book_en_u.jpg	en_u
+en_v	cate_1	ABC Readers	Vv	Pam Vachatimanont and Emily Eshman	book_en_v.jpg	en_v
+en_w	cate_1	ABC Readers	Ww	Pam Vachatimanont and Emily Eshman	book_en_w.jpg	en_w
+en_x	cate_1	ABC Readers	Xx	Pam Vachatimanont and Emily Eshman	book_en_x.jpg	en_x
+en_y	cate_1	ABC Readers	Yy	Pam Vachatimanont and Emily Eshman	book_en_y.jpg	en_y
+en_z	cate_1	ABC Readers	Zz	Pam Vachatimanont and Emily Eshman	book_en_z.jpg	en_z
+en_101	cate_2	Early Readers	Transport	Ursula Nafula	book_en_101_page_0.png	en_101
+en_102	cate_2	Early Readers	Yummy Foods	Pam Vachatimanont	book_en_102_page_0.png	en_102
+en_103	cate_2	Early Readers	Big and Small	Pam Vachatimanont	book_en_103_page_0.png	en_103
+en_104	cate_2	Early Readers	Colors	Caren Echesa	book_en_104_page_0.png	en_104
+en_105	cate_2	Early Readers	Let's Write a Letter	Philippa Kim	book_en_105_page_0.png	en_105
+en_106	cate_2	Early Readers	I Love My Family	Philippa Kim	book_en_106_page_0.png	en_106
+en_107	cate_2	Early Readers	Body	Philippa Kim	book_en_107_page_0.png	en_107
+en_108	cate_2	Early Readers	Face	Philippa Kim	book_en_108_page_0.png	en_108
+en_109	cate_2	Early Readers	What We Wear	Philippa Kim and Immaculate Kyamanywa	book_en_109_page_0.png	en_109
+en_110	cate_2	Early Readers	Farm Animals	Philippa Kim and Immaculate Kyamanywa	book_en_110_page_0.png	en_110
+en_111	cate_2	Early Readers	Wild Animals	Philippa Kim and Immaculate Kyamanywa	book_en_111_page_0.png	en_111
+en_112	cate_2	Early Readers	School	Philippa Kim	book_en_112_page_0.png	en_112
+en_113	cate_2	Early Readers	Our Sky	Pam Vachatimanont and Emily Eshman	book_en_113_page_0.png	en_113
+en_114	cate_2	Early Readers	Tree	Philippa Kim	book_en_114_page_0.png	en_114
+en_115	cate_2	Early Readers	Shapes	Philippa Kim	book_en_115_page_0.png	en_115
+en_116	cate_2	Early Readers	Stages of Life	Philippa Kim and Immaculate Kyamanywa	book_en_116_page_0.png	en_116
+en_117	cate_2	Early Readers	Time	Philippa Kim and Immaculate Kyamanywa	book_en_117_page_0.png	en_117
+en_118	cate_2	Early Readers	Move, Move, Move!	Pam Vachatimanont and Emily Eshman	book_en_118_page_0.png	en_118
+en_201	cate_3	Beginning Readers	What Do You Like Doing?	Nina Orange	book_en_201_page_0.png	en_201
+en_202	cate_3	Beginning Readers	My Emotions	Philippa Kim	book_en_202_page_0.png	en_202
+en_203	cate_3	Beginning Readers	Big, Small and Strong	Philippa Kim	book_en_203_page_0.png	en_203
+en_204	cate_3	Beginning Readers	Oh, Rats.	Pam Vachatimanont	book_en_204_page_0.png	en_204
+en_205	cate_3	Beginning Readers	The World	Pam Vachatimanont	book_en_205_page_0.png	en_205
+en_206	cate_3	Beginning Readers	Woof! Meow! Quack!	Philippa Kim	book_en_206_page_0.png	en_206
+en_207	cate_3	Beginning Readers	Shapes Are Everywhere!	Philippa Kim and Immaculate Kyamanywa	book_en_207_page_0.png	en_207
+en_208	cate_3	Beginning Readers	Who Eats Mangoes? 	Philippa Kim	book_en_208_page_0.png	en_208
+en_209	cate_3	Beginning Readers	Who Has Teeth? 	Zanele Buthelezi, Thembani Dladla, Clare Verbeek	book_en_209_page_0.png	en_209
+en_210	cate_3	Beginning Readers	I Can!	Philippa Kim	book_en_210_page_0.png	en_210
+en_211	cate_3	Beginning Readers	When She Grows Up	Jong Kwon Youn	book_en_211_page_0.png	en_211
+en_302	cate_4	Developing Readers	The Hungry Crocodile	Christian G.	book_en_302_page_0.png	en_302
+en_303	cate_4	Developing Readers	My Red Ball	Marion Drew	book_en_303_page_0.png	en_303
+en_304	cate_4	Developing Readers	Do You Know the Colors of the Rainbow?	Caren Echesa	book_en_304_page_0.png	en_304
+en_305	cate_4	Developing Readers	Where is My Bat? 	Meera Tendolkar, Madhav Chavan	book_en_305_page_0.png	en_305
+en_306	cate_4	Developing Readers	The Lion and the Mouse	Philippa Kim	book_en_306_page_0.png	en_306
+en_307	cate_4	Developing Readers	Icky, Icky	Philippa Kim	book_en_307_page_0.png	en_307
+en_308	cate_4	Developing Readers	How Many Mangoes? 	Philippa Kim and Immaculate Kyamanywa	book_en_308_page_0.png	en_308
+en_309	cate_4	Developing Readers	Legs	Philippa Kim and Immaculate Kyamanywa	book_en_309_page_0.png	en_309
+en_310	cate_4	Developing Readers	Luis, Keiko and the Cats	Jong Kwon Youn	book_en_310_page_0.png	en_310
+en_311	cate_4	Developing Readers	I Help My Mom	Pam Vachatimanont and Emily Eshman	book_en_311_page_0.png	en_311
+en_312	cate_4	Developing Readers	Where are the Shapes? 	Pam Vachatimanont and Emily Eshman	book_en_312_page_0.png	en_312
+en_401	cate_5	Advanced Readers	Good Friends	Philippa Kim	book_en_401_page_0.png	en_401
+en_402	cate_5	Advanced Readers	Friends	Zimbili Dlamini and Hlengiwe Zondi	book_en_402_page_0.png	en_402
+en_403	cate_5	Advanced Readers	How Should I Travel Today?	Ursula Nafula	book_en_403_page_0.png	en_403
+en_406	cate_5	Advanced Readers	My Favorite Cow	Ruth Odondi	book_en_406_page_0.png	en_406
+en_408	cate_5	Advanced Readers	Wangari Maathai	Mike Jaffe	book_en_408_page_0.png	en_408
+en_409	cate_5	Advanced Readers	To the Moon!	Mike Jaffe	book_en_409_page_0.png	en_409
+en_501	cate_5	Advanced Readers	Who Will Marry Mouse?	Philippa Kim	book_en_501_page_0.png	en_501
+en_503	cate_5	Advanced Readers	The Seventh Sun	Kamundi Mutugi	book_en_503_page_0.png	en_503
+en_504	cate_5	Advanced Readers	The Fox and the Grapes	Kholeka Mabeta	book_en_504_page_0.png	en_504
+en_505	cate_5	Advanced Readers	The Elephant and the Frogs	Mozambican students	book_en_505_page_0.png	en_505
+en_508	cate_5	Advanced Readers	Tall Tumo	Mutugi Kamundi	book_en_508_page_0.png	en_508
+en_510	cate_5	Advanced Readers	Khalai, the Girl who Loves Plants	Ursula Nafula	book_en_510_page_0.png	en_510

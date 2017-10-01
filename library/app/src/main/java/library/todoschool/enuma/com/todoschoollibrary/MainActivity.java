@@ -2,6 +2,8 @@ package library.todoschool.enuma.com.todoschoollibrary;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
@@ -23,9 +25,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -36,13 +40,17 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.enuma.kitkitlogger.KitKitLogger;
+import com.enuma.kitkitlogger.KitKitLoggerActivity;
 
 
 /**
  * Created by ingtellect on 11/18/16.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends KitKitLoggerActivity {
 
     LayoutParams params;
     int viewWidth;
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     static boolean useExternalData = false;
     private String TAG = "MainActivity";
+
+    private static LibraryApplication application;
 
 
     public static int dpTopx(int dp, Context context) {
@@ -99,8 +109,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onResume() {
+            super.onResume();
+            KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
+            logger.tagScreen(TAG);
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.d(TAG,"onCreateView videoFragment");
             Boolean foundVideoFiles;
 
             TreeMap<String, ArrayList<VideoData>> data = new TreeMap<String, ArrayList<VideoData>>();
@@ -148,10 +166,13 @@ public class MainActivity extends AppCompatActivity {
 
 //                        Log.d("data-test", video.id + " " + video.category + " " + video.title + " " + video.thumbnail + " " + video.filename);
 
-                        video.lyrics = video.lyrics.replaceAll("\\\\n ", "\n");
-                        video.info = video.info.replaceAll("\\\\n ", "\n");
-                        //Log.d("data-test","lyrics : " + video.lyrics);
-                        //Log.d("data-test","info : "+ video.info);
+//                        Log.d("data-test","lyrics-org : " + video.lyrics);
+//                        Log.d("data-test","info-org : "+ video.info);
+                        video.lyrics = video.lyrics.replaceAll("\\\\n ", "\n").replaceAll("\\\\n","\n");
+
+                        video.info = video.info.replaceAll("\\\\n ", "\n").replaceAll("\\\\n","\n");
+//                        Log.d("data-test","lyrics : " + video.lyrics);
+//                        Log.d("data-test","info : "+ video.info);
 
                         ArrayList<VideoData> videoArrayForMap;
 
@@ -294,6 +315,10 @@ public class MainActivity extends AppCompatActivity {
                     hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv2_wrapper);
                     categoryTitle = (TextView) rootView.findViewById(R.id.musicvideo_title_textView);
                 }
+                else if(category.equals("video")) {
+                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv3_wrapper);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.video_title_textView);
+                }
                 else {
                     continue;
                 }
@@ -327,19 +352,25 @@ public class MainActivity extends AppCompatActivity {
                     //imageButton.setTag(1, libPath + File.separator + video.filename);
                     imageButton.setTag(video);
                     Drawable thumbnail = null;
+                    Bitmap thumbnailBitmap = null;
                     if (useExternalData) {
                         String thumbnailPath = libPath + File.separator + video.thumbnail;
                         thumbnail = Drawable.createFromPath(thumbnailPath);
+                        imageButton.setImageDrawable(thumbnail);
                     }
                     else {
-                        try {
-                            thumbnail = Drawable.createFromStream(getContext().getAssets().open(video.thumbnail), null);
-                        }
-                        catch (IOException ex) {
-
-                        }
+                        thumbnailBitmap = loadVideoThumbnail(video);
+                        imageButton.setImageBitmap(thumbnailBitmap);
+//                        try {
+//                            //thumbnail = Drawable.createFromStream(getContext().getAssets().open(video.thumbnail), null);
+//
+//                        }
+//                        catch (IOException ex) {
+//
+//                        }
                     }
-                    imageButton.setImageDrawable(thumbnail);
+
+
                     imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -354,6 +385,18 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("currentVideoIndex",curVideoIndex);
 
                             startActivity(intent);
+                            try {
+                                KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
+                                logger.logEvent("library","start_video",video.title,0);
+                            }
+                            catch (NullPointerException ne) {
+                                ne.printStackTrace();
+                                Log.e(TAG, ne.getMessage());
+                            }
+                            catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+
                         }
                     });
                 }
@@ -364,7 +407,33 @@ public class MainActivity extends AppCompatActivity {
             return rootView;
 
         }
+
+        public Bitmap loadVideoThumbnail(VideoData video)
+        {
+            Bitmap thumbnail = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inPreferredConfig = Bitmap.Config.RGB_565;
+//            //options.inJustDecodeBounds = true;
+//            options.inSampleSize = 8;
+            try {
+                thumbnail = BitmapFactory.decodeStream(getContext().getAssets().open(video.thumbnail), null, options);
+            }
+            catch (IOException e) {
+                return null;
+            }
+
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+            String imageType = options.outMimeType;
+            return thumbnail;
+
+        }
+
+
+
     }
+
+
 
     public static class BookFragment extends Fragment {
         private String TAG = "BookFragment";
@@ -375,12 +444,60 @@ public class MainActivity extends AppCompatActivity {
             fragment.setArguments(args);
             return fragment;
         }
-        TreeMap<String, BookData> bookDataTreeMap;
+        //TreeMap<String, BookData> bookDataTreeMap;
+
+        public Bitmap loadBookThumbnail(BookData bookData)
+        {
+            Bitmap thumbnail = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inPreferredConfig = Bitmap.Config.RGB_565;
+//            //options.inJustDecodeBounds = true;
+//            options.inSampleSize = 8;
+            try {
+
+                String filename = "";
+                filename = bookData.thumbnail;
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int density = metrics.densityDpi;
+//                Log.d("density",new Integer(density).toString());
+
+                if (density < DisplayMetrics.DENSITY_XHIGH) {
+//                    Log.d("filename",filename);
+
+                    StringTokenizer tokenizer = new StringTokenizer(bookData.thumbnail,".");
+                    filename = tokenizer.nextElement().toString() + "_hdpi." + tokenizer.nextElement().toString();
+
+                }
+
+                thumbnail = BitmapFactory.decodeStream(getContext().getAssets().open(filename), null, options);
+
+            }
+            catch (IOException e) {
+                Log.e(TAG,"IOException in book thumbnail");
+                return null;
+            }
+
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+            String imageType = options.outMimeType;
+            return thumbnail;
+
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
+            logger.tagScreen(TAG);
+        }
+
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
+            Log.d(TAG,"onCreateView bookFragment");
             TreeMap<String, ArrayList<BookData>> data = new TreeMap<String, ArrayList<BookData>>();
 
             File docsFolder =
@@ -458,7 +575,7 @@ public class MainActivity extends AppCompatActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_book, container, false);
 
-            boolean cate4Exist = false;
+            boolean cate6Exist = false;
 
             for(Map.Entry<String, ArrayList<BookData>> entry : data.entrySet()) {
                 String category = entry.getKey();
@@ -479,10 +596,13 @@ public class MainActivity extends AppCompatActivity {
                 } else if (category.equals("cate_4")) {
                     hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv4_wrapper);
                     categoryTitle = (TextView) rootView.findViewById(R.id.book4_title_textView);
-                    cate4Exist = true;
-//                } else if (category.equals("cate_5")) {
-//                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv5_wrapper);
-//                    categoryTitle = (TextView) rootView.findViewById(R.id.book5_title_textView);
+                } else if (category.equals("cate_5")) {
+                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv5_wrapper);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book5_title_textView);
+                } else if (category.equals("cate_6")) {
+                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv6_wrapper);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book6_title_textView);
+                    cate6Exist = true;
                 } else {
                     continue;
                 }
@@ -522,17 +642,24 @@ public class MainActivity extends AppCompatActivity {
                     if (useExternalData) {
                         String thumbnailPath = libPath + File.separator + book.thumbnail;
                         thumbnail = Drawable.createFromPath(thumbnailPath);
+                        imageButton.setImageDrawable(thumbnail);
                     }
                     else {
-                        try {
-                            thumbnail = Drawable.createFromStream(getContext().getAssets().open(book.thumbnail), null);
-                        }
-                        catch (IOException ex) {
-
-                        }
+                        Bitmap thumbnailBitmap= loadBookThumbnail(book);
+                        imageButton.setImageBitmap(thumbnailBitmap);
+//                        thumbnailBitmap.recycle();
+//                        thumbnailBitmap = null;
+//
+//                        try {
+//                            //thumbnail = Drawable.createFromStream(getContext().getAssets().open(book.thumbnail), null);
+//
+//                        }
+//                        catch (IOException ex) {
+//
+//                        }
                     }
 
-                    imageButton.setImageDrawable(thumbnail);
+
                     imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -540,6 +667,18 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("book",view.getTag().toString());
                         Log.d("booktest", view.getTag().toString());
                         startActivity(intent);
+                        try {
+                            KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
+                            logger.logEvent("library","start_book",view.getTag().toString(),0);
+
+                        }
+                        catch (NullPointerException ne) {
+                            ne.printStackTrace();
+                            Log.e(TAG, ne.getMessage());
+                        }
+                        catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
 
                         }
                     });
@@ -548,10 +687,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            if (!cate4Exist) {
-                View hsv4 = rootView.findViewById(R.id.hsv4);
-                TextView categoryTitle = (TextView) rootView.findViewById(R.id.book4_title_textView);
-                hsv4.setVisibility(View.GONE);
+            if (!cate6Exist) {
+                View hsv6 = rootView.findViewById(R.id.hsv6);
+                TextView categoryTitle = (TextView) rootView.findViewById(R.id.book6_title_textView);
+                hsv6.setVisibility(View.GONE);
                 categoryTitle.setVisibility(View.GONE);
             }
 
@@ -584,6 +723,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d(TAG,"onCreate()");
         hideSystemUI();
 
         setContentView(R.layout.activity_main);
@@ -632,6 +772,7 @@ public class MainActivity extends AppCompatActivity {
         layouts = new ArrayList<LinearLayout>();
         params = new LayoutParams(viewWidth, LayoutParams.WRAP_CONTENT);
 
+        viewPager.setCurrentItem(getIntent().getIntExtra("tab",0));
 
     }
 

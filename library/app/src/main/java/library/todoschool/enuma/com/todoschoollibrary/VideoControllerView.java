@@ -452,10 +452,10 @@ public class VideoControllerView extends FrameLayout {
         }
         
         if (mPlayer.isFullScreen()) {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_shrink);
+//            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_shrink);
         }
         else {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_stretch);
+//            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_stretch);
         }
     }
 
