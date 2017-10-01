@@ -1,33 +1,43 @@
-# Kitkit School 
+# Kitkit School
 
-Kitkit School consists of five apps as following:
+Kitkit School consists of nine apps as following:
 
-1. Launcher 
-* A home screen app, from where other apps are launched. 
+1. Launcher
+* A home screen app, from where other apps are launched.
 
-2. Lock Screen 
-* This app appears when the device wakes up. 
-* The device will be unlocked by touching the Kitkit School icon in the middle. 
+2. Lock Screen
+* This app appears when the device wakes up.
+* The device will be unlocked by touching the Kitkit School icon in the middle.
 
-3. Library 
-* A collection of videos and books for children to enjoy. 
-* Video will play in place, while a separate book viewer will open to read a book. 
+3. Library
+* A collection of videos and books for children to enjoy.
+* Video will play in place, while a separate book viewer will open to read a book.
 
 4. Book Viewer
 * Book viewer app, which reads aloud most of books. The app will also read each word when one is touched.   
 
 5. Main App
-* Main learning app with tailored curriculum. 
+* Main learning app with tailored curriculum.
 
-The first three apps (Launcher, LockScreen, Library) are built using Android Studio, while the other two (Book Viewer and MainApp) are made upon cocos2d-x engine. 
+6. Blackboard
+7. Drawing
+8. Drum
+9. Marimba
+* Additional tools/toys as rewards
 
+Most of the apps above share code from kitkitshcoollogger
+10. KitkitSchoolLogger
+* not a stand-alone app, but the code is shared among other apps
+
+
+Book Viewer and MainApp are made upon cocos2d-x engine, while others are native Android apps written in Java
 
 
 # Build Environment #
 
-This section describes the build environment we were using. 
-Please note that we've used macOS version 10.11 and 10.12. 
-It may work with other OS/Tool versions, but not verified. 
+This section describes the build environment we were using.
+Please note that we've used macOS version 10.11 and 10.12.
+It may work with other OS/Tool versions, but not verified.
 
 
 1. Download Cocos2dx-3.10
@@ -74,80 +84,74 @@ It may work with other OS/Tool versions, but not verified.
 # Copy Resources Files #
 
 Now the environment is setup, but we are not ready to build the apps yet.  
-Due to the large amount of resources, we could not put all the necessary resources into Githug. Instead, they are stored in Box folder. 
+Due to the large amount of resources, we could not put all the necessary resources into Githug. Instead, they are stored in Box folder.
 
 1. Library
-* target directory is library/app/src/main/assets
-* copy files from resources/library/en/assets into the target directory for English version
-* copy files from resources/library/sw/assets into the target directory for Swahili version
+* target directory is library/app/src/main/assets and library/app/src/main/res
+* copy files from each language pack into the target directory
 
 2. Book Viewer
 * target directory is bookviewer/Resources
-* copy files from resources/bookviewer/Resources into the target directory
+* copy files from each language pack into the target directory
 
 3. Main App
 * target directory is mainapp/Resources
-* copy files from resources/mainapp/Resources into the target directory
-* also copy pre-built library from resources/mainapp/cocos2d to mainapp/cocos2d
+* copy files from each language pack into the target directory
+* also copy pre-built library from cocos2d.tar.gz to mainapp/cocos2d
 
 
 
 # Build APKs #
 
 
-1. Apps built with Android Studio (Launcher, Lock Screen, Library) 
+1. Apps built with Android Studio (Launcher, Lock Screen, Library, and other tools)
 
-We have to build unsigned-release APKs for Android Studio based apps. 
-One way to do this is, 
 - open the "Build Variants" tab at left-bottom
-- set the 'Build Variant' to release
+- set the 'Build Variant' of 'app' to swahiliDebug or englishDebug, respectively
+- build variant of kitkitlogger will be set automatically (swahiliRelease or englishRelease)
 - from the top menu, choose Build > Build APK
 
-Another way is to create a Gradle task by 
-- open Run/Debug Configuration menu by press "app" button on the menu bar, then choose "Edit Configuration"
-- add a Gradle Task and give a name like "assemble" 
-- run the task 
 
-The resulting APK will be generated in app/build/outputs/apk/[appname]-release-unsigned.apk
+The resulting APK will be generated in app/build/outputs/apk/[appname]-[language]-debug.apk
 
 
-2. Apps based on cocos2d-x (Book Viewer, Main App) 
+2. Apps based on cocos2d-x (Book Viewer, Main App)
 
-For those apps, a command line tool is used to generate signed-release APKs. 
-The key is pushed to Github - if you want to use your own key, change the keystore and proj.android/ant.properties
+For those apps, a command line tool is used to generate APKs.
 
-The command is simple: 
-> cocos compile -p android -m release
+The command is:
+> cocos compile -p android --android-studio
 
-in each app's directory. 
+in each app's directory.
 
-APK will be generated in bin/release/android
+APK will be generated in proj.android-studio/app/build/outputs/apk/[appname]-[language]-debug.apk
 
 
 
 # Language Settings #
 
-Some apps need to change a few lines of the source code or resource files to build a binary for the other language. 
+Some apps need to change a few lines of the source code or resource files to build a binary for the other language.
 
 
-1. Launcher and Lock Screen 
-* They look at the system language and use the localized string accordingly, so you just need one binary for both languages. 
+1. Launcher and Lock Screen
+* choose build variants respectively.
 
-2. Library 
-* As mentioned in the previous section, the whole assets need to be replaced 
-    * resources/library/en/assets -> library/app/src/main/assets for English
-    * resources/library/sw/assets -> library/app/src/main/assets for Swahili
+2. Library
+* choose build variants respectively.
+* copy the resources as described above
 
 3. Book Viewer
+* copy the resources as described above
 * change line 7 of Classes/MainScene.h
     * for English
     > #define IS_ENGLISH (true)
-    
+
     * for Swahili
     > #define IS_ENGLISH (false)
 
 
 4. Main App
+* copy the resources as described above
 * change line 31 of Classes/Managers/LanguageManager.cpp
     * for English
     > auto defaultLang = LanguageType::ENGLISH;
@@ -159,21 +163,23 @@ Some apps need to change a few lines of the source code or resource files to bui
 
 # Build AOSP to make image #
 
-With all the APKs, it is time to build an image. 
-We used a machine with ubuntu 16.04 LTS for that purpose. 
+With all the APKs, it is time to build an image.
+We used a machine with ubuntu 16.04 LTS for that purpose.
 
 
 
 1.
-Follow this 
+Follow this
 https://source.android.com/source/requirements.html
 https://source.android.com/source/downloading.html
 https://source.android.com/source/building.html
-need at least 150G of empty space. 
+need at least 150G of empty space.
 
 2.
+all the apps are signed with the platform key
+only mainapp will be installed in userdata.img, while other apps will be placed in system.img
+
 make a folder to <aosp root>/package/app/<app name>
-: BookTest / TodoSchool / TodoSchoolLauncher / TodoSchoolLibrary / TodoSchoolLockScreen
 
 put *.apk file to the folder and make Android.mk and fill with
 
@@ -181,7 +187,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := < your app folder name >
-LOCAL_CERTIFICATE := < desired key >
+LOCAL_CERTIFICATE := platform
 LOCAL_SRC_FILES := < app apk filename >
 LOCAL_MODULE_CLASS := APPS
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
@@ -195,17 +201,17 @@ to put the apk in the /data/app, add this line
 LOCAL_MODULE_PATH := $(TARGET_OUT_DATA)/app
 
 for system privileged app add this line (apk will be in /system/priv-app)
-LOCAL_PRIVILEGED_MODULE := true 
+LOCAL_PRIVILEGED_MODULE := true
 
 step 3.
 edit device/google/dragon/device.mk
-add package name to 
+add package name to
 PRODUCT_PACKAGES += < package name >
 
 step 4.
 to create userdata.img
 edit device/google/dragon/BoardConfig.mk
-add 
+add
 
 #userdata
 #for 32GB device
@@ -227,7 +233,7 @@ Fix for Marshmallow on ubuntu
 
 art/build/Android.common_build.mk
 line 75
-change 
+change
 ifneq ($(Without_HOST_CLANG),true)
 to
 ifeq ($(WITHOUT_HOST_CLANG),false)
