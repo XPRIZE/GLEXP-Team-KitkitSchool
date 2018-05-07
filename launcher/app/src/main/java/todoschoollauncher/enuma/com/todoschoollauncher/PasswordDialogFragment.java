@@ -5,8 +5,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +25,7 @@ public class PasswordDialogFragment extends DialogFragment {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface PasswordDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog, String redirectTo);
         public void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -58,12 +61,15 @@ public class PasswordDialogFragment extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_password, null);
         passwordEditText = (EditText) dialogView.findViewById(R.id.password);
 
+        Log.d("frag args", this.getArguments().getString("userobject"));
+        final String redirectToClass = this.getArguments().getString("userobject");
+
         builder.setView(dialogView)
-                .setPositiveButton(R.string.setting_activity_title, new DialogInterface.OnClickListener() {
+                .setPositiveButton(redirectToClass, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d("tag",passwordEditText.getText().toString());
                         if(passwordEditText.getText().toString().equals("2019")) {
-                            mListener.onDialogPositiveClick(PasswordDialogFragment.this);
+                            mListener.onDialogPositiveClick(PasswordDialogFragment.this, redirectToClass);
                         }
                         else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -87,6 +93,8 @@ public class PasswordDialogFragment extends DialogFragment {
                     }
                 });
         // Create the AlertDialog object and return it
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        return dialog;
     }
 }

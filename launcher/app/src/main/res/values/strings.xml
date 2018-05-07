@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">TodoSchoolLauncher</string>
+    <string name="app_name">Kitkit Launcher</string>
     <!--<string name="action_settings">Settings</string>-->
     <!--<string name="action_close">Close</string>-->
     <string name="tools_activity_title">Kitkit School Tools</string>
+    <string name="user_default_id">user0</string>
     <string name="launcher_title">Kitkit School</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_credit">Credit</string>
@@ -27,6 +28,8 @@
     <string name="unlock_all">Unlock all</string>
     <string name="add_100_stars">Add 100 stars</string>
     <string name="add_1000_stars">Add 1000 stars</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 
     <string name="drums">Drums</string>
     <string name="marimba">Xylophone</string>

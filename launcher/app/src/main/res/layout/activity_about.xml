@@ -1,72 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <android.support.v7.widget.Toolbar
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="130px"
         android:background="#F28F22"
-        android:elevation="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/about_activity_title"
-            android:layout_gravity="center"
-            android:id="@+id/toolbar_title"
-            android:textColor="#ffffff"
-            android:textSize="30sp"/>
-    </android.support.v7.widget.Toolbar>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f7f7f7"
-        android:padding="88dp"
-        android:orientation="vertical">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_setting"
-            android:textAlignment="textStart"
-            android:paddingStart="85dp"
-            android:textSize="30sp"
-            android:textColor="@android:color/white"
-            android:background="@drawable/xprize_about_button_setting"
-            android:textAllCaps="false"
-            android:onClick="onClickSetting"
-            android:layout_marginBottom="31dp"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:textSize="30sp"
-            android:textColor="@android:color/white"
-            android:paddingStart="85dp"
-            android:background="@drawable/xprize_about_button_credits"
-            android:textAllCaps="false"
-            android:onClick="onClickCredit"
-            android:text="@string/btn_credit"
-            />
-        <TextView
-            android:id="@+id/version_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#6b6b6b"
-            android:layout_marginTop="80dp"
-            android:textSize="25sp"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/xprize_about_image_enuma"
-            android:layout_marginTop="130dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enuma_info"
-            android:layout_marginTop="20dp"
-            android:textColor="#6b6b6b"
-            android:textSize="20sp"/>
+        android:elevation="8px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
 
-    </LinearLayout>
-</LinearLayout>
+        <RelativeLayout
+            android:id="@+id/v_back"
+            android:layout_width="180px"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/library_icon_back"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="60px"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/about_activity_title"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+        <TextView
+            android:id="@+id/textView_currentUserId_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textSize="60px"
+            android:layout_marginRight="30px"
+            android:textColor="#ffffff"
+            android:text="@string/user_default_id"/>
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:background="#f7f7f7"
+        android:orientation="vertical"
+        android:padding="30px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/setting_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16px"
+                android:background="@drawable/xprize_about_button_setting"
+                android:onClick="onClickSetting"
+                android:paddingStart="@dimen/setting_padding"
+                android:paddingBottom="20px"
+                android:text="@string/btn_setting"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="60px" />
+
+            <Button
+                android:id="@+id/select_user_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16px"
+                android:background="@drawable/xprize_about_button_credits"
+                android:onClick="onClickSetting"
+                android:paddingStart="@dimen/setting_padding"
+                android:paddingBottom="20px"
+                android:text="@string/select_user"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="60px" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16px"
+                android:background="@drawable/xprize_about_button_credits"
+                android:onClick="onClickCredit"
+                android:paddingStart="@dimen/setting_padding"
+                android:paddingBottom="20px"
+                android:text="@string/btn_credit"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="60px" />
+
+            <TextView
+                android:id="@+id/version_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100px"
+                android:textColor="#6b6b6b"
+                android:textSize="50px" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/xprize_about_image_enuma" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40px"
+                android:gravity="bottom"
+                android:text="@string/enuma_info"
+                android:textColor="#6b6b6b"
+                android:textSize="40px" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50px" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

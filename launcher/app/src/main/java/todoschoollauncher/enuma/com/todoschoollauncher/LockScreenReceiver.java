@@ -1,6 +1,7 @@
 package todoschoollauncher.enuma.com.todoschoollauncher;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -26,12 +27,18 @@ public class LockScreenReceiver extends BroadcastReceiver {
 //            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            context.startActivity(i);
             try {
-                Intent i =  context.getPackageManager().getLaunchIntentForPackage("com.enuma.todoschoollockscreen");
+                //Intent i =  context.getPackageManager().getLaunchIntentForPackage("com.enuma.todoschoollockscreen");
+                Intent i = new Intent(Intent.ACTION_MAIN);
+                i.setComponent(new ComponentName("com.enuma.todoschoollockscreen","com.enuma.todoschoollockscreen.LockScreenActivity"));
+                //i.putExtras(intent.getExtras());
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 context.startActivity(i);
 
             }
             catch (Exception e)
             {
+                Log.d("LockScreenReceiver","start lockscreen failed");
 
             }
         }

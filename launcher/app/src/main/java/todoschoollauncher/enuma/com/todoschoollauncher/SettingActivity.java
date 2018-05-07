@@ -3,19 +3,14 @@ package todoschoollauncher.enuma.com.todoschoollauncher;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.LoaderManager;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.database.Cursor;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -24,18 +19,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.enuma.kitkitProvider.KitkitDBHandler;
-import com.enuma.kitkitProvider.KitkitProvider;
 import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
@@ -44,8 +37,9 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by ingtellect on 8/7/17.
@@ -54,20 +48,22 @@ import java.util.Locale;
 public class SettingActivity extends KitKitLoggerActivity {
 
     private static final String TAG = "SettingActivity";
+    private View mVBack;
     private FtpClient ftpclient = null;
     private Context cntx = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideStatusbar();
+//        hideStatusbar();
+        Util.hideSystemUI(this);
         setContentView(R.layout.activity_setting);
+        Util.setScale(this, findViewById(R.id.root_container));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.library_icon_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mVBack = findViewById(R.id.v_back);
+        mVBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 onBackPressed();
             }
         });
@@ -76,17 +72,38 @@ public class SettingActivity extends KitKitLoggerActivity {
         ftpclient = new FtpClient();
         //listLogFiles();
 
-
         EditText ftpAddressEditText = (EditText)findViewById(R.id.ftp_address);
         EditText ftpUsernameEditText = (EditText)findViewById(R.id.ftp_username);
         EditText ftpPasswordEditText = (EditText)findViewById(R.id.ftp_password);
         EditText ftpPortEditText = (EditText)findViewById(R.id.ftp_port);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         ftpAddressEditText.setText(prefs.getString("host",""));
         ftpUsernameEditText.setText(prefs.getString("username",""));
         ftpPasswordEditText.setText(prefs.getString("password",""));
         ftpPortEditText.setText(prefs.getString("port",""));
+
+        Switch librarySwitch = (Switch)findViewById(R.id.librarySwitch);
+        librarySwitch.setChecked(prefs.getBoolean("library_on", true));
+        librarySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("library_on", isChecked);
+                editor.commit();
+            }
+        });
+
+        Switch toolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
+        toolsSwitch.setChecked(prefs.getBoolean("tools_on", true));
+        toolsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("tools_on", isChecked);
+                editor.commit();
+            }
+        });
 
 
         SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
@@ -105,7 +122,10 @@ public class SettingActivity extends KitKitLoggerActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        hideStatusbar();
+//        hideStatusbar();
+        if (hasFocus) {
+            Util.hideSystemUI(this);
+        }
     }
 
     public boolean connectToWifi(){
@@ -149,10 +169,24 @@ public class SettingActivity extends KitKitLoggerActivity {
 
     }
 
+    public void onClickLibrary(View v) {
+        v.findViewById(R.id.librarySwitch).performClick();
+    }
+
+    public void onClickTools(View v) {
+        v.findViewById(R.id.toolsSwitch).performClick();
+    }
+
     public void onClickClearAppdata(View v) {
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.xprize");
-        i.putExtra("clearAppData", true);
-        startActivity(i);
+        try {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setComponent(new ComponentName("com.enuma.xprize", "org.cocos2dx.cpp.AppActivity"));
+            i.putExtra("clearAppData", true);
+            startActivity(i);
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickSetting(View v) {
@@ -174,6 +208,15 @@ public class SettingActivity extends KitKitLoggerActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (Util.mBlockingView != null) {
+            Util.mBlockingView.setOnTouchListener(null);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         KitKitLogger logger = ((LauncherApplication)getApplication()).getLogger();
@@ -182,6 +225,9 @@ public class SettingActivity extends KitKitLoggerActivity {
         connectToWifi();
         refresh();
 
+        if (Util.mBlockingView != null) {
+            Util.mBlockingView.setOnTouchListener(mBlockViewTouchListener);
+        }
     }
 
     private Handler handler = new Handler() {
@@ -195,10 +241,19 @@ public class SettingActivity extends KitKitLoggerActivity {
             } else if (msg.what == 2) {
                 Toast.makeText(SettingActivity.this, "Uploaded Successfully!",
                         Toast.LENGTH_LONG).show();
-                ftpclient.ftpDisconnect();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean result = ftpclient.ftpDisconnect();
+                        Log.i(TAG, "ftp disconnect : " + result);
+                    }
+                }).start();
+
             } else if (msg.what == 3) {
                 Toast.makeText(SettingActivity.this, "Disconnected Successfully!",
                         Toast.LENGTH_LONG).show();
+
             } else {
                 Toast.makeText(SettingActivity.this, "Unable to Perform Action! : " + msg.what,
                         Toast.LENGTH_LONG).show();
@@ -255,19 +310,35 @@ public class SettingActivity extends KitKitLoggerActivity {
     }
 
     private void uploadLogs() {
+        // NB(xenosoz, 2018): Duplication alert! I saw the code below in both MainActivity and SettingActivity. [2/2]
+
         new Thread(new Runnable() {
             public void run() {
                 boolean status = false;
                 String documentsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
                 String logPath = documentsPath + "/logs";
 
-                File[] txts = new File(logPath).listFiles((FileFilter)new WildcardFileFilter("*.txt"));
+                // 2017.12.20 yongsoo : It does not matter if it fails
+                ftpclient.ftpChangeDirectory("sda1/");
+
+                File[] txts = new File(logPath).listFiles((FileFilter)new WildcardFileFilter(Arrays.asList("*.txt", "*.zip")));
                 for (File txt : txts) {
                     Log.d("TXTTest", txt.toString());
                     status = ftpclient.ftpUpload(
                             txt.getPath(),
-                            txt.getName(), "/", cntx);
+                            txt.getName(), "remote/", cntx);
 
+                    if (status == true) {
+                        try {
+                            ftpclient.mFTPClient.changeToParentDirectory();
+                        } catch (Exception e) {
+                            Log.e(TAG, "", e);
+                        }
+                    }
+                }
+
+                if (status == true) {
+                    status = uploadImages();
                 }
 
                 if (status == true) {
@@ -280,6 +351,73 @@ public class SettingActivity extends KitKitLoggerActivity {
             }
         }).start();
 
+    }
+
+    private boolean uploadImages() {
+        boolean status = true;
+        try {
+            MainActivity.deleteImageZipFiles();
+
+            File dcimFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            String tempZipFolder = dcimFolder.getAbsolutePath() + File.separator + MainActivity.TEMP_ZIP_FOLDER_NAME;
+            File uploadTimeFile = null;
+
+            if (MainActivity.writeFile(MainActivity.getCurrentDisplayTime(), tempZipFolder + File.separator + MainActivity.UPLOAD_TIME_RECORD_FILE) == true) {
+                uploadTimeFile = new File(tempZipFolder + File.separator + MainActivity.UPLOAD_TIME_RECORD_FILE);
+                if (uploadTimeFile.exists() == false) {
+                    uploadTimeFile = null;
+                }
+            }
+
+            ArrayList<File> commonImages = MainActivity.getImageFileList(dcimFolder);
+            if (commonImages.size() > 0) {
+                if (uploadTimeFile != null) {
+                    commonImages.add(uploadTimeFile);
+                }
+
+                String zipFileName = Build.SERIAL + "_" + "user_common" + ".zip";
+                if (MainActivity.compressZip(tempZipFolder, zipFileName, commonImages) == true) {
+                    status = uploadFtpImageFile(new File(tempZipFolder + File.separator + zipFileName));
+                }
+            }
+
+            File[] userFolders = MainActivity.getImageFolderList(dcimFolder);
+            if (userFolders != null && userFolders.length > 0) {
+                for (File userFolder : userFolders) {
+                    ArrayList<File> images = MainActivity.getImageFileList(userFolder);
+                    if (images.size() > 0) {
+                        if (uploadTimeFile != null) {
+                            images.add(uploadTimeFile);
+                        }
+
+                        String zipFileName = Build.SERIAL + "_" + userFolder.getName() + ".zip";
+                        if (MainActivity.compressZip(tempZipFolder, zipFileName, images) == true) {
+                            status = uploadFtpImageFile(new File(tempZipFolder + File.separator + zipFileName));
+                        }
+                    }
+                }
+            }
+
+        } finally {
+            MainActivity.deleteImageZipFiles();
+        }
+
+        return status;
+    }
+
+    private boolean uploadFtpImageFile(File file) {
+        boolean result = ftpclient.ftpUpload(
+                file.getPath(),
+                file.getName(), "remote/", cntx);
+
+        if (result == true) {
+            try {
+                ftpclient.mFTPClient.changeToParentDirectory();
+            } catch (Exception e) {
+                Log.e(TAG, "", e);
+            }
+        }
+        return result;
     }
 
 //    private void listLogFiles() {
@@ -299,15 +437,25 @@ public class SettingActivity extends KitKitLoggerActivity {
 //    }
 
     public void onClickPretest(View v) {
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
-        i.putExtra("test", "Pre-Test");
-        startActivity(i);
+        try {
+            Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
+            i.putExtra("test", "Pre-Test");
+            startActivity(i);
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickPosttest(View v) {
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
-        i.putExtra("test", "Post-Test");
-        startActivity(i);
+        try {
+            Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
+            i.putExtra("test", "Post-Test");
+            startActivity(i);
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -321,13 +469,16 @@ public class SettingActivity extends KitKitLoggerActivity {
                             String lang = "";
                             switch (which) {
                                 case 0:
-                                    lang = "en";
+                                    lang = "en-US";
                                     break;
                                 case 1:
-                                    lang = "sw";
+                                    lang = "en-KE";
+                                    break;
+                                case 2:
+                                    lang = "sw-TZ";
                                     break;
                                 default:
-                                    lang = "sw";
+                                    lang = "sw-TZ";
                                     break;
                             }
 
@@ -345,82 +496,10 @@ public class SettingActivity extends KitKitLoggerActivity {
         }
     }
 
-    public static class SelectUserDialogFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor> {
-
-        ArrayAdapter<String> arrayAdapter;
-        SimpleCursorAdapter mAdapter;
-
-
-        @Override
-        public void onActivityCreated (Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-
-            getLoaderManager().initLoader(0, null, this);
-
-
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            mAdapter = new SimpleCursorAdapter(getActivity(),
-                    android.R.layout.simple_list_item_2, null,
-                    new String[] { KitkitDBHandler.COLUMN_USERNAME},
-                    new int[] { android.R.id.text1}, 0);
-            builder.setTitle(R.string.select_user)
-                    .setAdapter(mAdapter, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Cursor cursor = (Cursor)mAdapter.getItem(which);
-                            String userName = cursor.getString(cursor.getColumnIndex(KitkitDBHandler.COLUMN_USERNAME));
-                            ((LauncherApplication)getActivity().getApplication()).getDbHandler().setCurrentUser(userName);
-                            ((SettingActivity)getActivity()).refresh();
-                        }
-                    });
-
-//            builder.setTitle(R.string.select_user)
-//                    .setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            String userName = arrayAdapter.getItem(which);
-//                            ((LauncherApplication)getActivity().getApplication()).getDbHandler().setCurrentUser(userName);
-//                        }
-//                    });
-            return builder.create();
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new CursorLoader(getActivity(),
-                    KitkitProvider.CONTENT_URI
-                    , new String[]{KitkitDBHandler.COLUMN_ID, KitkitDBHandler.COLUMN_USERNAME}, null, null, null);
-
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-/*            arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
-            data.moveToFirst();
-            while (!data.isAfterLast()) {
-                arrayAdapter.add(data.getString(0));
-                data.moveToNext();
-            }*/
-            mAdapter.swapCursor(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mAdapter.swapCursor(null);
-        }
-    }
-
 
     public void onClickChangeLanguage(View v) {
-
-        DialogFragment dialog = new LanguageDialogFragment();
-        dialog.show(getFragmentManager() ,"LanguageDialogFragment");
+//        DialogFragment dialog = new LanguageDialogFragment();
+//        dialog.show(getFragmentManager() ,"LanguageDialogFragment");
     }
 
     public void changeLanguage(String lang) {
@@ -444,9 +523,13 @@ public class SettingActivity extends KitKitLoggerActivity {
         User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
         String currentUsername = user.getUserName();
         TextView textViewUsername = (TextView)findViewById(R.id.textView_currentUsername);
-        textViewUsername.setText(currentUsername);
+        if ("user0".equalsIgnoreCase(currentUsername) == false) {
+            textViewUsername.setText(currentUsername);
+        } else {
+            textViewUsername.setText("");
+        }
 
-        TextView textViewNumcoin = (TextView)findViewById(R.id.textView_numCoinSetting);
+        TextView textViewNumcoin = (TextView)findViewById(R.id.textView_numCoin);
         textViewNumcoin.setText(String.format("%d",user.getNumStars()));
     }
 
@@ -478,6 +561,33 @@ public class SettingActivity extends KitKitLoggerActivity {
         dbHandler.updateUser(user);
         refresh();
     }
+
+    private Rect mTempRect = new Rect();
+    private boolean mbPressed = false;
+    private View.OnTouchListener mBlockViewTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mVBack.getGlobalVisibleRect(mTempRect);
+                if (mTempRect.contains((int) event.getX(), (int) event.getY())) {
+                    mbPressed = true;
+                    mVBack.dispatchTouchEvent(event);
+                } else {
+                    mbPressed = false;
+                }
+            } else {
+                if (mbPressed) {
+                    mVBack.dispatchTouchEvent(event);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mbPressed = false;
+                }
+            }
+
+            return true;
+        }
+    };
 
 //    public void changeLanguageOthers(String lang) {
 //        Log.d(TAG, "change language all");

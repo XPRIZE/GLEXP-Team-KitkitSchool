@@ -10,6 +10,9 @@ import com.enuma.kitkitProvider.KitkitDBHandler;
 import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 
+import todoschoollauncher.enuma.com.todoschoollauncher.BuildConfig;
+
+
 import java.util.UUID;
 
 
@@ -40,22 +43,34 @@ public class LauncherApplication extends Application {
 //            editor.commit();
 //        }
 
-        SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
-        String sharedLang = preferences.getString("appLanguage", "");
-        if (sharedLang.isEmpty()) {
-            String lang = getString(com.enuma.kitkitlogger.R.string.defaultLanguage);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("appLanguage",lang);
-            editor.apply();
-        }
 
+
+//        SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
+//
+//        int versionCode = BuildConfig.VERSION_CODE;
+//        int lastVersion = preferences.getInt("launcherVersion", 0);
+//        String sharedLang = preferences.getString("appLanguage", "");
+//
+//        if ((lastVersion < versionCode) || (sharedLang.isEmpty())) {
+//            String lang = getString(R.string.defaultLanguage);
+//            SharedPreferences.Editor editor = preferences.edit();
+//            editor.putString("appLanguage",lang);
+//            editor.putInt("launcherVersion", versionCode);
+//            editor.apply();
+//        }
+
+        SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
+        String lang = getString(R.string.defaultLanguage);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("appLanguage",lang);
+        editor.apply();
 
         logger = new KitKitLogger(getPackageName(), getApplicationContext());
         dbHandler = new KitkitDBHandler(getApplicationContext());
 
         if (dbHandler.numUser() == 0) {
             //make users in DB
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 100; i++) {
                 User user = new User("user"+i,0);
 //                user.setNumStars(i*50);
 //                user.setFinishTutorial(true);

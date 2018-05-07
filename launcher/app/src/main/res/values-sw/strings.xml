@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TodoSchoolLauncher</string>
+    <string name="app_name">Kitkit Launcher</string>
     <!--<string name="action_settings">Mipangilio</string>-->
     <!--<string name="action_close">Close</string>-->
     <string name="tools_activity_title">Zana za Kitkit Shule</string>
@@ -28,6 +28,8 @@
     <string name="unlock_all">Unlock all</string>
     <string name="add_100_stars">Add 100 stars</string>
     <string name="add_1000_stars">Add 1000 stars</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 
     <string name="drums">Ngoma</string>
     <string name="marimba">Marimba</string>
