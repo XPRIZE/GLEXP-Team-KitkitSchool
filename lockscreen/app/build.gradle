@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.enuma.todoschoollockscreen"
         minSdkVersion 19
@@ -21,14 +21,6 @@ android {
         }
     }
 
-    productFlavors {
-        english {
-
-        }
-        swahili {
-
-        }
-    }
 
     buildTypes {
         release {
@@ -56,6 +48,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
-    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
-    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
+    compile project(':kitkitlogger')
+//    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
+//    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
 }
