@@ -1,6 +1,8 @@
 package com.enuma.blackboard.utility;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.util.TypedValue;
 
 public class Util {
@@ -34,5 +36,11 @@ public class Util {
         int dx = x2 - x1;
         int dy = y2 - y1;
         return Math.atan2(dx, dy);
+    }
+
+    public static Point getWindowSize(Activity activity) {
+        Point result = new Point();
+        activity.getWindowManager().getDefaultDisplay().getRealSize(result);
+        return result;
     }
 }

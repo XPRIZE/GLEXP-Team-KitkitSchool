@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
@@ -81,6 +83,7 @@ public class ViewDrawingColoring extends View {
     ////////////////////////////////////////////////////////////////////////////////
 
     private Context mContext;
+    private boolean mbSmallLCD;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -156,19 +159,28 @@ public class ViewDrawingColoring extends View {
 
     private void init(Context context) {
         mContext = context;
+        Point size = Util.getWindowSize((Activity)context);
+        mbSmallLCD = (size.x <= 1280);
+
         mEffectSound = EffectSound.getInstance(mContext);
 
         mTouchPosX = Float.MIN_VALUE;
         mTouchPosY = Float.MIN_VALUE;
 
-        mBitmapBrushAlphaChannel = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.crayon_brush_alpha);
+        mBitmapBrushAlphaChannel = BitmapFactory.decodeResource(mContext.getResources(), mbSmallLCD ? R.drawable.crayon_brush_alpha_s : R.drawable.crayon_brush_alpha);
         mBitmapBrush = Bitmap.createBitmap(mBitmapBrushAlphaChannel.getWidth(), mBitmapBrushAlphaChannel.getHeight(), Bitmap.Config.ARGB_8888);
 
         BRUSH_POINT_WIDTH = mBitmapBrushAlphaChannel.getWidth() / BRUSH_WIDTH_COUNT;
         BRUSH_POINT_HEIGHT = mBitmapBrushAlphaChannel.getHeight() / BRUSH_HEIGHT_COUNT;
 
-        mBitmapEraser = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.tool_blackboard_eraser);
-        mEraserRect.set(Util.getPixel(mContext, 13), Util.getPixel(mContext, 7), Util.getPixel(mContext, 218), Util.getPixel(mContext, 117));
+        mBitmapEraser = BitmapFactory.decodeResource(mContext.getResources(), mbSmallLCD ? R.drawable.tool_blackboard_eraser_s : R.drawable.tool_blackboard_eraser);
+        if (mbSmallLCD == true) {
+            mEraserRect.set(26 / 2, 14 / 2, 436 / 2, 234 / 2);
+
+        } else {
+            mEraserRect.set(26, 14, 436, 234);
+        }
+
 
         mPaintEraser.setAlpha(255);
         mPaintEraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -206,13 +218,22 @@ public class ViewDrawingColoring extends View {
             mCanvasTraceBuffer = new Canvas(mBitmapTraceBuffer);
             mBitmapTraceBuffer.eraseColor(Color.TRANSPARENT);
 
-            float scaleFactor = (float) getHeight() / Util.getPixel(mContext, 900);
             ERASER_DEFAULT_POS_X = getWidth() - mBitmapEraser.getWidth() - mBitmapEraser.getWidth() / 4;
-            ERASER_DEFAULT_POS_Y = getHeight() - mBitmapEraser.getHeight() - (int)(Util.getPixel(mContext, 40) * scaleFactor - Util.getPixel(mContext,  17));
+            if (mbSmallLCD == true) {
+                ERASER_DEFAULT_POS_Y = getHeight() - mBitmapEraser.getHeight() - 50 / 2;
+            } else {
+                ERASER_DEFAULT_POS_Y = getHeight() - mBitmapEraser.getHeight() - 50;
+            }
+
             mPropertyEraser.setX(ERASER_DEFAULT_POS_X);
             mPropertyEraser.setY(ERASER_DEFAULT_POS_Y);
 
-            PADDING_BOTTOM = Util.getPixel(mContext, 47 * scaleFactor);
+            if (mbSmallLCD == true) {
+                PADDING_BOTTOM = 94 / 2;
+
+            } else {
+                PADDING_BOTTOM = 94;
+            }
         }
 
         canvas.save();
