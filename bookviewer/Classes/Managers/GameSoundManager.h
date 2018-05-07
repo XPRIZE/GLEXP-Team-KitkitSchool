@@ -1,4 +1,4 @@
-﻿#ifndef GAME_SOUND_MANAGER_H
+#ifndef GAME_SOUND_MANAGER_H
 #define GAME_SOUND_MANAGER_H
 
 #include <string>
@@ -39,7 +39,10 @@ public:
     void preloadEffect(std::string name);
     
     
-
+    void playBGM(std::string name);
+    void stopBGM();
+    void pauseBGM();
+    void resumeBGM();
     
     
 private:

@@ -26,9 +26,11 @@ public:
     static std::string dtos(const double& d);
     
     static std::istream& safegetline(std::istream& is, std::string& t);
+    static std::string combineCSV(std::vector<std::string> csv);
     static std::vector<std::string> splitCSV(std::string& line);
     static std::vector<std::vector<std::string>> readCSV(std::string& filedata);
-
+    static std::vector<std::vector<std::string>> readTSV(std::string& filedata);
+    
     static std::string trim(std::string& str);
     static std::string removeSpaces(std::string input);
     
@@ -40,6 +42,10 @@ public:
 
     static cocos2d::Label* createLabel(const std::string &text, float maxFontSize, Size boxSize,const std::string &fontName, const cocos2d::Color4B &color, cocos2d::TextHAlignment hAlignment = cocos2d::TextHAlignment::LEFT, cocos2d::TextVAlignment vAlignment = cocos2d::TextVAlignment::CENTER);
   
+    static cocos2d::Label* createLabelMultiline(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment = TextHAlignment::LEFT, TextVAlignment vAlignment = TextVAlignment::CENTER);
+    
+    static cocos2d::Label* createLabelMultilineToFit(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment = TextHAlignment::LEFT, TextVAlignment vAlignment = TextVAlignment::CENTER);
+    
 };
 
 

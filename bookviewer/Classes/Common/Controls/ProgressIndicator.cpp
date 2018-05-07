@@ -31,14 +31,25 @@ bool ProgressIndicator::init()
     return true;
 }
 
-void ProgressIndicator::setMax(int max)
+void ProgressIndicator::setMax(int max, bool forEgg)
 {
     removeAllChildren();
     _balls.clear();
  
+    if (forEgg) {
+        _completedBall = "EggQuiz/Progress/pretest_progress_level_pass.png";
+        _futureBall = "EggQuiz/Progress/pretest_progress_level_notyet.png";
+        _currentBall = "EggQuiz/Progress/pretest_progress_level_current.png";
+        _missedBall = "EggQuiz/Progress/pretest_progress_level_fail.png";
+    } else {
+        _completedBall = "Common/Controls/wm_progress_completed.png";
+        _futureBall = "Common/Controls/wm_progress_level.png";
+        _currentBall = "Common/Controls/wm_progress_level_current.png";
+        _missedBall = _completedBall;
+    }
     
     for (int i=0; i<max; i++) {
-        auto b = Sprite::create("Common/Controls/wm_progress_level.png");
+        auto b = Sprite::create(_futureBall);
         b->setPosition(i*(dotMargin+dotSize.width)+0.5*dotSize.width, 0.5*dotSize.height);
         addChild(b);
         _balls.push_back(b);
@@ -56,15 +67,15 @@ void ProgressIndicator::setCurrent(int current, bool complete)
     for (int i=0; i<_balls.size(); i++) {
         Sprite *b = _balls.at(i);
         if (i+1<current) {
-            b->setTexture("Common/Controls/wm_progress_completed.png");
+            b->setTexture(_completedBall);
         } else if (i+1==current) {
             if (complete) {
-                b->setTexture("Common/Controls/wm_progress_completed.png");
+                b->setTexture(_completedBall);
             } else {
-                b->setTexture("Common/Controls/wm_progress_level_current.png");
+                b->setTexture(_currentBall);
             }
         } else {
-            b->setTexture("Common/Controls/wm_progress_level.png");
+            b->setTexture(_futureBall);
         }
     }
     
@@ -72,3 +83,20 @@ void ProgressIndicator::setCurrent(int current, bool complete)
     
 }
 
+void ProgressIndicator::setStatus(std::string status)
+{
+    for (int i=0; i<_balls.size(); i++) {
+        Sprite *b = _balls.at(i);
+        auto s = status[i];
+        
+        if (s=='c') {
+            b->setTexture(_currentBall);
+        } else if (s=='o') {
+            b->setTexture(_completedBall);
+        } else if (s=='x') {
+            b->setTexture(_missedBall);
+        } else {
+            b->setTexture(_futureBall);
+        }
+    }
+}

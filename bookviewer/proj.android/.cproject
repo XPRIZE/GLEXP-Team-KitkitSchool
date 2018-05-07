@@ -171,14 +171,14 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="booktest.null.31159645" name="booktest"/>
+		<project id="KitkitBookViewer.null.31159645" name="KitkitBookViewer"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/booktest"/>
+			<resource resourceType="PROJECT" workspacePath="/KitkitBookViewer"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/booktest"/>
+			<resource resourceType="PROJECT" workspacePath="/KitkitBookViewer"/>
 		</configuration>
 	</storageModule>
 </cproject>

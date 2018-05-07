@@ -1,6 +1,6 @@
 //
 //  CompletePopup.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/29/16.
 //
@@ -22,11 +22,15 @@ public:
     
     void show(float delay, std::function<void(void)> callback);
     void dismiss();
+
+    void setTitleText(const std::string& titleText);
+
 protected:
     
     Node *_mainView;
     LayerColor *_backView;
-    
+    Label *_titleTextLabel;
+
     std::function<void(void)> _callback;
     
     

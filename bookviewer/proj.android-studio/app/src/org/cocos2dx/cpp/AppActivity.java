@@ -26,19 +26,20 @@
  ****************************************************************************/
 package org.cocos2dx.cpp;
 
-import org.cocos2dx.lib.*;
-import org.cocos2dx.lib.Cocos2dxActivity;
-
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Environment;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.enuma.kitkitlogger.KitKitLogger;
+
+import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import java.io.File;
 
@@ -47,7 +48,6 @@ public class AppActivity extends Cocos2dxActivity {
     public static AppActivity _activity;
     public static String _launchString;
     private Cocos2dxGLSurfaceView _glSurfaceView;
-
     private static String TAG = "BookTestActivity";
 
     public static String getDocumentsPath() {
@@ -76,8 +76,8 @@ public class AppActivity extends Cocos2dxActivity {
                     @Override
                     public void run() {
                         Log.d("AppActivity", "sendToBack onUIThread 2 - booktest");
-                        //_activity.moveTaskToBack(true);
-                        _activity.finish();
+                        _activity.moveTaskToBack(true);
+//                        _activity.finish();
                     }
                 });
             }
@@ -156,6 +156,17 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent.hasExtra("book")) {
+            _launchString = intent.getStringExtra("book");
+            Log.d("AppActivity", "onNewIntent has book extra - " + _launchString);
+        }
+
+    }
+
     private void hideSystemUI() {
 
         if (_glSurfaceView == null) return;
@@ -196,6 +207,26 @@ public class AppActivity extends Cocos2dxActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
             Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+        }
+    }
+
+    public static String getConfig(SharedPreferences pref, String key, String defaultValue) {
+        String rtn = defaultValue;
+        try {
+            rtn = pref.getString(key, defaultValue);
+        } catch (Exception e) {
+
+        }
+        return rtn;
+    }
+
+    public static void setConfig(SharedPreferences pref, String key, String val) {
+        try {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(key, val);
+            editor.commit();
+        } catch (Exception e) {
+
         }
     }
 }

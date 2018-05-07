@@ -4,7 +4,6 @@
 #include "cocos2d.h"
 #include <string>
 
-#define IS_ENGLISH (false)
 
 class MainScene : public cocos2d::Layer
 {
@@ -13,10 +12,12 @@ public:
     
     static cocos2d::Scene* createScene();
     static cocos2d::Scene* createBookScene(std::string bookfolder);
-    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+	static std::string __launchString;
+#endif
+
     static std::string getLaunchString();
     static void clearLaunchString();
-    
     static std::string currentBook;
     
     

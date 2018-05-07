@@ -1,15 +1,19 @@
 //
 //  TodoLoadingScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/28/16.
 //
 //
 
 #include "TodoLoadingScene.hpp"
+#include "Managers/LanguageManager.hpp"
+#include "Managers/GameSoundManager.h"
+//#include "Managers/UserManager.hpp"
+//#include "Managers/CurriculumManager.hpp"
+#include <string>
 
-#include "MainScene.h"
-
+using namespace std;
 
 
 Scene* TodoLoadingScene::createScene(std::function<Scene*(void)> creator, float loadingTime, float fadeOutTime)
@@ -52,19 +56,10 @@ void TodoLoadingScene::update(float delta)
     Layer::update(delta);
     _currentTimer += delta;
     
-    if (_transitionFinished && !_nextSceneLoading && !_nextSceneLoaded) {
-        _nextSceneLoading = true;
-        _nextScene = _sceneCreator();
-        _nextScene->retain();
-        
-        _nextSceneLoaded = true;
-        
-    }
-    
-    
-    
     if (_nextSceneLoaded && _transitionFinished && _currentTimer>_loadingTime) {
      
+        GameSoundManager::getInstance()->unloadAllEffect();
+        
         Director::getInstance()->replaceScene(TransitionFade::create(_fadeOutTime, _nextScene));
         CC_SAFE_RELEASE(_nextScene);
         
@@ -87,7 +82,6 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
     
     _sceneCreator = creator;
     _nextSceneLoaded = false;
-    _nextSceneLoading = false;
     _transitionFinished = false;
     
 //    auto t = std::thread([this, creator]()
@@ -103,22 +97,48 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
     _fadeOutTime = fadeOutTime;
     
     
-    CCLOG("showLoading...");
-    
     auto winSize = Director::getInstance()->getVisibleSize();
-
-    Sprite *loadingImage = Sprite::create("Common/xprize_image_loading.png");
+    
+//    auto eng = LanguageManager::getInstance()->isEnglish();
+//    Sprite* loadingImage = Sprite::create(eng ? "System/todoschool_BI.png" : "System/todoshule_BI.png");
+    
+    
+//    auto levelID = UserManager::getInstance()->getCurrentLevelID();
+//    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
+    
+    
+    string loadingFile;
+//    if (cur) {
+//        loadingFile = StringUtils::format("BirdAnimation/Loading/%c%d.png", cur->category, cur->categoryLevel);
+//    } else {
+//        loadingFile = "System/transition_yellowbird.png";
+//    }
+    loadingFile = "Common/xprize_image_loading.png";
+    
+    
+    Sprite *loadingImage = Sprite::create(loadingFile);
+    
     loadingImage->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    loadingImage->setPosition(winSize/2.f);
+    loadingImage->setPosition(winSize/2.f + Size(0, 50));
     addChild(loadingImage);
     
     Size imageSize = loadingImage->getContentSize();
     
-
+//    Sprite *loadingMark = Sprite::create("System/transition_ABC123.png");
+//    loadingMark->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+//    loadingMark->setPosition(Vec2(winSize.width/2-imageSize.width/2 - 20, winSize.height/2+imageSize.height/2));
+//    addChild(loadingMark);
     
-    std::string loadingText = IS_ENGLISH ? "Loading..." : "Tafadhali subiri...";
+//    loadingMark->runAction(RepeatForever::create(
+//                             Sequence::create(DelayTime::create(0.2),
+//                                              MoveBy::create(0.0, Vec2(10, 0)),
+//                                              DelayTime::create(0.2),
+//                                              MoveBy::create(0.0, Vec2(-10, 0)), nullptr)));
     
-    Label *loadingLabel = Label::createWithTTF(loadingText, "fonts/TodoSchoolV2.ttf", 56);
+    
+    std::string loadingText = LanguageManager::getInstance()->isEnglish() ? "Loading..." : "Tafadhali subiri...";
+    
+    Label *loadingLabel = Label::createWithTTF(loadingText, "fonts/TodoSchoolV2.ttf", 150);
     loadingLabel->setTextColor(Color4B(255, 240, 222, 255));
     loadingLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     loadingLabel->setPosition(Vec2(winSize.width/2, winSize.height/2 - imageSize.height/2 - 50));
@@ -135,9 +155,15 @@ void TodoLoadingScene::onEnterTransitionDidFinish()
     Layer::onEnterTransitionDidFinish();
     
     _transitionFinished = true;
-    _nextSceneLoading = false;
     
-
+    {
+        _nextScene = _sceneCreator();
+        _nextScene->retain();
+        
+        _nextSceneLoaded = true;
+        
+    }
+    
 //
 //    auto seq = Sequence::create(DelayTime::create(_loadingTime), CallFunc::create([this]() {
 //        Director::getInstance()->replaceScene(TransitionFade::create(_fadeOutTime, _nextScene));

@@ -6,6 +6,7 @@
 #include "TodoBook.hpp"
 #include "BookView.hpp"
 #include "ui/CocosGUI.h"
+#include "Managers/LanguageManager.hpp"
 
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
@@ -19,6 +20,9 @@ USING_NS_CC;
 
 std::string MainScene::currentBook = "";
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
+std::string MainScene::__launchString = "";
+#endif
 
 
 
@@ -61,16 +65,27 @@ string getDocumentsPath()
     }
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
+    static string path = "";
+    if (!path.empty()) return path;
     
-    string path = FileUtils::getInstance()->getWritablePath();
     
-    //return path + "../work/xprize_books/game_books/";
-    return path + "Books/";
+    
+    path = FileUtils::getInstance()->getWritablePath() + "Books/";
+    
+    if (FileUtils::getInstance()->isFileExist(path+"/location.txt")) {
+        path = FileUtils::getInstance()->getStringFromFile(path+"/location.txt");
+        path.erase(std::remove(path.begin(),path.end(),'\n'),path.end());
+        path.push_back('/');
+    }
+    
+
+    return path;
 #else
     return "BookData/";
 #endif
     
 }
+
 
 string MainScene::getLaunchString() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
@@ -79,7 +94,12 @@ string MainScene::getLaunchString() {
     
     return tmp;
     
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
+	string tmp = __launchString;
+	return tmp;
+
 #else
+	
     //return "book_portrait";
     return "";
     
@@ -89,12 +109,15 @@ string MainScene::getLaunchString() {
 void MainScene::clearLaunchString() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     JniHelper::callStaticVoidMethod("org/cocos2dx/cpp/AppActivity", "clearLaunchString");
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
+	__launchString = "";
 #endif
     
 }
 
 Scene* MainScene::createBookScene(std::string bookfolder)
 {
+
 
     
     // 'scene' is an autorelease object
@@ -110,8 +133,10 @@ Scene* MainScene::createBookScene(std::string bookfolder)
     bool ret = book->readFile(bookPath);
     if (ret)
     {
+        BookView::setBookLanguage(LanguageManager::getInstance()->getCurrentLanguageCode());
+        BookView::setLibraryMode(true);
+        BookView::setCurrentBook(bookfolder);
         auto bv = BookView::create(fixedSize, bookPath);
-        bv->setLibraryMode(true);
         bv->setScale(sceneScale);
         bv->viewTitle();
         scene->addChild(bv);
@@ -136,7 +161,7 @@ bool MainScene::init()
         return false;
     }
     
-    
+    BookView::setBookLanguage(LanguageManager::getInstance()->getCurrentLanguageCode());
     
     if (MainScene::getLaunchString().length()>0) {
         
@@ -198,8 +223,9 @@ void MainScene::showLoading()
                                                                   DelayTime::create(0.2),
                                                                   MoveBy::create(0.0, Vec2(-10, 0)), nullptr)));
     */
+    bool isEnglish = LanguageManager::getInstance()->isEnglish();
     
-    std::string loadingText = IS_ENGLISH ? "Loading..." : "Tafadhali subiri...";
+    std::string loadingText = isEnglish ? "Loading..." : "Tafadhali subiri...";
     
     Label *loadingLabel = Label::createWithTTF(loadingText, "fonts/TodoSchoolV2.ttf", 56);
     loadingLabel->setTextColor(Color4B(255, 240, 222, 255));
@@ -219,12 +245,11 @@ void MainScene::showChooser()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto path = getDocumentsPath();
     
-    auto listFile = path + "booklist.txt";
-    
+    auto dirs = FileUtils::getInstance()->listFiles(path);
     auto innerView = Node::create();
     
     
-    vector<string> dirs;
+    //vector<string> dirs;
     {
         auto l = Label::createWithSystemFont("path: " + getDocumentsPath(), "fonts/Seshat.otf", 20);
         l->setPosition(Vec2(visibleSize.width/2, -20));
@@ -236,40 +261,43 @@ void MainScene::showChooser()
         innerView->addChild(l);
     }
 
-    string filedata = FileUtils::getInstance()->getStringFromFile(listFile);
-    if (filedata.length()<=0) {
-        auto l = Label::createWithSystemFont("cannot find "+listFile, "fonts/Seshat.otf", -20);
-        
-        l->setPosition(Vec2(visibleSize.width/2, -100));
-        innerView->addChild(l);
-    }
-    
-    
-    
-    auto dirlist = TodoUtil::readCSV(filedata);
-    for (auto row : dirlist) {
-        if (row.size()==0) continue;
-        string dir = TodoUtil::trim(row[0]);
-        if (dir.length()>=1) {
-            dirs.push_back(dir);
-        }
-    }
+//    string filedata = FileUtils::getInstance()->getStringFromFile(listFile);
+//    if (filedata.length()<=0) {
+//        auto l = Label::createWithSystemFont("cannot find "+listFile, "fonts/Seshat.otf", -20);
+//
+//        l->setPosition(Vec2(visibleSize.width/2, -100));
+//        innerView->addChild(l);
+//    }
+//
+//
+//
+//    auto dirlist = TodoUtil::readCSV(filedata);
+//    for (auto row : dirlist) {
+//        if (row.size()==0) continue;
+//        string dir = TodoUtil::trim(row[0]);
+//        if (dir.length()>=1) {
+//            dirs.push_back(dir);
+//        }
+//    }
     
     float y = -80;
     
     for (int i=0; i<dirs.size(); i++) {
         auto dir = dirs[i];
+        auto folder = TodoUtil::split(dir, '/').back();
+        if (!FileUtils::getInstance()->isFileExist(dir + "/bookinfo.csv")) continue;
+        
         
         auto button = Button::create();
         button->setTitleFontSize(50);
         button->setTitleColor(Color3B::WHITE);
-        button->setTitleText(dir);
+        button->setTitleText(folder);
         button->setPosition(Vec2(visibleSize.width/2, y-=80));
         innerView->addChild(button);
         
-        button->addClickEventListener([this, path, dir, button](Ref*) {
-            if (!showBook(dir)) {
-                auto l = Label::createWithSystemFont("cannot find "+path+dir+"/bookinfo.csv", "fonts/Seshat.otf", 20);
+        button->addClickEventListener([this, path, folder, button](Ref*) {
+            if (!showBook(folder)) {
+                auto l = Label::createWithSystemFont("cannot find "+path+folder+"/bookinfo.csv", "fonts/Seshat.otf", 20);
                 l->setPosition(button->getPosition() + Vec2(300, -10));
                 addChild(l);
             }
@@ -310,6 +338,7 @@ void MainScene::showChooser()
 
 bool MainScene::showBook(std::string bookfolder)
 {
+    
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Size fixedSize = Size(1800.f*visibleSize.width/visibleSize.height, 1800.f);
     float sceneScale = visibleSize.height / 1800.f;
@@ -320,9 +349,15 @@ bool MainScene::showBook(std::string bookfolder)
     if (ret)
     {
         
-
+        auto folderName = TodoUtil::split(bookfolder, '/').back();
+        if (folderName.find("en")==0) {
+            LanguageManager::getInstance()->setCurrentLocale(LanguageManager::LocaleType::en_US);
+        } else if (folderName.find("sw")==0) {
+            LanguageManager::getInstance()->setCurrentLocale(LanguageManager::LocaleType::sw_TZ);
+        }
         
         auto scene = Scene::create();
+        BookView::setCurrentBook(bookfolder);
         auto bv = BookView::create(fixedSize, bookPath);
         bv->setScale(sceneScale);
         bv->viewTitle();

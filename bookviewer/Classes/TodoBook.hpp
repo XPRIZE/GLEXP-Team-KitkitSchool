@@ -25,7 +25,7 @@ enum class TDBookLayout
 
 enum class TDBookType
 {
-    Unknown = -1,
+//    Unknown = -1,
     WithAudio = 0,
     TextOnly = 1,
     
@@ -88,24 +88,32 @@ public:
     float fontSize;
     
     
+    string commonPrefix;
     string filePrefix;
     string imagePrefix;
     
     const string pagePrefix = "page/";
     const string wordPrefix = "word/";
     
+    string getWordAudioPath(string wordAudio);
+    
     vector<TodoPage> pages;
     
-    TDBookType getBookType(string &filedata);
+//    TDBookType getBookType(string &filedata);
     
     void readData(string &data);
     void readCredit(string &data);
+
     
-    bool readFile(string prefix);
+    bool readFile(string prefix, string filename = "bookinfo.csv");
+    bool writeFile(string prefix, string filename = "bookinfo.csv");
+
     
     void addCreditPage();
     
     string checkData();
+
+    
     
     
 };

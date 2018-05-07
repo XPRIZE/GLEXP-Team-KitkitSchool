@@ -8,7 +8,9 @@
 
 #include "cocos2d.h"
 #include "LogManager.hpp"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include "platform/android/jni/JniHelper.h"
+#endif
 
 USING_NS_CC;
 
@@ -32,6 +34,7 @@ bool LogManager::init(void)
 
 bool LogManager::logEvent(std::string eventValue)
 {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     // get Documents directory path
     JniMethodInfo t;
     std::string eventString = eventValue;
@@ -44,6 +47,8 @@ bool LogManager::logEvent(std::string eventValue)
         
         return true;
     }
+
+#endif
     
     return false;
 }

@@ -98,6 +98,29 @@ std::istream& TodoUtil::safegetline(std::istream& is, std::string& t)
 }
 
 
+std::string TodoUtil::combineCSV(std::vector<std::string> csv)
+{
+    std::string ret = "";
+    
+    for (auto v : csv) {
+        bool comma = (v.find(",")!=std::string::npos);
+        
+        if (comma) ret += "\"";
+        
+        for (int i=0; i<v.length(); i++) {
+            auto c = v[i];
+            if (c=='"') ret+="\"";
+            ret+=std::string(1, c);
+        }
+        
+        if (comma) ret += "\"";
+        ret += ",";
+
+    }
+    
+    return ret;
+}
+
 std::vector<std::string> TodoUtil::splitCSV(std::string& line)
 {
     std::vector<std::string> columns;
@@ -177,6 +200,36 @@ std::vector<std::vector<std::string>> TodoUtil::readCSV(std::string& filedata)
     return ret;
 }
 
+
+std::vector<std::vector<std::string>> TodoUtil::readTSV(std::string& filedata)
+{
+    std::vector<std::vector<std::string>> ret;
+    
+    std::istringstream iss(filedata);
+    std::string line;
+    std::string word;
+    
+    while(iss.good())
+    {
+        safegetline(iss, line);
+        if(line.length() == 0 && !iss.good())
+        {
+            break;
+        }
+        //CCLOG("csv line: %s", line.c_str());
+        std::vector<std::string> columns;
+        std::istringstream iss2(line);
+        while(iss2.good())
+        {
+            std::getline(iss2, word, '\t');
+            columns.push_back(word);
+        }
+        ret.push_back(columns);
+    }
+    
+    return ret;
+}
+
 std::string TodoUtil::trim(std::string& str)
 {
 
@@ -230,3 +283,44 @@ Label* TodoUtil::createLabel(const std::string &text, float maxFontSize, Size bo
 }
 
 
+Label* TodoUtil::createLabelMultiline(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment/* = TextHAlignment::LEFT*/, TextVAlignment vAlignment/* = TextVAlignment::CENTER*/)
+{
+    Label* label;
+    
+    
+    label = Label::createWithTTF(text, fontName, maxFontSize, Size(boxSize.width, 0), hAlignment, vAlignment);
+    label->setTextColor(color);
+    label->setVerticalAlignment(cocos2d::TextVAlignment::CENTER);
+    
+    return label;
+}
+
+Label* TodoUtil::createLabelMultilineToFit(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment/* = TextHAlignment::LEFT*/, TextVAlignment vAlignment/* = TextVAlignment::CENTER*/)
+{
+    Label* label;
+    
+    
+    label = Label::createWithTTF(text, fontName, maxFontSize, Size(boxSize.width, 0), hAlignment, cocos2d::TextVAlignment::CENTER);
+    label->setTextColor(color);
+    
+    
+    if (boxSize.height<1) return label;
+    
+    if (label->getContentSize().height > boxSize.height) {
+        auto smallFontSize = maxFontSize * (boxSize.height /label->getContentSize().height);
+        auto adjustedFontSize = (smallFontSize + maxFontSize)/2.0;
+        
+        label = Label::createWithTTF(text, fontName, adjustedFontSize, Size(boxSize.width, 0), hAlignment, cocos2d::TextVAlignment::CENTER);
+        label->setTextColor(color);
+        
+        if (label->getContentSize().height > boxSize.height) {
+            label = Label::createWithTTF(text, fontName, smallFontSize, Size(boxSize.width, 0), hAlignment, cocos2d::TextVAlignment::CENTER);
+            label->setTextColor(color);
+        }
+        
+        return label;
+        
+    }
+    
+    return label;
+}

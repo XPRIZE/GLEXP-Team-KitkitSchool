@@ -5,6 +5,7 @@ include $(CLEAR_VARS)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/external)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos)
+$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos/audio/include)
 
 LOCAL_MODULE := cocos2dcpp_shared
 
@@ -18,7 +19,6 @@ CLASSES += $(wildcard $(LOCAL_PATH)/../../../Classes/**/**/**/*.cpp)
 CLASSES := $(CLASSES:$(LOCAL_PATH)/%=%)
 LOCAL_SRC_FILES := hellocpp/main.cpp
 LOCAL_SRC_FILES += $(CLASSES)
-
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes
 

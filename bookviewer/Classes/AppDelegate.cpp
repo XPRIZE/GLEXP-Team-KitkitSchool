@@ -3,7 +3,8 @@
 #include <string>
 #include "SimpleAudioEngine.h"
 #include "Common/Controls/TodoLoadingScene.hpp"
-
+#include "Managers/LanguageManager.hpp"
+#include "Utils/TodoUtil.h"
 USING_NS_CC;
 
 
@@ -42,6 +43,8 @@ static int register_all_packages()
 
 
 bool AppDelegate::applicationDidFinishLaunching() {
+    CCLOG("applicationDidFinishLaunching()");
+
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
@@ -66,6 +69,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     Scene* scene;
+    /*
     auto book= MainScene::getLaunchString();
     //if (book.length()>0) {
     //    scene = HelloWorld::createBookScene(book);
@@ -77,6 +81,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // run
     director->runWithScene(scene);
+    */
+
+	if (!launchBook()) {
+		scene = MainScene::createScene();
+		director->runWithScene(scene);
+	}
 
     return true;
 }
@@ -87,30 +97,61 @@ void AppDelegate::applicationDidEnterBackground() {
     //Director::getInstance()->pause();
     // if you use SimpleAudioEngine, it must be pause
     //CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-    
+
 
 }
 
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
-    
-    //Director::getInstance()->resume();
+    CCLOG("applicationWillEnterForeground()");
+
+//    Director::getInstance()->resume();
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
     //CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
     
-    auto book= MainScene::getLaunchString();
-    if (book.length()>0 && book!=MainScene::currentBook) {
-        MainScene::clearLaunchString();
-        MainScene::currentBook = book;
-        
-        std::function<Scene*(void)> creator = [book]() {
-            auto scene = MainScene::createBookScene(book);
-            return scene;
-        };
-        
-        Director::getInstance()->replaceScene(TodoLoadingScene::createScene(creator));
+    
+	launchBook();
+}
 
-    }
+bool AppDelegate::launchBook()
+{
+	auto book = MainScene::getLaunchString();
+	CCLOG("argument = [%s]", book.c_str());
+	if (book.length() > 0 && book != MainScene::currentBook) {
+		MainScene::clearLaunchString();
+		MainScene::currentBook = book;
+
+
+		auto folderName = TodoUtil::split(book, '/').back();
+		if (folderName.find("en") == 0) {
+			LanguageManager::getInstance()->setCurrentLocale(LanguageManager::LocaleType::en_US);
+		}
+		else if (folderName.find("sw") == 0) {
+			LanguageManager::getInstance()->setCurrentLocale(LanguageManager::LocaleType::sw_TZ);
+		}
+
+
+		std::function<Scene*(void)> creator = [book]() {
+			auto scene = MainScene::createBookScene(book);
+			return scene;
+		};
+
+
+		auto running = Director::getInstance()->getRunningScene();
+		if (running) {
+			Director::getInstance()->replaceScene(TodoLoadingScene::createScene(creator));
+		}
+		else {
+			Director::getInstance()->runWithScene(TodoLoadingScene::createScene(creator));
+		}
+
+		return true;
+	}
+
+
+
+
+	return false;
 }

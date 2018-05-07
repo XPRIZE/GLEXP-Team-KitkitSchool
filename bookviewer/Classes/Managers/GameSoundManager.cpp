@@ -96,3 +96,25 @@ void GameSoundManager::preloadEffect(std::string name){
     }
 }
 
+void GameSoundManager::playBGM(std::string name)
+{
+//    if (m_currentBGM == name) return;
+//    m_currentBGM = name;
+    SimpleAudioEngine::getInstance()->playBackgroundMusic(name.c_str());
+}
+
+void GameSoundManager::stopBGM()
+{
+//    m_currentBGM = "";
+    SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+}
+
+void GameSoundManager::pauseBGM()
+{
+    SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+}
+
+void GameSoundManager::resumeBGM()
+{
+    SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+}
