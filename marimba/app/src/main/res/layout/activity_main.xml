@@ -12,8 +12,8 @@
         android:id="@+id/v_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
         android:alpha="0.65"
         android:background="@drawable/selector_back" />
 
@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="881.3dp"
-            android:layout_height="411.6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:src="@drawable/tools_marimba_image_frame" />
 
@@ -38,104 +38,104 @@
 
             <FrameLayout
                 android:id="@+id/v_bar_0"
-                android:layout_width="119dp"
-                android:layout_height="510.65dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/tools_marimba_image_stick_1_effect">
 
                 <ImageView
-                    android:layout_width="119dp"
-                    android:layout_height="510.65dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_1_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_1"
-                android:layout_width="119.35dp"
-                android:layout_height="484.75dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_2_effect">
 
                 <ImageView
-                    android:layout_width="119.35dp"
-                    android:layout_height="484.75dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_2_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_2"
-                android:layout_width="119.7dp"
-                android:layout_height="467.6dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_3_effect">
 
                 <ImageView
-                    android:layout_width="119.7dp"
-                    android:layout_height="467.6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_3_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_3"
-                android:layout_width="116.2dp"
-                android:layout_height="440.65dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_4_effect">
 
                 <ImageView
-                    android:layout_width="116.2dp"
-                    android:layout_height="440.65dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_4_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_4"
-                android:layout_width="116.2dp"
-                android:layout_height="423.85dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_5_effect">
 
                 <ImageView
-                    android:layout_width="116.2dp"
-                    android:layout_height="423.85dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_5_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_5"
-                android:layout_width="119.7dp"
-                android:layout_height="401.8dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_6_effect">
 
                 <ImageView
-                    android:layout_width="119.7dp"
-                    android:layout_height="401.8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:src="@drawable/tools_marimba_image_stick_6_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_6"
-                android:layout_width="119.7dp"
-                android:layout_height="376.95dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_7_effect">
 
                 <ImageView
-                    android:layout_width="119.7dp"
-                    android:layout_height="376.95dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_7_body" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_bar_7"
-                android:layout_width="118.65dp"
-                android:layout_height="355.95dp"
-                android:layout_marginLeft="-21dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-60px"
                 android:background="@drawable/tools_marimba_image_stick_8_effect">
 
                 <ImageView
-                    android:layout_width="118.65dp"
-                    android:layout_height="355.95dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/tools_marimba_image_stick_8_body" />
             </FrameLayout>
 

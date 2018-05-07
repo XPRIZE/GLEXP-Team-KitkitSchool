@@ -6,6 +6,21 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 public class Util {
+    private static long mMarkTime;
+
+    public static void setMarkTime() {
+        mMarkTime = System.currentTimeMillis();
+    }
+
+    public static long getElapsedTime() {
+        Log.i(":" + (System.currentTimeMillis() - mMarkTime));
+        return System.currentTimeMillis() - mMarkTime;
+    }
+
+    public static long getElapsedTime(String comment) {
+        Log.i(comment + " : " + (System.currentTimeMillis() - mMarkTime) + "msec");
+        return System.currentTimeMillis() - mMarkTime;
+    }
 
     public static DisplayMetrics getWindowInfo(Activity activity) {
         DisplayMetrics result = new DisplayMetrics();

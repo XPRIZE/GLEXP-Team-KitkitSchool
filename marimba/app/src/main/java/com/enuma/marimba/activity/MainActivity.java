@@ -1,13 +1,15 @@
 package com.enuma.marimba.activity;
 
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private View mDecorView;
     private int mUiOption;
 
+    private float mScale;
+
     ////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -41,19 +45,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setImmersiveMode();
-        DisplayMetrics displayMetrics = Util.getWindowInfo(this);
-        Log.i("width dp : " + Util.getDip(this, displayMetrics.widthPixels));
-        Log.i("height dp : " + Util.getDip(this, displayMetrics.heightPixels));
         mEffectSound = EffectSound.getInstance(this);
 
         setupView();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mEffectSound.startSoundPool(EffectSound.SOUND_INTRO);
-            }
-        }, 300);
+        if (savedInstanceState == null) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mEffectSound.startSoundPool(EffectSound.SOUND_INTRO);
+                }
+            }, 300);
+        }
     }
 
     @Override
@@ -61,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
         if (hasFocus == true) {
             mDecorView.setSystemUiVisibility(mUiOption);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("KEY_PAUSE", true);
+        super.onSaveInstanceState(outState);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -80,12 +89,39 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupView() {
         findViewById(R.id.v_back).setOnClickListener(mOnClickListener);
-        findViewById(R.id.layout_root).setOnTouchListener(mOnTouchListener);
+        View rootView = findViewById(R.id.layout_root);
+        rootView.setOnTouchListener(mOnTouchListener);
 
         String packageName = getPackageName();
         for (int i = 0; i < MAX_BAR_COUNT; ++i) {
             mVBars[i] = findViewById(Util.getResourceId(this, "v_bar_" + i, "id", packageName));
         }
+
+        setScale(rootView);
+    }
+
+    private void setScale(View rootView) {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+
+        float fixedSizeWidth = 1800.f * size.x / size.y;
+        float fixedSizeHeight = 1800.f;
+        mScale = size.y / 1800.f;
+
+        Log.i("display width : " + size.x);
+        Log.i("display height : " + size.y);
+        Log.i("fixed width : " + fixedSizeWidth);
+        Log.i("fixed height : " + fixedSizeHeight);
+        Log.i("scale : " + mScale);
+
+        ViewGroup.LayoutParams params = rootView.getLayoutParams();
+        params.width = (int)(fixedSizeWidth + 0.5f);
+        params.height = (int)(fixedSizeHeight + 0.5f);
+        rootView.setPivotX(0);
+        rootView.setPivotY(0);
+        rootView.setScaleX(mScale);
+        rootView.setScaleY(mScale);
     }
 
     private void selectBar(int barIndex) {
@@ -149,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
                 boolean bSelect = false;
                 for (int j = 0; j < mVBars.length; ++j) {
                     mVBars[j].getGlobalVisibleRect(mTempRect);
+                    mTempRect.left = (int)(mTempRect.left / mScale);
+                    mTempRect.top = (int)(mTempRect.top / mScale);
+                    mTempRect.right = (int)(mTempRect.right / mScale);
+                    mTempRect.bottom = (int)(mTempRect.bottom / mScale);
+
                     if (mTempRect.contains((int) x, (int) y) == true) {
                         if (mTouchInfo.get(touchId) != j) {
                             mTouchInfo.put(touchId, j);
