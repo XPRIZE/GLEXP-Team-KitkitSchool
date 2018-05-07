@@ -105,62 +105,6 @@
 
                     </LinearLayout>
                 </FrameLayout>
-                <android.support.percent.PercentRelativeLayout
-                    android:orientation="horizontal"
-                    android:layout_below="@id/videoSurfaceContainer"
-                    app:layout_widthPercent="100%"
-                    app:layout_heightPercent="10%">
-                    <LinearLayout
-                        android:id="@+id/icon_volume_down_wrapper"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentStart="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:id="@+id/icon_volume_down"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/libray_icon_volume_down"
-                            />
-                    </LinearLayout>
-                    <SeekBar
-                        app:layout_widthPercent="30%"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/volumeBar"
-                        android:max="100"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/icon_volume_down_wrapper" />
-
-                    <LinearLayout
-                        android:id="@+id/icon_volume_up_wrapper"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:layout_toRightOf="@id/volumeBar">
-                        <ImageView
-                            android:id="@+id/icon_volume_up"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/libray_icon_volume_up"
-                            />
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/expand_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentRight="true"
-                        android:background="@android:color/transparent"
-                        android:drawablePadding="5dp"
-                        android:textAllCaps="false"
-                        android:textSize="20sp" />
-
-
-                </android.support.percent.PercentRelativeLayout>
             </android.support.percent.PercentRelativeLayout>
             <ScrollView
                 android:id="@+id/scrollView"

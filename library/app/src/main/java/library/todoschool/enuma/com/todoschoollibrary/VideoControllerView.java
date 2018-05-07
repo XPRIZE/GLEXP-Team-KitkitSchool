@@ -96,6 +96,7 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mNextButton;
     private ImageButton         mPrevButton;
     private ImageButton         mFullscreenButton;
+    private SeekBar mVolumeSeekBar;
     private Handler             mHandler = new MessageHandler(this);
 
     public VideoControllerView(Context context, AttributeSet attrs) {
@@ -220,6 +221,7 @@ public class VideoControllerView extends FrameLayout {
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
+        mVolumeSeekBar = (SeekBar) v.findViewById(R.id.volumeBar);
         installPrevNextListeners();
     }
 
@@ -336,23 +338,30 @@ public class VideoControllerView extends FrameLayout {
         if (mPlayer == null || mDragging) {
             return 0;
         }
-        
-        int position = mPlayer.getCurrentPosition();
-        int duration = mPlayer.getDuration();
-        if (mProgress != null) {
-            if (duration > 0) {
-                // use long to avoid overflow
-                long pos = 1000L * position / duration;
-                mProgress.setProgress( (int) pos);
-            }
-            int percent = mPlayer.getBufferPercentage();
-            mProgress.setSecondaryProgress(percent * 10);
-        }
 
-        if (mEndTime != null)
-            mEndTime.setText(stringForTime(duration));
-        if (mCurrentTime != null)
-            mCurrentTime.setText(stringForTime(position));
+        int position = 0;
+        try {
+            position = mPlayer.getCurrentPosition();
+            int duration = mPlayer.getDuration();
+            if (mProgress != null) {
+                if (duration > 0) {
+                    // use long to avoid overflow
+                    long pos = 1000L * position / duration;
+                    mProgress.setProgress( (int) pos);
+                }
+                int percent = mPlayer.getBufferPercentage();
+                mProgress.setSecondaryProgress(percent * 10);
+            }
+
+            if (mEndTime != null)
+                mEndTime.setText(stringForTime(duration));
+            if (mCurrentTime != null)
+                mCurrentTime.setText(stringForTime(position));
+
+        } catch (Exception e) {
+            Log.e(TAG, "" + e);
+
+        }
 
         return position;
     }
@@ -630,7 +639,11 @@ public class VideoControllerView extends FrameLayout {
             }
         }
     }
-    
+
+    public SeekBar getVolumeSeekBar() {
+        return mVolumeSeekBar;
+    }
+
     public interface MediaPlayerControl {
         void    start();
         void    pause();
@@ -652,25 +665,30 @@ public class VideoControllerView extends FrameLayout {
         MessageHandler(VideoControllerView view) {
             mView = new WeakReference<VideoControllerView>(view);
         }
+
         @Override
         public void handleMessage(Message msg) {
-            VideoControllerView view = mView.get();
-            if (view == null || view.mPlayer == null) {
-                return;
-            }
-            
-            int pos;
-            switch (msg.what) {
-                case FADE_OUT:
-                    view.hide();
-                    break;
-                case SHOW_PROGRESS:
-                    pos = view.setProgress();
-                    if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
-                        msg = obtainMessage(SHOW_PROGRESS);
-                        sendMessageDelayed(msg, 1000 - (pos % 1000));
-                    }
-                    break;
+            try {
+                VideoControllerView view = mView.get();
+                if (view == null || view.mPlayer == null) {
+                    return;
+                }
+
+                int pos;
+                switch (msg.what) {
+                    case FADE_OUT:
+                        view.hide();
+                        break;
+                    case SHOW_PROGRESS:
+                        pos = view.setProgress();
+                        if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
+                            msg = obtainMessage(SHOW_PROGRESS);
+                            sendMessageDelayed(msg, 1000 - (pos % 1000));
+                        }
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e(TAG,"" + e);
             }
         }
     }

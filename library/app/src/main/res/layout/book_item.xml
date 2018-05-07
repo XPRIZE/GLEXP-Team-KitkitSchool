@@ -11,7 +11,7 @@
         android:layout_margin="0dp"
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:padding="0px"
         android:background="#fff"
         android:adjustViewBounds="true"
@@ -19,15 +19,14 @@
     <TextView
         android:id="@+id/book_title"
         android:layout_width="130dp"
-        android:layout_height="35dp"
+        android:layout_height="70dp"
         android:text="Jungle Books"
         android:textSize="20sp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:gravity="bottom"
+        android:gravity="center_vertical"
         android:ellipsize="end"
-        android:maxLines="1"
-        />
+        android:maxLines="2" />
     <TextView
         android:id="@+id/book_author"
         android:layout_width="130dp"
@@ -38,5 +37,6 @@
         android:layout_marginEnd="15dp"
         android:gravity="top"
         android:ellipsize="end"
+        android:visibility="gone"
         android:maxLines="1"/>
 </LinearLayout>

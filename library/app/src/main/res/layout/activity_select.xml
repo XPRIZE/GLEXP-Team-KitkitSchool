@@ -23,6 +23,7 @@
             android:src="@drawable/library_button_help"
             android:layout_gravity="right"
             android:background="@android:color/transparent"
+            android:visibility="gone"
             android:onClick="showTutorialVideo"/>
     </android.support.v7.widget.Toolbar>
 

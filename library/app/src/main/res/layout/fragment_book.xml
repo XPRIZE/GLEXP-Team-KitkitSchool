@@ -1,304 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="41dp"
             android:layout_marginStart="86dp"
+            android:layout_marginTop="41dp"
+            android:orientation="vertical"
             android:paddingBottom="40dp">
+
             <TextView
                 android:id="@+id/book1_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:textSize="22sp"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_weight="6"
-                />
+                android:textSize="22sp"
+                android:visibility="gone" />
 
-            <HorizontalScrollView
-                android:id="@+id/hsv"
-                android:layout_width="fill_parent"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_1"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:fillViewport="false"
-                android:measureAllChildren="false"
-                android:scrollbars="none"
                 android:layout_weight="50"
-                >
-                <LinearLayout
-                    android:id="@+id/hsv_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                    <!--<LinearLayout-->
-                        <!--android:id="@+id/roundedrect1"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:orientation="vertical"-->
-                        <!--android:background="@drawable/roundedrect"-->
-                        <!--android:elevation="3dp"-->
-                        <!--android:layout_marginTop="2dp"-->
-                        <!--android:layout_marginEnd="2dp"-->
-                        <!--android:layout_marginStart="5dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-                        <!--<ImageButton-->
-                            <!--android:id="@+id/book1"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:layout_weight="602"-->
-                            <!--android:src="@drawable/book_thumbnail"-->
-                            <!--android:scaleType="fitXY"-->
-                            <!--android:padding="0px"-->
-                            <!--android:background="#fff"-->
-                            <!--android:adjustViewBounds="true"-->
-                            <!--android:tag="tutorial1"/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Jungle Books"-->
-                            <!--android:textSize="20sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="bottom"-->
-                            <!--/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Rudyard Kipling"-->
-                            <!--android:textSize="16sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="top"/>-->
-                    <!--</LinearLayout>-->
-                    <!--<LinearLayout-->
-                        <!--android:id="@+id/roundedrect2"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:orientation="vertical"-->
-                        <!--android:background="@drawable/roundedrect"-->
-                        <!--android:elevation="3dp"-->
-                        <!--android:layout_marginTop="2dp"-->
-                        <!--android:layout_marginEnd="2dp"-->
-                        <!--android:layout_marginStart="17dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-                        <!--<ImageButton-->
-                            <!--android:id="@+id/book2"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:layout_weight="602"-->
-                            <!--android:src="@drawable/book_thumbnail"-->
-                            <!--android:scaleType="fitXY"-->
-                            <!--android:padding="0px"-->
-                            <!--android:background="#fff"-->
-                            <!--android:adjustViewBounds="true"-->
-                            <!--android:tag="tutorial1"/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Jungle Books"-->
-                            <!--android:textSize="20sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="bottom"-->
-                            <!--/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Rudyard Kipling"-->
-                            <!--android:textSize="16sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="top"/>-->
-                    <!--</LinearLayout>-->
-                    <!--<LinearLayout-->
-                        <!--android:id="@+id/roundedrect3"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:orientation="vertical"-->
-                        <!--android:background="@drawable/roundedrect"-->
-                        <!--android:elevation="3dp"-->
-                        <!--android:layout_marginTop="2dp"-->
-                        <!--android:layout_marginEnd="2dp"-->
-                        <!--android:layout_marginStart="17dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-                        <!--<ImageButton-->
-                            <!--android:id="@+id/book3"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:layout_weight="602"-->
-                            <!--android:src="@drawable/book_thumbnail"-->
-                            <!--android:scaleType="fitXY"-->
-                            <!--android:padding="0px"-->
-                            <!--android:background="#fff"-->
-                            <!--android:adjustViewBounds="true"-->
-                            <!--android:tag="tutorial1"/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Jungle Books"-->
-                            <!--android:textSize="20sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="bottom"-->
-                            <!--/>-->
-                        <!--<TextView-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="0px"-->
-                            <!--android:text="Rudyard Kipling"-->
-                            <!--android:textSize="16sp"-->
-                            <!--android:layout_weight="95"-->
-                            <!--android:layout_marginStart="15dp"-->
-                            <!--android:gravity="top"/>-->
-                    <!--</LinearLayout>-->
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/book2_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="6"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="22sp" />
-            <HorizontalScrollView
-                android:id="@+id/hsv2"
-                android:layout_width="fill_parent"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_2"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:measureAllChildren="false"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
                 android:scrollbars="none"
-                android:fillViewport="false">
-                <LinearLayout
-                    android:id="@+id/hsv2_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/book3_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="6"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="22sp" />
-            <HorizontalScrollView
-                android:id="@+id/hsv3"
-                android:layout_width="fill_parent"
-                android:measureAllChildren="false"
-                android:scrollbars="none"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_3"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:fillViewport="false">
-                <LinearLayout
-                    android:id="@+id/hsv3_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/book4_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="6"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="22sp" />
-            <HorizontalScrollView
-                android:id="@+id/hsv4"
-                android:layout_width="fill_parent"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_4"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:measureAllChildren="false"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
                 android:scrollbars="none"
-                android:fillViewport="false">
-                <LinearLayout
-                    android:id="@+id/hsv4_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/book5_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="6"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="22sp" />
-            <HorizontalScrollView
-                android:id="@+id/hsv5"
-                android:layout_width="fill_parent"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_5"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:measureAllChildren="false"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
                 android:scrollbars="none"
-                android:fillViewport="false">
-                <LinearLayout
-                    android:id="@+id/hsv5_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/book6_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="6"
-                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:textSize="22sp" />
-            <HorizontalScrollView
-                android:id="@+id/hsv6"
-                android:layout_width="fill_parent"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_6"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:measureAllChildren="false"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
                 android:scrollbars="none"
-                android:fillViewport="false">
-                <LinearLayout
-                    android:id="@+id/hsv6_wrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="25dp">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/book7_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_7"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/book8_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="6"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_book_8"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:paddingLeft="0dp"
+                android:paddingRight="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
     </ScrollView>
 

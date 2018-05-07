@@ -144,9 +144,6 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
             }
         });
 
-        Button expandButton = (Button)findViewById(R.id.expand_button);
-        expandButton.setVisibility(View.INVISIBLE);
-
         /*
         expandButton.setText(R.string.button_more);
         expandButton.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.libray_icon_more),null,null,null);
@@ -172,10 +169,9 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
 
         player = new MediaPlayer();
         controller = new VideoControllerView(this);
-        initControls();
         controller.setMediaPlayer(this);
         controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-
+        initControls();
 
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
         SurfaceHolder videoHolder = videoSurface.getHolder();
@@ -452,7 +448,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     {
         try
         {
-            volumeSeekbar = (SeekBar)findViewById(R.id.volumeBar);
+            volumeSeekbar = controller.getVolumeSeekBar();
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             volumeSeekbar.setMax(audioManager
                     .getStreamMaxVolume(AudioManager.STREAM_MUSIC));

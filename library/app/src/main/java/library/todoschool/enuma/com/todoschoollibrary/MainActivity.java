@@ -1,33 +1,21 @@
 package library.todoschool.enuma.com.todoschoollibrary;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import android.graphics.Rect;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.content.Intent;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -44,6 +32,21 @@ import android.widget.Toast;
 
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 
 /**
@@ -58,6 +61,8 @@ public class MainActivity extends KitKitLoggerActivity {
     int mWidth;
 
     static boolean useExternalData = false;
+    static String appLanguage;
+
     private String TAG = "MainActivity";
 
     private static LibraryApplication application;
@@ -81,8 +86,8 @@ public class MainActivity extends KitKitLoggerActivity {
         String title;
         String thumbnail;
         String filename;
-        String lyrics;
-        String info;
+        String lyrics = "";
+        String info = "";
     }
 
     public static class BookData
@@ -119,6 +124,7 @@ public class MainActivity extends KitKitLoggerActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Log.d(TAG,"onCreateView videoFragment");
+            setMarkTime();
             Boolean foundVideoFiles;
 
             TreeMap<String, ArrayList<VideoData>> data = new TreeMap<String, ArrayList<VideoData>>();
@@ -129,6 +135,8 @@ public class MainActivity extends KitKitLoggerActivity {
             //File videoFolder = getContext().getFilesDir().getAbsoluteFile();
 
             final String libPath = videoFolder.getAbsolutePath() + File.separator + "Library";
+
+
 
             File libFolder = new File(libPath);
             String videoDataFilename = "library_video_data.tsv";
@@ -142,8 +150,8 @@ public class MainActivity extends KitKitLoggerActivity {
                     is = new FileInputStream(dataFile);
                 }
                 else {
-                    Log.d("TAG", Arrays.toString(getActivity().getAssets().list(".")));
-                    is = getActivity().getAssets().open(videoDataFilename);
+                    Log.i(TAG, "path : " + (appLanguage +  File.separator + videoDataFilename));
+                    is = getActivity().getAssets().open(appLanguage +  File.separator + videoDataFilename);
                 }
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -157,22 +165,14 @@ public class MainActivity extends KitKitLoggerActivity {
                         video.category = RowData[1];
                         video.categoryName = RowData[2];
                         video.title = RowData[3];
-                        video.thumbnail = RowData[4];
+                        video.thumbnail = appLanguage +  File.separator + RowData[4];
                         video.filename = RowData[5];
-                        video.lyrics = RowData[6];
-                        video.info = RowData[7];
+//                        video.lyrics = RowData[6];
+//                        video.info = RowData[7];
 
                         videoArray.add(video);
-
-//                        Log.d("data-test", video.id + " " + video.category + " " + video.title + " " + video.thumbnail + " " + video.filename);
-
-//                        Log.d("data-test","lyrics-org : " + video.lyrics);
-//                        Log.d("data-test","info-org : "+ video.info);
                         video.lyrics = video.lyrics.replaceAll("\\\\n ", "\n").replaceAll("\\\\n","\n");
-
                         video.info = video.info.replaceAll("\\\\n ", "\n").replaceAll("\\\\n","\n");
-//                        Log.d("data-test","lyrics : " + video.lyrics);
-//                        Log.d("data-test","info : "+ video.info);
 
                         ArrayList<VideoData> videoArrayForMap;
 
@@ -213,224 +213,51 @@ public class MainActivity extends KitKitLoggerActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_video, container, false);
 
-            // dynamically add category - doesn't work
-//            ViewGroup relativeLayout = (ViewGroup)rootView.findViewById(R.id.video_layout);
-//
-//            int viewId = 1;
-//
-//            for(Map.Entry<String, ArrayList<VideoData>> entry : data.entrySet()) {
-//                String category = entry.getKey();
-//                ArrayList<VideoData> videoList = entry.getValue();
-//
-//                TextView categoryTitle = new TextView(getContext());
-//                categoryTitle.setText(category);
-//                categoryTitle.setTextAppearance(R.style.CategoryHeaderText);
-//                categoryTitle.setId(viewId++);
-//                relativeLayout.addView(categoryTitle);
-//
-//                PercentRelativeLayout.LayoutParams textViewParams = new PercentRelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-//                        LayoutParams.WRAP_CONTENT);
-//                textViewParams.setMarginStart(MainActivity.dpTopx(5,getContext()));
-//                if (viewId != 2) {
-//                    textViewParams.addRule(RelativeLayout.BELOW, viewId-2);
-//                }
-//
-//                PercentLayoutHelper.PercentLayoutInfo info = textViewParams.getPercentLayoutInfo();
-//                info.heightPercent = 0.05f;
-//                categoryTitle.setLayoutParams(textViewParams);
-//                categoryTitle.requestLayout();
-//
-//
-//                HorizontalScrollView hsv = new HorizontalScrollView(getContext());
-//                hsv.setId(viewId++);
-//
-//                PercentRelativeLayout.LayoutParams hsvParams = new PercentRelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-//                        LayoutParams.MATCH_PARENT);
-//                hsvParams.addRule(RelativeLayout.BELOW, categoryTitle.getId());
-//                PercentLayoutHelper.PercentLayoutInfo hsvParamsInfo = textViewParams.getPercentLayoutInfo();
-//                hsvParamsInfo.heightPercent = 0.45f;
-//                hsv.setLayoutParams(hsvParams);
-//
-//                relativeLayout.addView(hsv);
-//
-//                LinearLayout hsvWrapper = new LinearLayout(getContext());
-//
-//                LayoutParams hsvWrapperParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-//                hsvWrapper.setGravity(Gravity.CENTER_VERTICAL);
-//                hsvWrapper.setOrientation(LinearLayout.HORIZONTAL);
-//                hsvWrapper.setLayoutParams(hsvWrapperParams);
-//                hsv.addView(hsvWrapper);
-//                boolean isFirst = true;
-//                for (VideoData video : videoList) {
-//                    View child = LayoutInflater.from(getContext()).inflate(R.layout.video_item, null);
-//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-//                    int left = MainActivity.dpTopx(5,getContext());
-//                    int top=MainActivity.dpTopx(2,getContext());;
-//                    int right=MainActivity.dpTopx(5,getContext());;
-//                    int bottom=MainActivity.dpTopx(5,getContext());;
-//                    if (isFirst) {
-//                        left = MainActivity.dpTopx(17,getContext());;
-//                        isFirst = false;
-//                    }
-//
-//                    layoutParams.setMargins(left,top,right,bottom);
-//                    child.setLayoutParams(layoutParams);
-//
-//                    hsvWrapper.addView(child);
-//
-//                    child.findViewById(getResources().getIdentifier("roundedrect", "id", getActivity().getPackageName()));
-//
-//                    ImageButton imageButton = (ImageButton) child.findViewById(getResources().getIdentifier("video_image_button","id",getActivity().getPackageName()));
-//                    imageButton.setTag(libPath + File.separator + video.filename);
-//                    String thumbnailPath = libPath + File.separator + video.thumbnail;
-//                    Drawable thumbnail = Drawable.createFromPath(thumbnailPath);
-//                    imageButton.setImageDrawable(thumbnail);
-//                    imageButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-//                            Log.d("MainActivity", "tag : "+view.getTag().toString());
-//                            intent.putExtra("video",view.getTag().toString());
-//                            startActivity(intent);
-//                        }
-//                    });
-//                }
-//
-//
-//            }
-
-
             for(Map.Entry<String, ArrayList<VideoData>> entry : data.entrySet()) {
                 String category = entry.getKey();
                 final ArrayList<VideoData> videoList = entry.getValue();
 
-                LinearLayout hsvWrapper;
                 TextView categoryTitle;
+                RecyclerView recyclerView;
 
                 if (category.equals("tutorial")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv_wrapper);
                     categoryTitle = (TextView) rootView.findViewById(R.id.tutorial_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_video_0);
                 }
                 else if(category.equals("music_video")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv2_wrapper);
                     categoryTitle = (TextView) rootView.findViewById(R.id.musicvideo_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_video_1);
                 }
-                else if(category.equals("video")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv3_wrapper);
-                    categoryTitle = (TextView) rootView.findViewById(R.id.video_title_textView);
+                else if(category.equals("literacy_video")) {
+                    categoryTitle = (TextView) rootView.findViewById(R.id.literacy_video_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_video_2);
+                }
+                else if(category.equals("math_video")) {
+                    categoryTitle = (TextView) rootView.findViewById(R.id.math_video_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_video_3);
+
+                } else if(category.equals("alphabet_video")) {
+                        categoryTitle = (TextView) rootView.findViewById(R.id.alphabet_video_title_textView);
+                        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_video_4);
+
                 }
                 else {
                     continue;
                 }
 
-                boolean isFirst = true;
-                for (VideoData video : videoList) {
-                    View child = LayoutInflater.from(getContext()).inflate(R.layout.video_item, null);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                    int left = MainActivity.dpTopx(9,getContext());
-                    int top=MainActivity.dpTopx(2,getContext());
-                    int right=MainActivity.dpTopx(5,getContext());
-                    int bottom=MainActivity.dpTopx(5,getContext());
-                    if (isFirst) {
-                        left = MainActivity.dpTopx(5,getContext());
-                        categoryTitle.setText(video.categoryName);
-                        isFirst = false;
-                    }
-
-                    layoutParams.setMargins(left,top,right,bottom);
-                    child.setLayoutParams(layoutParams);
-
-                    hsvWrapper.addView(child);
-
-                    child.findViewById(getResources().getIdentifier("roundedrect", "id", getActivity().getPackageName()));
-                    child.setClipToOutline(true);
-
-                    TextView videoTitle = (TextView) child.findViewById(R.id.video_title);
-                    videoTitle.setText(video.title);
-
-                    ImageButton imageButton = (ImageButton) child.findViewById(getResources().getIdentifier("video_image_button","id",getActivity().getPackageName()));
-                    //imageButton.setTag(1, libPath + File.separator + video.filename);
-                    imageButton.setTag(video);
-                    Drawable thumbnail = null;
-                    Bitmap thumbnailBitmap = null;
-                    if (useExternalData) {
-                        String thumbnailPath = libPath + File.separator + video.thumbnail;
-                        thumbnail = Drawable.createFromPath(thumbnailPath);
-                        imageButton.setImageDrawable(thumbnail);
-                    }
-                    else {
-                        thumbnailBitmap = loadVideoThumbnail(video);
-                        imageButton.setImageBitmap(thumbnailBitmap);
-//                        try {
-//                            //thumbnail = Drawable.createFromStream(getContext().getAssets().open(video.thumbnail), null);
-//
-//                        }
-//                        catch (IOException ex) {
-//
-//                        }
-                    }
-
-
-                    imageButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-//                            Log.d("MainActivity", "tag : "+view.getTag(1).toString());
-                            VideoData video = (VideoData)view.getTag();
-
-                            intent.putExtra("videoArray", videoArray);
-                            intent.putExtra("libPath", libPath);
-
-                            int curVideoIndex = videoArray.indexOf(video);
-                            intent.putExtra("currentVideoIndex",curVideoIndex);
-
-                            startActivity(intent);
-                            try {
-                                KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
-                                logger.logEvent("library","start_video",video.title,0);
-                            }
-                            catch (NullPointerException ne) {
-                                ne.printStackTrace();
-                                Log.e(TAG, ne.getMessage());
-                            }
-                            catch (Exception e) {
-                                Log.e(TAG, e.getMessage());
-                            }
-
-                        }
-                    });
-                }
-
-
+                categoryTitle.setText(videoList.get(0).categoryName);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+                recyclerView.addItemDecoration(new MainActivity.RecyclerViewDecoration(
+                        MainActivity.dpTopx(7,getContext()),
+                        MainActivity.dpTopx(2,getContext()),
+                        MainActivity.dpTopx(7,getContext()),
+                        MainActivity.dpTopx(5,getContext())));
+                recyclerView.setAdapter(new MainActivity.VideoAdapter(getActivity(), libPath, videoList));
             }
-
+            getElapsedTime("video");
             return rootView;
 
         }
-
-        public Bitmap loadVideoThumbnail(VideoData video)
-        {
-            Bitmap thumbnail = null;
-            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inPreferredConfig = Bitmap.Config.RGB_565;
-//            //options.inJustDecodeBounds = true;
-//            options.inSampleSize = 8;
-            try {
-                thumbnail = BitmapFactory.decodeStream(getContext().getAssets().open(video.thumbnail), null, options);
-            }
-            catch (IOException e) {
-                return null;
-            }
-
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            String imageType = options.outMimeType;
-            return thumbnail;
-
-        }
-
-
-
     }
 
 
@@ -444,7 +271,6 @@ public class MainActivity extends KitKitLoggerActivity {
             fragment.setArguments(args);
             return fragment;
         }
-        //TreeMap<String, BookData> bookDataTreeMap;
 
         public Bitmap loadBookThumbnail(BookData bookData)
         {
@@ -458,19 +284,20 @@ public class MainActivity extends KitKitLoggerActivity {
                 String filename = "";
                 filename = bookData.thumbnail;
 
-                DisplayMetrics metrics = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                int density = metrics.densityDpi;
+//                DisplayMetrics metrics = new DisplayMetrics();
+//                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//                int density = metrics.densityDpi;
 //                Log.d("density",new Integer(density).toString());
 
-                if (density < DisplayMetrics.DENSITY_XHIGH) {
+//                if (density < DisplayMetrics.DENSITY_XHIGH) {
 //                    Log.d("filename",filename);
 
-                    StringTokenizer tokenizer = new StringTokenizer(bookData.thumbnail,".");
-                    filename = tokenizer.nextElement().toString() + "_hdpi." + tokenizer.nextElement().toString();
+//                    StringTokenizer tokenizer = new StringTokenizer(bookData.thumbnail,".");
+//                    filename = tokenizer.nextElement().toString() + "_hdpi." + tokenizer.nextElement().toString();
+//
+//                }
 
-                }
-
+                Log.i(TAG, "thumbnail : " + thumbnail);
                 thumbnail = BitmapFactory.decodeStream(getContext().getAssets().open(filename), null, options);
 
             }
@@ -498,6 +325,7 @@ public class MainActivity extends KitKitLoggerActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Log.d(TAG,"onCreateView bookFragment");
+            setMarkTime();
             TreeMap<String, ArrayList<BookData>> data = new TreeMap<String, ArrayList<BookData>>();
 
             File docsFolder =
@@ -519,7 +347,7 @@ public class MainActivity extends KitKitLoggerActivity {
                     is = new FileInputStream(dataFile);
                 }
                 else {
-                    is = getContext().getAssets().open(bookDataFilename);
+                    is = getContext().getAssets().open(appLanguage +  File.separator + bookDataFilename);
                 }
 
 
@@ -536,7 +364,7 @@ public class MainActivity extends KitKitLoggerActivity {
                         bookData.categoryName = RowData[2];
                         bookData.title = RowData[3];
                         bookData.author = RowData[4];
-                        bookData.thumbnail = RowData[5];
+                        bookData.thumbnail = appLanguage +  File.separator + RowData[5];
                         bookData.foldername = RowData[6];
 
                         ArrayList<BookData> bookArray;
@@ -575,125 +403,63 @@ public class MainActivity extends KitKitLoggerActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_book, container, false);
 
-            boolean cate6Exist = false;
-
             for(Map.Entry<String, ArrayList<BookData>> entry : data.entrySet()) {
                 String category = entry.getKey();
                 ArrayList<BookData> videoList = entry.getValue();
 
-                LinearLayout hsvWrapper;
                 TextView categoryTitle;
+                RecyclerView recyclerView;
 
-                if (category.equals("cate_1")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv_wrapper);
+                if (category.equals("cate_2")) {
                     categoryTitle = (TextView) rootView.findViewById(R.id.book1_title_textView);
-                } else if (category.equals("cate_2")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv2_wrapper);
-                    categoryTitle = (TextView) rootView.findViewById(R.id.book2_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_1);
+
                 } else if (category.equals("cate_3")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv3_wrapper);
-                    categoryTitle = (TextView) rootView.findViewById(R.id.book3_title_textView);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book2_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_2);
+
                 } else if (category.equals("cate_4")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv4_wrapper);
-                    categoryTitle = (TextView) rootView.findViewById(R.id.book4_title_textView);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book3_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_3);
+
                 } else if (category.equals("cate_5")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv5_wrapper);
-                    categoryTitle = (TextView) rootView.findViewById(R.id.book5_title_textView);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book4_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_4);
+
                 } else if (category.equals("cate_6")) {
-                    hsvWrapper = (LinearLayout) rootView.findViewById(R.id.hsv6_wrapper);
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book5_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_5);
+
+                } else if (category.equals("cate_7")) {
                     categoryTitle = (TextView) rootView.findViewById(R.id.book6_title_textView);
-                    cate6Exist = true;
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_6);
+
+                } else if (category.equals("cate_8")) {
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book7_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_7);
+
+                } else if (category.equals("cate_9")) {
+                    categoryTitle = (TextView) rootView.findViewById(R.id.book8_title_textView);
+                    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_book_8);
+
                 } else {
                     continue;
                 }
 
+                categoryTitle.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
 
-                boolean isFirst = true;
-                for (BookData book : videoList) {
-                    View child = LayoutInflater.from(getContext()).inflate(R.layout.book_item, null);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                    int left = MainActivity.dpTopx(9,getContext());
-                    int top=MainActivity.dpTopx(2,getContext());
-                    int right=MainActivity.dpTopx(5,getContext());
-                    int bottom=MainActivity.dpTopx(5,getContext());
-                    if (isFirst) {
-                        left = MainActivity.dpTopx(5,getContext());
-                        categoryTitle.setText(book.categoryName);
-                        isFirst = false;
-                    }
-
-                    layoutParams.setMargins(left,top,right,bottom);
-                    child.setLayoutParams(layoutParams);
-
-                    hsvWrapper.addView(child);
-
-                    child.findViewById(getResources().getIdentifier("roundedrect", "id", getActivity().getPackageName()));
-                    child.setClipToOutline(true);
-
-                    TextView bookTitle = (TextView) child.findViewById(R.id.book_title);
-                    bookTitle.setText(book.title);
-
-                    TextView bookAuthor = (TextView) child.findViewById(R.id.book_author);
-                    bookAuthor.setText(book.author);
-
-                    ImageButton imageButton = (ImageButton) child.findViewById(getResources().getIdentifier("book_image_button","id",getActivity().getPackageName()));
-                    imageButton.setTag(book.foldername);
-                    Drawable thumbnail = null;
-                    if (useExternalData) {
-                        String thumbnailPath = libPath + File.separator + book.thumbnail;
-                        thumbnail = Drawable.createFromPath(thumbnailPath);
-                        imageButton.setImageDrawable(thumbnail);
-                    }
-                    else {
-                        Bitmap thumbnailBitmap= loadBookThumbnail(book);
-                        imageButton.setImageBitmap(thumbnailBitmap);
-//                        thumbnailBitmap.recycle();
-//                        thumbnailBitmap = null;
-//
-//                        try {
-//                            //thumbnail = Drawable.createFromStream(getContext().getAssets().open(book.thumbnail), null);
-//
-//                        }
-//                        catch (IOException ex) {
-//
-//                        }
-                    }
-
-
-                    imageButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        Intent intent = getContext().getPackageManager().getLaunchIntentForPackage("com.enuma.booktest");
-                        intent.putExtra("book",view.getTag().toString());
-                        Log.d("booktest", view.getTag().toString());
-                        startActivity(intent);
-                        try {
-                            KitKitLogger logger = ((LibraryApplication)getActivity().getApplication()).getLogger();
-                            logger.logEvent("library","start_book",view.getTag().toString(),0);
-
-                        }
-                        catch (NullPointerException ne) {
-                            ne.printStackTrace();
-                            Log.e(TAG, ne.getMessage());
-                        }
-                        catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-
-                        }
-                    });
-                }
-
-
+                categoryTitle.setText(videoList.get(0).categoryName);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+                recyclerView.addItemDecoration(new MainActivity.RecyclerViewDecoration(
+                        MainActivity.dpTopx(7,getContext()),
+                        MainActivity.dpTopx(2,getContext()),
+                        MainActivity.dpTopx(7,getContext()),
+                        MainActivity.dpTopx(5,getContext())));
+                recyclerView.setAdapter(new MainActivity.BookAdapter(getActivity(), libPath, videoList));
             }
 
-            if (!cate6Exist) {
-                View hsv6 = rootView.findViewById(R.id.hsv6);
-                TextView categoryTitle = (TextView) rootView.findViewById(R.id.book6_title_textView);
-                hsv6.setVisibility(View.GONE);
-                categoryTitle.setVisibility(View.GONE);
-            }
-
+            getElapsedTime("book");
             return rootView;
         }
     }
@@ -726,6 +492,8 @@ public class MainActivity extends KitKitLoggerActivity {
         Log.d(TAG,"onCreate()");
         hideSystemUI();
 
+        appLanguage = getAppLanguage();
+        Log.i(TAG, "appLanguage : " + appLanguage);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -776,13 +544,6 @@ public class MainActivity extends KitKitLoggerActivity {
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -809,5 +570,192 @@ public class MainActivity extends KitKitLoggerActivity {
 
     }
 
+    public static class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
+        private Activity mActivity;
+        private ArrayList<VideoData> mItems;
+        private String mLibraryPath = "";
+        public VideoAdapter(Activity activity, String libraryPath, ArrayList<VideoData> items) {
+            mActivity = activity;
+            mLibraryPath = libraryPath;
+            mItems = items;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mActivity).inflate(R.layout.video_item, null);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            final VideoData item = mItems.get(position);
+            holder.itemView.setClipToOutline(true);
+            holder.mTvTitle.setText(item.title);
+
+            if (useExternalData) {
+                String thumbnailPath = mLibraryPath + File.separator + item.thumbnail;
+                ImageLoader.getInstance().displayImage(thumbnailPath, holder.mImageButton);
+
+            } else {
+                ImageLoader.getInstance().displayImage("assets://" + item.thumbnail, holder.mImageButton);
+            }
+
+            holder.mImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mActivity, VideoPlayerActivity.class);
+                    intent.putExtra("videoArray", mItems);
+                    intent.putExtra("libPath", mLibraryPath);
+                    intent.putExtra("currentVideoIndex", position);
+
+                    mActivity.startActivity(intent);
+                    try {
+                        KitKitLogger logger = ((LibraryApplication)mActivity.getApplication()).getLogger();
+                        logger.logEvent("library","start_video",item.title,0);
+                    }
+                    catch (NullPointerException ne) {
+                        ne.printStackTrace();
+                        Log.e(MainActivity.class.getName(), ne.getMessage());
+                    }
+                    catch (Exception e) {
+                        Log.e(MainActivity.class.getName(), e.getMessage());
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView mTvTitle;
+            public ImageButton mImageButton;
+            public ViewHolder(View view) {
+                super(view);
+                mTvTitle = (TextView) view.findViewById(R.id.video_title);
+                mImageButton = (ImageButton) view.findViewById(R.id.video_image_button);
+            }
+        }
+    }
+
+    public static class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
+        private Activity mActivity;
+        private ArrayList<BookData> mItems;
+        private String mLibraryPath = "";
+        public BookAdapter(Activity activity, String libraryPath, ArrayList<BookData> items) {
+            mActivity = activity;
+            mLibraryPath = libraryPath;
+            mItems = items;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mActivity).inflate(R.layout.book_item, null);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            final BookData item = mItems.get(position);
+            holder.mTvBookTitle.setText(item.title);
+            holder.mTvBookAuthor.setText(item.author);
+
+            if (useExternalData) {
+                String thumbnailPath = mLibraryPath + File.separator + item.thumbnail;
+                ImageLoader.getInstance().displayImage(thumbnailPath, holder.mImageButton);
+
+            } else {
+                ImageLoader.getInstance().displayImage("assets://" + item.thumbnail, holder.mImageButton);
+
+            }
+
+            holder.mImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.setComponent(new ComponentName("com.enuma.booktest", "org.cocos2dx.cpp.AppActivity"));
+
+                        intent.putExtra("book", item.foldername);
+                        Log.d("booktest", item.foldername);
+                        mActivity.startActivity(intent);
+                    } catch (Exception e) {
+                        Toast.makeText(v.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
+
+
+
+                    try {
+                        KitKitLogger logger = ((LibraryApplication)mActivity.getApplication()).getLogger();
+                        logger.logEvent("library","start_book",  item.foldername, 0);
+
+                    }
+                    catch (NullPointerException ne) {
+                        ne.printStackTrace();
+                        Log.e(MainActivity.class.getName(), ne.getMessage());
+                    }
+                    catch (Exception e) {
+                        Log.e(MainActivity.class.getName(), e.getMessage());
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView mTvBookTitle;
+            public TextView mTvBookAuthor;
+            public ImageButton mImageButton;
+
+            public ViewHolder(View view) {
+                super(view);
+
+                mTvBookTitle = (TextView) view.findViewById(R.id.book_title);
+                mTvBookAuthor = (TextView) view.findViewById(R.id.book_author);
+                mImageButton = (ImageButton) view.findViewById(R.id.book_image_button);
+            }
+        }
+    }
+
+    public static class RecyclerViewDecoration extends RecyclerView.ItemDecoration {
+        private int mLeft;
+        private int mTop;
+        private int mRight;
+        private int mBottom;
+
+        public RecyclerViewDecoration(int left, int top, int right, int bottom) {
+            mLeft = left;
+            mTop = top;
+            mRight = right;
+            mBottom = bottom;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            outRect.left = mLeft;
+            outRect.top = mTop;
+            outRect.right = mRight;
+            outRect.bottom = mBottom;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    private static long mMarkTime;
+
+    private static void setMarkTime() {
+        mMarkTime = System.currentTimeMillis();
+    }
+
+    private static long getElapsedTime(String comment) {
+        Log.i("myLog", comment + " : " + (System.currentTimeMillis() - mMarkTime) + "msec");
+        return System.currentTimeMillis() - mMarkTime;
+    }
 
 }

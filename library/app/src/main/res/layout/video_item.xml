@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/roundedrect"
-    android:layout_width="match_parent"
+    android:layout_width="360dp"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/roundedrect"
     android:elevation="3dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginEnd="5dp"
-    android:layout_marginStart="5dp"
-    android:layout_marginBottom="5dp">
+    android:orientation="vertical">
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="226dp"
-    >
+        android:layout_height="226dp">
 
         <ImageButton
             android:id="@+id/video_image_button"
             android:layout_width="360dp"
             android:layout_height="226dp"
             android:background="#fff"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:layout_width="360dp"
             android:layout_height="226dp"
-            android:src="@drawable/library_icon_videoplay"
-            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:cropToPadding="true" />
+            android:cropToPadding="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/library_icon_videoplay" />
 
     </FrameLayout>
 
@@ -38,20 +34,12 @@
 
         <TextView
             android:id="@+id/video_title"
-            android:layout_width="match_parent"
+            android:layout_width="360dp"
             android:layout_height="match_parent"
-            android:textSize="20sp"
-            android:layout_marginStart="15dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:layout_marginTop="10dp" />
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:singleLine="false"
+            android:textSize="20sp" />
     </FrameLayout>
-
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="0px"-->
-        <!--android:textSize="16sp"-->
-        <!--android:layout_weight="95"-->
-        <!--android:layout_marginStart="15dp"-->
-        <!--android:gravity="top"/>-->
 </LinearLayout>

@@ -84,7 +84,7 @@ public class SelectActivity extends KitKitLoggerActivity {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-
+/*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean showTutorial = prefs.getBoolean("Show_tutorial", true);
         if (showTutorial) {
@@ -93,7 +93,7 @@ public class SelectActivity extends KitKitLoggerActivity {
             editor.putBoolean("Show_tutorial",false);
             editor.apply();
         }
-
+*/
     }
 
 
