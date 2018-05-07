@@ -11,9 +11,12 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.enuma.kitkitProvider.KitkitDBHandler;
+import com.enuma.kitkitProvider.SntpResult;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +25,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by ingtellect on 7/14/17.
@@ -29,12 +36,15 @@ import java.util.Calendar;
 
 public class KitKitLogger {
     private static final String TAG = "KitkitLogger";
-    private File path;
+    private File basePath;
     private String appName;
     private Context _ctnx;
     //private String installId;
     //private String androidId;
     private String serialNumber;
+
+    // NB(xenosoz, 2018): SNTP cache.
+    Map<String, SntpResult> _sntpCache = new HashMap<>();
 
     private KitkitDBHandler dbHandler;
 
@@ -49,10 +59,10 @@ public class KitKitLogger {
 //            e.printStackTrace();
 //        }
 
-        //path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" + installId);
-        path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" +"logs");
-        if(!path.exists()){
-            path.mkdirs();
+        //basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" + installId);
+        basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" +"logs");
+        if(!basePath.exists()){
+            basePath.mkdirs();
         }
         _ctnx = ctnx;
         //androidId = Settings.Secure.getString(_ctnx.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -93,75 +103,191 @@ public class KitKitLogger {
         }
     }
 
-    public void logEvent(String eventString) {
-        boolean isNew = false;
+    public static String intToLei(int n) {
+        // NB(xenosoz, 2018): Length encoded integer
+        if (n == 0) { return "A"; }
+        return (n < 0 ? "-" : "") + Character.toString((char)('B' + (int)Math.log10(Math.abs(n)))) + String.valueOf(n);
+    }
 
-        File[] files = path.listFiles();
+    public static int leiToInt(String lei) {
+        // NB(xenosoz, 2018): Length encoded integer
+        int mul = 1;
+        int p = 0;
 
-        String header = serialNumber + "_log_";
-        String tail = ".txt";
-        String lastFilename = null;
-        File lastFile = null;
-        int lastNum = 1;
+        if (lei.startsWith("-")) { mul = -Math.abs(mul); p = 1; }
+        if ("A".equals(lei.substring(p))) { return mul * 0; }
 
-        if (files != null) {
-            for (int i=0; i<files.length; i++){
-                String filename = files[i].getName();
+        p += 1;
+        return Integer.valueOf(lei.substring(p)).intValue();
+    }
 
-                if(lastFilename == null){
-                    lastFilename = filename;
-                    lastFile = files[i];
-                }
+    public String normAppName() {
+        // NB(xenosoz, 2018): Prepare to split fields with a dot.
+        return appName.replace('.', '_');
+    }
 
-                if(filename.contains(header)){
-                    int num = Integer.parseInt(filename.split("_")[2].split("\\.")[0]);
-                    if(num > lastNum){
-                        lastNum = num;
-                        lastFilename = filename;
-                        lastFile = files[i];
-                    }
-                }
-            }
+    public String lastLogPathName() {
+        // NB(xenosoz, 2018): com_enuma_xprize.HGAF1GZW.lastlog.txt
+        return normAppName() + "." + serialNumber + "." + "lastlog" + ".txt";
+    }
+
+    private byte[] readAllBytes(File f) {
+        byte[] b = new byte[(int)f.length()];
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            fis.read(b);
         }
-
-        if(lastFilename == null){
-            lastFilename = path + "/" + header + "1" + tail;
-            lastFile = new File(lastFilename);
-            if(!lastFile.exists()){
-                try{ lastFile.createNewFile(); }catch(Exception e){}
-                isNew = true;
-            }
-        }
-
-        long size = lastFile.length();
-
-        if(size > 100*1024){
-            lastNum++;
-            lastFilename = path + "/" + header + Integer.toString(lastNum) + tail;
-            lastFile = new File(lastFilename);
-
-            if(!lastFile.exists()){
-                try{ lastFile.createNewFile(); }catch(Exception e){}
-                isNew = true;
-            }
-        }
-
-        try{
-            JSONObject logJson = new JSONObject();
-            logJson.put("appName",appName);
-            logJson.put("timeStamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
-            JSONObject eventJson = new JSONObject(eventString);
-            logJson.put("event",eventJson);
-            logJson.put("user",dbHandler.getCurrentUsername());
-
-            FileWriter fw = new FileWriter(lastFile.getAbsoluteFile(), true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write((isNew ? "" : "\r\n") + logJson.toString());
-            bw.close();
-        }catch(Exception e){
+        catch (Exception e) {
             Log.e(TAG,e.getMessage());
         }
+        return b;
+    }
 
+    public void putSntpResult(String serverSpec, long now, String snow) {
+        SntpResult sr = new SntpResult(serverSpec, now, snow);
+        dbHandler.uniqueInsertSntpResult(sr);
+
+        // NB(xenosoz, 2018): Heat cache to prevent passive time event.
+        _sntpCache.put(sr.serverSpec, sr);
+
+        try {
+            JSONObject eventJson = new JSONObject();
+            eventJson.put("0.name", "activeSntpUpdate");
+            eventJson.put("1.serverSpec", sr.serverSpec);
+            eventJson.put("2.now", sr.now);
+            eventJson.put("3.snow", sr.snow);
+
+            logEvent(eventJson.toString());
+        }
+        catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        logEvent("putSntpResult");
+    }
+
+    public void logSntpUpdateTo(BufferedWriter bw) {
+        if (bw == null) { return; }
+
+        for (SntpResult sr : dbHandler.getSntpResults()) {
+            SntpResult cache = _sntpCache.get(sr.serverSpec);
+
+            if (cache != null && !cache.serverSpec.equals(sr.serverSpec)) { cache = null; }
+            if (cache != null && cache.now != sr.now) { cache = null; }
+            if (cache != null && !cache.snow.equals(sr.snow)) { cache = null; }
+            if (cache != null) {
+                // NB(xenosoz, 2018): Cache value exists, no update. -> quit.
+                continue;
+            }
+
+            JSONObject logJson = new JSONObject();
+            try {
+                JSONObject eventJson = new JSONObject();
+                eventJson.put("0.name", "passiveSntpUpdate");
+                eventJson.put("1.serverSpec", sr.serverSpec);
+                eventJson.put("2.now", sr.now);
+                eventJson.put("3.snow", sr.snow);
+
+                logJson.put("appName", appName);
+                logJson.put("timeStamp", (double) (Calendar.getInstance().getTimeInMillis() / 1000));
+                logJson.put("event", eventJson);
+                logJson.put("user", dbHandler.getCurrentUsername());
+
+                bw.write(logJson.toString() + "\n");
+            }
+            catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+            catch (IOException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            // NB(xenosoz, 2018): Heat the cache.
+            _sntpCache.put(sr.serverSpec, sr);
+        }
+    }
+
+    public void logEvent(String eventString) {
+
+        // NB(xenosoz, 2018): Try to make the last log file if not exist.
+        File logPath = new File(basePath + "/" + lastLogPathName());
+        if (!logPath.exists()) {
+            try {
+                logPath.createNewFile();
+            }
+            catch (Exception e) {
+            }
+        }
+
+        // NB(xenosoz, 2018): Write log contents to the last log file.
+        try {
+            FileWriter fw = new FileWriter(logPath.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            logSntpUpdateTo(bw);
+
+            JSONObject eventJson = new JSONObject(eventString);
+            JSONObject logJson = new JSONObject();
+
+            logJson.put("appName", appName);
+            logJson.put("timeStamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
+            logJson.put("event", eventJson);
+            logJson.put("user", dbHandler.getCurrentUsername());
+
+            bw.write(logJson.toString() + "\n");
+            bw.close();
+        }
+        catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        // NB(xenosoz, 2018): If the log size is small enough (under 400kb), we're done here.
+        long logSize = logPath.length();
+        if (logSize < 400 * 1024) {
+            return;
+        }
+
+        // NB(xenosoz, 2018): Find candidate name for making zip archive.
+        File[] files = basePath.listFiles();
+
+        String header = normAppName() + "." + serialNumber + ".";
+        String zipFooter = ".log.zip";
+        String txtFooter = ".log.txt";
+        int lastNum = -1;
+
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                String filename = files[i].getName();
+                if (!filename.startsWith(header)) { continue; }
+                if (!filename.endsWith(zipFooter)) { continue; }
+
+                int num = leiToInt(filename.split("\\.")[2]);
+                if (num > lastNum) {
+                    lastNum = num;
+                }
+            }
+        }
+
+        // NB(xenosoz, 2018): Create archive file.
+        try {
+            int zipNum = lastNum + 1;
+            File zipPath = new File(basePath + "/" + (header + intToLei(zipNum) + zipFooter));
+            ZipOutputStream zipOS = new ZipOutputStream(new FileOutputStream(zipPath));
+            {
+                ZipEntry e = new ZipEntry(header + intToLei(zipNum) + txtFooter);
+                zipOS.putNextEntry(e);
+                byte[] bytes = readAllBytes(logPath);
+                zipOS.write(bytes, 0, bytes.length);
+                zipOS.closeEntry();
+            }
+            zipOS.close();
+        }
+        catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        // NB(xenosoz, 2018): Remove the log file.
+        logPath.delete();
     }
 
     public String extractLogToFile() {
@@ -181,7 +307,7 @@ public class KitKitLogger {
         // the email app.
         String documentsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
 
-        String fullName = documentsPath + "/crashlog_"+appName+".txt";
+        String fullName = documentsPath + "/crashlog." + normAppName() + ".txt";
 
         // Extract to file.
         File file = new File (fullName);
@@ -208,11 +334,11 @@ public class KitKitLogger {
             reader = new InputStreamReader(process.getInputStream());
 
             // write output stream
-            writer = new FileWriter (file);
-            writer.write ("Android version: " +  Build.VERSION.SDK_INT + "\n");
-            writer.write ("Device: " + model + "\n");
-            writer.write ("App name: " + appName);
-            writer.write ("App version: " + (info == null ? "(null)" : info.versionCode) + "\n");
+            writer = new FileWriter(file);
+            writer.write("Android version: " +  Build.VERSION.SDK_INT + "\n");
+            writer.write("Device: " + model + "\n");
+            writer.write("App name: " + appName);
+            writer.write("App version: " + (info == null ? "(null)" : info.versionCode) + "\n");
 
             char[] buffer = new char[10000];
             do

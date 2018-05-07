@@ -22,16 +22,22 @@ public class KitkitProvider extends ContentProvider {
 
     private static final String USER_TABLE = "users";
     private static final String CURRENT_USER_TABLE = "current_user";
+    private static final String SNTP_RESULT_TABLE = "sntp_result";
+
     public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/" + USER_TABLE);
 
     public static final Uri CURRENT_USER_URI =
             Uri.parse("content://" + AUTHORITY + "/" + CURRENT_USER_TABLE);
 
+    public static final Uri SNTP_RESULT_URI =
+            Uri.parse("content://"+ AUTHORITY + "/" + SNTP_RESULT_TABLE);
+
 
     public static final int USER = 1;
     public static final int USER_ID = 2;
     public static final int CURRENT_USER = 3;
+    public static final int SNTP_RESULT = 4;
 
     private static final UriMatcher sURIMatcher =
             new UriMatcher(UriMatcher.NO_MATCH);
@@ -42,7 +48,7 @@ public class KitkitProvider extends ContentProvider {
                 USER_ID);
 
         sURIMatcher.addURI(AUTHORITY, CURRENT_USER_TABLE, CURRENT_USER);
-
+        sURIMatcher.addURI(AUTHORITY, SNTP_RESULT_TABLE, SNTP_RESULT);
     }
 
     private KitkitDBHandler myDB;
@@ -72,6 +78,9 @@ public class KitkitProvider extends ContentProvider {
             case CURRENT_USER:
                 queryBuilder.setTables(KitkitDBHandler.TABLE_CURRENT_USER);
                 break;
+            case SNTP_RESULT:
+                queryBuilder.setTables(KitkitDBHandler.TABLE_SNTP_RESULT);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI");
         }
@@ -81,7 +90,8 @@ public class KitkitProvider extends ContentProvider {
                 sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(),
                 uri);
-        return cursor;    }
+        return cursor;
+    }
 
 
     @Nullable
@@ -105,6 +115,10 @@ public class KitkitProvider extends ContentProvider {
                 break;
             case CURRENT_USER:
                 id = sqlDB.insert(KitkitDBHandler.TABLE_CURRENT_USER,
+                        null, values);
+                break;
+            case SNTP_RESULT:
+                id = sqlDB.insert(KitkitDBHandler.TABLE_SNTP_RESULT,
                         null, values);
                 break;
             default:
@@ -140,6 +154,11 @@ public class KitkitProvider extends ContentProvider {
                                         + " and " + selection,
                                 selectionArgs);
                     }
+                    break;
+                case SNTP_RESULT:
+                    rowsDeleted = sqlDB.delete(KitkitDBHandler.TABLE_SNTP_RESULT,
+                            selection,
+                            selectionArgs);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -186,6 +205,10 @@ public class KitkitProvider extends ContentProvider {
                                 values,
                                 selection,
                                 selectionArgs);
+                break;
+            case SNTP_RESULT:
+                rowsUpdated =
+                        sqlDB.update(KitkitDBHandler.TABLE_SNTP_RESULT, values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " +

@@ -16,7 +16,7 @@ public class User {
     private boolean _unlockDrawing;
     private boolean _unlockColoring;
     private boolean _unlockBlackboard;
-
+    private boolean _finishLauncherTutorial;
 
     public User() {
         this._id = 0;
@@ -28,6 +28,7 @@ public class User {
         this._unlockDrawing = false;
         this._unlockColoring = false;
         this._unlockBlackboard = false;
+        this._finishLauncherTutorial = false;
     }
 
     public User(int id, String username, int stars) {
@@ -40,6 +41,7 @@ public class User {
         this._unlockDrawing = false;
         this._unlockColoring = false;
         this._unlockBlackboard = false;
+        this._finishLauncherTutorial = false;
     }
 
     public User(String productname, int stars) {
@@ -51,6 +53,7 @@ public class User {
         this._unlockDrawing = false;
         this._unlockColoring = false;
         this._unlockBlackboard = false;
+        this._finishLauncherTutorial = false;
     }
 
     public void setID(int id) {
@@ -79,7 +82,7 @@ public class User {
 
     public void setFinishTutorial(boolean unlock) { this._finishTutorial = unlock; }
 
-    public boolean isFinishTutorial() {return this._finishTutorial;}
+    public boolean isFinishTutorial() {return true; /*this._finishTutorial;*/}
 
     public void setUnlockDrum(boolean unlock) { this._unlockDrum = unlock; }
 
@@ -102,4 +105,7 @@ public class User {
 
     public boolean isUnlockBlackboard() {return this._unlockBlackboard;}
 
+    public void setFinishLauncherTutorial(boolean unlock) { this._finishLauncherTutorial = unlock; }
+
+    public boolean isFinishLauncherTutorial() {return this._finishLauncherTutorial;}
 }

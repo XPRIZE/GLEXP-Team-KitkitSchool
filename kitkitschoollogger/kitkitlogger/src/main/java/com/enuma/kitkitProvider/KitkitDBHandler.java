@@ -10,18 +10,22 @@ import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ingtellect on 9/1/17.
  */
 
+// NB(xenosoz, 2018): SNTP Result table by me.
+
 public class KitkitDBHandler extends SQLiteOpenHelper {
     private ContentResolver myCR;
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "userDB.db";
     public static final String TABLE_USERS = "users";
     public static final String TABLE_CURRENT_USER = "current_user";
+    public static final String TABLE_SNTP_RESULT = "sntp_result";
 
 
     public static final String COLUMN_ID = "_id";
@@ -33,6 +37,11 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_UNLOCK_DRAWING = "unlock_drawing";
     public static final String COLUMN_UNLOCK_COLORING = "unlock_coloring";
     public static final String COLUMN_UNLOCK_BLACKBOARD = "unlock_blackboard";
+    public static final String COLUMN_FINISH_LAUNCHER_TUTORIAL = "finish_launcher_tutorial";
+
+    public static final String COLUMN_SERVER_SPEC = "server_spec";
+    public static final String COLUMN_TIME_NOW = "time_now";
+    public static final String COLUMN_TIME_SNOW = "time_snow";
 
     public KitkitDBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -52,7 +61,8 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 + COLUMN_UNLOCK_MARIMBA + " BOOLEAN,"
                 + COLUMN_UNLOCK_DRAWING + " BOOLEAN,"
                 + COLUMN_UNLOCK_COLORING + " BOOLEAN,"
-                + COLUMN_UNLOCK_BLACKBOARD + " BOOLEAN"
+                + COLUMN_UNLOCK_BLACKBOARD + " BOOLEAN,"
+                + COLUMN_FINISH_LAUNCHER_TUTORIAL + " BOOLEAN"
                 + ")";
         db.execSQL(CREATE_USER_TABLE);
 
@@ -64,6 +74,14 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(CREATE_CURRENT_USER_TABLE);
 
+        String CREATE_SNTP_RESULT_TABLE = "CREATE TABLE "
+                + TABLE_SNTP_RESULT
+                + "(" + COLUMN_SERVER_SPEC + " TEXT PRIMARY KEY"
+                + "," + COLUMN_TIME_NOW + " INTEGER"
+                + "," + COLUMN_TIME_SNOW + " TEXT"
+                //+ ",UNIQUE(" + COLUMN_SERVER_SPEC + ")"
+                + ")";
+        db.execSQL(CREATE_SNTP_RESULT_TABLE);
     }
 
     @Override
@@ -71,6 +89,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         Log.w(KitkitDBHandler.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURRENT_USER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SNTP_RESULT);
         onCreate(db);
     }
 
@@ -85,6 +104,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_UNLOCK_DRAWING, user.isUnlockDrawing());
         values.put(COLUMN_UNLOCK_COLORING, user.isUnlockColoring());
         values.put(COLUMN_UNLOCK_BLACKBOARD, user.isUnlockBlackboard());
+        values.put(COLUMN_FINISH_LAUNCHER_TUTORIAL, user.isFinishLauncherTutorial());
 
         myCR.insert(KitkitProvider.CONTENT_URI, values);
     }
@@ -98,7 +118,9 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 COLUMN_UNLOCK_MARIMBA,
                 COLUMN_UNLOCK_DRAWING,
                 COLUMN_UNLOCK_COLORING,
-                COLUMN_UNLOCK_BLACKBOARD};
+                COLUMN_UNLOCK_BLACKBOARD,
+                COLUMN_FINISH_LAUNCHER_TUTORIAL
+                };
 
         String selection = "username = \"" + username + "\"";
 
@@ -119,9 +141,11 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             user.setUnlockDrawing("1".equals(cursor.getString(6)));
             user.setUnlockColoring("1".equals(cursor.getString(7)));
             user.setUnlockBlackboard("1".equals(cursor.getString(8)));
+            user.setFinishLauncherTutorial("1".equals(cursor.getString(9)));
             cursor.close();
         } else {
             user = null;
+            cursor.close();
         }
         return user;
     }
@@ -153,6 +177,18 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         return numUser;
 
     }
+
+    public int numUserSeenLauncherTutorial() {
+        String[] projection = {COLUMN_USERNAME};
+        Cursor cursor = myCR.query(KitkitProvider.CONTENT_URI,
+                projection, COLUMN_FINISH_LAUNCHER_TUTORIAL + "=1", null,
+                null);
+        int count = cursor.getCount();
+        cursor.close();
+        Log.w(KitkitDBHandler.class.getName(), "numUserSeenLauncherTutorial count : " + count);
+        return count;
+    }
+
 
     public boolean currentUserExist() {
 
@@ -200,9 +236,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         catch (NullPointerException ne) {
             return null;
         }
-        String currentUserName = cursor.getString(0);
 
+        String currentUserName = cursor.getString(0);
         User user = findUser(currentUserName);
+        cursor.close();
         return user;
     }
 
@@ -217,7 +254,9 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         catch (NullPointerException ne) {
             return null;
         }
-        return cursor.getString(0);
+        String result = cursor.getString(0);
+        cursor.close();
+        return result;
     }
 
     public void updateUser(User user) {
@@ -233,7 +272,42 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_UNLOCK_DRAWING, user.isUnlockDrawing());
         values.put(COLUMN_UNLOCK_COLORING, user.isUnlockColoring());
         values.put(COLUMN_UNLOCK_BLACKBOARD, user.isUnlockBlackboard());
+        values.put(COLUMN_FINISH_LAUNCHER_TUTORIAL, user.isFinishLauncherTutorial());
 
         myCR.update(KitkitProvider.CONTENT_URI, values, selection, null);
+    }
+
+    public void uniqueInsertSntpResult(SntpResult sntpResult) {
+        // NB(xenosoz, 2018): myCR.update doesn't do the trick here,
+        //   and myCR doesn't support 'INSERT OR IGNORE' statement.
+        SntpResult sr = sntpResult;
+        String where = COLUMN_SERVER_SPEC + "=" + ("\"" + sr.serverSpec + "\"");
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SERVER_SPEC, sr.serverSpec);
+        values.put(COLUMN_TIME_NOW, sr.now);
+        values.put(COLUMN_TIME_SNOW, sr.snow);
+
+        String[] args = null;
+        myCR.delete(KitkitProvider.SNTP_RESULT_URI, where, args);
+        myCR.insert(KitkitProvider.SNTP_RESULT_URI, values);
+    }
+
+    public List<SntpResult> getSntpResults() {
+        ArrayList<SntpResult> results = new ArrayList<SntpResult>();
+
+        Cursor cursor = myCR.query(KitkitProvider.SNTP_RESULT_URI, null, null, null, null);
+        while (cursor != null && cursor.moveToNext()) {
+            String serverSpec = cursor.getString(cursor.getColumnIndex(COLUMN_SERVER_SPEC));
+            long now = cursor.getLong(cursor.getColumnIndex(COLUMN_TIME_NOW));
+            String snow = cursor.getString(cursor.getColumnIndex(COLUMN_TIME_SNOW));
+
+            SntpResult sr = new SntpResult(serverSpec, now, snow);
+            results.add(sr);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return results;
     }
 }

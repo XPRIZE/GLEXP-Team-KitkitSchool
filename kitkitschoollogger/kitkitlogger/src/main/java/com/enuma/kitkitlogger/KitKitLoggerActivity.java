@@ -27,6 +27,8 @@ public class KitKitLoggerActivity extends AppCompatActivity {
     private static final String TAG = "KitKitLoggerActivity";
     protected String appLanguage;
 
+    public String getAppLanguage() { return appLanguage; }
+
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -67,7 +69,12 @@ public class KitKitLoggerActivity extends AppCompatActivity {
             Context launcherContext = newBase.createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
             SharedPreferences pref = launcherContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
             appLanguage = pref.getString("appLanguage", newBase.getString(R.string.defaultLanguage));
-            Locale newLocale = new Locale(appLanguage);
+
+            String[] splitLang = appLanguage.split("-");
+            String lang = splitLang[0];
+            String region = splitLang.length>1 ? splitLang[1] : "";
+
+            Locale newLocale = new Locale(lang, region);
             Context context = KitkitContextWrapper.wrap(newBase, newLocale);
             super.attachBaseContext(context);
         }
