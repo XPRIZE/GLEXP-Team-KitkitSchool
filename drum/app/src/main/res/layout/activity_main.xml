@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="88px"
         android:scaleType="fitCenter"
         android:src="@drawable/drum_image_drum" />
 
@@ -22,8 +22,8 @@
         android:id="@+id/v_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
         android:alpha="0.65"
         android:background="@drawable/selector_back" />
 

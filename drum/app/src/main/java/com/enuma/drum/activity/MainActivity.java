@@ -5,13 +5,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private View mDecorView;
     private int mUiOption;
+    private float mScale;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +86,31 @@ public class MainActivity extends AppCompatActivity {
         mIvDrum = (ImageView) findViewById(R.id.iv_drum);
         mIvDrum.setOnTouchListener(mOnTouchListener);
         mColorInfoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drum_color_info);
+        setScale(findViewById(R.id.layout_root));
+    }
+
+    private void setScale(View rootView) {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+
+        float fixedSizeWidth = 1800.f * size.x / size.y;
+        float fixedSizeHeight = 1800.f;
+        mScale = size.y / 1800.f;
+
+        Log.i("display width : " + size.x);
+        Log.i("display height : " + size.y);
+        Log.i("fixed width : " + fixedSizeWidth);
+        Log.i("fixed height : " + fixedSizeHeight);
+        Log.i("scale : " + mScale);
+
+        ViewGroup.LayoutParams params = rootView.getLayoutParams();
+        params.width = (int)(fixedSizeWidth + 0.5f);
+        params.height = (int)(fixedSizeHeight + 0.5f);
+        rootView.setPivotX(0);
+        rootView.setPivotY(0);
+        rootView.setScaleX(mScale);
+        rootView.setScaleY(mScale);
     }
 
     private void startAnimation(View v) {
