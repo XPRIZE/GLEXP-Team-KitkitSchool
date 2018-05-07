@@ -45,8 +45,8 @@ class ScratchField: public Node {
     RefPtr<TraceScrollView> Scroll;
     vector<RefPtr<TraceGlyphNode>> GlyphNodes;
     
-    
-    Optional<SoundEffect> TraceSound;
+    bool TraceSoundPlaying;
+    SoundEffect TraceSound;
     string cursorFilename;
     
     
@@ -76,6 +76,7 @@ public:
     Chain<bool> Enabled;
     Chain<bool> ClippingEnabled;
     
+    int LiveTouchEventCount;
     function<void(ScratchField*)> OnBeginEditing;
     function<void(ScratchField*)> OnEditing;
     function<void(ScratchField*)> OnEndEditing;

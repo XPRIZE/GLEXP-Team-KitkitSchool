@@ -1,6 +1,6 @@
 //
 //  TodoSchoolBackButton.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by 강승우 on 6/27/16.
 //
@@ -30,6 +30,9 @@ public:
 protected:
     void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
     void onTouched(Ref* pSender, ui::Widget::TouchEventType eEventType);
+    
+private:
+    static bool _didFinish;
     
 };
 

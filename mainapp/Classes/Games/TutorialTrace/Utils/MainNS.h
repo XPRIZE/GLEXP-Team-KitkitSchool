@@ -17,16 +17,16 @@ namespace tutorialtrace {
 } \
 }
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/ADT/Optional.h>
-#include <Games/NumberTrace/Common/ADT/TaggedFunction.h>
-#include <Games/NumberTrace/Common/ADT/FunctionVector.h>
-#include <Games/NumberTrace/Common/Basic/AARect.h>
+#include <Common/ADT/Chain.h>
+#include <Common/ADT/Optional.h>
+#include <Common/ADT/TaggedFunction.h>
+#include <Common/ADT/FunctionVector.h>
+#include "Common/Basic/AARect.h"
 #include <Games/NumberTrace/Common/Basic/Button.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/TodoSchoolDrawNode.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
+#include "Common/Basic/TodoSchoolDrawNode.h"
+#include "Common/Repr/AllRepr.h"
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/ProgressIndicator.hpp>
 #include <Common/Controls/CompletePopup.hpp>
@@ -89,7 +89,7 @@ int stoi(const std::string& S);
 using cocos2d::Vec2;
 using cocos2d::Point;
 using cocos2d::Size;
-using Rect = todoschool::AARect;  // NB(xenosoz, 2016): Replacing cocos2d::Rect;
+using Rect = AARect;  // NB(xenosoz, 2016): Replacing cocos2d::Rect;
 using cocos2d::Color3B;
 using cocos2d::Color4B;
 using cocos2d::BlendFunc;
@@ -99,7 +99,7 @@ using cocos2d::ClippingNode;
 using cocos2d::Label;
 using cocos2d::Sprite;
 using cocos2d::Camera;
-using DrawNode = todoschool::TodoSchoolDrawNode;  // NB(xenosoz, 2016): Replacing cocos2d::DrawNode
+using DrawNode = TodoSchoolDrawNode;  // NB(xenosoz, 2016): Replacing cocos2d::DrawNode
 using cocos2d::ui::Widget;
 using cocos2d::ui::Layout;
 using todoschool::Button;  // NB(xenosoz, 2016): Replacing cocos2d::ui::Button

@@ -11,7 +11,7 @@
 #include "../ChildNodes/WoodSlot.h"
 #include "../PieceNodes/WoodPiece.h"
 #include "../Utils/WoodenPuzzleDepot.h"
-#include <Games/NumberTrace/Common/Utils/StringUtils.h>
+#include "Utils/StringUtils.h"
 
 
 BEGIN_NS_WOODENPUZZLES

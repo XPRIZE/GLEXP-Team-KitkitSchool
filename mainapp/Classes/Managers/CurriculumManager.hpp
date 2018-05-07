@@ -1,6 +1,6 @@
 //
 //  CurriculumManager.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/23/16.
 //
@@ -33,8 +33,6 @@ public:
     
     map<string, LevelCurriculum> levels;
     
-private:
-    
     void loadData();
     
 
@@ -45,6 +43,9 @@ struct GameDescription
     string gameName;
     int gameLevel;
     string gameParameter;
+    
+    // ephemeral
+    int appearIndex;
 };
 
 
@@ -52,6 +53,7 @@ struct DayCurriculum {
     int dayOrder;
     int numGames;
     bool isEggQuiz;
+    bool isMiniQuiz;
     vector<GameDescription> games;
     
 };

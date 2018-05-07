@@ -11,14 +11,15 @@
 #include "Problems.h"
 #include "../Utils/MainDepot.h"
 #include <Common/Controls/TodoSchoolBackButton.hpp>
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
 
 BEGIN_NS_TUTORIALTRACE
 
-using woodenpuzzles::TargetDragBody;
+
 using tracefield::TraceLineStyle;
 
 namespace {
@@ -50,7 +51,7 @@ bool MainScene::init() {
 
 void MainScene::clearInternals() {
     auto appendSound = [&](const string& Name) {
-        auto S = SoundEffect(MainDepot().assetPrefix() + "/TempSounds" + Name).preloaded();
+        auto S = SoundEffect("Common/Sounds/Effect" + Name).preloaded();
         SoundsForTraceEnd.push_back(S);
     };
     appendSound("/Cards_1.m4a");
@@ -158,9 +159,30 @@ void MainScene::refreshChildNodes() {
         })());
         
         setupFieldForProblem(It, TheProblem());
+        It->OnEndEditing = [this](ScratchField*) {
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "TutorialTrace";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << ProblemID;
+                return SS.str();
+            }();
+            StrictLogManager::shared()->game_Peek_Answer("TutorialTrace", workPath, "work-middle",  "work-end");
+        };
         It->OnTraceWorkDidEnd = [this](ScratchField*) {
             auto Guard = NodeScopeGuard(this);
             handleTraceWorkDidEnd();
+            
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "TutorialTrace";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << ProblemID;
+                return SS.str();
+            }();
+            StrictLogManager::shared()->game_Peek_Answer("TutorialTrace", workPath, "work-end",  "work-end");
         };
         
         TheGameNode->addChild(It);

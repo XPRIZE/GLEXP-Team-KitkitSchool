@@ -12,6 +12,7 @@
 #include "../ChildNodes/BallSlot.h"
 #include "../Utils/MainDepot.h"
 #include <Common/Controls/TodoSchoolBackButton.hpp>
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -302,6 +303,19 @@ void MainScene::refreshChildNodes() {
             }
             if (!BestSlot) { return; }
             
+            
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "Spelling";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << ProblemID;
+                return SS.str();
+            }();
+            StrictLogManager::shared()->game_Peek_Answer("Spelling", workPath, It->Text(), It->Text());
+
+            
+            //
             BestSlot->fillSlot();  // XXX
             It->playHitSound();
             It->removeFromParent();  // XXX
@@ -310,6 +324,16 @@ void MainScene::refreshChildNodes() {
         It->OnDragDidEnd = [this, It](Touch*, Event*) {
             if (!ThePlatform) { return; }
             ThePlatform->showShadowForBallID(It->BallID());
+            
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "Spelling";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << ProblemID;
+                return SS.str();
+            }();
+            StrictLogManager::shared()->game_Peek_Answer("Spelling", workPath, It->Text(), "None");
         };
         
         It->setOpacity(0);
@@ -374,7 +398,7 @@ void MainScene::openingPlatform() {
     if (!ThePlatform) { Next(); return; }
 
     auto Action = Sequence::create(DelayTime::create(.2f),
-                                   ThePlatform->actionForEnter(),
+                                   ThePlatform->actionForEnter2(),
                                    nullptr);
     ThePlatform->runAction(Action);
 }

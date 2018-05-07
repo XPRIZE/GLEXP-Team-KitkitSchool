@@ -1,6 +1,6 @@
 //
 //  NumberMatchingCard.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 6/23/16.
 //

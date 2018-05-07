@@ -7,7 +7,7 @@
 //
 
 #include "MainDepot.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 #include <Managers/LanguageManager.hpp>
 
 
@@ -77,22 +77,22 @@ SoundEffect MainDepot::soundForNumber(int Number) const {
 }
 
 SoundEffect MainDepot::soundForTraceEnd() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_1.m4a");
 }
     
 SoundEffect MainDepot::soundForGoodAssetTouch() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_2.m4a");
 }
 
 SoundEffect MainDepot::soundForBadAssetTouch() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_3.m4a");
 }
 
 SoundEffect MainDepot::soundForWorkComplete() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_4.m4a");
 }
 
@@ -150,7 +150,7 @@ vector<SoundEffect> MainDepot::soundEffectsToPreload() const {
 }
 
 SoundEffect MainDepot::englishSoundForNumber(int Number) const {
-    string P = assetPrefix() + "/Sounds.en_US";
+    string P = assetPrefix() + "/Sounds";
     
     if (1 <= Number && Number <= 10) {
         return SoundEffect(P + StringUtils::format("/num_%02d.wav", Number));
@@ -160,7 +160,7 @@ SoundEffect MainDepot::englishSoundForNumber(int Number) const {
 }
 
 SoundEffect MainDepot::swahiliSoundForNumber(int Number) const {
-    string P = assetPrefix() + "/Sounds.sw_TZ";
+    string P = assetPrefix() + "/Sounds";
     
     if (1 <= Number && Number <= 30) {
         return SoundEffect(P + StringUtils::format("/snumber-%02d.wav", Number));

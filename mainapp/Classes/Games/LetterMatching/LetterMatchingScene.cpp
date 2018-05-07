@@ -17,7 +17,9 @@
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <Common/Basic/SoundEffect.h>
 #include <Games/NumberMatching/Utils/CardSlotBuilder.h>
+#include "Utils/TodoUtil.h"
 #include <Managers/LanguageManager.hpp>
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -35,7 +37,7 @@ using namespace todoschool::lettermatching;
 
 namespace LetterMatching
 {
-    const char* SOLVE_EFFECT_SOUND = "Counting/UI_Star_Collected.m4a";
+    const char* SOLVE_EFFECT_SOUND = "Common/Sounds/Effect/UI_Star_Collected.m4a";
 
     string nextButtonTitle() {
         if (LanguageManager::getInstance()->isSwahili()) { return "Inayofuata"; }
@@ -72,7 +74,7 @@ bool LetterMatchingScene::init()
     
     auto winSize = getContentSize();
     
-    auto bg = Sprite::create("NumberMatching/Images/matching_bg_bigger.png");
+    auto bg = Sprite::create("NumberMatching/Images/matching_bg_bigger.jpg");
     bg->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     bg->setPosition(winSize/2);
     addChild(bg);
@@ -340,7 +342,6 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
     
     
     listener->onTouchEnded =  [this, card](Touch* touch, Event* event) {
-        
         card->stopParticle();
         card->isTouched = false;
         
@@ -368,7 +369,6 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
                 this->addStarParticle(card);
                 
                 card->setPosition(Vec2::ONE * 9999.0f);
-                
                 _matchCount++;
                 if (_matchCount == _currentLevelMaxCardCount)
                 {
@@ -377,14 +377,42 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
                     }), nullptr));
                 }
             }), nullptr));
+            
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "LetterMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("LetterMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         TodoUtil::itos(other->id));
         }
         else {
             auto nextPos = this->safePointForBoundary(card->getPosition());
             auto rescaleAction = ScaleTo::create(0.1f, _defaultScaleFactor);
             auto reposAction = EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f);
             card->runAction(Spawn::create(rescaleAction, reposAction, nullptr));
+            card->runAction(rescaleAction);
 
             this->stompByNode(card);
+            
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "LetterMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("LetterMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         "None");
+
         }
     };
 

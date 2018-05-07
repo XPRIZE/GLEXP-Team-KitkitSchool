@@ -9,6 +9,7 @@
 #include "DoubleDigitScene.h"
 #include "Utils/TodoUtil.h"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <string>
 #include "ui/UIWidget.h"
@@ -22,10 +23,10 @@ using namespace cocos2d::ui;
 
 
 namespace DoubleDigitSceneSpace {
-    const char* solveEffect = "Counting/UI_Star_Collected.m4a";
-    const char* missEffect = "Counting/Help.m4a";
+    const char* solveEffect = "Common/Sounds/Effect/UI_Star_Collected.m4a";
+    const char* missEffect = "Common/Sounds/Effect/Help.m4a";
     const Size defaultGameSize = Size(2048, 1440);
-    const char* touchEffect = "Counting/paneltouch.m4a";
+    const char* touchEffect = "Common/Sounds/Effect/paneltouch.m4a";
     const char* defaultFont = "fonts/TodoSchoolV2.ttf";
 
 }
@@ -343,11 +344,12 @@ void DoubleDigitScene::makeFakeView()
     
     showProblem(notePageProblemView, numSolved);
     
-    notePageGridFading->retain();
-    notePageGridFading->removeFromParent();
-    //notePadPage->addChild(notePageGrid);
-    notePadPage->addChild(notePageGridFading);
-    notePageGridFading->release();
+    notePageGridFading->getParent()->reorderChild(notePageGridFading, notePageGridFading->getLocalZOrder());
+    
+//    notePageGridFading->retain();
+//    notePageGridFading->removeFromParent();
+//    notePadPage->addChild(notePageGridFading);
+//    notePageGridFading->release();
     
     
     
@@ -481,6 +483,18 @@ void DoubleDigitScene::showAnswer(Node *view, int indexProblem)
 
 void DoubleDigitScene::handleAnswerEntered(std::string &answer)
 {
+    // NB(xenosoz, 2018): Log for future analysis
+    auto workPath = [this] {
+        stringstream ss;
+        ss << "/" << "DoubleDigit";
+        ss << "/" << "level-" << currentLevel;
+        ss << "/" << "work-" << numSolved;
+        return ss.str();
+    }();
+    
+    StrictLogManager::shared()->game_Peek_Answer("DoubleDigit", workPath,
+                                                 answer, problems[numSolved]["answer"].asString());
+
     
     if (problems[numSolved]["answer"].asString().compare(answer) == 0) {
         GameSoundManager::getInstance()->playEffectSound(solveEffect);
@@ -526,7 +540,7 @@ void DoubleDigitScene::showComplete(float)
 void DoubleDigitScene::turningPageAnimation()
 {
     // add sound
-    GameSoundManager::getInstance()->playEffectSound("DoubleDigit/Card_Move_Right.m4a");
+    GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/Card_Move_Right.m4a");
     
     float delay = 1.5f;
     

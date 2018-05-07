@@ -8,17 +8,18 @@
 
 #include "WordTraceScene.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
-
+#include <numeric>
 
 BEGIN_NS_WORDTRACE
 
 using namespace todoschool::tracefield;
 using namespace cocos2d;
 using namespace std;
-using todoschool::woodenpuzzles::TargetDragBody;
+
 
 
 namespace {
@@ -233,8 +234,23 @@ void WordTraceScene::refreshChildNodes() {
             return Style;
         }());
 
-        It->OnTraceWorkDidEnd = [this](TraceField*) {
+        string workPath = [this] {
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            stringstream SS;
+            SS << "/" << "WordTrace";
+            SS << "/" << "level-" << LevelID;
+            SS << "/" << "work-" << ProgressIndex();
+            return SS.str();
+        }();
+        
+        It->OnEndEditing = [this, workPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("WordTrace", workPath, "work-middle", "work-end");
+        };
+
+        It->OnTraceWorkDidEnd = [this, workPath](TraceField*) {
             auto Guard = NodeScopeGuard(this);
+            StrictLogManager::shared()->game_Peek_Answer("WordTrace", workPath, "work-end", "work-end");
+            
             handleTraceWorkDidFinish();
         };
 

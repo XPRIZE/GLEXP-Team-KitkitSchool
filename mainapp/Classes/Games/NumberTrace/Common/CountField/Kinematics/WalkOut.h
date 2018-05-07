@@ -1,6 +1,6 @@
 //
 //  WalkOut.h on Jul 13, 2016.
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.

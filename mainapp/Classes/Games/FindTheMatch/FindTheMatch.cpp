@@ -51,6 +51,7 @@ cocos2d::Scene* FindTheMatch::createScene() {
     auto It = FindTheMatchScene::createScene();
     
     It->TheSheet.update(Sheet);
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

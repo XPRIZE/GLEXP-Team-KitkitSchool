@@ -1,6 +1,6 @@
 //
 //  CurriculumManager.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/23/16.
 //
@@ -13,12 +13,16 @@
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
 #include "Games/LetterTracingCard/Utils/LetterTracingCardUtility.hpp"
-
+#endif
 
 #include "CCAppController.hpp"
 
 #include "Utils/TodoUtil.h"
+
+#include <map>
+
 USING_NS_CC;
 
 using namespace std;
@@ -53,6 +57,7 @@ LevelCurriculum* CurriculumManager::findCurriculum(char category, int level)
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto id = makeLevelID(lang, category, level);
     
+    
     return findCurriculum(id);
     
 }
@@ -71,7 +76,7 @@ LevelCurriculum* CurriculumManager::findCurriculum(string levelID)
 
 void CurriculumManager::loadData()
 {
-    string P = "CurriculumData.tsv";
+    string P = LanguageManager::getInstance()->findLocalizedResource("CurriculumData.tsv");
     string S = FileUtils::getInstance()->getStringFromFile(P);
     
     todoschool::CommentStream IS(S);
@@ -92,6 +97,10 @@ void CurriculumManager::loadData()
     string entryType;
 
 
+    vector<string> wrongGameNames;
+    map<string, int> occurrenceMap;
+    
+    
     
 
     auto loadGame = [&](GameDescription &game) {
@@ -105,10 +114,12 @@ void CurriculumManager::loadData()
         }
         
         game.gameName = gameName;
-        
-        int gameLevelInt;
+       
+		int gameLevelInt = 0;
         if (gameName=="LetterTracingCard") {
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
             gameLevelInt = LetterTracingCardUtility::getLevelByLetter(gameLevel, LanguageManager::getInstance()->isEnglish());
+#endif //WINRT
             
         } else {
             gameLevelInt = TodoUtil::stoi(gameLevel);
@@ -117,12 +128,25 @@ void CurriculumManager::loadData()
         game.gameLevel = gameLevelInt;
         game.gameParameter = gameParam;
         
+        if (gameLevelInt==1) {
+            if (occurrenceMap.find(gameName) == occurrenceMap.end()) {
+                occurrenceMap[gameName] = 0;
+            }
+            auto occurrence = occurrenceMap[gameName]+1;
+            occurrenceMap[gameName] = occurrence;
+            game.appearIndex = occurrence;
+        }
+        
   
         if (UserManager::getInstance()->isDebugMode()) {
+            
             if (!CCAppController::sharedAppController()->gameExists(game.gameName)) {
-                string err = "Wrong game name : "+ game.gameName;
-                CCLOGERROR("%s", err.c_str());
+                if (find(wrongGameNames.begin(), wrongGameNames.end(), game.gameName)==wrongGameNames.end())
+                    wrongGameNames.push_back(game.gameName);
+                //string err = "Wrong game name : "+ game.gameName;
+                //CCLOGERROR("%s", err.c_str());
             }
+            
         }
         
         
@@ -135,16 +159,19 @@ void CurriculumManager::loadData()
         bool ret = (IS >> entryType >> day.dayOrder >> day.numGames);
         if (ret && entryType=="day") {
             day.isEggQuiz = false;
-            
+            day.isMiniQuiz = false;
+
             for (int i=0; i<day.numGames; i++) {
                 GameDescription game;
                 loadGame(game);
                 day.games.push_back(game);
             }
             
-            if (day.numGames==1 && day.games.at(0).gameName=="EggQuiz") {
+            if (day.numGames==1 && (day.games.at(0).gameName=="EggQuizLiteracy" || day.games.at(0).gameName=="EggQuizMath")) {
                 day.isEggQuiz = true;
-                
+                if (day.games.at(0).gameParameter.find("MiniTest") != string::npos) {
+                    day.isMiniQuiz = true;
+                }
             }
             
         } else {
@@ -196,6 +223,13 @@ void CurriculumManager::loadData()
     }
     
     
-    
+    if (UserManager::getInstance()->isDebugMode() && (wrongGameNames.size()>0)) {
+        string files;
+        for (auto file : wrongGameNames) {
+            files += file + "\n";
+        }
+        MessageBox("Wrong Game Name in the curriculum", files.c_str() );
+
+    }
     
 }

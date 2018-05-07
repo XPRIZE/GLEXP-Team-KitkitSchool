@@ -57,6 +57,7 @@ cocos2d::Scene* MovingInsects::createScene() {
     auto It = MainScene::createScene(LevelID);
 
     It->TheSheet.update(Sheet);
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
 

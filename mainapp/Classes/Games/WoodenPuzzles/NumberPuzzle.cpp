@@ -80,6 +80,7 @@ cocos2d::Scene* NumberPuzzle::createScene() {
         case Worksheet::PuzzleType::Ordered: /* Fall through */
         case Worksheet::PuzzleType::RandomOrdered: {
             auto It = OrderedPuzzleScene::create();
+            It->LevelID = LevelID;
             It->grabPuzzleStore(new StoreForWorksheet(WS));
             It->OnSuccess = OnSuccess;
             It->OnFail = OnFail;
@@ -92,6 +93,7 @@ cocos2d::Scene* NumberPuzzle::createScene() {
             
         case Worksheet::PuzzleType::Free: {
             auto It = FreePuzzleScene::create();
+            It->LevelID = LevelID;
             It->grabPuzzleStore(new StoreForWorksheet(WS));
             It->OnSuccess = OnSuccess;
             It->OnFail = OnFail;

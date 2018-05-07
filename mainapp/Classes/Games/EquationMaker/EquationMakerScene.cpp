@@ -10,7 +10,10 @@
 #include "EquationMakerObject.h"
 #include "Utils/TodoUtil.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
+#include "Common/Effects/FireworksEffect.hpp"
+#include <Common/Basic/SoundEffect.h>
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/CompletePopup.hpp"
 #include "CCAppController.hpp"
 
@@ -713,6 +716,25 @@ void EquationMakerScene::onTouchesMoved(const std::vector<Touch*>& touches,
                     isMatch = isSlotIn(i, pObject->getType(), pObject->getRowType(), touchPos);
                     
                     if(isMatch){
+                        // NB(xenosoz, 2018): Log for future analysis (#1/2)
+                        auto workPath = [&] {
+                            stringstream ss;
+                            ss << "/" << "EquationMaker";
+                            ss << "/" << "level-" << m_CurrentLevel;
+                            ss << "/" << "work-" << m_CurrentStage;
+                            return ss.str();
+                        }();
+                        
+                        auto answer = [&] {
+                            stringstream ss;
+                            ss << "/" << pObject->getType();
+                            ss << "/" << pObject->getRowType();
+                            return ss.str();
+                        }();
+                        
+                        StrictLogManager::shared()->game_Peek_Answer("EquationMaker", workPath,
+                                                                     answer, answer);
+
                         m_isMiss = false;
                         
                         m_GameState = K_TAG_GAME_WAIT;
@@ -737,6 +759,10 @@ void EquationMakerScene::onTouchesMoved(const std::vector<Touch*>& touches,
                         
                         std::string name = getSoundName(K_SOUND_SLOT_IN);
                         GameSoundManager::getInstance()->playEffectSound(name);
+                        
+                        FireworksEffect::fire();
+                        
+                        SoundEffect(StringUtils::format("FindTheMatch/Sounds/card_hit.2.m4a")).play();
                     
                         ++m_StageSuccCount;
                         
@@ -758,6 +784,27 @@ void EquationMakerScene::onTouchesEnded(const std::vector<Touch*>& touches,
     if(m_SelectIndex < size && isCheckTouch(touches)){
         EquationMakerObject* pObject = m_vecObjectList[m_SelectIndex];
         
+        if(m_isMiss){
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            auto workPath = [&] {
+                stringstream ss;
+                ss << "/" << "EquationMaker";
+                ss << "/" << "level-" << m_CurrentLevel;
+                ss << "/" << "work-" << m_CurrentStage;
+                return ss.str();
+            }();
+            
+            auto answer = [&] {
+                stringstream ss;
+                ss << "/" << pObject->getType();
+                ss << "/" << pObject->getRowType();
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("EquationMaker", workPath,
+                                                         answer, "None");
+        }
+        
         if(pObject->isSlotIn() == false){
             Point origin = pObject->getOriginPos();
             
@@ -777,12 +824,14 @@ void EquationMakerScene::onTouchesEnded(const std::vector<Touch*>& touches,
     if(m_isMiss){
         std::string name = getSoundName(K_SOUND_MISS);
         GameSoundManager::getInstance()->playEffectSound(name);
-        
+        SoundEffect(StringUtils::format("FindTheMatch/Sounds/card_miss.m4a")).play();
+        FireworksEffect::miss();
+
         m_isMiss = false;
         m_isFirstMiss = true;
         //GameController::getInstance()->onMiss();
+        return;
     }
-
 }
 
 void EquationMakerScene::setObjectMatchMoveEnd(){

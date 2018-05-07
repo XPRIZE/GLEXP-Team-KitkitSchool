@@ -17,10 +17,10 @@ namespace starfall {
 } \
 }
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include <Common/ADT/Chain.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
+#include "Common/Repr/AllRepr.h"
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/TodoSchoolBackButton.hpp>
 #include <Common/Controls/ProgressIndicator.hpp>

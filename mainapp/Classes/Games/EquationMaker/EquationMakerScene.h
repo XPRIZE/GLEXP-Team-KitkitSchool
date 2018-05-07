@@ -15,6 +15,7 @@
 #include "extensions/GUI/CCControlExtension/CCControl.h"
 #include "Common/Controls/ProgressIndicator.hpp"
 
+
 USING_NS_CC;
 USING_NS_CC_EXT;
 

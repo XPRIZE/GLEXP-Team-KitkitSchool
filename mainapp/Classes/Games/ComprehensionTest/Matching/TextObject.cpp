@@ -1,6 +1,6 @@
 //
 //  TextObject.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 06/12/2016.
 //

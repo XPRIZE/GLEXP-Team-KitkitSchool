@@ -1,6 +1,6 @@
 //
 //  TextAndTextLayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //

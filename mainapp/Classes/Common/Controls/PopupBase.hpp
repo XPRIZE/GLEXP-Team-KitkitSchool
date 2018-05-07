@@ -1,6 +1,6 @@
 //
 //  PopupBase.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 11/1/16.
 //

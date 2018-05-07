@@ -53,6 +53,7 @@ cocos2d::Scene* StarFall::createScene() {
     auto It = StarFallScene::create();
 
     It->TheWorksheet = Sheet;
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

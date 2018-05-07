@@ -42,6 +42,7 @@ class FindTheMatchScene: public Scene {
 public:
     Chain<Worksheet> TheSheet;
 
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 
@@ -57,6 +58,7 @@ private:
     void refreshChildNodes();
 
     void lockTouchEventOnlyForTheCard(Card* ActiveCard);
+    void lockTouchEventForAllCards();
     void releaseTouchEventForAllCards();
     
     void prepareFirstWork();

@@ -10,16 +10,12 @@
 #pragma once
 
 
-#include "../Utils/MainNS.h"
-#include "../Models/Problem.h"
-
 #include <Common/Controls/TraceField/TraceField.h>
 #include <functional>
 
 #include "../../ComprehensionScene.hpp"
 
 
-BEGIN_NS_COMPTRACE
 
 // NB(xenosoz, 2016): The general gameflow is as following:
 //   1. Play one word trace game
@@ -36,16 +32,31 @@ class CompTraceScene: public Layer {
     
     Sprite* _guide;
     
-
-    
 public:
+    enum class ProblemType
+    {
+        IMAGE = 1,
+        IMAGE_AND_SOUND = 2
+    };
+    
+    class Problem {
+    public:
+        std::string Text;
+        std::string TeaserFileName;
+        
+        // added
+        ProblemType Type;
+        std::string QuestionSound;
+        std::string AnswerSound;
+    };
+    
     
 
     
     cocos2d::Node* TheGameNode;
     cocos2d::Node* ImageNode;
     
-    tracefield::TraceField* TheTraceField;
+    todoschool::tracefield::TraceField* TheTraceField;
 
 
     Chain<Problem> TheTraceWork;
@@ -77,7 +88,10 @@ private:
     void handleFail();
     
     void onEnter() override;
+    void onExit() override;
     void onExitTransitionDidStart() override;
+    
+    void writePlayLog();
+    std::string makeWorkPath();
 };
 
-END_NS_COMPTRACE

@@ -27,6 +27,7 @@ public:
     static std::string dtos(const double& d);
     
     static std::istream& safegetline(std::istream& is, std::string& t);
+    static std::string combineCSV(std::vector<std::string> csv);
     static std::vector<std::string> splitCSV(std::string& line);
     static std::vector<std::vector<std::string>> readCSV(std::string& filedata);
     static std::vector<std::vector<std::string>> readTSV(std::string& filedata);

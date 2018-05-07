@@ -1,13 +1,13 @@
 //
 //  RotateAndForward.cpp on Jun 28, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
 //
 
 #include "RotateAndForward.h"
-#include <Games/NumberTrace/Common/Utils/DarkMagicMath.h>
+#include "Common/Basic/DarkMagicMath.h"
 
 using namespace cocos2d;
 using namespace std;

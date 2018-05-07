@@ -1,6 +1,6 @@
 //
 //  UserManager.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Seokkwon Lee on 11/4/16.
 //
@@ -17,6 +17,13 @@
 #include <vector>
 
 using namespace std;
+
+enum class PretestProgressType {
+    required,
+    pass,
+    fail,
+    finish
+};
 
 class UserManager {
     
@@ -49,17 +56,23 @@ public:
     string getCurrentDayKey(string levelID);
     int getCurrentDay(string levelID);
     void setCurrentDay(string levelID, int day);
+ 
+    void setPlayingDay(int day) { _playingDay = day; }
+    int getPlayingDay() { return _playingDay; }
     
     string getLevelOpenKey(string levelID);
     bool isLevelOpen(string levelID);
     void setLevelOpen(string levelID, bool isOpen = true);
     bool isLevelCleared(string levelID);
     
+    PretestProgressType getPretestProgressType(string levelID);
+    void setPretestProgressType(string levelID, PretestProgressType type);
+    
     string getDayClearedKey(string levelID, int day);
     bool isDayCleared(string levelID, int day);
     void setDayCleared(string levelID, int day, bool isCleared = true);
     
-    bool isDayInProgress(string levelID, int day);
+    bool checkIfNextDayIsAvailable(string levelID, int day);
     void clearDayProgress(string levelID, int day);
     
     
@@ -81,6 +94,8 @@ public:
     const string getCurrentUsername();
     void updateStars(int numStars);
     int getStars();
+    
+    string getFinishTutorialKey();
     void finishTutorial();
     bool hasPlayedMenuTutorial();
     
@@ -93,6 +108,7 @@ private:
     map<pair<string, int>, bool> _dayClearedMap;
     map<tuple<string, int, int>, bool> _gameClearedMap;
     
+    int _playingDay;
     bool _debugMode;
     bool _gameTestingMode;
     bool _allowReset;

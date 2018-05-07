@@ -67,6 +67,9 @@ private:
     float _defaultScaleFactor;
     float _upScaleFactor;
     
+    std::map<std::string,float> loadDurationsheet();
+    std::map<std::string,float> _duration;
+
     int _currentLevelID;
     ShapeMatching::Worksheet _currentWorksheet;
     int _currentProblemID;
@@ -119,7 +122,8 @@ private:
     
     Point safePointForBoundary(Point point);
     void stompByNode(Node* node);
-
+    bool isExistPair();
+    int getMinimumLocalZOrder();
     
     bool _nextTransition;
     

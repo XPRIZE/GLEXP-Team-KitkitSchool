@@ -1,6 +1,6 @@
 //
 //  GameVideoScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 9/6/17.
 //

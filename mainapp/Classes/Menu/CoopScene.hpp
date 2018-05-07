@@ -1,6 +1,6 @@
 //
 //  CoopScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/20/16.
 //

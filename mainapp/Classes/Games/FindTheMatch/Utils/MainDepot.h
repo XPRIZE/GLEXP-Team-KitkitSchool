@@ -16,6 +16,7 @@ BEGIN_NS_FINDTHEMATCH
 
 class MainDepot {
 public:
+    string gameName() const;
     string assetPrefix() const;
     string defaultFont() const;
 

@@ -35,7 +35,7 @@ namespace BookPageSpace {
     const float turnEase = 1.4;
     
     const string titleFont = "fonts/Seshat.otf";
-    const string bodyFont = "fonts/TodoSchoolV2.ttf";
+    const string bodyFont = "fonts/Andika-R.ttf";
     
     
     
@@ -95,7 +95,8 @@ void BookPage::update(float delta)
             _pauseLength = 0;
             _pauseReading = false;
             
-            GameSoundManager::getInstance()->resumeEffect(_readingAudioID);
+            //GameSoundManager::getInstance()->resumeEffect(_readingAudioID);
+            GameSoundManager::getInstance()->resumeBGM();
             
         } else {
             return;
@@ -139,8 +140,9 @@ void BookPage::update(float delta)
             GameSoundManager::getInstance()->stopAllEffects();
             
             //auto audioPath = _book->filePrefix+_book->pagePrefix+sentence.sentenceAudioFilename;
-            auto audioPath = _resourceFolder+"page/"+newReadingSentence.sentenceAudioFilename;
-            _readingAudioID = GameSoundManager::getInstance()->playEffectSound(audioPath);
+            auto audioPath = _book->filePrefix + "page/"+newReadingSentence.sentenceAudioFilename;
+            //_readingAudioID = GameSoundManager::getInstance()->playEffectSound(audioPath);
+            GameSoundManager::getInstance()->playBGM(audioPath);
             
             _timeSentence = 0.0;
             
@@ -152,8 +154,12 @@ void BookPage::update(float delta)
     for (auto b : _wordButtons) {
         auto wordObj = _words[b->getTag()];
         if (wordObj.startTimingInPage<=_timePage && _timePage<=wordObj.endTimingInPage) {
-            b->setTitleColor(Color3B::RED);
+            b->resetNormalRender();
+            b->loadTextureNormal("Common/lightblue.png");
+            b->setTitleColor(Color3B::BLACK);
         } else {
+            b->resetNormalRender();
+            b->loadTextureNormal("Common/transparent.png");
             b->setTitleColor(textColor);
         }
     }
@@ -169,6 +175,7 @@ void BookPage::stopReading()
 {
     if (_withAudio) unscheduleUpdate();
     GameSoundManager::getInstance()->stopAllEffects();
+    GameSoundManager::getInstance()->stopBGM();
     
 }
 
@@ -459,37 +466,44 @@ void BookPage::setTitle(string title, string titleImagePath, string audioPath, T
     
     
     auto image = Sprite::create(titleImagePath);
-    auto imageSize = image->getContentSize();
-    auto viewSize = _imageView->getContentSize();
-    auto scale = MIN(viewSize.width/imageSize.width, viewSize.height/imageSize.height);
-    image->setScale(scale);
-    image->setPosition(viewSize/2);
-    _imageView->addChild(image);
+    if (!image) image = Sprite::create(titleImagePath+".jpg");
+    if (!image) image = Sprite::create(titleImagePath+".png");
+    if (image) {
+        auto imageSize = image->getContentSize();
+        auto viewSize = _imageView->getContentSize();
+        auto scale = MIN(viewSize.width/imageSize.width, viewSize.height/imageSize.height);
+        image->setScale(scale);
+        image->setPosition(viewSize/2);
+        _imageView->addChild(image);
+    }
     
     
     
     
     GameSoundManager::getInstance()->stopAllEffects();
-    auto titleAudioPath = audioPath;
-    
-    scheduleOnce([titleAudioPath](float){  // Sound delay
-        GameSoundManager::getInstance()->playEffectSound(titleAudioPath);
-    }, delay, "titleAudio");
-    
+    if (audioPath.length() > 0) {
+        auto titleAudioPath = audioPath;
+
+        scheduleOnce([titleAudioPath](float){  // Sound delay
+            GameSoundManager::getInstance()->playEffectSound(titleAudioPath);
+        }, delay, "titleAudio");
+
+    }
 }
 
 
-void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool withAudio)
+void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  bool withAudio)
 {
     _isTitle = false;
     
     _page = page;
-    _resourceFolder = folder;
+    _book = book;
+    auto folder = _book->filePrefix;
     _bookLayout = layout;
     _withAudio = withAudio;
     //_isPortrait = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
     _hasBackCover = layout==TDBookLayout::Portrait || layout==TDBookLayout::Portrait_Traditional;
-    
+    int pageNum = _page->pageNum;
     if (page->creditPage) {
         setCreditPage();
         return;
@@ -592,7 +606,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         leftTexture->setPosition(wp1->getPosition());
         _leftView->addChild(leftTexture);
         
-        
+        setPageNum((pageNum * 2 - 1), _leftView, Vec2(_leftView->getPositionX()/2, halfSize.height - _imageView->getContentSize().height - 150));
         
         _textView = Node::create();
         _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -606,6 +620,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         rightTexture->setPosition(wp2->getPosition());
         _rightView->addChild(rightTexture);
         
+        setPageNum(( pageNum * 2), _rightView, Vec2(_rightView->getPositionX()/2, halfSize.height - _textView->getContentSize().height - 150));
         
     } else if (layout==TDBookLayout::Landscape) {
 
@@ -706,7 +721,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         _textView = Node::create();
         _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         _textView->setContentSize(Size(2000, 300));
-        _textView->setPosition(Vec2(bigSize.width/2, 40+350/2));
+        _textView->setPosition(Vec2(bigSize.width/2, 280));
         _rightView->addChild(_textView);
         
         
@@ -715,6 +730,8 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         rightTexture->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         rightTexture->setPosition(wp2->getPosition());
         _rightView->addChild(rightTexture);
+        
+        setPageNum(pageNum, _rightView, Vec2(bigSize.width/2, 130));
          
         
     } else if (layout==TDBookLayout::Square) {
@@ -770,8 +787,10 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
         _textView = Node::create();
         _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         _textView->setContentSize(Size(1200, 300));
-        _textView->setPosition(Vec2(squareSize.width/2, 200));
+        _textView->setPosition(Vec2(squareSize.width/2, 240));
         _rightView->addChild(_textView);
+        
+        setPageNum(pageNum, _rightView, Vec2(squareSize.width/2, 120));
         
 
         
@@ -784,6 +803,8 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
     
     //auto image = Sprite::create(_book->imagePrefix+pageObj.pageImageFilename);
     auto image = Sprite::create(folder+"page/"+page->pageImageFilename);
+    if (!image) image = Sprite::create(folder+"page/"+page->pageImageFilename+".jpg");
+    if (!image) image = Sprite::create(folder+"page/"+page->pageImageFilename+".png");
     if (image) {
         auto imageSize = image->getContentSize();
         auto viewSize = _imageView->getContentSize();
@@ -823,10 +844,6 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
     }
      */
     
-    
-    auto cl = LayerColor::create(Color4B::RED, _textView->getContentSize().width, _textView->getContentSize().height);
-    //_textView->addChild(cl);
-    
     if (true) {
         auto text = createTextViewMultiLine(textViewSize, page->fontSize);
         _textView->addChild(text);
@@ -836,6 +853,7 @@ void BookPage::setPage(TodoPage *page, string folder, TDBookLayout layout,  bool
     }
     
     
+
 
 
 
@@ -1300,11 +1318,14 @@ Node* BookPage::createTextViewOneLine(Size size, float fontSize)
         currentX += buttonSize.width + pageFontSize/2;
         
         if (_withAudio) {
-            auto wordAudioPath = _resourceFolder+"word/"+word.wordAudioFilename;
-            
+            auto wordAudioPath = _book->getWordAudioPath(word.wordAudioFilename);
             GameSoundManager::getInstance()->preloadEffect(wordAudioPath);
-            wordButton->addClickEventListener([this, word, wordAudioPath](Ref*){
-                GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
+            wordButton->addClickEventListener([this, word, wordAudioPath, wordButton](Ref*){
+                //GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
+                GameSoundManager::getInstance()->pauseBGM();
+                
+                wordButton->resetNormalRender();
+                wordButton->loadTextureNormal("Common/lightblue.png");
                 GameSoundManager::getInstance()->playEffectSound(wordAudioPath);
                 _pauseReading = true;
                 _pauseLength = word.wordAudioLength;
@@ -1382,9 +1403,13 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
     
     auto addAudioHandler = [&](Button* button, string path, float length) {
         GameSoundManager::getInstance()->preloadEffect(path);
-        button->addClickEventListener([this, path, length](Ref*){
+        button->addClickEventListener([this, path, button, length](Ref*){
             
-            GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
+            //GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
+            GameSoundManager::getInstance()->pauseBGM();
+            button->resetNormalRender();
+            button->loadTextureNormal("Common/lightblue.png");
+            
             GameSoundManager::getInstance()->playEffectSound(path);
             _pauseReading = true;
             _pauseLength = length;
@@ -1427,7 +1452,7 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
                     innerTextView->addChild(wordButton);
                     
                     if (_withAudio) {
-                        auto wordAudioPath = _resourceFolder+"word/"+word.wordAudioFilename;
+                        auto wordAudioPath = _book->getWordAudioPath(word.wordAudioFilename);
                         addAudioHandler(wordButton, wordAudioPath, word.wordAudioLength);
                         _wordButtons.push_back(wordButton);
                     }
@@ -1529,8 +1554,7 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
                     innerTextView->addChild(wordButton);
                     
                     if (_withAudio) {
-                        auto wordAudioPath = _resourceFolder+"word/"+word.wordAudioFilename;
-                        
+                        auto wordAudioPath = _book->getWordAudioPath(word.wordAudioFilename);
                         GameSoundManager::getInstance()->preloadEffect(wordAudioPath);
                         addAudioHandler(wordButton, wordAudioPath, word.wordAudioLength);
                         
@@ -1576,4 +1600,14 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
     
 }
 
+void BookPage::setPageNum(int page, Node *_pageView, Vec2 pos)
+{
+    Label* pagelabel = Label::create();
+    pagelabel->setSystemFontSize(40);
+    pagelabel->setTextColor(Color4B::BLACK);
+    pagelabel->setString(TodoUtil::itos(page));
+    pagelabel->setPosition(pos);
+    
+    _pageView->addChild(pagelabel);
+}
 

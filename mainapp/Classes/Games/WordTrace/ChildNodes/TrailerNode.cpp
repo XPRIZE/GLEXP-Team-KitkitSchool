@@ -19,7 +19,7 @@ using namespace std;
 
 
 bool TrailerNode::init() {
-    if (!Super::init()) { return false; }
+    if (!Node::init()) { return false; }
     
     NextLabel = nullptr;
     NextButtonA = nullptr;
@@ -66,6 +66,7 @@ void TrailerNode::refreshNextButton() {
     MainDepot Depot;
     Size GameSize = Depot.gameSize();
     
+    mbClicked = false;
     if (NextButtonA)
         NextButtonA->removeFromParent();
 
@@ -86,8 +87,13 @@ void TrailerNode::refreshNextButton() {
             auto Guard = ScopeGuard([this] { retain(); },
                                     [this] { release(); });
 
+            if (mbClicked == true)
+                return;
+            
             if (OnNextButtonClicked)
                 OnNextButtonClicked(*this, NextTraceWorkA());
+            
+            mbClicked = true;
         });
         
         addChild(It);
@@ -114,9 +120,13 @@ void TrailerNode::refreshNextButton() {
         It->addClickEventListener([this](Ref*) {
             auto Guard = ScopeGuard([this] { retain(); },
                                     [this] { release(); });
+            if (mbClicked == true)
+                return;
 
             if (OnNextButtonClicked)
                 OnNextButtonClicked(*this, NextTraceWorkB());
+            
+            mbClicked = true;
         });
         
         addChild(It);

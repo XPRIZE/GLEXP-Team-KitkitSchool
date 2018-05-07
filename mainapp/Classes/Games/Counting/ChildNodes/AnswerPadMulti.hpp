@@ -1,6 +1,6 @@
 //
 //  AnswerPadMulti.hpp on Jul 29, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Extended by Taihyun Hwang 7/29/16 base on the work of
 //  Created by Gunho Lee on 6/26/16.

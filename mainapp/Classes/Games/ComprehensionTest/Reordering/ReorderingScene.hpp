@@ -1,6 +1,6 @@
 //
 //  ReorderingScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 20/12/2016.
 //
@@ -43,7 +43,7 @@ namespace ComprehensionTest
             
         private:
             ComprehensionScene* _comprehensionScene;
-            string _questionText;
+            //string _questionText;
             vector<string> _itemVector;
             Node* _gameNode;
             vector<ImageBlock*> _imageSlots;
@@ -53,13 +53,16 @@ namespace ComprehensionTest
             void initData();
             void createImageSlots();
             void createTextSlots(float wrapperNodeCorrectionY, float scaleFactor);
-            Node* createImageBlock(string imagePath);
-            Node* createTextBlock(string text, float scaleFactor);
+            Node* createImageBlock(string imageFile);
+            Node* createTextBlock(int index, string text, float scaleFactor);
             bool isSolved();
             void onSolve();
             void createFixedResources();
             void determineItemType();
             void drawBlocksByGameType();
+            
+            void writePlayLog();
+            string makeWorkPath();
         };
     }
 }

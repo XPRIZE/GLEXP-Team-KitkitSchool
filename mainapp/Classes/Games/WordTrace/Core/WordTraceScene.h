@@ -57,6 +57,7 @@ public:
     Chain<int> ProgressIndex;
     vector<int> ProblemIDsToGo;
     
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
     

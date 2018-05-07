@@ -1,6 +1,6 @@
 //
 //  StarFallDepot.cpp on Jul 15, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -9,10 +9,9 @@
 
 #include "StarFallDepot.h"
 #include <Managers/LanguageManager.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Repr/AllRepr.h"
+#include "Common/Sounds/CommonSound.hpp"
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -95,10 +94,17 @@ Node* StarFallDepot::createGameNode() const {
 }
 
 Json::Value StarFallDepot::jsonForMainGameWork() {
-	if (LanguageManager::getInstance()->isSwahili()) {
-			return swahiliJsonForMainGameWork();
-	}
-    return englishJsonForMainGameWork();
+    string Filename = assetPrefix() + "/starfall.json";
+    string JsonStr = FileUtils::getInstance()->getStringFromFile(Filename);
+    
+    Json::Value JsonValue;
+    Json::Reader JsonReader;
+    if (!JsonReader.parse(JsonStr, JsonValue)) {
+        CCLOGERROR("JSON reader parse error: %s", Filename.c_str());
+        JsonValue.clear();
+    }
+    
+    return JsonValue;
 }
    
 SymbolLayoutType StarFallDepot::defaultSymbolLayout() const {
@@ -157,41 +163,7 @@ SoundEffect StarFallDepot::soundForTargetDeath() const {
 }
 
 SoundEffect StarFallDepot::soundForWord(const string& Word) const {
-    if (LanguageManager::getInstance()->isSwahili()) {
-        return Imma_swTZ().soundForWord(Word);
-    }
-    
-    return Pam_enUS().soundForWord(Word);
-}
-
-Json::Value StarFallDepot::swahiliJsonForMainGameWork()
-{
-    string Filename = assetPrefix() + "/starfall.sw.json";
-    string JsonStr = FileUtils::getInstance()->getStringFromFile(Filename);
-
-    Json::Value JsonValue;
-    Json::Reader JsonReader;
-    if (!JsonReader.parse(JsonStr, JsonValue)) {
-        CCLOGERROR("JSON reader parse error: %s", Filename.c_str());
-        JsonValue.clear();
-    }
-    
-    return JsonValue;
-}
-
-Json::Value StarFallDepot::englishJsonForMainGameWork()
-{
-    string Filename = assetPrefix() + "/starfall.en.json";
-    string JsonStr = FileUtils::getInstance()->getStringFromFile(Filename);
-
-    Json::Value JsonValue;
-    Json::Reader JsonReader;
-    if (!JsonReader.parse(JsonStr, JsonValue)) {
-        CCLOGERROR("JSON reader parse error: %s", Filename.c_str());
-        JsonValue.clear();
-    }
-    
-    return JsonValue;
+    return CommonSound().soundForWord(Word);
 }
 
 

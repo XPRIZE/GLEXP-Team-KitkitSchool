@@ -14,8 +14,8 @@
 // for data checking
 #include "Managers/UserManager.hpp"
 #include "3rdParty/CCNativeAlert.h"
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Basic/SoundEffect.h"
+
 
 using namespace std;
 using namespace cocos2d;

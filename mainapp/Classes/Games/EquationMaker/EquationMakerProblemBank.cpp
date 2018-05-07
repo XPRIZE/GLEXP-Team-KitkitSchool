@@ -8,6 +8,8 @@
 
 #include "EquationMakerProblemBank.h"
 #include "EquationMakerScene.h"
+#include <Common/Basic/CommentStream.h>
+#include <Managers/LanguageManager.hpp>
 
 #ifndef MAKE_STRING
 #   define MAKE_STRING(_Text) "" #_Text
@@ -20,6 +22,48 @@ EquationMakerProblemBank::EquationMakerProblemBank() {
 Json::Value EquationMakerProblemBank::generateParameters(int level) {
     Json::Value a(Json::objectValue);
     Json::Value temp(Json::arrayValue);
+    
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    auto p = LanguageManager::getInstance()->findLocalizedResource("Games/EquationMaker/EquationMaker_Levels.tsv");
+    std::string s = FileUtils::getInstance()->getStringFromFile(p);
+    CCLOG("levels file : %s", s.c_str());
+    todoschool::CommentStream stream(s);
+    
+    int Level, MinNumber, MaxNumber, Repeat, Line1BlankCount, PannelCount;
+    std::string Language, Type, MathSign;
+    
+    while (stream >> Language >> Level >> Type >> MathSign >> MinNumber >> MaxNumber >> Repeat >> Line1BlankCount >> PannelCount)
+    {
+        if (level == Level)
+        {
+            mItemTSV.level = Level;
+            mItemTSV.type = 3;
+            if (Type == "B")
+            {
+                mItemTSV.type = 4;
+            }
+            else if (Type == "C")
+            {
+                mItemTSV.type = 5;
+            }
+            
+            mItemTSV.mathSign = EquationMakerScene::K_TYPE_SIGN_PLUS;
+            if (MathSign == "M")
+            {
+                mItemTSV.mathSign = EquationMakerScene::K_TYPE_SIGN_MINUS;
+            }
+            else if (MathSign == "R")
+            {
+                mItemTSV.mathSign = EquationMakerScene::K_TYPE_SIGN_RANDOM;
+            }
+            mItemTSV.minNumber = MinNumber;
+            mItemTSV.maxNumber = MaxNumber;
+            mItemTSV.repeatCount = Repeat;
+            mItemTSV.maxLine1BlankCount = Line1BlankCount;
+            mItemTSV.panelCount = PannelCount;
+        }
+    }
+#endif
     
     int levelType = getLevelType(level);
     
@@ -49,6 +93,7 @@ Json::Value EquationMakerProblemBank::generateParameters(int level) {
             int mathSign = getMathSign(level);
             int targetValueStart = getStartNumber(level);
             int targetValueMax = getMaxNumber(level);
+
             int problemCount = 6;
 
             for(int i = targetValueStart; i < targetValueMax; ++i)
@@ -88,6 +133,7 @@ Json::Value EquationMakerProblemBank::generateParameters(int level) {
                 }
                 
                 right = first+second;
+
                 if(subSign == EquationMakerScene::K_TYPE_SIGN_MINUS){
                     int temp = first;
                     first = right;
@@ -115,6 +161,7 @@ Json::Value EquationMakerProblemBank::generateParameters(int level) {
                 
                 int targetCount = getAnswerCount(level, levelType);
                 int up = getUpAnswerCount(level, targetCount-1);
+
                 if(up > 0){
                     std::vector<int> vecProblemSelect;
                     for(int j = 0; j < problem.vecData.size(); ++j){
@@ -420,6 +467,10 @@ Json::Value EquationMakerProblemBank::generateParameters(int level) {
 }
 
 int EquationMakerProblemBank::getPanelCount(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.panelCount;
+    
+#else
     int ret = 0;
     
     if(_curLevel <= 2) ret = 4;
@@ -429,6 +480,7 @@ int EquationMakerProblemBank::getPanelCount(int _curLevel){
     else ret = 4;
     
     return ret;
+#endif
 }
 
 //std::string EquationMakerProblemBank::getL5FileName(int _objectType){
@@ -512,6 +564,10 @@ int EquationMakerProblemBank::getPanelCount(int _curLevel){
 //}
 
 int EquationMakerProblemBank::getMathSign(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.mathSign;
+    
+#else
     int ret = EquationMakerScene::K_TYPE_SIGN_PLUS;
     
     if(_curLevel == 2 || _curLevel == 4 || _curLevel == 6)
@@ -520,22 +576,33 @@ int EquationMakerProblemBank::getMathSign(int _curLevel){
     else if(_curLevel == 7) ret = EquationMakerScene::K_TYPE_SIGN_RANDOM;
     
     return ret;
+#endif
 }
 
 int EquationMakerProblemBank::getLevelType(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.type;
+    
+#else
     if(_curLevel >= 5 && _curLevel <= 7) return 4;
     else if(_curLevel >= 8) return 5;
     
     return 3;
+#endif
 }
 
 int EquationMakerProblemBank::getRepNumber(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.repeatCount;
+    
+#else
     int ret = 2;
     
     if(_curLevel == 9) ret = 3;
     else if(_curLevel == 10) ret = 4;
     
     return ret;
+#endif
 }
 
 int EquationMakerProblemBank::getTargetCount(int _curLevel){
@@ -547,31 +614,53 @@ int EquationMakerProblemBank::getTargetCount(int _curLevel){
 }
 
 int EquationMakerProblemBank::getStartNumber(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.minNumber;
+    
+#else
     int ret = 1;
     
     if(_curLevel == 7) ret = 10;
     
     return ret;
+#endif
 }
 
 int EquationMakerProblemBank::getMaxNumber(int _curLevel){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return mItemTSV.maxNumber;
+#else
     int ret = 5;
     
     if(_curLevel >= 3 && _curLevel <= 6) ret = 10;
     else if(_curLevel == 7) ret = 20;
     
     return ret;
+#endif
 }
 
 int EquationMakerProblemBank::getUpAnswerCount(int _curLevel, int _max){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    if (mItemTSV.maxLine1BlankCount == 0)
+    {
+        return 0;
+    }
+    
+    return MIN(((rand() % mItemTSV.maxLine1BlankCount)+1), mItemTSV.maxLine1BlankCount);
+#else
     int ret = 0;
     
     if(_curLevel == 3 || _curLevel == 4) ret = MIN(((rand()%_max)+1), _max);
     
     return ret;
+#endif
 }
 
 int EquationMakerProblemBank::getAnswerCount(int _curLevel, int _levelType){
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    return 3;
+    
+#else
     int ret = 3;
     
     if(_levelType == 4) return 5;
@@ -582,4 +671,26 @@ int EquationMakerProblemBank::getAnswerCount(int _curLevel, int _levelType){
     }
     
     return ret;
+#endif
 }
+
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+std::vector<int> EquationMakerProblemBank::getLevelIDs()
+{
+    std::vector<int> result;
+    
+    auto p = LanguageManager::getInstance()->findLocalizedResource("Games/EquationMaker/EquationMaker_Levels.tsv");
+    std::string s = FileUtils::getInstance()->getStringFromFile(p);
+    todoschool::CommentStream stream(s);
+    
+    int Level, MinNumber, MaxNumber, Repeat, Line1BlankCount, PannelCount;
+    std::string Language, Type, MathSign;
+    
+    while (stream >> Language >> Level >> Type >> MathSign >> MinNumber >> MaxNumber >> Repeat >> Line1BlankCount >> PannelCount)
+    {
+        result.push_back(Level);
+    }
+    
+    return result;
+}
+#endif

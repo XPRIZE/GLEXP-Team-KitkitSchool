@@ -1,6 +1,6 @@
 //
 //  SoundCard.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 05/09/2017.
 //
@@ -42,6 +42,8 @@ void SoundCard::loadOnTrain(SoundTrain *train) {
     _loading = true;
     
     this->runAction(Sequence::create(MoveTo::create(0.1, trainWorldPos), CallFunc::create([this](){
+        //this->getParent()->reorderChild(this, this->getLocalZOrder());
+        
         this->retain();
         this->removeFromParent();
         this->setPosition(this->_targetTrain->_slotPos);
@@ -60,6 +62,7 @@ void SoundCard::unload(Node *ground) {
     
     auto pos = this->convertToWorldSpace(this->getContentSize()/2);
     this->setPosition(pos);
+    //this->getParent()->reorderChild(this, this->getLocalZOrder());
     this->retain();
     this->removeFromParent();
     ground->addChild(this);
@@ -114,13 +117,17 @@ void SoundCard::setType(string letter){
     auto listener = EventListenerTouchAllAtOnce::create();
     // listener->setSwallowTouches(true);
     listener->onTouchesBegan = [this](const vector<Touch*>& touches, Event* E) {
-        if (!_enableTouch) return false;
         
         for (int i = 0; i<touches.size(); i++) {
             auto T = touches[i];
             auto P = getParent();
             auto pos = P->convertToNodeSpace(T->getLocation());
             if (this->getBoundingBox().containsPoint(pos)) {
+                if (!_enableTouch) return false;
+                _enableTouch = false;
+
+                CCLOG("tx:%f, ty:%f", T->getLocation().x, T->getLocation().y);
+                CCLOG("ontouchbegan");
                 //CCLOG("touchbegan: %s", _assignedLetter.c_str());
                 _touching[_assignedIndex] = T->getID()+1;
                 if (onTouchBegan) onTouchBegan();
@@ -131,9 +138,8 @@ void SoundCard::setType(string letter){
     };
     
     listener->onTouchesMoved = [this](const vector<Touch*>& touches, Event* E) {
-        if (!_enableTouch) return;
         if (!_touching[_assignedIndex]) return;
-        
+
         for (int i = 0; i<touches.size(); i++) {
             
             auto T = touches[i];
@@ -144,18 +150,19 @@ void SoundCard::setType(string letter){
             auto pl = P->convertToNodeSpace(T->getPreviousLocation());
             auto cl = P->convertToNodeSpace(T->getLocation());
             auto delta = cl-pl;
-            this->setPosition(this->getPosition()+delta);
+            // this->setPosition(this->getPosition()+delta);
+            this->setPosition(cl);
         }
     };
     
     listener->onTouchesEnded = [this](const vector<Touch*>& touches, Event* E) {
-        if (!_enableTouch) return;
         if (!_touching[_assignedIndex]) return;
         
         for (int i = 0; i<touches.size(); i++) {
             auto T = touches[i];
             if (_touching[_assignedIndex] != T->getID()+1) continue;
-            
+            _enableTouch = true;
+
             auto P = getParent();
             auto pos = P->convertToNodeSpace(T->getLocation());
             //CCLOG("touchend#2: %s", _assignedLetter.c_str());
@@ -166,8 +173,8 @@ void SoundCard::setType(string letter){
     
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
-    auto cardLetter = TodoUtil::createLabel(letter, 140, Size(210, 242), fontName, Color4B(54, 54, 54,255), TextHAlignment::CENTER);
-    cardLetter->setPosition(_face->getPosition());
+    auto cardLetter = TodoUtil::createLabel(letter, 140, Size::ZERO, fontName, Color4B(54, 54, 54,255), TextHAlignment::CENTER);
+    cardLetter->setPosition(_face->getPositionX(), _face->getPositionY()+10);
     cardLetter->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     addChild(cardLetter);
 

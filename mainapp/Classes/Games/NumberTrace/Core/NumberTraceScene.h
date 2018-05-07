@@ -32,6 +32,7 @@ public:
     Chain<size_t> TheProblemID;
     Chain<Problem> TheProblem;
     
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

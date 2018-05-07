@@ -62,6 +62,7 @@ cocos2d::Scene* TutorialTrace::createScene() {
     
     auto It = MainScene::create();
     It->TheSheet.update(Sheet);
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     return It;

@@ -1,6 +1,6 @@
 //
 //  ImageBlock.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 20/12/2016.
 //
@@ -29,8 +29,8 @@ public:
     
     static Size wordBlockSize;
     
-    void initAsSlot(std::string imagePath);
-    void initAsBlock(std::string imagePath);
+    void initAsSlot(std::string imageFile);
+    void initAsBlock(std::string folder, std::string imageFile);
     
     std::string getValue();
     std::string getSolutionValue();
@@ -46,8 +46,8 @@ public:
     
 private:
     bool _bSlot;
-    std::string _imagePath;
-    std::string _solutionImagePath;
+    std::string _imageFile;
+    std::string _solutionImageFile;
     Point _originPos;
     Point _faceOriginPos;
     Node *_background, *_face, *_shadow;

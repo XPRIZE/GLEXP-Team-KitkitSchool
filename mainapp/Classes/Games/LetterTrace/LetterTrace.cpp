@@ -16,17 +16,7 @@
 
 using todoschool::lettertrace::LevelData;
 
-namespace {
-    std::string currentLanguageTag() {
-        auto CodeToTag = std::map<std::string, std::string>{{"en", "en_US"}, {"sw", "sw_TZ"}};
-        auto Code = LanguageManager::getInstance()->getCurrentLanguageCode();
-        if (CodeToTag.find(Code) == CodeToTag.end()) {
-            return "en_US";
-        }
-        return CodeToTag.at(Code);
-    };
-    
-}  // unnamed namespace
+
 
 
 LetterTrace::LetterTrace() {

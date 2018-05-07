@@ -11,8 +11,8 @@
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/TodoLoadingScene.hpp>
 #include <Common/Controls/TodoSchoolBackButton.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/NodeScopeGuard.h"
 #include <Utils/TodoUtil.h>
 #include <cocos/ui/UIButton.h>
 
@@ -20,13 +20,13 @@
 
 using namespace cocos2d;
 using namespace std;
-using todoschool::NodeScopeGuard;
 
 
 
 namespace {
     const string defaultFont("fonts/TodoSchoolV2.ttf");
     const float defaultFontSize(100.f);
+    
 
     Size windowSize() {
         return todoschool::DeviceSpec::forCurrentDesignResolution().FullScreenResolution;
@@ -55,75 +55,165 @@ void GradeSelector::setGameName(std::string gameName) {
     gameName_ = gameName;
 }
 
-void GradeSelector::setChoices(const Choices& choices) {
-    choices_ = choices;
+void GradeSelector::setChoices(const std::vector<int> choices) {
+    _choicesStr.clear();
+    _choicesInt = choices;
+    refreshChildNodes();
+}
+void GradeSelector::setChoices(const std::vector<std::string> choices) {
+    _choicesInt.clear();
+    _choicesStr = choices;
     refreshChildNodes();
 }
 
-//void GradeSelector::setCreator(Creator creator) {
-//    creator_ = creator;
-//}
-
 cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
+    removeAllChildren();
     auto scene = Scene::create();
     
-    [&] {
-        auto it = Sprite::create("FindTheMatch/Background/picturematching.jpg");
-        auto spriteSize = it->getContentSize();
-        float scale = max(windowSize().width / spriteSize.width,
-                          windowSize().height / spriteSize.height);
-        
-        it->setScale(scale);
-        it->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        it->setPosition(windowSize() / 2.f);
-        
-        it->setBlendFunc(BlendFunc::DISABLE);
-        scene->addChild(it);
-        return it;
-    }();
+    _winSize = Director::getInstance()->getWinSize();
+    auto bg = Sprite::create("MainScene/bg_ground.jpg");
+    auto bgSize = bg->getContentSize();
+    auto bgScale = MAX(_winSize.width / bgSize.width, _winSize.height / bgSize.height);
+    bg->setScale(bgScale);
+    bg->setPosition(_winSize/2);
+    bg->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    scene->addChild(bg);
     
-    auto gameNode = [&] {
-        float scale = min(windowSize().width / gameSize().width,
-                          windowSize().height / gameSize().height);
-        
-        auto it = Node::create();
-        it->setContentSize(gameSize());
-        it->setScale(scale);
-        it->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        it->setPosition(windowSize() / 2.f);
-        
-        scene->addChild(it);
-        return it;
-    }();
+    auto backButton = TodoSchoolBackButton::create();
+    backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+    backButton->setPosition(Vec2(25, _winSize.height-25));
+    scene->addChild(backButton);
     
-    [&] {
-        // NB(xenosoz, 2016): The back button.
-        TodoSchoolBackButton* It = TodoSchoolBackButton::create();
-        It->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-        It->setPosition(Point(25.f, windowSize().height - 25.f));
-
-
-        
-        scene->addChild(It);
-        return It;
-    }();
-
+    auto label = Label::createWithTTF("Choose a level to play",
+                                   defaultFont, defaultFontSize);
     
-    [&] {
-        auto it = this;
-        it->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        it->setPosition(gameSize() / 2.f);
+    label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+    label->setPosition(_winSize.width/2, _winSize.height-150);
+    scene->addChild(label);
+    
+    bool levelIDisInteger = false;
+    
+    if (_choicesInt.size()>0) {
+        levelIDisInteger = true;
+        for (auto it : _choicesInt) {
+            _choicesStr.push_back(TodoUtil::itos(it));
+        }
+    }
+    
+    auto node = Node::create();
+    scene->addChild(node);
+    node->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+    node->setPosition(_winSize.width*0.05,_winSize.height-400);
+    
+    float posX = 0.f, posY = 0.f;
+    float width = 0.f, height = 0.f;
+    
+    int levelCount = -1;
+    int columnCount = 0;
+
+    string gameName = gameName_;
+
+    for (auto it : _choicesStr) {
+
+        bool newLine = false;
+
+        auto itVec = TodoUtil::split(it, '_');
         
-        gameNode->addChild(it);
-        return it;
-    }();
+        if (itVec.size()>1) {
+            auto currentLevel = TodoUtil::stoi(itVec[1]);
+            CCLOG("currentLevel: %d", currentLevel);
+            CCLOG("levelCount: %d", levelCount);
+            if (levelCount != -1 && levelCount != currentLevel) newLine = true;
+            levelCount = currentLevel;
+        } else {
+            columnCount++;
+            if (columnCount !=1 && columnCount%10 == 1) newLine = true;
+        }
+
+        auto button = ui::Button::create();
+        button->setTitleFontSize(200.f);
+        button->setTitleFontName(defaultFont);
+        button->setColor(Color3B::WHITE);
+        button->setTitleText(" "+it+" ");
+        button->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+        Size buttonSize = button->getContentSize();
+        button->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
+        
+        if (newLine){
+            CCLOG("new line!");
+            posX = 0.f;
+            posY -= buttonSize.height * 2;
+            if (-posY > height) height = -posY;
+
+        }
+        
+        button->setPosition(Vec2(posX, posY));
+        button->addTouchEventListener([this, it, gameName, levelIDisInteger, scene](Ref*,ui::Widget::TouchEventType e) {
+            if (e == ui::Widget::TouchEventType::ENDED) {
+                if (gameName == "ReadingBird") {
+                    cocos2d::ui::EditBox* editBox = (cocos2d::ui::EditBox*)(scene->getChildByTag(1000)->getChildByTag(100));
+                    if (editBox != nullptr) {
+                        int val = TodoUtil::stoi(string(editBox->getText()));
+                        
+                        if (val != INT_MIN) {
+                            UserDefault::getInstance()->setIntegerForKey("TRIGGER_VOLUME", val);
+                        }
+                    }
+                }
+                
+                if (levelIDisInteger) handleSelection(gameName, TodoUtil::stoi(it));
+                else handleSelection(gameName, it);
+            }
+        });
+        node->addChild(button);
+        posX += buttonSize.width * 1.1;
+        if (posX > width) width = posX;
+    }
+    
+    if (gameName == "ReadingBird")
+    {
+        const int DEFAULT_TRIGGER_VOLUME = 110;
+        
+        Node* nodeVolume = Node::create();
+        auto label = Label::createWithTTF("Trigger Volume: ",
+                                          defaultFont, defaultFontSize);
+        label->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        label->setPosition(Vec2::ZERO);
+        nodeVolume->addChild(label);
+        
+        auto editVolume = cocos2d::ui::EditBox::create(Size(200, label->getContentSize().height), cocos2d::ui::Scale9Sprite::create());
+        editVolume->setTag(100);
+        editVolume->setFont(defaultFont.c_str(), defaultFontSize);
+        editVolume->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        editVolume->setPosition(Vec2(label->getContentSize().width, 0));
+        editVolume->setMaxLength(3);
+        editVolume->setReturnType(cocos2d::ui::EditBox::KeyboardReturnType::DONE);
+        editVolume->setInputMode(cocos2d::ui::EditBox::InputMode::NUMERIC);
+        int triggerVolume = UserDefault::getInstance()->getIntegerForKey("TRIGGER_VOL", DEFAULT_TRIGGER_VOLUME);
+        editVolume->setText(TodoUtil::itos(triggerVolume).c_str());
+        nodeVolume->addChild(editVolume);
+
+        nodeVolume->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        nodeVolume->setContentSize(Size(label->getContentSize().width + editVolume->getContentSize().width / 2, label->getContentSize().height));
+        nodeVolume->setPosition(Vec2(_winSize.width / 2 - nodeVolume->getContentSize().width / 2, 200));
+        nodeVolume->setTag(1000);
+        scene->addChild(nodeVolume);
+    }
+
+    float scale = MIN(_winSize.width / width, (_winSize.height-600) / height) * 0.9;
+
+    if (scale < 1) node->setScale(scale);
     
     return scene;
+    
 }
 
 cocos2d::Scene* GradeSelector::createScene() {
-    auto it = GradeSelector::create();
-    return it->minimalSceneByWrapping();
+    auto scene = Scene::create();
+    auto layer = GradeSelector::create();
+    scene->addChild(layer);
+    return scene;
+    // return it->minimalSceneByWrapping();
 }
 
 void GradeSelector::clearInternals() {
@@ -132,61 +222,16 @@ void GradeSelector::clearInternals() {
 
 void GradeSelector::refreshChildNodes() {
     removeAllChildren();
-
-    const Size buttonSize(200.f, 200.f);
-    const Size buttonMargin(20.f, 20.f);
-    size_t rowCount = (choices_.size() + 9) / 10;
-    size_t colCount = (rowCount > 1 ? 10 : choices_.size());
     
-    setContentSize([&] {
-        float width = buttonSize.width * colCount + buttonMargin.width * (colCount + 1);
-        float height = buttonSize.height * rowCount + buttonMargin.height * (rowCount + 1);
-
-        height += 200.f;
-        return Size(width, height);
-    }());
-    
-    auto CS = getContentSize();
-
-    auto TitleLabel = [&] {
-        auto It = Label::createWithTTF("Choose a level to play",
-                                       defaultFont, defaultFontSize);
-
-        It->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
-        It->setPosition(Point(CS.width / 2.f, CS.height));
-
-        addChild(It);
-        return It;
-    }();
-
-
-    for (size_t i = 0, e = choices_.size(); i < e; ++i) {
-        auto choice = choices_[i];
-        auto it = ui::Button::create();
-        size_t row = (i / 10);
-        size_t col = (i % 10);
-
-        it->setTitleFontName(defaultFont);
-        it->setTitleFontSize(200.f);
-        it->setTitleText(TodoUtil::itos((int)choice));
-        it->setContentSize(buttonSize);
-        it->addClickEventListener([this, choice](Ref*) {
-            auto guard = NodeScopeGuard(this);
-            handleSelection(choice);
-        });
-
-        it->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-        it->setPosition([&] {
-            float x = buttonSize.width * col + buttonMargin.width * (col + 1);
-            float y = (CS.height - TitleLabel->getContentSize().height) - (buttonSize.height * row + buttonMargin.height * (row + 1));
-            return Point(x, y);
-        }());
-        
-        addChild(it);
-    }
 }
 
-void GradeSelector::handleSelection(int choice) {
-    CCLOG("gameName %s", gameName_.c_str());
-    CCAppController::sharedAppController()->startGame(gameName_, choice);
+void GradeSelector::handleSelection(std::string gameName, int choice) {
+    CCLOG("gameName %s", gameName.c_str());
+    CCAppController::sharedAppController()->startGame(gameName, choice);
 }
+
+void GradeSelector::handleSelection(std::string gameName, string choice) {
+    CCLOG("gameName %s", gameName.c_str());
+    CCAppController::sharedAppController()->startGame(gameName, 0, choice);
+}
+

@@ -11,8 +11,7 @@
 #define TODOSCHOOL_LETTERTRACE_BONUSNODE_H
 
 #include <Games/LetterTrace/Common/BonusVideoPlayer/BonusVideoPlayer.h>
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 #include <cocos/ui/CocosGUI.h>
 #include <functional>
@@ -21,10 +20,12 @@
 namespace todoschool {
 namespace lettertrace {
 
-class BonusNode: public TodoSchoolNode<BonusNode> {
-    typedef TodoSchoolNode<BonusNode> Super;
+class BonusNode: public cocos2d::Node {
 
 public:
+    
+    CREATE_FUNC(BonusNode);
+    
     BonusVideoPlayer* BonusPlayer;
     cocos2d::Label* FullTextNode;
     cocos2d::Label* TraceTextNode;

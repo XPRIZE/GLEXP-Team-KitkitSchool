@@ -9,7 +9,7 @@
 
 #include "TraceScrollView.h"
 #include "../Utils/TraceFieldDepot.h"
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Repr/AllRepr.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -91,7 +91,7 @@ void TraceScrollView::scrollThisToZero() {
 void TraceScrollView::scrollThisToBegin() {
     TraceFieldDepot Depot;
     Size CS = getContentSize();
-    Rect BB = TheTraceString().roughBoundingBox();
+    AARect BB = TheTraceString().roughBoundingBox();
 
     Point BeginCamera = ([&] {
         Point It(0.f, BB.midY() - CS.height/2.f);
@@ -110,7 +110,7 @@ void TraceScrollView::scrollThisToBegin() {
 void TraceScrollView::scrollThisToEnd() {
     TraceFieldDepot Depot;
     Size CS = getContentSize();
-    Rect BB = TheTraceString().roughBoundingBox();
+    AARect BB = TheTraceString().roughBoundingBox();
     
     Point EndCamera = ([&] {
         Point It(-CS.width, BB.midY() - CS.height/2.f);
@@ -128,7 +128,7 @@ void TraceScrollView::scrollThisToEnd() {
 
 void TraceScrollView::scrollThisToCenter() {
     Size CS = getContentSize();
-    Rect BB = (UseTightBoundingBox() ?
+    AARect BB = (UseTightBoundingBox() ?
                TheTraceString().tightBoundingBox() : TheTraceString().roughBoundingBox());
 
     Point CenterCamera(BB.midX() - CS.width/2.f, BB.midY() - CS.height/2.f);
@@ -159,7 +159,7 @@ void TraceScrollView::scrollTheGlyphToRegion() {
     
     TraceFieldDepot Depot;
     Size CS = getContentSize();
-    Rect BB = TheTraceString().roughBoundingBox();
+    AARect BB = TheTraceString().roughBoundingBox();
 
     if (BB.size.width <= CS.width) {
         // NB(xenosoz, 2016): Align to center when letter width is small enough.

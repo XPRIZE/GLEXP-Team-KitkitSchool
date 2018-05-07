@@ -1,6 +1,6 @@
 //
 //  WordItem.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/18/16.
 //
@@ -9,11 +9,12 @@
 #include "WordItem.hpp"
 #include "Utils/TodoUtil.h"
 #include "GreenDottedRect.hpp"
+#include "GreenDashedRect.hpp"
 
 namespace WordItemNamespace
 {
-    const string kFontName = "fonts/TodoSchoolV2.ttf";
-    const float kFontSize = 60.f;
+    const string kFontName = "fonts/Andika-R.ttf";
+    const float kFontSize = 80.f;
     const float kItemPadding = 50.f;
 }
 
@@ -26,6 +27,8 @@ void WordItem::setWordItemWidth(float width)
     // 반복되는 패턴이 안깨지게 하기 위해 16단위로 올려줍니다
     wordItemSize.width = ceil(width/16)*16;
 }
+
+bool WordItem::_touchEnabled = true;
 
 bool WordItem::init()
 {
@@ -41,6 +44,10 @@ bool WordItem::init()
     
     _snapped = false;
     _pair = nullptr;
+    
+    onCheckTargetBegan = nullptr;
+    onCheckTargetMoved = nullptr;
+    onCheckTargetEnded = nullptr;
     
     return true;
 }
@@ -91,7 +98,7 @@ void WordItem::initWord(string word)
     
     auto l = TodoUtil::createLabel(word, kFontSize, Size::ZERO, kFontName, Color4B::WHITE);
     l->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    l->setPosition(wordItemSize/2);
+    l->setPosition(wordItemSize.width/2, wordItemSize.height/2+10);
     _face->addChild(l);
     
     
@@ -103,23 +110,23 @@ void WordItem::initWord(string word)
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
         
-        
         // Touch의 Location은 world좌표계이고, getBoundingBox는 부모 좌표계이기 때문에 둘을 맞춰줄 필요가 있습니다.
         auto P = getParent();
         auto pos = P->convertToNodeSpace(T->getLocation());
         if (this->getBoundingBox().containsPoint(pos)) {
-        
+            if (!_touchEnabled) return false;
+            _touchEnabled = false;
+
             this->setPicked(true);
             
-            // 원위치로 되돌릴 일이 있을 때를 위하여 원래 위치를 저장해둡니다.
-            this->_originPos = getPosition();
-            
-            
             // 선택된 객체를 위로 올려줍니다.
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+            
+//
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             if (onCheckTargetBegan) {
                 onCheckTargetBegan();
@@ -130,30 +137,42 @@ void WordItem::initWord(string word)
         return false;
     };
     
-    listener->onTouchMoved = [this](Touch* T, Event* E) {
+    listener->onTouchMoved = [this](Touch* touch, Event* event) {
 
         // getDelta()로는 world좌표계상에서 touch의 차이를 받아오게 되기 때문에, 부모좌표계상에서의 차이를 알기 위해
         // previousLocation과 Location을 받아서 각각 변환을 해준 다음에 차이를 구합니다. 
         auto P = getParent();
-        auto pl = P->convertToNodeSpace(T->getPreviousLocation());
-        auto cl = P->convertToNodeSpace(T->getLocation());
+        auto pl = P->convertToNodeSpace(touch->getPreviousLocation());
+        auto cl = P->convertToNodeSpace(touch->getLocation());
         auto delta = cl-pl;
         this->setPosition(this->getPosition()+delta);
+        if (onCheckTargetMoved) {
+            onCheckTargetMoved(touch);
+        }
         
     };
     
-    listener->onTouchEnded = [this](Touch* T, Event* E) {
+    listener->onTouchEnded = [this](Touch* touch, Event* event) {
         // 놓았을 때 빈칸에 들어갔는지 확인하기 위한 callback입니다.
         setPicked(false);
+        _touchEnabled = true;
         
         if (onCheckTargetEnded) {
-            onCheckTargetEnded();
+            onCheckTargetEnded(touch);
         }
     };
+    
+    listener->onTouchCancelled = [this](Touch*, Event*) {
+        setPicked(false);
+    };
+    
     
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
+void WordItem::setOriginPos() {
+    this->_originPos = getPosition();
+}
 
 void WordItem::setPicked(bool picked)
 {

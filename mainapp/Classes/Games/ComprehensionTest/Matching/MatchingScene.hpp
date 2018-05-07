@@ -1,6 +1,6 @@
 //
 //  Matching.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 05/12/2016.
 //
@@ -79,6 +79,8 @@ namespace ComprehensionTest
             
             void onStart();
             void onSolve();
+            
+            std::string makeWorkPath();
         };
 
     }  // namespace Matching

@@ -15,6 +15,7 @@
 #include "ui/CocosGUI.h"
 #include "Common/Basic/SoundEffect.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
@@ -201,12 +202,38 @@ void HundredPuzzleScene::createPieces()
             _picked[n] = true;
         }
         
-        piece->onSnapped = [this, piece](){
+        // NB(xenosoz, 2018): Log for future analysis (#2/2)
+        auto workPath = [&] {
+            auto pieceId = _pieces.size();
             
-            piece->retain();
-            piece->removeFromParent();
-            _backNode->addChild(piece);
-            piece->release();
+            stringstream ss;
+            ss << "/" << "HundredPuzzle";
+            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "work-" << pieceId;
+            return ss.str();
+        }();
+        
+        auto signature = [&] {
+            stringstream ss;
+            ss << "[";
+            for (auto n : ps) { ss << n << ", "; }
+            ss << "]";
+            return ss.str();
+        }();
+        
+        piece->onTouched = [this, piece, workPath, signature]() {
+            StrictLogManager::shared()->game_Peek_Answer("HundredPuzzle", workPath, signature, "None");
+        };
+        
+        piece->onSnapped = [this, piece, workPath, signature](){
+            StrictLogManager::shared()->game_Peek_Answer("HundredPuzzle", workPath, signature, signature);
+            
+            piece->getParent()->reorderChild(piece, piece->getLocalZOrder());
+            
+//            piece->retain();
+//            piece->removeFromParent();
+//            _backNode->addChild(piece);
+//            piece->release();
             
             
             int target = _pieces.size();
@@ -602,6 +629,7 @@ bool HundredPiece::init()
 
     if (!Node::init()) return false;
 
+    onTouched = nullptr;
     onSnapped = nullptr;
     
     _snapped = false;
@@ -622,11 +650,11 @@ bool HundredPiece::init()
             
             this->setPicked(true);
             
-            
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             return true;
         }
@@ -658,7 +686,8 @@ bool HundredPiece::init()
     listener->onTouchEnded = [this](Touch* T, Event* E) {
         if (_snapped) return;
         setPicked(false);
-        
+        if (onTouched) { onTouched(); }
+
         auto tp = _targetPos;
         auto cp = getPosition();
         
@@ -682,6 +711,7 @@ bool HundredPiece::init()
             }
         }
         
+
 
         
 

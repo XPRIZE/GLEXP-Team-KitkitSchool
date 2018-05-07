@@ -15,8 +15,8 @@
 #include "../LiveModels/TracePoint.h"
 #include "../LiveModels/TraceStroke.h"
 #include "../ArchiveModels/TraceKnotPoint.h"
-#include <Games/NumberTrace/Common/Basic/BigLabel.h>
-#include <Games/NumberTrace/Common/Utils/DarkMagicMath.h>
+#include "Common/Basic/BigLabel.h"
+#include "Common/Basic/DarkMagicMath.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -153,13 +153,13 @@ TraceGlyph TraceModelFactory::glyphWithKnotList(const TraceKnotList& KnotList,
 }
 
 TraceString TraceModelFactory::resizeStringVertically(const TraceString& Source,
-                                                      Rect TargetRect,
+                                                      AARect TargetRect,
                                                       bool UseTightBB /* = false */) const
 {
     // NB(xenosoz, 2016): BoundingBox height -> TargetHeight. Preserving the center point.
     //   I just couldn't find a handy Mat3 to utilize.
 
-    Rect BB = (UseTightBB ? Source.tightBoundingBox() : Source.roughBoundingBox());
+    AARect BB = (UseTightBB ? Source.tightBoundingBox() : Source.roughBoundingBox());
     Vec2 PreTranslate = -Vec2(BB.minX(), BB.minY());
     float Scale = TargetRect.size.height / BB.size.height;
     Vec2 PostTranslate = Vec2(TargetRect.minX(), TargetRect.minY());
@@ -169,13 +169,13 @@ TraceString TraceModelFactory::resizeStringVertically(const TraceString& Source,
 }
 
 TraceString TraceModelFactory::resizeString(const TraceString& Source,
-                                            Rect TargetRect,
+                                            AARect TargetRect,
                                             bool UseTightBB /* = false */) const
 {
     // NB(xenosoz, 2016): BoundingBox -> TargetRect. Center to center.
     //   I just couldn't find a handy Mat3 to utilize.
 
-    Rect BB = (UseTightBB ? Source.tightBoundingBox() : Source.roughBoundingBox());
+    AARect BB = (UseTightBB ? Source.tightBoundingBox() : Source.roughBoundingBox());
     Vec2 PreTranslate = -Vec2(BB.minX(), BB.minY());
     float Scale = min(TargetRect.size.width / BB.size.width,
                       TargetRect.size.height / BB.size.height);

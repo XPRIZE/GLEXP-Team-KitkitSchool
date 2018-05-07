@@ -16,7 +16,9 @@
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Utils/Random.h"
 #include "Utils/CardSlotBuilder.h"
+#include "Utils/TodoUtil.h"
 #include <Managers/LanguageManager.hpp>
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -33,7 +35,7 @@ using namespace todoschool::numbermatching;
 
 namespace NumberMatching
 {
-    const char* SOLVE_EFFECT_SOUND = "Counting/UI_Star_Collected.m4a";
+    const char* SOLVE_EFFECT_SOUND = "Common/Sounds/Effect/UI_Star_Collected.m4a";
     
     string nextButtonTitle() {
         if (LanguageManager::getInstance()->isSwahili()) { return "Inayofuata"; }
@@ -71,7 +73,7 @@ bool NumberMatchingScene::init()
     
     auto winSize = getContentSize();
     
-    auto bg = Sprite::create("NumberMatching/Images/matching_bg_bigger.png");
+    auto bg = Sprite::create("NumberMatching/Images/matching_bg_bigger.jpg");
     bg->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     bg->setPosition(winSize/2);
     addChild(bg);
@@ -408,14 +410,41 @@ void NumberMatchingScene::bindingEvents(NumberMatchingCard* card)
                     }), nullptr));
                 }
             }), nullptr));
+            
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "NumberMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("NumberMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         TodoUtil::itos(other->id));
         }
         else {
             auto nextPos = this->safePointForBoundary(card->getPosition());
             auto rescaleAction = ScaleTo::create(0.1f, _defaultScaleFactor);
             auto reposAction = EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f);
             card->runAction(Spawn::create(rescaleAction, reposAction, nullptr));
+            card->runAction(rescaleAction);
             
             this->stompByNode(card);
+            
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "NumberMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("NumberMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         "None");
         }
     };
     

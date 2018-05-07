@@ -1,6 +1,6 @@
 //
 //  MainDepot.cpp on Jul 15, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -10,8 +10,8 @@
 #include "MainDepot.h"
 #include "../../LetterTrace/Utils/MainDepot.h"
 #include <Managers/LanguageManager.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Repr/AllRepr.h"
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -38,7 +38,7 @@ Size MainDepot::gameSize() const {
 }
 
 Sprite* MainDepot::createBackgroundSprite() const {
-    Sprite* It = Sprite::create(assetPrefix() + "/wordtracing_blackboard.png");
+    Sprite* It = Sprite::create(assetPrefix() + "/wordtracing_blackboard.jpg");
     
     Size WindowSize = windowSize();
     Size SpriteSize = It->getContentSize();
@@ -176,14 +176,14 @@ Sprite* MainDepot::createNextButtonTeaserSprite(std::string TeaserFileName) cons
     // NB(xenosoz, 2016): I baked all sprites for necessary videos.
     
     string CountryCode = LanguageManager::getInstance()->getCurrentLanguageCode();
-    string Prefix = assetPrefix() + "/Teasers." + CountryCode;
+    string Prefix = assetPrefix() + "/Teasers";
     Sprite* It = Sprite::create(Prefix + "/" + TeaserFileName);
     
     if (!It) {
         CCLOGERROR("Sprite for (%s) not ready in MainDepot::createNextButtonTeaserSprite", TeaserFileName.c_str());
         
         // NB(xenosoz, 2016): Prepare a question mark instead.
-        return Sprite::create(Prefix + "/%3f.png");
+        return Sprite::create(Prefix + "/c_3f.png");
     }
     
     return It;

@@ -56,6 +56,7 @@ cocos2d::Scene* WordTrace::createScene() {
     
     auto It = WordTraceScene::create();
     It->TheWorksheet.update(Sheet);
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
 

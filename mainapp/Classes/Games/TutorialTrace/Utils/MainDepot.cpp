@@ -8,9 +8,7 @@
 
 
 #include "MainDepot.h"
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 #include <Managers/LanguageManager.hpp>
 
 

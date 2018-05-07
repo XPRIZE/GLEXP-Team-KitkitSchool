@@ -46,40 +46,16 @@ void GameSoundManager::stopBGM()
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 }
 
-
-void GameSoundManager::preloadGameEffect()
+void GameSoundManager::pauseBGM()
 {
-    
-    
-    SimpleAudioEngine::getInstance()->preloadEffect("GameSounds/SFX_LEVELCOMPLETE.m4a");
-    SimpleAudioEngine::getInstance()->preloadEffect("Game_WrongAnswer_SlideBack1.m4a");
-    SimpleAudioEngine::getInstance()->preloadEffect("UI_Star_Collected.m4a");
+    SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
-
-unsigned int GameSoundManager::playHelpSound(){
-    unsigned int ret = 0;
-    
-    ret = playEffectSound("Help.m4a");
-    
-    return ret;
+void GameSoundManager::resumeBGM()
+{
+    SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 
-unsigned int GameSoundManager::playMissEffectSound(){
-    unsigned int ret = 0;
-    
-    ret = playEffectSound("Game_WrongAnswer_SlideBack1.m4a");
-    
-    return ret;
-}
-
-unsigned int GameSoundManager::playFlyingStartEffectSound(){
-    unsigned int ret = 0;
-    
-    ret = playEffectSound("UI_Star_Collected.m4a");
-    
-    return ret;
-}
 
 
 
@@ -88,9 +64,11 @@ unsigned int GameSoundManager::playAdultVoice(int num, eAdultVoice vType){
     unsigned int ret = 0;
     
     std::string fileName = getAdultVoiceName(num, vType);
-    std::string prefix = "Common/AdultVoice/" + LanguageManager::getInstance()->getCurrentLanguageCode()+"/";
+    //std::string prefix = "Common/AdultVoice/" + LanguageManager::getInstance()->getCurrentLanguageCode()+"/";
     
-    ret = playEffectSound(prefix+fileName);
+    auto filepath = LanguageManager::getInstance()->findLocalizedResource("NumberVoice/"+fileName);
+    
+    ret = playEffectSound(filepath);
 
     return ret;
 }
@@ -191,6 +169,18 @@ unsigned int GameSoundManager::playChildVoice(int num){
 //    return ret;
 }
 
+void GameSoundManager::playEffectSoundForAutoStart(std::string filename) {
+    preloadEffect(filename);
+    Director::getInstance()->getScheduler()->schedule([this, filename](float dt){
+        playEffectSound(filename);
+    }, this, 0, 0, 0.3f, false, filename);
+}
+
+void GameSoundManager::playEffectSoundVoiceOnly(std::string name) {
+    stopBGM();
+    SimpleAudioEngine::getInstance()->playBackgroundMusic(name.c_str(), false);
+}
+
 unsigned int GameSoundManager::playEffectSound(std::string name,
                                                bool isLoop, float pitch, float pan, float gain)
 {
@@ -268,7 +258,8 @@ void GameSoundManager::preloadEffect(std::string name){
 
     SET_STRING::iterator find = m_SetLoadedList.find(fullname);
     if (find == m_SetLoadedList.end()) {
-        SimpleAudioEngine::getInstance()->preloadEffect(fullname.c_str());
+        // SimpleAudioEngine::getInstance()->preloadEffect(fullname.c_str());
+        playEffectSound(fullname.c_str(), false, 1.0f, 0, 0);
         m_SetLoadedList.insert(fullname);
     }
 }

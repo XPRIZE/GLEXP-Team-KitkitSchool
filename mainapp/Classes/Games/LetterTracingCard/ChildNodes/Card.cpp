@@ -1,6 +1,6 @@
 //
 //  Card.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 9/5/17.
 //
@@ -33,6 +33,7 @@ namespace
 }
 
 Card::Card():
+onEditing(nullptr),
 onComplete(nullptr),
 isComplete(false)
 {
@@ -42,7 +43,10 @@ isComplete(false)
 void Card::drawCardWithProblem(Problem* problem)
 {
     word = problem->word;
-    
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    imageName = problem->imageName;
+    audioName = problem->audioName;
+#endif
     string frontFaceImagePath;
     string shadowImagePath;
     string backFaceImagePath;
@@ -121,6 +125,11 @@ void Card::drawCardWithProblem(Problem* problem)
                 return Style;
             }());
             
+            It->OnEndEditing = [this](TraceField*) {
+                auto Guard = NodeScopeGuard(this);
+                if (onEditing) { onEditing(); }
+            };
+            
             It->OnTraceWorkDidEnd = [this](TraceField*) {
                 auto Guard = NodeScopeGuard(this);
                 FlipToBack();
@@ -149,11 +158,17 @@ void Card::drawCardWithProblem(Problem* problem)
         clipper->setPosition(backFace->getContentSize().width / 2, backFace->getContentSize().height / 2 + backFace->getContentSize().height / 2 + heightCorrection);
         backFace->addChild(clipper);
         
-        string imagePath = LanguageManager::getInstance()->isEnglish() ? "/en/" : "/sw/";
+        string imagePath = "/Images/";
 //        string imagePath = LanguageManager::getInstance()->isEnglish() ? "/images.en_US/" : "/images.sw_TZ/";
         string word = problem->word;
         TodoUtil::replaceAll(word, "'", "1");
+        
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+        string fullPath = MainDepot().assetPrefix() + imagePath + imageName;
+#else
         string fullPath = MainDepot().assetPrefix() + imagePath + word + ".png";
+#endif
+
         CCLOG("fullPath : %s", fullPath.c_str());
         Sprite* image = Sprite::create(fullPath.c_str());
 //        Sprite* image = Sprite::create("LetterTracingCard/sw/anga.png");
@@ -215,16 +230,24 @@ void Card::FlipToBack()
         label->runAction(Sequence::create(DelayTime::create(0.5f), CallFunc::create([this](){
             label->setTextColor(Color4B(81, 53, 24, 255 * 0.9f));
         }), nullptr));
-                                          
-        if (LanguageManager::getInstance()->isEnglish())
+        
+        
+    
         {
-            GameSoundManager::getInstance()->playEffectSound(MainDepot().assetPrefix() + "/Sounds.en_US/" + word + ".wav");
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+            auto file = MainDepot().assetPrefix() + "/Sounds/" + audioName;
+            GameSoundManager::getInstance()->playEffectSound(file);
+#else
+            auto file = MainDepot().assetPrefix() + "/Sounds/" + word + ".m4a";
+            if (FileUtils::getInstance()->isFileExist(file)) {
+                GameSoundManager::getInstance()->playEffectSound(file);
+            } else {
+                file = MainDepot().assetPrefix() + "/Sounds/" + word + ".wav";
+                GameSoundManager::getInstance()->playEffectSound(file);
+            }
+#endif
         }
-        else
-        {
-            TodoUtil::replaceAll(word, "'", "");
-            GameSoundManager::getInstance()->playEffectSound(MainDepot().assetPrefix() + "/Sounds.sw_TZ/" + word + ".m4a");
-        }
+        
         
         isComplete = true;
         if (onComplete != nullptr)

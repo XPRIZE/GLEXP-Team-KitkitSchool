@@ -1,6 +1,6 @@
 //
 //  TextAndImageLayer.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -28,7 +28,7 @@ namespace ComprehensionTest
             CREATE_FUNC(TextAndImageLayer);
             virtual bool init() override;
             
-            void setAnswers(std::vector<std::string> imagePaths);
+            void setAnswers(std::string folder, std::vector<std::string> imageFiles);
             MultipleChoicesScene* parentScene;
         };
     }

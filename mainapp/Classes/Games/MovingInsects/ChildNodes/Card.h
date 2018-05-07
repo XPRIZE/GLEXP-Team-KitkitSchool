@@ -16,7 +16,6 @@ BEGIN_NS_MOVINGINSECTS
 
 class Card: public Node {
     typedef Node Super;
-    bool TouchEventEndedPrematually;
 
     Button* FrontFace;
     Label* TitleLabel;
@@ -26,6 +25,7 @@ class Card: public Node {
 
 public:
     Chain<bool> TouchEnabled;
+    bool TouchEventEndedPrematually;
     
     // NB(xenosoz, 2016): The title text is for a prototype only.
     Chain<string> TitleText;

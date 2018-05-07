@@ -1,6 +1,6 @@
 //
 //  MainDepot.cpp on Jul 15, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -10,8 +10,8 @@
 #include "MainDepot.h"
 #include "../../LetterTrace/Utils/MainDepot.h"
 #include <Managers/LanguageManager.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Repr/AllRepr.h"
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -70,7 +70,7 @@ Node* MainDepot::createGameNode() const {
 }
 
 SoundEffect MainDepot::soundForTraceEnd() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_1.m4a");
 }   
     

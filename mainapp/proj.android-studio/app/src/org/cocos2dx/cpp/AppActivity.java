@@ -1,30 +1,28 @@
 /****************************************************************************
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2011      Zynga Inc.
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2015-2017 Chukong Technologies Inc.
+ 
+http://www.cocos2d-x.org
 
- http://www.cocos2d-x.org
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+****************************************************************************/
 package org.cocos2dx.cpp;
+
 
 import java.util.Locale;
 import java.util.UUID;
@@ -56,11 +54,13 @@ import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitkitContextWrapper;
 
+import org.cocos2dx.cpp.ReadingBird.PlayAudio;
+import org.cocos2dx.cpp.ReadingBird.SpeechRecognition;
 import org.cocos2dx.lib.*;
 import org.cocos2dx.lib.Cocos2dxActivity;
 
-public class AppActivity extends Cocos2dxActivity {
 
+public class AppActivity extends Cocos2dxActivity {
     public static AppActivity _activity;
     public static String _launchString;
     private Cocos2dxGLSurfaceView glSurfaceView;
@@ -72,20 +72,23 @@ public class AppActivity extends Cocos2dxActivity {
     protected static String currentUsername;
     protected static User currentUser;
 
-    public  boolean isStoragePermissionGranted() {
+    public static AppActivity instance() { return _activity; }
+
+    public boolean isPermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
+                    == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                            == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG,"Permission is granted");
                 return true;
             } else {
 
                 Log.v(TAG,"Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
+        } else { //permission is automatically granted on sdk<23 upon installation
             Log.v(TAG,"Permission is granted");
             return true;
         }
@@ -98,11 +101,21 @@ public class AppActivity extends Cocos2dxActivity {
         _launchString = "";
     }
 
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
+        // Workaround in https://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time/16447508
+        if (!isTaskRoot()) {
+            // Android launched another instance of the root activity into an existing task
+            //  so just quietly finish and go away, dropping the user back into the activity
+            //  at the top of the stack (ie: the last state of this task)
+            // Don't need to finish it again since it's finished in super.onCreate .
+            return;
+        }
+        // DO OTHER INITIALIZATION BELOW
         Log.d(TAG,"onCreate");
-        isStoragePermissionGranted();
+        isPermissionGranted();
         _activity = this;
 
         Bundle extras = getIntent().getExtras();
@@ -134,7 +147,6 @@ public class AppActivity extends Cocos2dxActivity {
         catch (Exception e) {
             Log.e(TAG, "error when getting current user. please check launcher is installed.");
         }
-
 
     }
 
@@ -213,6 +225,7 @@ public class AppActivity extends Cocos2dxActivity {
             Log.e(TAG, "error when getting current user. please check launcher is installed.");
         }
 
+        resumeAudio();
     }
 
 
@@ -259,7 +272,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     static
     {
-        System.loadLibrary("cocos2dcpp");
+        System.loadLibrary("MyGame");
     }
 
     public static void staticSetFullScreen() {
@@ -370,12 +383,13 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults[1]== PackageManager.PERMISSION_GRANTED){
+            Log.v(TAG, "Permission: "+permissions[0]+ " was "+grantResults[0]);
+            Log.v(TAG, "Permission: "+permissions[1]+ " was "+grantResults[1]);
         }
     }
 
-//    @Override
+    //    @Override
 //    protected void attachBaseContext(Context newBase) {
 //
 //        final String defaultLanguage = newBase.getString(com.enuma.kitkitlogger.R.string.defaultLanguage);
@@ -467,15 +481,107 @@ public class AppActivity extends Cocos2dxActivity {
             int rId = libraryContext.getResources().getIdentifier(filename, "raw", libraryContext.getPackageName());
 
             if (rId > 0) {
-              String uri = "android.resource://" + packageName + "/raw/" + filename;
+                String uri = "android.resource://" + packageName + "/raw/" + filename;
 
-              return uri;
+                return uri;
             }
-         }
-         catch (Exception e) {
-             Log.e(TAG, e.toString());
-         }
+        }
+        catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
 
-         return "";
+        return "";
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        onStopListeningAndRecognition();
+        pauseAudio();
+    }
+
+    private static SpeechRecognition mSpeechRecognition;
+    private static PlayAudio mPlayAudio;
+    public static void onSetupSpeechRecognition() {
+        org.cocos2dx.cpp.ReadingBird.Log.i( "onSetupSpeechRecognition");
+        mSpeechRecognition = new SpeechRecognition();
+        mSpeechRecognition.setup(_activity);
+
+        String externalFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/KitkitSchool/";
+        File externalFile = new File(externalFolderPath + "cache.txt");
+        mPlayAudio = new PlayAudio(_activity, externalFile.exists(), externalFolderPath);
+    }
+
+    public static void onCleanUpSpeechRecognition() {
+        org.cocos2dx.cpp.ReadingBird.Log.i( "onCleanUpSpeechRecognition");
+        if (mSpeechRecognition != null) {
+            mSpeechRecognition.cleanUp();
+            mSpeechRecognition = null;
+        }
+
+        if (mPlayAudio != null) {
+            mPlayAudio.cleanUp();
+            mPlayAudio = null;
+        }
+    }
+
+    public static void onStartListening(int triggerVolume, int silentVolume, String phone) {
+        org.cocos2dx.cpp.ReadingBird.Log.i( "onStartListening : " + triggerVolume + ", phone : " + phone);
+        if (mSpeechRecognition != null) {
+            mSpeechRecognition.startListening(triggerVolume, silentVolume, phone);
+        }
+    }
+
+    public static void onStopListeningAndRecognition() {
+        org.cocos2dx.cpp.ReadingBird.Log.i( "onStopListeningAndRecognition");
+        if (mSpeechRecognition != null) {
+            mSpeechRecognition.stopListeningAndRecognition();
+        }
+    }
+
+    public static void onPauseListeningAndRecognition() {
+        if (mSpeechRecognition != null) {
+            mSpeechRecognition.pauseListeningAndRecognition();
+        }
+    }
+
+    public static void onResumeListeningAndRecognition() {
+        if (mSpeechRecognition != null) {
+            mSpeechRecognition.resumeListeningAndRecognition();
+        }
+    }
+
+    public static void playPCMAudio() {
+        if (mPlayAudio != null && mSpeechRecognition != null) {
+            mPlayAudio.playPCM(mSpeechRecognition.getSpeechRecordFilePath());
+        }
+    }
+
+    public static void playAudio(String filePath) {
+        if (mPlayAudio != null) {
+            mPlayAudio.play(filePath);
+        }
+    }
+
+    public static void stopAudio() {
+        if (mPlayAudio != null) {
+            mPlayAudio.stop();
+        }
+    }
+
+    public static void pauseAudio() {
+        if (mPlayAudio != null) {
+            mPlayAudio.pause();
+        }
+    }
+
+    public static void resumeAudio() {
+        if (mPlayAudio != null) {
+            mPlayAudio.resume();
+        }
+    }
+
+    public static String getExternalStorageDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 }

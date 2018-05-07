@@ -15,6 +15,7 @@
 
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/TodoSchoolBackButton.hpp>
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -234,7 +235,31 @@ void FreePuzzleScene::attachGameLogicToWoodPiece(WoodPiece* Piece) {
             
             auto Guard = NodeScopeGuard(this);
             handleCorrectAnswer();
+            
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "WoodenPuzzles";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << 0;
+                return SS.str();
+            }();
+            StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+                                                         Piece->PieceID(), Slot->SlotID());
         }
+    };
+    
+    Piece->OnRelease = [this, Piece](Touch*, Event*) {
+        // NB(xenosoz, 2018): Log for future analysis (#2/2)
+        string workPath = [this] {
+            stringstream SS;
+            SS << "/" << "WoodenPuzzles";
+            SS << "/" << "level-" << LevelID;
+            SS << "/" << "work-" << 0;
+            return SS.str();
+        }();
+        StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+                                                     Piece->PieceID(), "None");
     };
 }
 

@@ -1,6 +1,6 @@
 //
 //  SplashScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/28/16.
 //
@@ -27,7 +27,9 @@ public:
     void onEnter();
     
     void finishSplash(float dt);
-    
+    void checkOpeningVideo(float dt);
+    void manageCache();
+
     // implement the "static create()" method manually
     CREATE_FUNC(SplashScene);
     

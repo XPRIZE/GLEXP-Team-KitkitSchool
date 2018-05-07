@@ -18,7 +18,7 @@
 
 BEGIN_NS_TRACEFIELD
 
-class TraceGlyphNode: public DrawNode {
+class TraceGlyphNode: public TodoSchoolDrawNode {
     typedef DrawNode Super;
 
     // NB(xenosoz, 2016): Nullable. Nullptr always means we're dirty.

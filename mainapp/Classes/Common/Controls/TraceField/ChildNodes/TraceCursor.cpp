@@ -57,6 +57,8 @@ void TraceCursor::onExit() {
 }
 
 void TraceCursor::update(float DeltaSeconds) {
+    Super::update(DeltaSeconds);
+
     if (CursorVelocity().length() < 1e-9) {
         // NB(xenosoz, 2016): Try to avoid 0/0.
         setVisible(false);

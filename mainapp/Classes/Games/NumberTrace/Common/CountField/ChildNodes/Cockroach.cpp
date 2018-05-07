@@ -1,6 +1,6 @@
 //
 //  Cockroach.cpp on Jul 15, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.

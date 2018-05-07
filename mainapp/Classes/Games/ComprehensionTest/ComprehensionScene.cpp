@@ -15,11 +15,11 @@
 #include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
-#include "Managers/UserManager.hpp"
-#include "Managers/StrictLogManager.h"
+//#include "Managers/UserManager.hpp"
+//#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
 
 #include "3rdParty/CCNativeAlert.h"
 
@@ -42,9 +42,9 @@ using namespace std;
 using namespace ComprehensionTest;
 
 namespace ComprehensionSceneSpace {
-    const char* solveEffect = "Counting/UI_Star_Collected.m4a";
-    const char* missEffect = "Counting/Help.m4a";
-    const char* pageTurnEffect = "DoubleDigit/Card_Move_Right.m4a";
+    const char* solveEffect = "Common/Sounds/Effect/UI_Star_Collected.m4a";
+    const char* missEffect = "Common/Sounds/Effect/Help.m4a";
+    const char* pageTurnEffect = "Common/Sounds/Effect/Card_Move_Right.m4a";
     const char* defaultFont = "fonts/TodoSchoolV2.ttf";
     
 
@@ -70,6 +70,40 @@ Scene* ComprehensionScene::createScene(string bookFolder, int set)
     
     // return the scene
     return scene;
+}
+
+int ComprehensionScene::getNumSet(string bookFolder)
+{
+    auto filedata = FileUtils::getInstance()->getStringFromFile(bookFolder+"/compquiz.txt");
+    
+    std::istringstream iss(filedata);
+    std::string line;
+
+    bool hasContents = false;
+    int numSet = 0;
+    
+    while(iss.good())
+    {
+        TodoUtil::safegetline(iss, line);
+        if(line.length() == 0 && !iss.good())
+        {
+            break;
+        }
+        
+        if (line.length()>0 && line.front()=='-') {
+            if (hasContents) numSet++;
+            hasContents = false;
+        }
+        
+        if (!line.empty()) hasContents = true;
+        
+    }
+    if (hasContents) numSet++;
+    
+    
+    
+    return numSet;
+    
 }
 
 bool ComprehensionScene::init()
@@ -160,13 +194,66 @@ void ComprehensionScene::onStart()
 */
 
 
-void ComprehensionScene::showChooser()
+void ComprehensionScene::showBookChooser()
 {
+    auto chooser = PopupBase::create(this, gameSize);
+    auto innerView = Node::create();
     
+    
+    // NB(xenosoz, 2018): Prevent iOS crash.
+    auto list = [&] {
+        if (!FileUtils::getInstance()->fullPathForFilename("Books/BookData/").empty()) {
+            // NB(xenosoz, 2018): Good on non-iOS.
+            return FileUtils::getInstance()->listFiles("Books/BookData/");
+        }
 
+        if (!FileUtils::getInstance()->fullPathForFilename("Books/BookData").empty()) {
+            // NB(xenosoz, 2018): Good on iOS.
+            return FileUtils::getInstance()->listFiles("Books/BookData");
+        }
+        return vector<string>();
+    }();
+
+    float y = -80;
+
+    for (auto folder : list) {
+        string quizPath = folder + "compquiz.txt";
+        if (FileUtils::getInstance()->isFileExist(quizPath)) {
+            auto button = Button::create();
+            button->setTitleFontSize(50);
+            button->setTitleColor(Color3B::WHITE);
+            auto book = TodoUtil::split(folder, '/').back();
+            button->setTitleText(book);
+            button->setPosition(Vec2(gameSize.width/2, y-=80));
+            innerView->addChild(button);
+            
+            button->addClickEventListener([this, folder, button, chooser](Ref*) {
+                _bookFolder = folder;
+                this->showSetChooser();
+                
+                chooser->dismiss(true);
+            });
+            
+        }
+    
+    }
+
+    auto height = -y + 100;
+    auto scroll = ui::ScrollView::create();
+    scroll->setContentSize(gameSize);
+    scroll->setInnerContainerSize(Size(gameSize.width, height));
+    innerView->setPosition(Vec2(0, height));
+    scroll->addChild(innerView);
+    chooser->addChild(scroll);
     
     
+    chooser->show(this, true);
     
+    
+}
+
+void ComprehensionScene::showSetChooser()
+{
     auto chooser = PopupBase::create(this, gameSize);
     
     auto innerView = Node::create();
@@ -176,32 +263,24 @@ void ComprehensionScene::showChooser()
     
     float y = -80;
     
-    for (auto it : problemSetMap) {
-        auto key = it.first;
-        auto value = it.second;
-        
-        
+    int num = getNumSet(_bookFolder);
+    
+    for (int i=1; i<=num; i++) {
         auto button = Button::create();
         button->setTitleFontSize(50);
         button->setTitleColor(Color3B::WHITE);
-        
-        string folder = get<0>(key);
-        int set = get<1>(key);
-        
-        string title = folder + " - " + TodoUtil::itos(set);
-        
-        button->setTitleText(title);
+        button->setTitleText(TodoUtil::itos(i));
         button->setPosition(Vec2(gameSize.width/2, y-=80));
         innerView->addChild(button);
         
-        button->addClickEventListener([this, folder, set, button, chooser](Ref*) {
-            _bookFolder = folder;
-            _problemSetIndex = set;
+        button->addClickEventListener([this, i, button, chooser](Ref*) {
+            _problemSetIndex = i;
             
-            if (UserManager::getInstance()->isDebugMode()) {
+            if (true) {
                 auto skip = Button::create();
                 skip->setTitleFontSize(100);
-                skip->setTitleText(format("[%s - %d] Skip", _bookFolder.c_str(), _problemSetIndex));
+                auto folderName = TodoUtil::split(_bookFolder, '/').back();
+                skip->setTitleText(format("[%s - %d] Skip", folderName.c_str(), _problemSetIndex));
                 skip->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
                 skip->setPosition(Vec2(winSize.width-25, winSize.height-25));
                 addChild(skip);
@@ -220,9 +299,8 @@ void ComprehensionScene::showChooser()
             chooser->dismiss(true);
             
         });
-
     }
-    
+
     
     auto height = -y + 100;
     auto scroll = ui::ScrollView::create();
@@ -234,22 +312,22 @@ void ComprehensionScene::showChooser()
     
     
     chooser->show(this, true);
-    
-    
 }
 
 void ComprehensionScene::onStart()
 {
-    createProblemMap();
+    //createProblemMap();
     
     _currentProblem = 0;
 
     if (_bookFolder=="") {
-        
-    
-        showChooser();
+        showBookChooser();
         return;
-        
+    }
+    
+    if (_problemSetIndex==0) {
+        showSetChooser();
+        return;
     }
     
     selectProblem();
@@ -259,14 +337,11 @@ void ComprehensionScene::onStart()
     _progressBar->setMax(problemSet.size());
     _progressBar->setCurrent(_currentProblem + 1);
     
-    //    _
-    //    float appearTime = 0;
-    //    putObjects(appearTime);
 }
 
 void ComprehensionScene::onSolve()
 {
-    StrictLogManager::shared()->comprehension_Solve(_bookFolder, _problemSetIndex, _currentProblem);
+  //  StrictLogManager::shared()->comprehension_Solve(_bookFolder, _problemSetIndex, _currentProblem);
     
     _blocker->setEnabled(true);
     _progressBar->setCurrent(_currentProblem+1, true);
@@ -306,6 +381,11 @@ void ComprehensionScene::setBookData(string bookFolder, int set)
     
     //_bookNo = bookNo;
     //_languageTag = languageTag;
+}
+
+std::string ComprehensionScene::getBookName()
+{
+    return TodoUtil::split(_bookFolder, '/').back();
 }
 
 int ComprehensionScene::getCurrentProblem()
@@ -372,6 +452,163 @@ void checkData(vector<string>& v, int line) {
 }
 
 
+
+void ComprehensionScene::convertToText()
+{
+    auto path = FileUtils::getInstance()->getWritablePath() + "Books/";
+    
+    string previousBook = "";
+    
+    string dataString = "";
+    string bookPath = "";
+    
+    vector<string> files;
+    
+    
+    
+    for (auto it : problemSetMap) {
+        ComprehensionProblemKey key = it.first;
+        string bookName = get<0>(key);
+        int quizSet = get<1>(key);
+    
+        
+        if (bookName!=previousBook) {
+
+            if (dataString!="") {
+                FileUtils::getInstance()->writeStringToFile(dataString, bookPath+"/compquiz.txt");
+                dataString = "";
+                
+                string filestring = "";
+                sort(files.begin(), files.end());
+                vector<string> picked;
+                for (auto f : files) if (find(picked.begin(), picked.end(), f)==picked.end()) picked.push_back(f);
+//                for (auto f : picked) filestring += f + "\n";
+//                if (!filestring.empty()) {
+//                    FileUtils::getInstance()->writeStringToFile(filestring, bookPath+"/files.txt");
+//                }
+                
+                for (auto f : picked) {
+                    string fromFile = "";
+                    if (FileUtils::getInstance()->isFileExist("ComprehensionTest/Image/"+f)) fromFile =  "ComprehensionTest/Image/"+f;
+                    if (FileUtils::getInstance()->isFileExist("ComprehensionTest/FillTheBlanks/"+f)) fromFile =  "ComprehensionTest/FillTheBlanks/"+f;
+                    if (!fromFile.empty()) {
+                        auto data = FileUtils::getInstance()->getDataFromFile(fromFile);
+                        auto toPath = bookPath + "/quiz";
+                        if (!FileUtils::getInstance()->isDirectoryExist(toPath)) {
+                            FileUtils::getInstance()->createDirectory(toPath);
+                        }
+
+                        bool ret = FileUtils::getInstance()->writeDataToFile(data, toPath + "/" + f);
+                        if (!ret) {
+                            break;
+                        }
+                        
+                        
+                    }
+                    
+                }
+                
+                files.clear();
+                
+            } else {
+                if (previousBook!="") dataString += "\n";
+            }
+            previousBook = bookName;
+            
+            bookPath= path + bookName;
+            if (!FileUtils::getInstance()->isDirectoryExist(bookPath)) {
+                FileUtils::getInstance()->createDirectory(bookPath);
+            }
+        } else {
+            dataString += "--------\n";
+        }
+       
+        for (ComprehensionProblem prob  : it.second) {
+            std::string comprehensionTestName = prob.first;
+            vector<string> v = prob.second;
+            
+            
+            dataString += comprehensionTestName + "\n";
+            if (v[0] == "matching")
+            {
+                //dataString += v[2] + "\n";
+                dataString += v[4] + "\n";
+                //dataString += v[3] + "\n";
+                dataString += v[5] + "\n";
+                
+                {
+                    auto fs = TodoUtil::splitCSV(v[4]);
+                    for (auto f : fs) files.push_back(f);
+                }
+                {
+                    auto fs = TodoUtil::splitCSV(v[5]);
+                    for (auto f : fs) files.push_back(f);
+                }
+                
+                    
+                
+                
+            }
+            else if (v[0] == "fill the blanks")
+            {
+                dataString += v[2] + "\n"; files.push_back(v[2]);
+                dataString += v[3] + "\n";
+                if (v.size()>4) {
+                    dataString += v[4] + "\n";
+                } else {
+                    dataString += "\n";
+                    
+                }
+                if (v.size()>6) {
+                    dataString += v[6] + "\n"; files.push_back(v[6]);
+                }
+            }
+            else if (v[0] == "reordering")
+            {
+                dataString += v[2] + "\n";
+                {
+                    auto fs = TodoUtil::splitCSV(v[2]);
+                    for (auto f : fs) files.push_back(f);
+                }
+            }
+            else if (v[0] == "multiple choices")
+            {
+                if (v[1].length()==0) {
+                    dataString+=v[2] + "\n";
+                    files.push_back(v[2]);
+                }
+                else dataString+=v[1] + "\n";
+                dataString+=v[3] + "\n";
+                dataString+=v[4] + "\n";
+                
+                {
+                    auto fs = TodoUtil::splitCSV(v[3]);
+                    for (auto f : fs) files.push_back(f);
+                }
+                {
+                    auto fs = TodoUtil::splitCSV(v[4]);
+                    for (auto f : fs) files.push_back(f);
+                }
+                
+            }
+            else if (v[0] == "tracing")
+            {
+                dataString += v[2] + "\n"; files.push_back(v[2]);
+                dataString += v[3] + "\n";
+            } else {
+                
+            }
+
+            dataString += "\n";
+            
+        }
+    }
+    if (dataString!="") {
+        FileUtils::getInstance()->writeStringToFile(dataString, bookPath+"/comptest.txt");
+    }
+}
+
+
 void ComprehensionScene::createProblemMap()
 {
     problemSet.clear();
@@ -387,7 +624,7 @@ void ComprehensionScene::createProblemMap()
 
  */
     
-    std::string dataPath = "ComprehensionTest/ComprehensionTest - Comprehension Test.tsv";
+    std::string dataPath = "ComprehensionTest/ComprehensionTest.tsv";
     std::string rawData = cocos2d::FileUtils::getInstance()->getStringFromFile(dataPath);
     auto data = TodoUtil::readTSV(rawData);
     
@@ -421,29 +658,72 @@ void ComprehensionScene::createProblemMap()
         auto cv = ComprehensionProblem(row[4], newRow);
         problemSetMap[ck].push_back(cv);
     }
+    
+    //convertToText();
 }
 
 void ComprehensionScene::selectProblem()
 {
-    if (_problemSetIndex>0) {
-        auto key = ComprehensionProblemKey(_bookFolder, _problemSetIndex);
-        problemSet = problemSetMap[key];
-        if (problemSet.size() > 0) return;
+    
+    auto filedata = FileUtils::getInstance()->getStringFromFile(_bookFolder+"/compquiz.txt");
+    
+    std::istringstream iss(filedata);
+    std::string line;
+    
+    bool setStarted = false;
+    bool problemStarted = false;
+    int currentSet = 1;
+    
+    vector<string> v;
+    
+    while(iss.good())
+    {
+        TodoUtil::safegetline(iss, line);
+        
+        
+        if(line.length() == 0 && !iss.good())
+        {
+            break;
+        }
+        
+        if (currentSet>_problemSetIndex) break;
+        
+        if (line.length()>0 && line.front()=='-') {
+            currentSet++;
+            continue;
+        }
+        
+        if (currentSet == _problemSetIndex) {
+            line = TodoUtil::trim(line);
+            if (!setStarted && line.empty()) {
+                continue;
+            } else {
+                setStarted = true;
+            }
+            
+            
+            if (!line.empty()) {
+                v.push_back(line);
+                problemStarted = true;
+            } else {
+                if (problemStarted) {
+            
+                    ComprehensionProblem p;
+                    p.first = v[0];
+                    p.second = v;
+                    problemSet.push_back(p);
+                    v.clear();
+                    problemStarted = false;
+                }
+            }
+        }
     }
     
-    
-    int maxSetNum = 3;
-    // 셋의 종류가 최대 3개인 것도 있고 2개인 것도 있는데, 최소 1개는 있다는 가정하에 있을 때까지 찾음
-    while(true)
-    {
-        auto key = ComprehensionProblemKey(_bookFolder, random(1, maxSetNum));
-        problemSet = problemSetMap[key];
-        if (problemSet.size() > 0)
-            break;
-        
-        maxSetNum--;
-        
-        CC_ASSERT(maxSetNum > 0);
+    if (v.size()>0 && currentSet == _problemSetIndex) {
+        ComprehensionProblem p;
+        p.first = v[0];
+        p.second = v;
+        problemSet.push_back(p);
     }
 }
 
@@ -456,7 +736,7 @@ void ComprehensionScene::showProblem()
         
         auto CP = CompletePopup::create();
         CP->show(1.f, [this] {
-            auto Guard = todoschool::NodeScopeGuard(this);
+            auto Guard = NodeScopeGuard(this);
             CCAppController::sharedAppController()->handleGameComplete(1);
         });
         return;
@@ -489,7 +769,8 @@ void ComprehensionScene::showProblem()
     {
         _gameNode->addChild(MultipleChoices::MultipleChoicesScene::createLayer(this));
     }
-    else if (comprehensionTestName == "tracing")
+    //else if (comprehensionTestName == "tracing")
+    else if (comprehensionTestName.find("tracing") != string::npos)
     {
         _gameNode->addChild(CompTrace().createLayer(this));
     }
@@ -528,7 +809,7 @@ void ComprehensionScene::showProblem()
     } else {
         auto CP = CompletePopup::create();
         CP->show(1.f, [this] {
-            auto Guard = todoschool::NodeScopeGuard(this);
+            auto Guard = NodeScopeGuard(this);
             CCAppController::sharedAppController()->handleGameComplete(1);
         });
     }

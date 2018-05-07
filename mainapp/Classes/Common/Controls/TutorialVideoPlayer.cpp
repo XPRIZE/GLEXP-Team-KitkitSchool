@@ -1,18 +1,19 @@
 //
 //  TutorialVideoPlayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/20/16.
 //
 //
 
 #include "TutorialVideoPlayer.hpp"
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
+#include "KitkitVideoPlayer.hpp"
 
 
-using namespace cocos2d::experimental::ui;
+
 
 bool TutorialVideoPlayer::init()
 {
@@ -28,7 +29,7 @@ bool TutorialVideoPlayer::init()
     auto bg = LayerColor::create(Color4B(0, 0, 0, 0), winSize.width, winSize.height);
     addChild(bg);
     
-    _player = VideoPlayer::create();
+    _player = KitkitVideoPlayer::create();
 
     _player->setContentSize(videoSize);
     _player->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -94,7 +95,7 @@ void TutorialVideoPlayer::playVideo(string filename)
 void TutorialVideoPlayer::handleVideoComplete()
 {
     auto seq = Sequence::create(FadeOut::create(3.0), CallFunc::create([this](){
-        auto Guard = todoschool::NodeScopeGuard(this);
+        auto Guard = NodeScopeGuard(this);
         this->removeFromParent();
         if (onCompleted) {
             onCompleted();

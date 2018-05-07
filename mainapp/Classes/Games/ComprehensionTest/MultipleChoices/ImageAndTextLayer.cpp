@@ -1,6 +1,6 @@
 //
 //  ImageAndTextLayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -31,15 +31,17 @@ namespace ComprehensionTest
             return true;
         }
         
-        void ImageAndTextLayer::setQuestionImage(std::string imagePath)
+        void ImageAndTextLayer::setQuestionImage(std::string folder, std::string imageFile)
         {
             auto backgroundSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img.png");
             backgroundSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
             backgroundSprite->setPosition(getContentSize().width / 2 + kRevisedX, getContentSize().height / 2 + kRevisedY);
+            backgroundSprite->setScale(0.8f);
             addChild(backgroundSprite);
             
-            auto questionSprite = Sprite::create("ComprehensionTest/Image/" + imagePath);
-            if (questionSprite == nullptr) { NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK"); return; }
+            auto questionSprite = Sprite::create(folder + "/quiz/" + imageFile);
+            if (!questionSprite) questionSprite = Sprite::create(folder + "/page/" + imageFile);
+            if (questionSprite == nullptr) { NativeAlert::show("Image does not exist.", imageFile, "OK"); return; }
             
             questionSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             questionSprite->setPosition(backgroundSprite->getContentSize() / 2);

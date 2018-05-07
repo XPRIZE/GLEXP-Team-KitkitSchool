@@ -1,6 +1,6 @@
 //
 //  CoopScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/20/16.
 //
@@ -24,12 +24,15 @@
 #include "Managers/StrictLogManager.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
+#include "Common/Controls/KitkitVideoPlayer.hpp"
+#include "Common/Controls/TouchEventLogger.h"
 
 #include "Games/Video/GameVideoPlayer.hpp"
 
 #include "Utils/TodoUtil.h"
 
 #include "3rdParty/CCNativeAlert.h"
+#include "Managers/VoiceMoldManager.h"
 
 namespace CoopSceneSpace {
     const Size coopSize = Size(2560, 1800);
@@ -221,32 +224,30 @@ bool CoopScene::init()
         
         {
             ui::Button* langButton = ui::Button::create();
-            auto langStr = LanguageManager::getInstance()->getCurrentLanguageString();
+            auto langStr = LanguageManager::getInstance()->getCurrentLocaleCode();
             
             auto txt = "Lang: " + langStr;
             langButton->setTitleText(txt);
             langButton->setTitleFontSize(50);
             langButton->setPosition(Vec2(debugViewSize.width-1500, debugViewSize.height/2));
+            
             langButton->addTouchEventListener([langButton, this](Ref*,ui::Widget::TouchEventType e) {
                 if (e == ui::Widget::TouchEventType::ENDED) {
-                    auto lang = LanguageManager::getInstance()->getCurrentLanguage();
-                    LanguageManager::LanguageType newLang;
                     
-                    if (lang==LanguageManager::ENGLISH) {
-                        newLang = LanguageManager::SWAHILI;
-                    } else {
-                        newLang = LanguageManager::ENGLISH;
-                    }
-                    LanguageManager::getInstance()->setCurrentLanguage(newLang);
-                    
-                    auto langStr = LanguageManager::getInstance()->getCurrentLanguageString();
+                    LanguageManager::LocaleType next = LanguageManager::getInstance()->findNextLocale();
+                    LanguageManager::getInstance()->setCurrentLocale(next);
+                    CurriculumManager::getInstance()->loadData();
+                    auto langStr = LanguageManager::getInstance()->getCurrentLocaleCode();
                     auto txt = "Lang: " + langStr;
                     langButton->setTitleText(txt);
                     
                     this->setupCoop();
+                    this->checkLight();
+                    
                 
                 }
             }  );
+            
             
             _debugView->addChild(langButton);
 
@@ -505,6 +506,11 @@ void CoopScene::onEnter()
 {
     Layer::onEnter();
     
+    GameSoundManager::getInstance()->stopBGM();
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    if (LanguageManager::getInstance()->isEnglish()) VoiceMoldManager::shared()->warmup();
+#endif
 
     auto levelID = UserManager::getInstance()->getCurrentLevelID();
     
@@ -517,11 +523,6 @@ void CoopScene::onEnter()
         }
         
     }
-    
-    
-    
-    
-    
     
 }
 
@@ -580,6 +581,8 @@ void CoopScene::hatchEgg(CoopSceneSpace::Room *room)
         p = p->getParent();
     }
     
+    
+    //bird->getParent()->reorderChild(bird, bird->getLocalZOrder());
     
     bird->retain();
     bird->removeFromParent();
@@ -670,7 +673,8 @@ void CoopScene::hatchEgg(CoopSceneSpace::Room *room)
         
         
         
-    }), DelayTime::create(2.0),
+	}), nullptr);
+	auto seq2 = Sequence::create(DelayTime::create(2.0),
         FadeOut::create(1.0),
         CallFunc::create([this, bird, zoomRate, sparkle, s1, s2, s3, s4](){
         
@@ -720,6 +724,7 @@ void CoopScene::hatchEgg(CoopSceneSpace::Room *room)
         CallFunc::create([this, room, bird, birdPosInRoom, s1, s2, s3, s4](){
         SoundEffect::particleEffect().play();
         
+        //bird->getParent()->reorderChild(bird, bird->getLocalZOrder());
         bird->retain();
         bird->removeFromParent();
         bird->setPosition(birdPosInRoom);
@@ -746,7 +751,7 @@ void CoopScene::hatchEgg(CoopSceneSpace::Room *room)
         
     }), nullptr);
     
-    bird->runAction(seq);
+    bird->runAction(Sequence::create(seq, seq2, nullptr));
     
     
 
@@ -759,7 +764,12 @@ void CoopScene::showDailyScene(std::string levelID)
     
     if (UserManager::getInstance()->isGameTestingMode()) {
         auto scene = GameSelectScene::createScene();
-        Director::getInstance()->pushScene(TransitionFade::create(0.8, scene));
+        scene->setName("GameSelectScene");
+        
+        auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(scene));
+        fadeScene->setName("(TransitionFade GameSelectScene)");
+        Director::getInstance()->pushScene(fadeScene);
+        
         setTouchEnabled(true);
         //((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
         return;
@@ -767,8 +777,11 @@ void CoopScene::showDailyScene(std::string levelID)
     
     
     auto dailyScene = DailyScene::createScene(levelID);
+    dailyScene->setName("DailyScene");
     
-    Director::getInstance()->pushScene(TransitionFade::create(0.8, dailyScene));
+    auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(dailyScene));
+    fadeScene->setName("(TransitionFade DailyScene)");
+    Director::getInstance()->pushScene(fadeScene);
     
 //    popup->show();
 //    
@@ -830,20 +843,20 @@ void CoopScene::checkLight()
             
             auto p = PopupBase::create(this);
             
-            auto v = cocos2d::experimental::ui::VideoPlayer::create();
+            auto v = KitkitVideoPlayer::create();
             v->setContentSize(Size(1280, 904));
             v->setPosition(this->getContentSize()/2);
             p->addChild(v);
             v->setFileName("TutorialVideo/xprize_library_open.m4v");
             
             
-            v->addEventListener([this, p](Ref*, cocos2d::experimental::ui::VideoPlayer::EventType E) {
+            v->addEventListener([this, p](Ref*, VideoPlayer::EventType E) {
                 switch (E) {
-                    case cocos2d::experimental::ui::VideoPlayer::EventType::PLAYING:
-                    case cocos2d::experimental::ui::VideoPlayer::EventType::PAUSED:
-                    case cocos2d::experimental::ui::VideoPlayer::EventType::STOPPED:
+                    case VideoPlayer::EventType::PLAYING:
+                    case VideoPlayer::EventType::PAUSED:
+                    case VideoPlayer::EventType::STOPPED:
                         break;
-                    case cocos2d::experimental::ui::VideoPlayer::EventType::COMPLETED: {
+                    case VideoPlayer::EventType::COMPLETED: {
                         
                         
                         p->dismiss(true);
@@ -859,13 +872,13 @@ void CoopScene::checkLight()
             }, 3.0, "VideoPlay");
             
             
-            
+            UserManager::getInstance()->finishTutorial();
             
         } else {
         }
         
         
-        UserManager::getInstance()->finishTutorial();
+        
         
     }
     

@@ -17,6 +17,7 @@
 #include "Utils/CardSlotBuilder.hpp"
 #include "Utils/Random.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 //#include "Managers/LocalizationManager.hpp"
 #include "Utils/TodoUtil.h"
 
@@ -39,7 +40,7 @@ using namespace ShapeMatching;
 
 namespace ShapeMatching
 {
-    const char* SOLVE_EFFECT_SOUND = "ShapeMatching/Sound/UI_Star_Collected.m4a";
+    const char* SOLVE_EFFECT_SOUND = "Common/Sounds/Effect/UI_Star_Collected.m4a";
     const string CARD_MATCHING_EFFECT_SOUND = "ShapeMatching/Sound/Train_Slotin.m4a";
     const string STAR_EFFECT_SOUND = "ShapeMatching/Sound/Quiz_Correct.m4a";
     
@@ -58,7 +59,7 @@ namespace ShapeMatching
         if (enUS == "star") { return "nyota"; }
         if (enUS == "rhombus") { return "rombasi"; }
         if (enUS == "diamond") { return "almasi"; }
-        if (enUS == "oval") { return "duara_dufu"; }
+        if (enUS == "oval") { return "mviringo"; }
         if (enUS == "hexagon") { return "pembe_sita"; }
         if (enUS == "pentagon") { return "pembe_tano"; }
         if (enUS == "trapezoid") { return "trapeza"; }
@@ -84,24 +85,23 @@ namespace ShapeMatching
     string localizeString(const string& enUS)
     {
         // NB(xenosoz, 2017): en_US string -> current language string.
-        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-        if (lang == "en-US") { return enUS; }
-        if (lang == "sw-TZ") { return swTZ_of_enUS(enUS); }
+        auto ret = enUS;
+        if (LanguageManager::getInstance()->isSwahili()) ret = swTZ_of_enUS(enUS);
+        return ret;
         
-        return enUS;
     }
     
     string localizedSound(const string& enUS)
     {
         // NB(xenosoz, 2017): en_US string -> current language sound.
-        stringstream ss;
-        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-        ss << "ShapeMatching";
-        ss << "/" << "Sound." << lang;
-        ss << "/" << swTZ_of_enUS(enUS);
-        ss << ".m4a";
-
-        return ss.str();
+        
+        auto shapeName = enUS;
+        if (LanguageManager::getInstance()->isSwahili()) {
+            shapeName = swTZ_of_enUS(enUS);
+        }
+        
+        return "ShapeMatching/Sound/"+shapeName+".m4a";
+        
     }
 }
 
@@ -120,6 +120,24 @@ namespace ShapeMatching
 //    // return the scene
 //    return scene;
 //}
+
+std::map<std::string,float> ShapeMatchingScene::loadDurationsheet() {
+    std::string rawString = cocos2d::FileUtils::getInstance()->getStringFromFile("ShapeMatching/Sound/Durations.tsv");
+    auto data = TodoUtil::readTSV(rawString);
+    
+    std::map<std::string,float> rt;
+    rt.clear();
+    
+    for (auto row : data) {
+        if (TodoUtil::trim(row[0]).size() <= 0) continue;
+        if (row.size()==1) continue;
+        auto row1Vec = TodoUtil::split(row[1], ':');
+        TodoUtil::replaceAll(row1Vec[2], ".", "");
+        auto rowDuration = (float)TodoUtil::stoi(row1Vec[2])/100;
+        rt[row[0]] = rowDuration;
+    }
+    return rt;
+}
 
 Scene* ShapeMatchingScene::createScene(int levelID)
 {
@@ -253,7 +271,9 @@ void ShapeMatchingScene::prepareNewGameWithLevel()
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto data = LevelData::defaultData();
     auto sheet = data.randomSheetFor(lang, _currentLevelID);
-    
+
+    _duration = loadDurationsheet();
+
     _currentWorksheet = sheet;
     _currentProblemID = sheet.beginProblemID();
     _progressBar->setMax((int)sheet.size());
@@ -574,6 +594,20 @@ void ShapeMatchingScene::initCardList()
         
         
     }
+    
+    float scaleFactor = 1;
+    
+    for (auto it : matchingCardList) {
+        if (it->getChildByName("shape") == nullptr) continue;
+        auto labelSize = it->getChildByName("shape")->getContentSize();
+        if (labelSize.width > 580) scaleFactor = MIN(580 / labelSize.width, scaleFactor);
+    }
+    if (scaleFactor != 1) {
+        for (auto it : matchingCardList) {
+            if (it->getChildByName("shape") == nullptr) continue;
+            it->setShapeScale(scaleFactor);
+        }
+    }
 }
 
 ShapeMatchingCard* ShapeMatchingScene::createMatchingCard(int zOrder, Point pos,
@@ -647,7 +681,7 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
                 
                 if (other->id == card->id) {
                     
-                    if (shouldBecomePair(other, card)) {
+                    if (isExistPair() == false && shouldBecomePair(other, card)) {
                         other->runAction(EaseElasticOut::create(ScaleTo::create(0.3f, _upScaleFactor)));
                         other->setLink(card);
                         card->setLink(other);
@@ -663,14 +697,20 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
     
     
     listener->onTouchEnded =  [this, card](Touch* touch, Event* event) {
+        card->isTouched = false;
+        
         if (isAnimating) return false;
         
         card->stopParticle();
-        card->isTouched = false;
         
         if (card->isLinked && !card->isMatchDone) {
             isAnimating = true;
             
+            float duration = 1.f;
+            auto fileNameVec = TodoUtil::split(card->matchSound, '/');
+            auto playFileName = fileNameVec.back();
+            if (_duration.count(playFileName)) duration = _duration[playFileName];
+
             
             GameSoundManager::getInstance()->playEffectSound(card->matchSound);
             
@@ -682,9 +722,18 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             _animationBG = LayerColor::create(Color4B(0, 0, 0, 0.8*255), winSize.width*3, winSize.height*3);
             _animationBG->setPosition(Vec2(-winSize.width,-winSize.height));
             
-            _gameNode->addChild(_animationBG, MIN(card->getLocalZOrder(),other->getLocalZOrder()) -1);
-            other->stopParticle();
+            int zOrder = MIN(card->getLocalZOrder(),other->getLocalZOrder()) -1;
+            _gameNode->addChild(_animationBG, zOrder);
             
+            for (auto c : matchingCardList)
+            {
+                if (c->isMatchDone || c == card || c == other)
+                    continue;
+                
+                c->setLocalZOrder(zOrder - 1);
+            }
+            
+            other->stopParticle();
             
             card->isMatchDone = true;
             other->isMatchDone = true;
@@ -724,8 +773,8 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             }), NULL);
             
             
-            auto seq1 = Sequence::create(DelayTime::create(0.5f),moveCenter1,DelayTime::create(0.6f), fadeOutAndStarEffect, NULL);
-            auto seq2 = Sequence::create(DelayTime::create(0.5f),moveCenter2,DelayTime::create(0.6f), fadeOutAndStarEffect2, CallFunc::create([this]() {
+            auto seq1 = Sequence::create(DelayTime::create(0.5f),moveCenter1,DelayTime::create(duration), fadeOutAndStarEffect, NULL);
+            auto seq2 = Sequence::create(DelayTime::create(0.5f),moveCenter2,DelayTime::create(duration), fadeOutAndStarEffect2, CallFunc::create([this]() {
                 //this->addStarParticle(card);
                 
                 //card->setPosition(Vec2::ONE * 9999.0f);
@@ -772,14 +821,41 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             //                    }), nullptr));
             //                }
             //            }), nullptr));
+            
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "ShapeMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("ShapeMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         TodoUtil::itos(other->id));
         }
         else {
             auto nextPos = this->safePointForBoundary(card->getPosition());
             auto rescaleAction = ScaleTo::create(0.1f, _defaultScaleFactor);
             auto reposAction = EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f);
             card->runAction(Spawn::create(rescaleAction, reposAction, nullptr));
-            
+            card->runAction(rescaleAction);
+
             this->stompByNode(card);
+            
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "ShapeMatching";
+                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "work-" << _currentProblemID;
+                return ss.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("ShapeMatching", workPath,
+                                                         TodoUtil::itos(card->id),
+                                                         "None");
         }
         
         return true;
@@ -892,6 +968,32 @@ void ShapeMatchingScene::stompByNode(Node* node)
     }
 }
 
+bool ShapeMatchingScene::isExistPair()
+{
+    for (auto card : matchingCardList) {
+        if (card->isMatchDone)
+            continue;
+        
+        if (card->isLinked)
+            return true;
+    }
+    
+    return false;
+}
+
+int ShapeMatchingScene::getMinimumLocalZOrder()
+{
+    int minOrder = 0;
+    
+    for (auto card : matchingCardList) {
+        if (card->isMatchDone)
+            continue;
+        
+        minOrder = MIN(minOrder, card->getLocalZOrder());
+    }
+    
+    return minOrder;
+}
 
 cocos2d::ValueMap ShapeMatchingScene::pickCards(ShapeMatching::Piece pieceInfo, int i)
 {

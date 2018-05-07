@@ -1,6 +1,6 @@
 //
 //  ImageObject.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 06/12/2016.
 //
@@ -36,21 +36,17 @@ namespace ComprehensionTest
             return true;
         }
 
-        void ImageObject::setImage(std::string imagePath)
+        void ImageObject::setImage(std::string folder, std::string imageFile)
         {
             
-            CCLOG("%s", imagePath.c_str());
-            _image = Sprite::create("ComprehensionTest/Image/"+imagePath);
+            _image = Sprite::create(folder + "/quiz/" + imageFile);
+            if (!_image) _image = Sprite::create(folder + "/page/" + imageFile);
             
-            if (_image == nullptr) { NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK"); return; }
+            if (_image == nullptr) { NativeAlert::show("Image does not exist.", imageFile, "OK"); return; }
             
             float scaleFactor = MIN(imageSize.width / _image->getContentSize().width, imageSize.height / _image->getContentSize().height);
             _image->setScale(scaleFactor);
-            
-            if (!_image) {
-                NativeAlert::show("Image not found in Comp-Matching", imagePath + "does not exist", "OK");
-                return;
-            }
+ 
          
             _image->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
             _image->setPosition(getContentSize().width / 2, getContentSize().height);

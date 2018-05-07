@@ -1,6 +1,6 @@
 //
 //  LogManager.mm
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Seokkwon Lee on 11/1/16.
 //

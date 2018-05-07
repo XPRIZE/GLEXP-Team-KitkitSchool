@@ -43,9 +43,8 @@ public:
 private:
 
     void placeBalloon(int tapCount, Rect placeRect,  bool isBubble = false, float delay = 0.f);
-    void balloonPoped(TappingBalloon *balloon, bool touched = true);
-    
-    
+    void balloonFlown(TappingBalloon *balloon, bool touched = true);
+
 private:
     Node *_bgNode;
     Node *_gameNode;
@@ -55,6 +54,9 @@ private:
     
     std::vector<TappingBalloon*> _balloons;
     int _popCount;
+    int _accBallonCount;
+    
+    int _zOrder = 10;
  
 };
 
@@ -67,6 +69,8 @@ public:
     virtual bool init() override {
         if (!Node::init()) return false;
         
+        OnTouched = nullptr;
+        OnPoped = nullptr;
         _tapCount = 0;
         _maxTap = 0;
         setCascadeOpacityEnabled(true);
@@ -78,9 +82,10 @@ public:
     
     void setupBubble();
     void setupBalloon(int maxTap, Color3B color);
+
+    void runFlyAnimation();
     
-    void runPopAnimation();
-    
+    std::function<void()> OnTouched;
     std::function<void()> OnPoped;
     
     Vec2 getCenter();
@@ -88,13 +93,14 @@ public:
     
     bool _touchEnabled;
     
+    int _balloonId;
+    int _tapCount;
+    int _maxTap;
+
+    
 protected:
     
     void inflateBalloon(int count);
-    
-    
-    int _tapCount;
-    int _maxTap;
     
     bool _isBalloon;
     

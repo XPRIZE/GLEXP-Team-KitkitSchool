@@ -1,6 +1,6 @@
 //
 //  SentenceMakerScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 30/12/2016.
 //
@@ -11,6 +11,7 @@
 #include "Managers/UserManager.hpp"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 #include "CCAppController.hpp"
 #include "Common/Controls/CompletePopup.hpp"
@@ -25,9 +26,9 @@ namespace SentenceMakerSpace
     const string kPrefixPath = "SentenceMaker/";
     const string kImagePrefixPath = kPrefixPath + "images/";
     const string kSoundPrefixPath = kPrefixPath + "sounds/";
-    const char* kDataFile = "SentenceMaker/SentenceMaker - Sheet1.tsv";
+    const char* kDataFile = "SentenceMaker/SentenceMaker.tsv";
     
-    const char* kSolveEffectSound = "Counting/UI_Star_Collected.m4a";
+    const char* kSolveEffectSound = "Common/Sounds/Effect/UI_Star_Collected.m4a";
     const char* kPickEffectSound = "Common/Sounds/Effect/SFX_Wood_SlideOut.m4a";
     const char* kSnapEffectSound = "Common/Sounds/Effect/SFX_Wood_Correct.m4a";
     
@@ -43,6 +44,10 @@ namespace SentenceMakerSpace
     const float kSketchbokPageCorrectionWidth = 280.f;
 //    const float kSentenceDelayTime = 0.3f; // 맞춰지는 효과음 때문에 딜레이 시간을 늘림
     const float kSentenceDelayTime = 0.6f;
+    
+    const string kFontName = "fonts/Andika-R.ttf";
+    const float kFontSize = 80.f;
+
 }
 
 using namespace SentenceMakerSpace;
@@ -61,7 +66,7 @@ Scene* SentenceMakerScene::createScene(int levelID)
     // 'layer' is an autorelease object
     auto layer = SentenceMakerScene::create();
     layer->setLevel(levelID);
-    
+
     // add layer as a child to scene
     scene->addChild(layer);
     
@@ -75,7 +80,7 @@ bool SentenceMakerScene::init()
     {
         return false;
     }
-    
+
     return true;
 }
 
@@ -83,8 +88,6 @@ void SentenceMakerScene::onEnter()
 {
     Layer::onEnter();
     CCLOG("[SentenceMakerScene::onEnter]");
-    
-    initData();
     
     winSize = getContentSize();
     
@@ -100,6 +103,14 @@ void SentenceMakerScene::onEnter()
     _gameNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _gameNode->setPosition(getContentSize() / 2);
     addChild(_gameNode);
+    
+    /*
+    auto test = GreenDashedRect::create();
+    test->setBodyWidth(2560);
+    test->setPosition(_gameNode->getContentSize().width/2, 0);
+    _gameNode->addChild(test);
+    return;
+     */
     
     _progressBar = ProgressIndicator::create();
     _progressBar->setPosition(Vec2(winSize.width/2, winSize.height - _progressBar->getContentSize().height));
@@ -174,7 +185,6 @@ void SentenceMakerScene::createGame(int problemId)
                          
     _gameNode->removeAllChildren();
     
-    _slots.clear();
     _bottomItemVector.clear();
     
     _progressBar->setCurrent(problemId, false);
@@ -228,8 +238,8 @@ void SentenceMakerScene::createGame(int problemId)
 
 bool SentenceMakerScene::isSolved()
 {
-    for (auto slot : _slots) {
-        if (slot->_pair == nullptr)
+    for (auto blank : _blanks) {
+        if (blank->_pair == nullptr)
             return false;
     }
     return true;
@@ -274,6 +284,7 @@ void SentenceMakerScene::onSolvePostProcess()
 void SentenceMakerScene::setLevel(int level)
 {
     _currentLevel = level;
+    initData();
 }
 
 void SentenceMakerScene::initData()
@@ -284,7 +295,7 @@ void SentenceMakerScene::initData()
     _progressBarSize = 0;
     _problemDataMap.clear();
     _bottomItemVector.clear();
-    _slots.clear();
+    _maxLevel = 0;
     
     for (auto row : data)
     {
@@ -299,43 +310,81 @@ void SentenceMakerScene::initData()
 
         _problemDataMap.insert({ProblemSetKey(row[0], TodoUtil::stoi(row[1]), TodoUtil::stoi(row[2])), ProblemData::parse(row)});
         
-        if (row[0] == LanguageManager::getInstance()->getCurrentLanguageTag() && TodoUtil::stoi(row[1]) == _currentLevel)
-            _progressBarSize++;
+        if (row[0] == LanguageManager::getInstance()->getCurrentLanguageTag()) {
+            int rawlevel = TodoUtil::stoi(row[1]);
+            if (rawlevel > _maxLevel) _maxLevel = rawlevel;
+            if (rawlevel == _currentLevel)
+                _progressBarSize++;
+        }
+        
     }
+}
+
+vector<int> SentenceMakerScene::getCandidateLevelIDs() {
+    vector<int> ret;
+    ret.clear();
+    
+    for (int i=1; i<=_maxLevel; i++) {
+        ret.push_back(i);
+    }
+    return ret;
 }
 
 void SentenceMakerScene::drawPage()
 {
-    auto page = Node::create();
+    //auto page = Node::create();
+    _blankLine = Node::create();
+    _blankLine->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     
-    Point pos = Point::ZERO;
+    float posX = 0;
     Size pageSize = Size::ZERO;
+    int index = 0;
+    _blanks.clear();
     
     for (auto each : _problemData->wordSet)
     {
         if (each->bBlank)
         {
+            auto blank = GreenDashedRect::create();
+            blank->_index = ++index;
+            blank->_word = each->value;
+            posX += blank->getContentSize().width/2 + kSpaceBetweenEachSlotX;
+            blank->setPosition(posX,0);
+            _blanks.push_back(blank);
+            _blankLine->addChild(blank);
+            posX += blank->getContentSize().width/2;
+            
+            /*
             WordItem* slot = WordItem::create();
             slot->initBlank(each->value);
             slot->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
             slot->setPosition(pos);
+            slot->_index = ++i;
             page->addChild(slot);
             pos.x += slot->getContentSize().width + kSpaceBetweenEachSlotX;
             pageSize.width += slot->getContentSize().width + kSpaceBetweenEachSlotX;
             pageSize.height = slot->getContentSize().height;
             _slots.push_back(slot);
+             */
         }
     }
+    _gameNode->addChild(_blankLine);
     
-    auto sf = (_sketchbookPage->getContentSize().width - kSketchbokPageCorrectionWidth) / pageSize.width;
-    _blockScaleFactor = (sf < 1.f ? sf : 1.f);
+    auto period = TodoUtil::createLabel(".", kFontSize, Size::ZERO, kFontName, Color4B::BLACK);
+    period->setName("period");
+    period->setPosition(posX+20, 0);
+    _blankLine->addChild(period);
     
+    _blankLine->setContentSize(Size(posX, 10));
+    _blankLine->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height / 2 + kPageCorrectionY);
+    
+    /*
     pageSize.height *= -1;
     page->setContentSize(pageSize);
     page->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     page->setScale(_blockScaleFactor);
     page->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height / 2 + kPageCorrectionY);
-    _gameNode->addChild(page);
+     */
 }
 
 void SentenceMakerScene::drawQuestionImage()
@@ -367,7 +416,7 @@ void SentenceMakerScene::drawBottomItems()
     
     _bottomAreaLayer = LayerColor::create(Color4B(100, 100, 100, bDebug ? 255 : 0));
     _bottomAreaLayer->setContentSize(Size(1600, 400));
-    _bottomAreaLayer->ignoreAnchorPointForPosition(false);
+    _bottomAreaLayer->setIgnoreAnchorPointForPosition(false);
     _bottomAreaLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _bottomAreaLayer->setPosition(getContentSize().width / 2 + 50.f, getContentSize().height / 2 + kBottomAreaLayerCorrectionY);
     _gameNode->addChild(_bottomAreaLayer);
@@ -383,7 +432,7 @@ void SentenceMakerScene::drawBottomItems()
     {
         auto tLayer = LayerColor::create(Color4B::BLUE);
         tLayer->setContentSize(_bottomAreaLayer->getContentSize());
-        tLayer->ignoreAnchorPointForPosition(false);
+        tLayer->setIgnoreAnchorPointForPosition(false);
         tLayer->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         tLayer->setPosition(pos);
         _gameNode->addChild(tLayer);
@@ -393,18 +442,18 @@ void SentenceMakerScene::drawBottomItems()
     {
         auto item = createWordItem(each);
         item->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-        item->setScale(_blockScaleFactor);
         item->setPosition(pos);
+        item->setOriginPos();
         _gameNode->addChild(item);
         
-        if (pos.x + (item->getContentSize().width + _kGapBetweenBottomItems) * _blockScaleFactor > _bottomAreaLayer->getContentSize().width)
+        if (pos.x + (item->getContentSize().width + _kGapBetweenBottomItems) > _bottomAreaLayer->getContentSize().width)
         {
             pos.x = originPosX;
-            pos.y -= item->getContentSize().height * _blockScaleFactor + kSpaceBetweenBottomItemY;
+            pos.y -= item->getContentSize().height + kSpaceBetweenBottomItemY;
         }
         else
         {
-            pos.x += (item->getContentSize().width + _kGapBetweenBottomItems) * _blockScaleFactor;
+            pos.x += (item->getContentSize().width + _kGapBetweenBottomItems);
         }
     }
 }
@@ -425,37 +474,113 @@ void SentenceMakerScene::playWordSound(string word)
     }
 }
 
-Node* SentenceMakerScene::createWordItem(string word)
+void SentenceMakerScene::repositionBlankLine(int resizedIndex, float preWidth, float postWidth) {
+    if (preWidth == postWidth) return;
+    float variation = (postWidth - preWidth)/2;
+    for (auto blank : _blanks) {
+        if (blank->_index < resizedIndex) {
+            blank->setPosition(blank->getPositionX()-variation, 0);
+            if (blank->_pair) blank->_pair->setPosition(blank->_pair->getPositionX()-variation, blank->_pair->getPositionY());
+        } else if (blank->_index > resizedIndex) {
+            blank->setPosition(blank->getPositionX()+variation, 0);
+            if (blank->_pair) blank->_pair->setPosition(blank->_pair->getPositionX()+variation, blank->_pair->getPositionY());
+        }
+    }
+    
+    auto period = _blankLine->getChildByName("period");
+    period->setPosition(period->getPositionX()+variation, 0);
+    //_blankLine->setPosition(_blankLine->getPositionX()-variation, 0);
+    
+}
+
+WordItem* SentenceMakerScene::createWordItem(string word)
 {
     WordItem* item = WordItem::create();
     item->initWord(word);
     
     // (s) touch callback
-    item->onCheckTargetBegan = [this, word](){
+    item->onCheckTargetBegan = [this, item](){
         GameSoundManager::getInstance()->playEffectSound(kPickEffectSound);
+        auto blank = item->_pair;
+        if (blank) blank->_pair = nullptr;
+        item->_pair = nullptr;
+        item->setSnapped(false);
         // playWordSound(word);
     };
     
-    item->onCheckTargetEnded = [this, item](){
-        // 들어갈 수 있는 빈칸이 있나 찾아봅니다.
-        WordItem *newSlot = nullptr;
-        float minDist = -1;
-        
-        for (auto slot : _slots) {
-            if (slot->_pair==nullptr) {
-                // 슬롯과 블록의 부모노드가 다르기 때문에 원점을 world좌표계로 변환한 후 비교합니다.
-                auto sp = slot->convertToWorldSpace(Vec2::ZERO);
-                auto bp = item->convertToWorldSpace(Vec2::ZERO);
-                auto dist = sp.distance(bp);
-                if (dist < 100) { // 들어갈 수 있는 슬롯 중에서 가장 가까운 것을 고릅니다.
-                    if (minDist<0 || minDist>dist) {
-                        minDist = dist;
-                        newSlot = slot;
-                    }
-                }
+    item->onCheckTargetMoved = [this, item](Touch* touch) {
+
+        for (auto blank : _blanks) {
+            
+            auto P = blank->getParent();
+            auto pos = P->convertToNodeSpace(touch->getLocation());
+
+            if (blank->getBoundingBox().containsPoint(pos) && !blank->_pair) {
+                repositionBlankLine(blank->_index, blank->getContentSize().width, item->getContentSize().width);
+                blank->setBodyWidth(item->getContentSize().width);
+            } else if (!blank->_pair && blank->_stretched) {
+                repositionBlankLine(blank->_index, blank->getContentSize().width, blank->_defaultWidth);
+                blank->setBodyWidth(blank->_defaultWidth);
             }
         }
+    };
+    
+    item->onCheckTargetEnded = [this, item](Touch* touch){
         
+        bool setTarget = false;
+        for (auto blank : _blanks) {
+            
+            auto P = blank->getParent();
+            auto pos = P->convertToNodeSpace(touch->getLocation());
+            
+            if (blank->getBoundingBox().containsPoint(pos) && blank->_word == item->_word) {
+                setTarget = true;
+                if (blank->_pair) {
+                    blank->_pair->returnToOrigin();
+                    blank->_pair->_pair = nullptr;
+                    repositionBlankLine(blank->_index, blank->getContentSize().width, item->getContentSize().width);
+                    blank->setBodyWidth(item->getContentSize().width);
+                }
+                blank->_pair = item;
+                item->_pair = blank;
+                auto newPos = item->getParent()->convertToNodeSpace(blank->getParent()->convertToWorldSpace(blank->getPosition()));
+                
+                blank->setBodyWidth(item->getContentSize().width);
+                item->setPosition(newPos.x-item->getContentSize().width/2, newPos.y+item->getContentSize().height/2);
+                item->setSnapped(true);
+
+                GameSoundManager::getInstance()->playEffectSound(kSnapEffectSound);
+            }  else if (!blank->_pair && blank->_stretched) {
+                repositionBlankLine(blank->_index, blank->getContentSize().width, blank->_defaultWidth);
+                blank->setBodyWidth(blank->_defaultWidth);
+            }
+            
+        };
+        if (!setTarget) item->returnToOrigin();
+
+        
+        // NB(xenosoz, 2018): 사용자 행동을 나중에 분석할 수 있도록 로그를 남깁니다.
+        /*
+        auto workPath = [this] {
+            stringstream ss;
+            ss << "/" << "SentenceMaker";
+            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "work-" << _currentProblem;
+            return ss.str();
+        }();
+        
+        auto wrapStr = [](const string& s) {
+            stringstream ss;
+            ss << "'" << s << "'";
+            return ss.str();
+        };
+        
+        StrictLogManager::shared()->game_Peek_Answer("SentenceMaker", workPath,
+                                                     wrapStr(item->_word),
+                                                     (newSlot ? wrapStr(newSlot->_word) : "None"));
+        
+        
+
         // 들어갈 수 있으면 끼워넣습니다. (슬롯이 비어있고, newSlot의 word 값과 block의 word 값이 같을 경우)
         if (newSlot && newSlot->_pair == nullptr && newSlot->_word == item->_word) {
             // TODO: 위의 if 조건절 변화로 이 부분 동작하고 있지 않음, 처리해야 함
@@ -475,6 +600,8 @@ Node* SentenceMakerScene::createWordItem(string word)
         } else {
             item->returnToOrigin();
         }
+         */
+
         
         if (isSolved())
             onSolve();

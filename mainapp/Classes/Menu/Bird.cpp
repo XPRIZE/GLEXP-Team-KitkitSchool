@@ -1,6 +1,6 @@
 //
 //  Bird.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/23/16.
 //
@@ -10,6 +10,53 @@
 #include "Utils/TodoUtil.h"
 #include "Managers/UserManager.hpp"
 #include "Managers/GameSoundManager.h"
+
+int Bird::getBirdID(char category, int level)
+{
+    std::vector<int> literacyBirds = { 1, 5, 4, 3, 6, 7, 13, 14, 15};
+    std::vector<int> mathBirds = { 2, 8, 9, 11, 10, 12, 16, 17, 18 };
+    
+    if (category=='L') {
+        if (level>=literacyBirds.size()) return 0;
+        return literacyBirds[level];
+    } else if (category =='M') {
+        if (level>=mathBirds.size()) return 0;
+        return mathBirds[level];
+    }
+    
+    return 0;
+}
+
+Vec2 Bird::getBirdAnchor(int id)
+{
+    //std::vector<int> literacyBirds = { 1, 5, 4, 3, 6, 7, 13, 14, 15};
+    //std::vector<int> mathBirds = { 2, 8, 9, 11, 10, 12, 16, 17, 18 };
+    
+    
+    switch (id) {
+        case 1: return Vec2(0.5, 0.02);
+        case 2: return Vec2(0.5, 0.05);
+        case 5: return Vec2(0.5, 0.02);
+        case 4: return Vec2(0.5, 0.02);
+        case 3: return Vec2(0.5, 0.02);
+        case 6: return Vec2(0.45, 0.05);
+        case 7: return Vec2(0.45, 0.02);
+        case 13: return Vec2(0.45, 0.02);
+        case 14: return Vec2(0.45, 0.02);
+        case 15: return Vec2(0.45, 0.05);
+        case 8: return Vec2(0.45, 0.12);
+        case 9: return Vec2(0.45, 0.18);
+        case 11: return Vec2(0.45, 0.10);
+        case 10: return Vec2(0.55, 0.10);
+        case 12: return Vec2(0.50, 0.08);
+        case 16: return Vec2(0.50, 0.08);
+        case 17: return Vec2(0.50, 0.18);
+        case 18: return Vec2(0.50, 0.08);
+        default:
+            return Vec2(0, 0);
+    }
+    
+}
 
 
 Bird* Bird::create(char category, int level, std::string levelID)
@@ -25,6 +72,8 @@ Bird* Bird::create(char category, int level, std::string levelID)
     return nullptr;
 }
 
+
+
 bool Bird::init(char category, int level, std::string levelID)
 {
     if (!Node::init()) {
@@ -36,11 +85,11 @@ bool Bird::init(char category, int level, std::string levelID)
     
     setCascadeOpacityEnabled(true);
     
-    _minProgressScale = 0.4;
+    _minProgressScale = 0.5;
     _progressScale = 1.0;
     
     if (level==0) {
-        _minProgressScale = 0.6;
+        _minProgressScale = 0.7;
     }
 
     
@@ -73,17 +122,11 @@ bool Bird::init(char category, int level, std::string levelID)
     string soundPath;
     
     if (category=='M') {
-        if (level==0) _type = BIRD_M0;
-        else _type = (BirdType)(BIRD_M1 + (level-1));
         soundPath = "BirdAnimation/Sound/Reptile_M"+TodoUtil::itos(level)+".m4a";
     } else if (category=='L') {
-        if (level==0) _type = BIRD_L0;
-        else _type = (BirdType)(BIRD_L1 + (level-1));
         soundPath = "BirdAnimation/Sound/Bird_L"+TodoUtil::itos(level)+".m4a";
-    } else {
-        _type = BIRD_L1;
-        
-    }
+    } 
+    _birdID = getBirdID(category, level);
 
     _sound = SoundEffect(soundPath);
     
@@ -117,48 +160,9 @@ void Bird::refreshSize()
             _aniSprite->setScale(_scale*_progressScale);
             _aniSprite->setPosition(Vec2(getContentSize().width/2, 0));
         }
-        
-        switch (_type) {
-            case BIRD_L0:
-                setAnchorPoint(Vec2(0.5, 0.02));
-                break;
-            case BIRD_M0:
-                setAnchorPoint(Vec2(0.5, 0.05));
-                break;
-            case BIRD_L1:
-                setAnchorPoint(Vec2(0.5, 0.02));
-                break;
-            case BIRD_L2:
-                setAnchorPoint(Vec2(0.5, 0.02));
-                break;
-            case BIRD_L3:
-                setAnchorPoint(Vec2(0.5, 0.02));
-                break;
-            case BIRD_L4:
-                setAnchorPoint(Vec2(0.45, 0.05));
-                break;
-            case BIRD_L5:
-                setAnchorPoint(Vec2(0.45, 0.02));
-                break;
-            case BIRD_M1:
-                setAnchorPoint(Vec2(0.45, 0.12));
-                break;
-            case BIRD_M2:
-                setAnchorPoint(Vec2(0.45, 0.18));
-                break;
-            case BIRD_M3:
-                setAnchorPoint(Vec2(0.45, 0.10));
-                break;
-            case BIRD_M4:
-                setAnchorPoint(Vec2(0.55, 0.10));
-                break;
-            case BIRD_M5:
-                setAnchorPoint(Vec2(0.50, 0.08));
-                break;
-            default:
-                break;
-        }
-
+       
+        auto anchor = getBirdAnchor(_birdID);
+        setAnchorPoint(anchor);
         
     }
 }
@@ -166,7 +170,7 @@ void Bird::refreshSize()
 void Bird::setStatus(BirdStatus status)
 {
     for(auto child : getChildren()) {
-        child->setVisible(false);
+        if (child->getName() != "sparkle") child->setVisible(false);
     }
     
     _status = status;
@@ -221,49 +225,12 @@ void Bird::setStatus(BirdStatus status)
 
 void Bird::loadAnimation()
 {
-    switch (_type) {
-        case BIRD_L0:
-            setupAnim("Bird1", 1, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M0:
-            setupAnim("Bird2", 2, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_L1:
-            setupAnim("Bird5", 5, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_L2:
-            setupAnim("Bird4", 4, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_L3:
-            setupAnim("Bird3", 3, 2, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_L4:
-            setupAnim("Bird6", 6, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_L5:
-            setupAnim("Bird7", 7, 2, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M1:
-            setupAnim("Bird8", 8, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M2:
-            setupAnim("Bird9", 9, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M3:
-            setupAnim("Bird11", 11, 2, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M4:
-            setupAnim("Bird10", 10, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        case BIRD_M5:
-            setupAnim("Bird12", 12, 1, 40, 31, 31, 24, 1.0/0.35);
-            break;
-        default:
-            break;
-    }
+    string prefix = StringUtils::format("Bird%d", _birdID);
+    //setupAnim(prefix, _birdID, 40, 31, 31, 24, 1.0/0.35);
+    setupAnim(prefix, _birdID, 40, 31, 31, 24, 1.0/0.40);
 }
 
-void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numSheets, int numAni1Frames, int numAni2Frames, int numAniTouchFrames, float fps, float scale)
+void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frames, int numAni2Frames, int numAniTouchFrames, float fps, float scale)
 {
     
     
@@ -347,6 +314,10 @@ void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numSheets, i
 
 void Bird::runIdleAnimation()
 {
+    if (_status<EGG_HATCHED) {
+        return;
+    }
+
     int pick = random(0, (int)animateArray.size()-2);
     auto animate = animateArray.at(pick);
     if (_aniSprite) {

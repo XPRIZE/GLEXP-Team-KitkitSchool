@@ -1,6 +1,6 @@
 //
 //  MultipleChoicesScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -13,6 +13,7 @@
 #include "ImageAndImageLayer.hpp"
 #include "Utils/TodoUtil.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "3rdParty/CCNativeAlert.h"
 
 namespace MultipleChoicesSceneSpace
@@ -49,7 +50,7 @@ namespace ComprehensionTest
         Layer* MultipleChoicesScene::createLayer(ComprehensionScene *parent)
         {
             auto layer = MultipleChoicesScene::create();
-            layer->_parent = parent;
+//            layer->_parent = parent;
             layer->_comprehensionScene = parent;
             return layer;
         }
@@ -72,7 +73,7 @@ namespace ComprehensionTest
             }
             else
             {
-                _questionTextFontSize = 65.f;
+                _questionTextFontSize = _questionText.length() > 20 ? 65.f : 165.f;
             }
             
             _comprehensionScene->drawQuestionTitle(directionContent, _gameNode);
@@ -92,7 +93,7 @@ namespace ComprehensionTest
                 {
                     auto layer= TextAndImageLayer::create();
                     layer->parentScene = this;
-                    layer->setAnswers(_answers);
+                    layer->setAnswers(_comprehensionScene->getBookFolder(), _answers);
                     _gameNode->addChild(layer);
                     break;
                 }
@@ -100,7 +101,7 @@ namespace ComprehensionTest
                 {
                     auto layer= ImageAndTextLayer::create();
                     layer->parentScene = this;
-                    layer->setQuestionImage(_questionImagePath);
+                    layer->setQuestionImage(_comprehensionScene->getBookFolder(), _questionImageFile);
                     layer->setAnswers(_answers);
                     _gameNode->addChild(layer);
                     break;
@@ -109,8 +110,8 @@ namespace ComprehensionTest
                 {
                     auto layer= ImageAndImageLayer::create();
                     layer->parentScene = this;
-                    layer->setQuestionImage(_questionImagePath);
-                    layer->setAnswers(_answers);
+                    layer->setQuestionImage(_comprehensionScene->getBookFolder(), _questionImageFile);
+                    layer->setAnswers(_comprehensionScene->getBookFolder(), _answers);
                     _gameNode->addChild(layer);
                     break;
                 }
@@ -121,7 +122,7 @@ namespace ComprehensionTest
         
         void MultipleChoicesScene::determineItemType()
         {
-            if (_questionImagePath == "")
+            if (_questionImageFile == "")
             {
                 if (_answers.size()<=0) {
                     NativeAlert::show("Error in MulpleChoice data", "answers empty", "OK");
@@ -156,25 +157,46 @@ namespace ComprehensionTest
                 }
             }
             
-            if (rawData.size()<=4) {
-             
-                NativeAlert::show("Wrong data in Comp - MultipleChoice", "missing data column", "OK");
-                return;
+//            if (rawData.size()<=4) {
+//
+//                NativeAlert::show("Wrong data in Comp - MultipleChoice", "missing data column", "OK");
+//                return;
+//            }
+            
+            string rawAnswers;
+            string rawSolution;
+            
+            if (rawData.size() > 4)
+            {
+                _questionText = rawData[1];
+                _questionImageFile = rawData[2];
+                rawAnswers = rawData[3];
+                rawSolution = rawData[4];
             }
-            _questionText = rawData[1];
-            _questionImagePath = rawData[2];
+            else
+            {
+                auto isImage = (rawData[1].find(".png") != std::string::npos) || (rawData[1].find(".jpg") != std::string::npos);
+                if (isImage) {
+                    _questionText = "";
+                    _questionImageFile = rawData[1];
+                } else {
+                    _questionText = rawData[1];
+                    _questionImageFile = "";
+                }
+                rawAnswers = rawData[2];
+                rawSolution = rawData[3];
+            }
             
             _answers.clear();
             answerPairVector.clear();
-//            for (auto splitAnswer : TodoUtil::split(rawData[3], ','))
-            for (auto splitAnswer : TodoUtil::splitCSV(rawData[3]))
+            for (auto splitAnswer : TodoUtil::splitCSV(rawAnswers))
             {
+                splitAnswer = lineWrappnig(splitAnswer);
                 _answers.push_back(TodoUtil::trim(splitAnswer));
                 answerPairVector.push_back(std::pair<std::string, bool>(TodoUtil::trim(splitAnswer), false));
             }
             _solutions.clear();
-//            for (auto splitSolution : TodoUtil::split(rawData[4], ',')) { _solutions.push_back(TodoUtil::trim(splitSolution)); }
-            for (auto splitSolution : TodoUtil::splitCSV(rawData[4])) { _solutions.push_back(TodoUtil::trim(splitSolution)); }
+            for (auto splitSolution : TodoUtil::splitCSV(rawSolution)) { _solutions.push_back(TodoUtil::trim(splitSolution)); }
         }
         
         void MultipleChoicesScene::createFixedResources()
@@ -188,7 +210,8 @@ namespace ComprehensionTest
 //            questionLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
 //            questionLabel->setPosition(300.f, _gameNode->getContentSize().height - 600.f);
             questionLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            questionLabel->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 450.f);
+            //questionLabel->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 450.f);
+            questionLabel->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 520.f);
             _gameNode->addChild(questionLabel);
         }
         
@@ -205,14 +228,18 @@ namespace ComprehensionTest
         
         bool MultipleChoicesScene::isCorrect(std::string answer)
         {
+            TodoUtil::replaceAll(answer, "\n", " ");
             for (auto solution : _solutions)
             {
                 if (solution == answer)
                 {
+                    StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), answer, solution);
                     return true;
                     break;
                 }
             }
+            
+            StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), answer, "None");
             return false;
         }
         
@@ -391,5 +418,39 @@ namespace ComprehensionTest
             
         }
         
+        std::string MultipleChoicesScene::lineWrappnig(std::string inputString)
+        {
+            int lineWrapCount = 35;
+            int lastIndex = 0;
+            for (int i = 0; i < inputString.length(); i++)
+            {
+                if (inputString[i] == ' ')
+                {
+                    if (i - lastIndex >= lineWrapCount)
+                    {
+                        if (lastIndex != 0)
+                        {
+                            inputString[lastIndex] = '#';
+                        }
+                        else
+                        {
+                            inputString[i] = '#';
+                        }
+                        lastIndex = i;
+                    }
+                }
+            }
+            TodoUtil::replaceAll(inputString, "#", "\n");
+            return inputString;
+        }
+        
+        std::string MultipleChoicesScene::makeWorkPath() const {
+            stringstream ss;
+            ss << "ComprehensionTest";
+            ss << "/" << _comprehensionScene->getBookName();
+            ss << "/" << "multiplechoice";
+            ss << "-" << _comprehensionScene->getCurrentProblem();
+            return ss.str();
+        }
     }
 }

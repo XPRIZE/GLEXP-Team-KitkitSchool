@@ -1,6 +1,6 @@
 //
 //  RotateAndForward.h on Jun 28, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -9,7 +9,7 @@
 #ifndef ENUMAXPRIZE_COUNTFIELD_ROTATEANDFORWARD_H
 #define ENUMAXPRIZE_COUNTFIELD_ROTATEANDFORWARD_H
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 
 namespace todoschool {

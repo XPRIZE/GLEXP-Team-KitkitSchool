@@ -1,6 +1,6 @@
 //
 //  ProblemData.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 09/12/2016.
 //
@@ -22,7 +22,7 @@ namespace ComprehensionTest
         class ProblemData
         {
         public:
-            std::string questionText;
+            //std::string questionText;
             std::string leftType;
             std::string rightType;
             std::vector<std::pair<int, std::string>> leftValue;

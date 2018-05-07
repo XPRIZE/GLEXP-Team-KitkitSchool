@@ -1,6 +1,6 @@
 //
 //  MainDepot.cpp on Jun 30, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -8,9 +8,8 @@
 
 #include "MainDepot.h"
 #include <Managers/LanguageManager.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Sounds/CommonSound.hpp"
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -119,23 +118,14 @@ void MainDepot::preloadSoundEffects() const {
 }
 
 SoundEffect MainDepot::soundForLetter(const string& Letter) const {
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        default:
-            CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
-            /* Fall through */
-        case LanguageManager::ENGLISH: return Pam_enUS().soundForLetterName(Letter);
-        case LanguageManager::SWAHILI: return Imma_swTZ().soundForLetterName(Letter);
-    }
+    
+    return CommonSound().soundForLetterName(Letter);
+    
 }
 
 SoundEffect MainDepot::soundForWord(const string& Word) const {
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        default:
-            CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
-            /* Fall through */
-        case LanguageManager::ENGLISH: return Pam_enUS().soundForWord(Word);
-        case LanguageManager::SWAHILI: return Imma_swTZ().soundForWord(Word);
-    }
+    return CommonSound().soundForWord(Word);
+    
 }
 
 SoundEffect MainDepot::soundForLetterBetweenWords() const {
@@ -155,32 +145,28 @@ SoundEffect MainDepot::soundForLetterBetweenWords() const {
 }
 
 SoundEffect MainDepot::soundForTraceEnd() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_1.m4a");
 }
 
 SoundEffect MainDepot::soundForGoodAssetTouch() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_2.m4a");
 }
 
 SoundEffect MainDepot::soundForBadAssetTouch() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_3.m4a");
 }
 
 SoundEffect MainDepot::soundForWorkComplete() const {
-    string P = assetPrefix() + "/TempSounds";
+    string P = "Common/Sounds/Effect";
     return SoundEffect(P + "/Cards_4.m4a");
 }
 
 string MainDepot::videoFilePathByFileName(string FileName) {
     string It;
     string CountryCode = LanguageManager::getInstance()->getCurrentLanguageCode();
-
-    It = assetPrefix() + "/BonusVideos." + CountryCode + "/" + FileName;
-    if (FileUtils::getInstance()->isFileExist(It))
-        return It;
 
     It = assetPrefix() + "/BonusVideos/" + FileName;
     if (FileUtils::getInstance()->isFileExist(It))
@@ -209,7 +195,7 @@ Sprite* MainDepot::createNextButtonTextSprite(const std::string& T) const {
     //   I baked all sprites for necessary letters.
 
     string CountryCode = LanguageManager::getInstance()->getCurrentLanguageCode();
-    string Prefix = assetPrefix() + "/Teasers." + CountryCode;
+    string Prefix = assetPrefix() + "/Teasers";
 
     // NB(xenosoz, 2016): 'A' == 'a' happens in case-insensitive filesystem.
     //   But we may always assume '%41' != '%61'.
@@ -217,7 +203,7 @@ Sprite* MainDepot::createNextButtonTextSprite(const std::string& T) const {
     string EscapedText = [&] {
         stringstream SS;
         for (auto C : T)
-            SS << StringUtils::format("%%%x", C);
+            SS << StringUtils::format("c_%x", C);
         
         return SS.str();
     }();
@@ -228,7 +214,7 @@ Sprite* MainDepot::createNextButtonTextSprite(const std::string& T) const {
         CCLOGERROR("Sprite for text (%s) not ready in MainDepot::createNextButtonTextSprite", T.c_str());
 
         // NB(xenosoz, 2016): Prepare a question mark instead.
-        return Sprite::create(Prefix + "/%3f.png");
+        return Sprite::create(Prefix + "/c_3f.png");
     }
 
     return It;

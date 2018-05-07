@@ -11,6 +11,7 @@
 #include "../Utils/MainDepot.h"
 #include <Common/Basic/SoundEffect.h>
 #include "Common/Effects/FireworksEffect.hpp"
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -19,7 +20,7 @@ BEGIN_NS_FINDTHEMATCH
 
 namespace {
     string contentSkin() {
-        return MainDepot().assetPrefix() + "/Background/picturematching.jpg";
+        return "MainScene/bg_ground.jpg";
     }
     string flowerLeft() {
         return MainDepot().assetPrefix() + "/Background/flowers_left.png";
@@ -209,7 +210,7 @@ void FindTheMatchScene::refreshChildNodes() {
         It->setPosition(GameSize / 2.f);
         It->setToFront();
         
-        It->TouchEnabled.update(true);
+//        It->TouchEnabled.update(true);
         It->TitleAsset.update(TheWork().assetForChoiceCard(CardID));
         //It->TitleText.update(itos((int)CardID));
         
@@ -222,32 +223,45 @@ void FindTheMatchScene::refreshChildNodes() {
         };
 
         It->OnFrontFaceClicked = [this, It, CardID, CorrectCardID](Card&) {
+            
             if (!TheGameBoard) { return; }
+            
+            if (!ThePlayerBase) { return; }
+            
+            lockTouchEventForAllCards();
+            It->stopAllActions();
+            
             if (CardID == CorrectCardID) {
                 Vector<FiniteTimeAction*> Actions;
                 Actions.pushBack(TheGameBoard->actionForPullCardToAnswerSlot(It));
-
-                Actions.pushBack(DelayTime::create(.1f));
+                Actions.pushBack(DelayTime::create(.5f));
                 Actions.pushBack(CallFunc::create([this] {
                     FireworksEffect::fire();
-                    
                     MainDepot().soundForCardHit().play();
+                    
                     if (TheProgressBar)
                         TheProgressBar->setCurrent((int)WorkID - TheSheet().beginProblemID() + 1, true);
                 }));
-
                 Actions.pushBack(DelayTime::create(.9f));
                 Actions.pushBack(CallFunc::create([this] {
                     NodeScopeGuard Guard(this);
                     handleCorrectAnswer();
                 }));
 
-                It->stopAllActions();
+                
                 It->runAction(It->movementGuard(Sequence::create(Actions)));
+                
+                // NB(xenosoz, 2018): Attach a log for future analysis (#1/2)
+                stringstream SS;
+                SS << "/" << MainDepot().gameName()
+                    << "/" << "level-" << LevelID
+                    << "/" << "work-" << WorkID;
+                StrictLogManager::shared()->game_Peek_Answer(MainDepot().gameName(),
+                                                             SS.str(),
+                                                             itos(CardID), itos(CorrectCardID));
                 return;
             }
             
-            if (!ThePlayerBase) { return; }
             
             Vector<FiniteTimeAction*> Actions;
             Actions.pushBack(TheGameBoard->actionForPullCardToAnswerSlot(It));
@@ -255,16 +269,24 @@ void FindTheMatchScene::refreshChildNodes() {
                 MainDepot().soundForCardMiss().play();
                 FireworksEffect::miss();
             }));
+            Actions.pushBack(ThePlayerBase->actionForPullCardWithSlotIndex(It, CardID));
+            Actions.pushBack(ThePlayerBase->actionForShakeCardWithSlotIndex(It, CardID));
+
             Actions.pushBack(DelayTime::create(durationForCardPause()));
             Actions.pushBack(CallFunc::create([this] {
                 releaseTouchEventForAllCards();
             }));
-            Actions.pushBack(ThePlayerBase->actionForPullCardWithSlotIndex(It, CardID));
-            Actions.pushBack(ThePlayerBase->actionForShakeCardWithSlotIndex(It, CardID));
-
-            lockTouchEventOnlyForTheCard(It);
-            It->stopAllActions();
+            
             It->runAction(It->movementGuard(Sequence::create(Actions)));
+            
+            // NB(xenosoz, 2018): Attach a log for future analysis (#2/2)
+            stringstream SS;
+            SS << "/" << MainDepot().gameName()
+            << "/" << "level-" << LevelID
+            << "/" << "work-" << WorkID;
+            StrictLogManager::shared()->game_Peek_Answer(MainDepot().gameName(),
+                                                         SS.str(),
+                                                         itos(CardID), itos(CorrectCardID));
         };
         
         It->setVisible(false);
@@ -295,7 +317,12 @@ void FindTheMatchScene::refreshChildNodes() {
 
 void FindTheMatchScene::lockTouchEventOnlyForTheCard(Card* ActiveCard) {
     for (auto C : AnswerCards) {
-        if (C == ActiveCard) { continue; }
+        if (C != ActiveCard) C->TouchEnabled.update(false);
+    }
+}
+
+void FindTheMatchScene::lockTouchEventForAllCards() {
+    for (auto C : AnswerCards) {
         C->TouchEnabled.update(false);
     }
 }

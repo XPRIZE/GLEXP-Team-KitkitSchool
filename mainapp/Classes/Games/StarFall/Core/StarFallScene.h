@@ -53,6 +53,7 @@ public:
     Chain<string> BadText;
     
 public:
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

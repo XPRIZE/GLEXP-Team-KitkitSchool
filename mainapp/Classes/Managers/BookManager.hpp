@@ -1,6 +1,6 @@
 //
 //  BookManager.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/3/16.
 //
@@ -23,7 +23,7 @@ class BookInfo {
     
 public:
     string bookTitle;
-    LanguageManager::LanguageType bookLanguage;
+    LanguageManager::LocaleType bookLanguage;
     string bookPath;
     string bookImagePath;
 };
@@ -44,11 +44,11 @@ public:
     
 
     void addBookInfo(BookInfo *info);
-    void addBookInfo(string title, LanguageManager::LanguageType lang, string path, string imagePath = "");
+    void addBookInfo(string title, LanguageManager::LocaleType lang, string path, string imagePath = "");
     
     
     BookInfo* findBookInfo(string title);
-    vector<BookInfo*> getBookVector(LanguageManager::LanguageType lang);
+    vector<BookInfo*> getBookVector(LanguageManager::LocaleType lang);
 
     
 };

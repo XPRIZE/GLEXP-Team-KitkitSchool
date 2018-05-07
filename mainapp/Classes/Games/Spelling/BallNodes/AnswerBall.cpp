@@ -9,12 +9,11 @@
 
 #include "AnswerBall.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
 
 
 BEGIN_NS_SPELLING
 
-using todoschool::woodenpuzzles::TargetDragBody;
 
 
 namespace {

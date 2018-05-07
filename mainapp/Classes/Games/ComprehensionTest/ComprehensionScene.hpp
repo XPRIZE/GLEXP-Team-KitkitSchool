@@ -28,6 +28,8 @@ class ComprehensionScene : public Layer
     
 public:
     static Scene* createScene(string bookFolder, int set);
+    static int getNumSet(string bookFolder);
+    
     virtual bool init() override;
     CREATE_FUNC(ComprehensionScene);
     virtual void onEnter() override;
@@ -38,8 +40,12 @@ public:
     
     void onStart();
     void onSolve();
-    void showChooser();
+    void showBookChooser();
+    void showSetChooser();
+    
     void setBookData(string bookFolder, int set);
+    std::string getBookFolder() { return _bookFolder; }
+    std::string getBookName();
     int getCurrentProblem();
     Button* drawSoundButton(Node* targetNode);
     void drawQuestionTitle(string titleText, Node* parentNode, float addLeftPadding = 0.f);
@@ -61,6 +67,7 @@ private:
     EventListenerTouchOneByOne *_blocker;
     
     NodeGrid* createPageGrid();
+    void convertToText();
     void createProblemMap();
     void selectProblem();
     void showProblem();

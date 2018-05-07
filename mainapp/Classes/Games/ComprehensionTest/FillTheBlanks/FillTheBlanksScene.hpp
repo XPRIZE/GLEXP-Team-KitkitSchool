@@ -1,6 +1,6 @@
 //
 //  FillTheBlanksScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho on 13/12/2016.
 //
@@ -35,7 +35,7 @@ namespace ComprehensionTest
             static cocos2d::Layer* createLayer(ComprehensionScene *parent);
             FillTheBlanksScene();
             void onEnter() override;
-            
+            void onExit() override;
             bool isSolved();
             void onSolve();
             
@@ -47,6 +47,7 @@ namespace ComprehensionTest
             
             Node *_gameNode;
             vector<WordBlock*> _slots;
+            vector<Point> _randomPoints;
             
             Size calculateMaxWordSize();
             Node* createPage(float pageWidth);
@@ -54,6 +55,10 @@ namespace ComprehensionTest
    
             void initData();
             void drawFixedResources();
+            void createRandomAreas();
+            
+            void writePlayLog();
+            std::string makeWorkPath();
         };
     }
 }

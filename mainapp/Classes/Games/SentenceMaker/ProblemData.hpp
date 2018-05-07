@@ -1,6 +1,6 @@
 //
 //  ProblemData.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 31/12/2016.
 //

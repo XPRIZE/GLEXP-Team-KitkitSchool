@@ -25,10 +25,10 @@ private:
     vector<Point> Offsets;
 
     // NB(xenosoz, 2016): Bounding box with points in TraceGlyph.
-    Rect TightBoundingBox;
+    AARect TightBoundingBox;
     
     // NB(xenosoz, 2016): Bounding box with the size of Label.
-    Rect RoughBoundingBox;
+    AARect RoughBoundingBox;
 
 public:
     void clear();
@@ -56,12 +56,12 @@ public:
     Point centerForGlyphAt(size_t N) const;
     Point minPointForGlyphAt(size_t N) const;
     Point maxPointForGlyphAt(size_t N) const;
-    Rect tightBoundingBoxForGlyphAt(size_t N) const;
-    Rect roughBoundingBoxForGlyphAt(size_t N) const;
+    AARect tightBoundingBoxForGlyphAt(size_t N) const;
+    AARect roughBoundingBoxForGlyphAt(size_t N) const;
 
     void refreshBoundingBox();
-    const Rect& tightBoundingBox() const;
-    const Rect& roughBoundingBox() const;
+    const AARect& tightBoundingBox() const;
+    const AARect& roughBoundingBox() const;
 };
 
 END_NS_TRACEFIELD

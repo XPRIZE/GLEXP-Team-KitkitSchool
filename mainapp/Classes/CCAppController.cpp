@@ -1,6 +1,6 @@
 //
 //  CCAppController.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/1/16.
 //
@@ -9,44 +9,70 @@
 #include "CCAppController.hpp"
 #include "Common/Controls/TodoLoadingScene.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
+#include "Common/Controls/TouchEventLogger.h"
+#include "Utils/TodoUtil.h"
+
+#include "Games/AnimalPuzzle/AnimalPuzzleScene.hpp"
 #include "Games/NumberTrace/NumberTrace.h"
-#include "Games/NumberTraceExt/NumberTraceExt.h"
-#include "Games/WoodenPuzzles/NumberPuzzle.h"
-#include "Games/FindTheMatch/FindTheMatch.h"
-#include "Games/NumberMatching/NumberMatchingScene.hpp"
 #include "Games/Counting/CountingScene.hpp"
-#include "Games/MovingInsects/MovingInsects.h"
-#include "Games/FishTank/FishTankScene.h"
-#include "Games/FishTank/FishTankProblemBank.h"
 #include "Games/DoubleDigit/DoubleDigitScene.h"
 #include "Games/DoubleDigit/DoubleDigit_ProblemBank.h"
 #include "Games/EquationMaker/EquationMakerScene.h"
 #include "Games/EquationMaker/EquationMakerProblemBank.h"
+
+#include "Games/NumberTraceExt/NumberTraceExt.h"
+#include "Games/WoodenPuzzles/NumberPuzzle.h"
+#include "Games/FindTheMatch/FindTheMatch.h"
+#include "Games/NumberMatching/NumberMatchingScene.hpp"
+
+#include "Games/MovingInsects/MovingInsects.h"
+#include "Games/FishTank/FishTankScene.h"
+#include "Games/FishTank/FishTankProblemBank.h"
+
+
+
 #include "Games/Books/BookView.hpp"
 #include "Games/WoodenPuzzles/AlphabetPuzzle.h"
 #include "Games/WordMachine/WordMachineScene.hpp"
 #include "Games/LetterTrace/LetterTrace.h"
 #include "Games/LetterTracingCard/LetterTracingCard.h"
+#include "Games/LetterTracingCard/Core/LetterTracingCardScene.h"
 #include "Games/WordTrace/WordTrace.h"
 #include "Games/StarFall/StarFall.h"
 #include "Games/Spelling/Spelling.h"
 #include "Games/LetterMatching/LetterMatchingScene.hpp"
-#include "Games/DigitalQuiz/DigitalQuiz.h"
 #include "Games/Tapping/TappingScene.hpp"
 #include "Games/TutorialTrace/TutorialTrace.h"
-#include "Games/AnimalPuzzle/AnimalPuzzleScene.hpp"
 #include "Games/HundredPuzzle/HundredPuzzleScene.hpp"
 #include "Games/ComprehensionTest/Matching/MatchingScene.hpp"
 #include "Games/ComprehensionTest/ComprehensionScene.hpp"
 #include "Games/SentenceMaker/SentenceMakerScene.hpp"
-#include "Games/EggQuiz/EggQuizScene.hpp"
+#include "Games/EggQuizLiteracy/EggQuizScene.hpp"
 #include "Games/BirdPhonics/BirdPhonicsScene.hpp"
 #include "Games/SoundTrain/SoundTrainScene.hpp"
 #include "Games/PatternTrain/PatternTrainScene.hpp"
 #include "Games/NumberTrain/NumberTrainScene.hpp"
 #include "Games/ShapeMatching/ShapeMatchingScene.hpp"
+#include "Games/ThirtyPuzzle/ThirtyPuzzleScene.hpp"
+#include "Games/MangoShop/MangoShopScene.hpp"
+#include "Games/WordNote/WordNoteScene.hpp"
+#include "Games/WhatIsThis/WhatIsThisScene.h"
+#include "Games/FeddingTime/FeedingTimeScene.h"
+#include "Games/LineMatching/LineMatchingScene.h"
+#include "Games/LineMatching/LineMatchingProblemBank.h"
 
 #include "Games/Video/GameVideoScene.hpp"
+
+
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+#include "Games/ThirtyPuzzle/ThirtyPuzzleScene.hpp"
+#include "Games/EggQuizMath/EggQuizMathScene.hpp"
+#include "Games/WordNote/WordNoteScene.hpp"
+#include "Games/DigitalQuiz/DigitalQuiz.h"
+#include "Games/ReadingBird/ReadingBirdScene.hpp"
+#include "Games/MissingNumber/MissingNumberScene.hpp"
+#endif //!WINRT
+
 
 #include "Menu/GradeSelector.hpp"
 #include "Menu/BookChoiceScene.hpp"
@@ -82,14 +108,11 @@ CCAppController::CCAppController() {
     _playTimer = new PlayTimer();
     _playTimer->start();
     
-    //BookManager::getInstance()->addBookInfo("We are", LanguageManager::ENGLISH, "Books/We are/", "Books/book2/page/");
-    BookManager::getInstance()->addBookInfo("book2", LanguageManager::SWAHILI, "book2/");
-    BookManager::getInstance()->addBookInfo("en_504", LanguageManager::SWAHILI, "en_504/");
-    //BookManager::getInstance()->addBookInfo("Wanyama (Test)", LanguageManager::SWAHILI, "Books/book_landscape_test/");
     
     CurriculumManager::getInstance();
     _currentCurrLevelID = "";
-    
+    _isFreeChoice = false;
+    _allowSkipTutorial = true;
     
 }
 
@@ -101,28 +124,10 @@ CCAppController::~CCAppController() {
 
 bool CCAppController::gameExists(std::string gameName)
 {
-    return this->startGame(gameName, 0, true);
+    return this->startGame(gameName, 0, "", true);
     
 }
 
-
-BookView* CCAppController::createBookView(std::string bookName)
-{
-    
-    auto info = BookManager::getInstance()->findBookInfo(bookName);
-    if (!info) return nullptr;
-    
-    
-    auto bv = BookView::create(Director::getInstance()->getVisibleSize(), info->bookPath);
-
-    if (info->bookImagePath!="") {
-        bv->getBook()->imagePrefix = info->bookImagePath;
-    }
-    
-    bv->viewTitle(1.0);
-    
-    return bv;
-}
 
 
 
@@ -134,14 +139,7 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
     _currentParam = "";
     _currentLevel = 0;
     
-    // bluecloud games
-    
     if(gameName == "Book"){
-        
-        //startGame(gameName, 0);
-        
-        //auto* nextScene = BookChoiceScene::createScene();
-        
         Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene([](){
             return BookChoiceScene::createScene();
         })));
@@ -152,23 +150,39 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
     }
     
     
-    Scene* nextScene;
     auto it = GradeSelector::create();
     it->retain();
     it->setGameName(gameName);
-    
-    if(gameName == "FishTank"){
+
+	if (gameName == "AnimalPuzzle") {
+		vector<int> ddLevels;
+		for (int i = 1; i <= 40; i++) ddLevels.push_back(i);
+		it->setChoices(ddLevels);
+
+	}else if (gameName == "NumberTracing") {
+		it->setChoices(NumberTrace().getCandidateLevelIDs());
+
+	} else if (gameName == "Counting") {
+		using todoschool::counting::LevelData;
+		auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+		it->setChoices(LevelData::defaultData().levelIDsFor(lang));
+
+	} else if (gameName == "DoubleDigit") {
+        DoubleDigit_ProblemBank bank;
+        it->setChoices(bank.getCandidateLevelIDs());
+
+	} else if (gameName == "EquationMaker") {
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+        it->setChoices(EquationMakerProblemBank::getLevelIDs());
+#else
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        it->setChoices(ddLevels);
+#endif
+
+	}else if(gameName == "FishTank"){
         vector<int> fishLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
         it->setChoices(fishLevels);
 
-    } else if(gameName=="DoubleDigit"){
-        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-        it->setChoices(ddLevels);
-        
-    } else if(gameName=="EquationMaker"){
-        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        it->setChoices(ddLevels);
-        
     } else if(gameName=="Tapping"){
         vector<int> ddLevels = { 1, 2, 3};
         it->setChoices(ddLevels);
@@ -177,22 +191,13 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         auto levels = TutorialTrace().getCandidateLevelIDs();
         it->setChoices(levels);
         
-    } else if (gameName=="AnimalPuzzle") {
-        vector<int> ddLevels;
-        for (int i=1; i<=40; i++) ddLevels.push_back(i);
-        it->setChoices(ddLevels);
-
     } else if(gameName=="HundredPuzzle"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
         it->setChoices(ddLevels);
         
     } else if (gameName=="SoundTrain") {
-        vector<int> ddLevels;
-        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-        if (lang == "en-US") ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-        else if (lang == "sw-TZ") ddLevels = { 1, 2, 3, 4, 5};
-        it->setChoices(ddLevels);
-        
+        auto soundTrainProblemBank = new todoschool::soundtrain::SoundTrainProblemBank();
+        it->setChoices(soundTrainProblemBank->getLevels());
     } else if (gameName=="PatternTrain") {
         vector<int> ddLevels = { 1, 2, 3, 4, 5};
         it->setChoices(ddLevels);
@@ -204,9 +209,6 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
     } else if (gameName=="NumberTrain") {
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,13,14,15,16,17,18};
         it->setChoices(ddLevels);
-        
-    } else if(gameName == "NumberTracing"){
-        it->setChoices(NumberTrace().getCandidateLevelIDs());
         
     } else if(gameName == "NumberTracingExt"){
         vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
@@ -223,11 +225,6 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         auto data = todoschool::numbermatching::LevelData::defaultData();
         it->setChoices(data.levelIDsFor(lang));
 
-    }else if(gameName == "Counting"){
-        using todoschool::counting::LevelData;
-        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-        it->setChoices(LevelData::defaultData().levelIDsFor(lang));
-
     }else if(gameName == "MovingInsects"){
         it->setChoices(MovingInsects().getCandidateLevelIDs());
 
@@ -239,10 +236,13 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
         it->setChoices(LevelData::defaultData().levelIDsFor(lang));
 
-    }else if(gameName == "LetterTracing"){
+    }else if(gameName == "LetterTrace"){
         it->setChoices(LetterTrace().getCandidateLevelIDs());
 
     }else if(gameName == "LetterTracingCard"){
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+        it->setChoices(todoschool::lettertracingcard::LetterTracingCardScene::getLevelIDs());
+#else
         vector<int> ddLevels;
         if (LanguageManager::getInstance()->isEnglish())
         {
@@ -250,9 +250,10 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         }
         else
         {
-            ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+            ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 };
         }
         it->setChoices(ddLevels);
+#endif
         
     }else if(gameName == "WordTracing"){
         it->setChoices(WordTrace().getCandidateLevelIDs());
@@ -277,23 +278,53 @@ void CCAppController::startGameWithLevelChoice(std::string gameName)
         it->setChoices(ddLevels);
         
     }else if(gameName == "SentenceMaker"){
-        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-        it->setChoices(ddLevels);
-        
-    }else if(gameName == "EggQuiz"){
-        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20 };
-        it->setChoices(ddLevels);
+        auto sentenceMakerScene = SentenceMakerScene::create();
+        sentenceMakerScene->setLevel(0);
+        it->setChoices(sentenceMakerScene->getCandidateLevelIDs());
         
     }else if(gameName == "BirdPhonics"){
-        vector<int> ddLevels = { 1 };
+        it->setChoices(BirdPhonicsScene::getLevelIDs());
+        
+    }else if(gameName == "MangoShop"){
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
         it->setChoices(ddLevels);
         
-    }else if(gameName == "ShapeMatching"){
-        vector<int> ddLevels = { 1 };
-        it->setChoices(ddLevels);
+    }else if(gameName == "WhatIsThis"){
+        auto whatIsThisLayer = WhatIsThisLayer::create();
+        it->setChoices(whatIsThisLayer->getLevels());
+
+    }else if(gameName == "FeedingTime"){
+        auto feedingTimeLayer = FeedingTimeLayer::create();
+        it->setChoices(feedingTimeLayer->getLevels());
         
+    }else if(gameName == "LineMatching"){
+        vector<int> ddLevels = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+        it->setChoices(ddLevels);
+    }
+    else if (gameName == "MissingNumber") {
+        it->setChoices(MissingNumber::MissingNumberScene::levelIDsFor());
+    }
+
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+    else if(gameName == "EggQuizLiteracy"){
+        it->setChoices(EggQuizSceneSpace::LevelData::getLevels());
     }
     
+    else if (gameName == "EggQuizMath") {
+        it->setChoices(EggQuizMath::ProblemBank::getInstance()->getLevels());
+    }
+
+    else if (gameName == "ThirtyPuzzle") {
+		it->setChoices(ThirtyPuzzle::ProblemBank::getInstance()->getLevels());
+	}
+	else if (gameName == "WordNote") {
+		it->setChoices(WordNote::ProblemBank::getInstance()->getLevels());
+    }
+    else if (gameName == "ReadingBird") {
+        it->setChoices(ReadingBird::ReadingBirdScene::levelIDsFor());
+    }
+
+#endif //WINRT
     //nextScene = it->minimalSceneByWrapping();
     Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene([it](){
         auto ret = it->minimalSceneByWrapping();
@@ -311,63 +342,113 @@ void CCAppController::startCurriculumGame(std::string levelID, int day, int game
     _currentCurrLevelID = levelID;
     _currentCurrDay = day;
     _currentCurrGameIndex = gameIndex;
+    _isFreeChoice = false;
+    
+    if (gameInfo.gameLevel ==1 && gameInfo.appearIndex<=2) {
+        _allowSkipTutorial = false;
+    }
     
     if (gameInfo.gameName=="Book") {
         startBookScene(gameInfo.gameParameter+"/");
     }
+
     else if (gameInfo.gameName=="Comprehension") {
         startComprehensionScene(gameInfo.gameParameter, gameInfo.gameLevel);
     }
     else if (gameInfo.gameName=="Video") {
         startVideoScene(gameInfo.gameParameter);
-    }
-    else {
+        
+    } else if (gameInfo.gameName == "EggQuizMath" || gameInfo.gameName == "EggQuizLiteracy") {
+        startGame(gameInfo.gameName, gameInfo.gameLevel, gameInfo.gameParameter);
+
+    } else {
         startGame(gameInfo.gameName, gameInfo.gameLevel);
     }
 }
 
 void CCAppController::startFreeChoiceGame(std::string gameName, int level)
 {
- 
+    _isFreeChoice = true;
     startGame(gameName, level);
-    _isFreeChoice = true; // this need to come after calling startGame()
+
     
 }
 
-bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
+std::function<Scene*(void)> CCAppController::getGameCreator(std::string gameName, int level, std::string param)
 {
-    _isFreeChoice = false;
-    GameSoundManager::getInstance()->stopBGM();
+    std::function<Scene*(void)> creator = nullptr;
     
-    // for memory release
-    Director::getInstance()->getTextureCache()->removeUnusedTextures();
 
     
-    _currentGame = gameName;
-    _currentParam = "";
-    _currentLevel = level;
-    
-    //Scene* nextScene;
-    std::function<Scene*(void)> creator;
-    
-    
-    if(gameName == "NumberTracing"){
+    if (gameName == "AnimalPuzzle") {
+        creator = [level]() {
+            auto scene = AnimalPuzzleScene::createScene(level);
+            scene->setName("AnimalPuzzleScene");
+            return scene;
+        };
+    } else if (gameName == "NumberTracing") {
         creator = [level]() {
             NumberTrace builder;
             
             // NB(xenosoz, 2016): Please consult
             //   $ROOT/Resources/Game/NumberTrace/NumberTrace_Levels.tsv
             builder.setLevelID(level);
-            
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("NumberTrace");
+            return scene;
         };
-
-    }else if(gameName == "NumberTracingExt"){
+        
+    } else if (gameName == "Counting") {
+        creator = [level]() {
+            auto scene = CountingScene::createScene(level);
+            scene->setName("CountingScene");
+            return scene;
+        };
+        
+    }
+    else if (gameName == "DoubleDigit") {
+        creator = [level]() {
+            auto nextScene = Scene::create();
+            auto gameScene = DoubleDigitScene::create();
+            
+            DoubleDigit_ProblemBank bank;
+            auto param = bank.generateParameters(level);
+            
+            gameScene->prepareNewGameWithLevel(param);
+            gameScene->handleStart();
+            
+            nextScene->addChild(gameScene);
+            nextScene->setName("DoubleDigit");
+            return nextScene;
+            
+        };
+        
+    }
+    else if (gameName == "EquationMaker") {
+        creator = [level]() {
+            auto nextScene = Scene::create();
+            auto gameScene = EquationMakerScene::create();
+            
+            EquationMakerProblemBank bank;
+            auto param = bank.generateParameters(level);
+            
+            gameScene->prepareNewGameWithLevel(param);
+            gameScene->handleStart();
+            
+            nextScene->addChild(gameScene);
+            nextScene->setName("EquationMakerScene");
+            return nextScene;
+            
+        };
+        
+    } else if(gameName == "NumberTracingExt"){
         creator = [level]() {
             NumberTraceExt builder;
-            return builder.createScene(level);
+            auto scene = builder.createScene(level);
+            scene->setName("NumberTraceExt");
+            return scene;
         };
-
+        
     }else if(gameName == "NumberPuzzle"){
         creator = [level]() {
             NumberPuzzle builder;
@@ -376,9 +457,11 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             //   $ROOT/Resources/Game/WoodenPuzzles/NumberPuzzle_Levels.tsv
             builder.setLevelID(level);
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("NumberPuzzle");
+            return scene;
         };
-
+        
     }else if(gameName == "FindTheMatch"){
         creator = [level]() {
             FindTheMatch builder;
@@ -390,24 +473,24 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished FindTheMatch."); });
             builder.setOnFail([] { CCLOG("The user failed to finish FindTheMatch."); });
             
-            return builder.createScene();
-        };
-
-    }else if(gameName == "NumberMatching"){
-
-        creator = [level]() {
-            return NumberMatchingScene::createScene(level);
+            auto scene = builder.createScene();
+            scene->setName("FindTheMatch");
+            return scene;
         };
         
-
-    }else if(gameName == "Counting"){
+    }else if(gameName == "NumberMatching"){
         creator = [level]() {
-            return CountingScene::createScene(level);
+            auto scene = NumberMatchingScene::createScene(level);
+            scene->setName("NumberMatchingScene");
+            return scene;
         };
-
+        
+        
     }else if(gameName == "Tapping"){
         creator = [level]() {
-            return TappingScene::createScene(level);
+            auto scene = TappingScene::createScene(level);
+            scene->setName("TappingScene");
+            return scene;
         };
         
     }
@@ -417,33 +500,63 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setLevelID(level);
             builder.setOnSuccess([] { CCLOG("The user finished TutorialTrace."); });
             builder.setOnFail([] { CCLOG("The user failed to finish TutorialTrace."); });
-            return builder.createScene();
-        };
-    }
-    else if(gameName == "AnimalPuzzle"){
-        creator = [level]() {
-            return AnimalPuzzleScene::createScene(level);
+            
+            auto scene = builder.createScene();
+            scene->setName("TutorialTrace");
+            return scene;
         };
     }
     else if(gameName == "SoundTrain"){
         creator = [level]() {
-            return todoschool::soundtrain::SoundTrainScene::createScene(level);
+            auto scene = todoschool::soundtrain::SoundTrainScene::createScene(level);
+            scene->setName("SoundTrainScene");
+            return scene;
         };
     } else if(gameName == "PatternTrain"){
         creator = [level]() {
-            return todoschool::patterntrain::PatternTrainScene::createScene(level);
+            auto scene = todoschool::patterntrain::PatternTrainScene::createScene(level);
+            scene->setName("PatternTrain");
+            return scene;
         };
     } else if(gameName == "NumberTrain"){
         creator = [level]() {
-            return NumberTrainScene::createScene(level);
+            auto scene = NumberTrainScene::createScene(level);
+            scene->setName("NumberTrain");
+            return scene;
         };
+    }
+    else if(gameName == "ThirtyPuzzle"){
+        creator = [level]() {
+            auto scene = ThirtyPuzzle::ThirtyPuzzleScene::createScene(level);
+            scene->setName("ThirtyPuzzle");
+            return scene;
+        };
+    }
+    else if(gameName == "MangoShop"){
+        creator = [level]() {
+            auto scene = MangoShop::MangoShopScene::createScene(level);
+            scene->setName("MangoShopScene");
+            return scene;
+        };
+        
+    } else if(gameName == "WordNote"){
+        creator = [level]() {
+            auto scene = WordNote::WordNoteScene::createScene(level);
+            scene->setName("WordNoteScene");
+            return scene;
+        };
+        
     } else if(gameName == "ShapeMatching"){
         creator = [level]() {
-            return ShapeMatchingScene::createScene(level);
+            auto scene = ShapeMatchingScene::createScene(level);
+            scene->setName("ShapeMatchingScene");
+            return scene;
         };
     } else if(gameName == "HundredPuzzle"){
         creator = [level]() {
-            return HundredPuzzleScene::createScene(level);
+            auto scene = HundredPuzzleScene::createScene(level);
+            scene->setName("HundredPuzzleScene");
+            return scene;
         };
         
     } else if(gameName == "MovingInsects"){
@@ -457,9 +570,11 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished MovingInsects."); });
             builder.setOnFail([] { CCLOG("The user failed to finish MovingInsects."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("MovingInsects");
+            return scene;
         };
-
+        
     }else if(gameName == "FishTank"){
         creator = [level]() {
             auto nextScene = Scene::create();
@@ -472,52 +587,15 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             gameScene->handleStart();
             
             nextScene->addChild(gameScene);
+            nextScene->setName("FishTankScene");
             return nextScene;
             
         };
-    }else if(gameName == "DoubleDigit"){
-        creator = [level]() {
-            auto nextScene = Scene::create();
-            auto gameScene = DoubleDigitScene::create();
-            
-            DoubleDigit_ProblemBank bank;
-            auto param = bank.generateParameters(level);
-            
-            gameScene->prepareNewGameWithLevel(param);
-            gameScene->handleStart();
-            
-            nextScene->addChild(gameScene);
-            return nextScene;
-            
-        };
-        
-    }else if(gameName == "EquationMaker"){
-        creator = [level]() {
-            auto nextScene = Scene::create();
-            auto gameScene = EquationMakerScene::create();
-            
-            EquationMakerProblemBank bank;
-            auto param = bank.generateParameters(level);
-            
-            gameScene->prepareNewGameWithLevel(param);
-            gameScene->handleStart();
-            
-            nextScene->addChild(gameScene);
-            return nextScene;
-            
-        };
-        
-    }else if(gameName == "Book"){
-        
-       
-        if (checkOnly) return true;
-        
-        startBookScene("book2/");
-        
     }else if(gameName == "Comprehension"){
         creator = [level]() {
-            return ComprehensionScene::createScene("", 0);
-            //return ComprehensionScene::createScene("book2", 1);
+            auto scene = ComprehensionScene::createScene("", 0);
+            scene->setName("ComprehensionScene");
+            return scene;
         };
         
     }else if(gameName == "AlphabetPuzzle"){
@@ -531,15 +609,19 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished AlphabetPuzzle."); });
             builder.setOnFail([] { CCLOG("The user failed to finish AlphabetPuzzle."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("AlphabetPuzzle");
+            return scene;
         };
         
     }else if(gameName == "WordMachine"){
         creator = [level]() {
-            return WordMachineScene::createScene(level);
+            auto scene = WordMachineScene::createScene(level);
+            scene->setName("WordMachine");
+            return scene;
         };
-
-    }else if(gameName == "LetterTracing"){
+        
+    }else if(gameName == "LetterTrace"){
         creator = [level]() {
             LetterTrace builder;
             
@@ -550,13 +632,17 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished LetterTrace."); });
             builder.setOnFail([] { CCLOG("The user failed to finish LetterTrace."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("LetterTrace");
+            return scene;
         };
-
+        
     }else if(gameName == "LetterTracingCard"){
         creator = [level]() {
             LetterTracingCard builder;
-            return builder.createScene(level);
+            auto scene = builder.createScene(level);
+            scene->setName("LetterTracingCard");
+            return scene;
         };
         
     }else if(gameName == "WordTracing"){
@@ -570,9 +656,11 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished WordTrace."); });
             builder.setOnFail([] { CCLOG("The user failed to finish WordTrace."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("WordTrace");
+            return scene;
         };
-
+        
     }else if(gameName == "StarFall"){
         creator = [level]() {
             StarFall builder;
@@ -584,7 +672,9 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished StarFall."); });
             builder.setOnFail([] { CCLOG("The user failed to finish StarFall."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("StarFall");
+            return scene;
         };
         
     }else if(gameName == "Spelling"){
@@ -598,14 +688,84 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setOnSuccess([] { CCLOG("The user finished Spelling."); });
             builder.setOnFail([] { CCLOG("The user failed to finish Spelling."); });
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("Spelling");
+            return scene;
         };
-
+        
     }else if(gameName == "LetterMatching"){
         creator = [level]() {
-            return LetterMatchingScene::createScene(level);
+            auto scene = LetterMatchingScene::createScene(level);
+            scene->setName("LetterMatchingScene");
+            return scene;
         };
-    } else if (gameName == "DigitalQuiz") {
+    } else if(gameName == "SentenceMaker"){
+        creator = [level]() {
+            auto scene = SentenceMakerScene::createScene(level);
+            scene->setName("SentenceMakerScene");
+            return scene;
+        };
+        
+    } else if(gameName == "EggQuizMath"){
+        creator = [param]() {
+            auto scene = EggQuizMath::EggQuizMathScene::createScene(param);
+            scene->setName("EggQuizMathScene");
+            return scene;
+        };
+    } else if (gameName == "EggQuizLiteracy") {
+        creator = [param]() {
+            auto scene = EggQuizScene::createScene(param);
+            scene->setName("EggQuizScene");
+            return scene;
+        };
+        
+    } else if (gameName == "BirdPhonics") {
+        creator = [level]() {
+            auto scene = BirdPhonicsScene::createScene(level);
+            scene->setName("BirdPhonicsScene");
+            return scene;
+        };
+        
+    } else if (gameName == "WhatIsThis") {
+        creator = [level]() {
+            auto scene = WhatIsThisScene::create();
+            scene->setName("WhatIsThisScene");
+            scene->SetLevelAndStart(level);
+            return scene;
+        };
+    } else if (gameName == "FeedingTime") {
+        creator = [level]() {
+            auto scene = FeedingTimeScene::create();
+            scene->setName("FeedingTimeScene");
+            scene->SetLevelAndStart(level);
+            return scene;
+        };
+    } else if (gameName == "LineMatching") {
+        creator = [level]() {
+            auto nextScene = Scene::create();
+            auto gameScene = LineMatchingScene::create();
+            
+            LineMatchingProblemBank bank;
+            auto param = bank.generateParameters(level);
+            
+            gameScene->prepareNewGameWithLevel(param);
+            gameScene->handleStart();
+            
+            nextScene->addChild(gameScene);
+            nextScene->setName("LineMatching");
+            return nextScene;
+        };
+    } else if (gameName == "MissingNumber") {
+        creator = [level]() {
+            auto scene = MissingNumber::MissingNumberScene::createScene(level);
+            scene->setName("MissingNumberScene");
+            return scene;
+        };
+    }
+    
+    
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+    else if (gameName == "DigitalQuiz") {
         creator = [level]() {
             DigitalQuiz builder;
             
@@ -613,34 +773,71 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
             builder.setStudentNumber(1);
             builder.setCourseKind(DigitalQuiz::CourseKind::PreTest);
             
-            return builder.createScene();
+            auto scene = builder.createScene();
+            scene->setName("DigitalQuiz");
+            return scene;
         };
-    }else if(gameName == "SentenceMaker"){
+    }
+    else if (gameName == "ThirtyPuzzle") {
         creator = [level]() {
-            return SentenceMakerScene::createScene(level);
+            auto scene = ThirtyPuzzle::ThirtyPuzzleScene::createScene(level);
+            scene->setName("ThirtyPuzzleScene");
+            return scene;
         };
-    } else if (gameName == "EggQuiz") {
+    }
+    else if (gameName == "WordNote") {
         creator = [level]() {
-            return EggQuizScene::createScene(level);
+            auto scene = WordNote::WordNoteScene::createScene(level);
+            scene->setName("WordNoteScene");
+            return scene;
         };
-        
-    } else if (gameName == "BirdPhonics") {
+    }
+    else if (gameName == "ReadingBird") {
         creator = [level]() {
-            return BirdPhonicsScene::createScene(level);
+            auto scene = ReadingBird::ReadingBirdScene::createScene(level);
+            scene->setName("ReadingBirdScene");
+            return scene;
         };
-        
-    } else if (gameName == "Video") {
-        if (checkOnly) {
-            return true;
-        }
-    } else if (gameName == "ShapeMatching") {
-        if (checkOnly) {
-            return true;
-        }
     }
     
-    if (!creator) {
+#endif  // !WINRT
+    
+    return creator;
+    
+}
 
+
+
+bool CCAppController::startGame(std::string gameName, int level, std::string param, bool checkOnly)
+{
+    
+    if (!checkOnly)  {
+        GameSoundManager::getInstance()->stopBGM();
+
+        // for memory release
+        Director::getInstance()->getTextureCache()->removeUnusedTextures();
+    }
+    
+    _currentGame = gameName;
+    _currentParam = "";
+    _currentLevel = level;
+    
+    //Scene* nextScene;
+    std::function<Scene*(void)> creator;
+    
+    
+    if (gameName == "Book") {
+        if (checkOnly) return true;
+        startBookScene("book2/");
+    } else if (gameName == "Video") {
+        if (checkOnly) return true;
+    } else {
+        creator = getGameCreator(gameName, level, param);
+    }
+    
+    
+    if (!creator) {
+        
         if (checkOnly) return false;
         
         auto emptyScene = GradeSelector::create()->minimalSceneByWrapping();
@@ -654,21 +851,44 @@ bool CCAppController::startGame(std::string gameName, int level, bool checkOnly)
     
     if (checkOnly) return true;
     
+    [&] {
+        // NB(xenosoz, 2018): Wrap all game with TouchEventLogger
+        auto newCreator = [creator, gameName] {
+            auto scene = creator();
+            if (scene && scene->getName().empty()) {
+                scene->setName(string("(Implicit ") + gameName + string(")"));
+            }
+            return TouchEventLogger::wrapScene(scene);
+        };
+        creator = newCreator;
+    }();
     
 
     StrictLogManager::shared()->game_Begin(_currentGame, _currentLevel);
     _playTimer->start();
 
+    auto allowSkip = _allowSkipTutorial;
+    _allowSkipTutorial = true;
     
-    if (level==1 && TutorialVideoScene::tutorialExists(gameName)) {
-        auto tutorialCreator = [creator, gameName](){
-            auto scene = TutorialVideoScene::createScene(gameName, creator);
+    if (level == 1 && TutorialVideoScene::tutorialExists(gameName))
+    {
+        auto tutorialCreator = [creator, gameName, allowSkip](){
+            auto scene = TutorialVideoScene::createScene(gameName, creator, allowSkip);
             return scene;
-            
         };
-        
         Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(tutorialCreator)));
-    } else {
+    }
+    // MangoShop Level #5 : using custom tutorial
+    else if (level == 5 && gameName == "MangoShop" && TutorialVideoScene::tutorialExistsWithCustomName("xPrize Tutorial - MangoShop2.mp4"))
+    {
+        auto tutorialCreator = [creator, gameName](){
+            auto scene = TutorialVideoScene::createSceneWithCustomFileName("xPrize Tutorial - MangoShop2.mp4", creator);
+            return scene;
+        };
+        Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(tutorialCreator)));
+    }
+    else
+    {
         Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
     }
     
@@ -699,6 +919,7 @@ void CCAppController::handleGameQuit()
     _currentGame = "";
     _currentParam = "";
     _currentLevel = 0;
+    _isFreeChoice = false;
     
     ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
 }
@@ -736,6 +957,7 @@ void CCAppController::handleGameComplete(int result)
     if (_isFreeChoice) {
         auto stars = UserManager::getInstance()->getStars();
         UserManager::getInstance()->updateStars(stars+1);
+        _isFreeChoice = false;
     }
     
     
@@ -752,6 +974,8 @@ void CCAppController::startBookScene(std::string bookFolder, bool replaceParent)
     _currentParam = bookFolder;
     _currentLevel = 0;
 
+    BookView::setBookLanguage(LanguageManager::getInstance()->getCurrentLanguageCode());
+    
     
     GameSoundManager::getInstance()->stopBGM();
     
@@ -790,6 +1014,9 @@ void CCAppController::startBookScene(std::string bookFolder, bool replaceParent)
     }
 }
 
+
+
+
 void CCAppController::startComprehensionScene(std::string bookFolder, int set, bool replaceParent)
 {
     StrictLogManager::shared()->comprehension_Begin(bookFolder, set);
@@ -801,14 +1028,32 @@ void CCAppController::startComprehensionScene(std::string bookFolder, int set, b
     GameSoundManager::getInstance()->stopBGM();
 
     std::function<Scene*(void)> creator = [bookFolder, set]() {
-        return ComprehensionScene::createScene(bookFolder, set);
+        return ComprehensionScene::createScene("Books/BookData/" + bookFolder, set);
     };
     
-    if (replaceParent) {
-        Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+    string tutorialName = "";
+    if (bookFolder=="sw_101" || bookFolder=="sw_102") tutorialName = "Comprehension Quiz Line";
+    if (bookFolder=="sw_201" || bookFolder=="sw_202") tutorialName = "Comprehension Quiz Sound";
+    
+    if (tutorialName!="" && TutorialVideoScene::tutorialExists(tutorialName)) {
+        auto tutorialCreator = [creator, tutorialName](){
+            auto scene = TutorialVideoScene::createScene(tutorialName, creator);
+            return scene;
+            
+        };
+        
+        Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(tutorialCreator)));
     } else {
-        Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+        
+        if (replaceParent) {
+            Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+        } else {
+            Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+        }
     }
+    
+    
+    
 }
 
 
@@ -836,7 +1081,7 @@ void CCAppController::startVideoScene(std::string filename, bool replaceParent)
     }
 }
 
-
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
 void CCAppController::startQuiz(std::string classroom, int studentNumber, std::string courseKind)
 {
     
@@ -867,6 +1112,13 @@ void CCAppController::startQuiz(std::string classroom, int studentNumber, std::s
     
 }
 
+
+#else
+
+void CCAppController::startQuiz(std::string classroom, int studentNumber, std::string courseKind) {}
+
+#endif //WINRT
+    /*
 void CCAppController::startEggQuiz(char category, int categoryLevel, bool isPreTest, std::function<void(bool)> callback)
 {
 
@@ -879,13 +1131,13 @@ void CCAppController::startEggQuiz(char category, int categoryLevel, bool isPreT
     _currentLevel = level;
     
     std::function<Scene*(void)> creator = [category, categoryLevel, isPreTest, callback]() {
-
+        
         auto scene = Scene::create();
-
+        
         auto layer = EggQuizScene::create();
         layer->setLevel(category, categoryLevel, isPreTest);
         layer->onCompleteCallback = callback;
-
+        
         scene->addChild(layer);
         
         return scene;
@@ -898,12 +1150,9 @@ void CCAppController::startEggQuiz(char category, int categoryLevel, bool isPreT
     _playTimer->start();
     
     Director::getInstance()->pushScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(creator)));
+
 }
-
-
-
-
-
+          */
 bool CCAppController::isDebug()
 {
     return UserManager::getInstance()->isDebugMode();

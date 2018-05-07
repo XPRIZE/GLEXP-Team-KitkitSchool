@@ -40,6 +40,7 @@ public:
     OrderedPuzzleScene();
     bool init() override;
     
+    int LevelID;
     void grabPuzzleStore(WoodenPuzzleStore* Store);
 
 private:

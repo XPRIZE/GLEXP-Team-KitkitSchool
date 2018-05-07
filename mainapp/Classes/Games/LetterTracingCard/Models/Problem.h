@@ -19,6 +19,7 @@ class Problem
 public:
     std::string characters;
     std::string imageName;
+    std::string audioName;
     std::string word;
 };
 

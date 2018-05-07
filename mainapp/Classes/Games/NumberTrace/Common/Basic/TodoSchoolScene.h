@@ -9,7 +9,7 @@
 #ifndef TODOSCHOOL_BASIC_TODOSCENE_H
 #define TODOSCHOOL_BASIC_TODOSCENE_H
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
+#include <Common/ADT/Chain.h>
 #include <Games/NumberTrace/Common/Basic/Cocos2dFwd.h>
 #include <cocos/2d/CCScene.h>
 #include <memory>

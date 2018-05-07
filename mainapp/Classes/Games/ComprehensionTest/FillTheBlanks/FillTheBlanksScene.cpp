@@ -1,6 +1,6 @@
 //
 //  FillTheBlanksScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 13/12/2016.
 //
@@ -9,6 +9,7 @@
 #include "FillTheBlanksScene.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 #include "3rdParty/CCNativeAlert.h"
 #include "Managers/LanguageManager.hpp"
@@ -25,11 +26,13 @@ namespace FillTheBlanksSpace
     
     const Size trayInnerSize = Size(1800, 300);
     const Size trayOuterSize = Size(2100, 400);
+    const Size kTrayArrangeSize = Size(1400.f, 400.f);
     const Rect trayInnerRect = Rect((gameSize.width - trayInnerSize.width) / 2, 0, trayInnerSize.width, trayInnerSize.height);
     const Rect trayOuterRect = Rect((gameSize.width - trayOuterSize.width) / 2, 0, trayOuterSize.width, trayOuterSize.height);
+    const Rect kTrayArrangeRect = Rect((gameSize.width-kTrayArrangeSize.width) / 2, 0.f, kTrayArrangeSize.width, kTrayArrangeSize.height);
     
     const string kPrefixPath = "ComprehensionTest/FillTheBlanks/";
-    const string kPrefixCommonImagePath = "ComprehensionTest/Image/";
+    //const string kPrefixCommonImagePath = "ComprehensionTest/Image/";
     const string fontName = "fonts/TodoSchoolV2.ttf";
     
     const char* kPickEffectSound = "Common/Sounds/Effect/SFX_Wood_SlideOut.m4a";
@@ -43,6 +46,8 @@ namespace FillTheBlanksSpace
     const float kPagePositionCorrectionX = 300.f;
     const float kQuestionImageCorrectionX = -400.f;
     const float kQuestionImageCorrectionY = 50.f;
+    
+    int randomAreasIndex = 0;
 }
 
 using namespace FillTheBlanksSpace;
@@ -85,7 +90,7 @@ namespace ComprehensionTest
         Layer* FillTheBlanksScene::createLayer(ComprehensionScene *parent)
         {
             auto layer = FillTheBlanksScene::create();
-            layer->_parent = parent;
+            //layer->_parent = parent;
             layer->_comprehensionScene = parent;
             return layer;
         }
@@ -95,6 +100,8 @@ namespace ComprehensionTest
             Layer::onEnter();
             
             initData();
+            randomAreasIndex = 0;
+            createRandomAreas();
             
             auto winSize = getContentSize();
             
@@ -132,13 +139,20 @@ namespace ComprehensionTest
             
             if (bDebug)
             {
-                auto lc = LayerColor::create(Color4B::RED);
+                LayerColor* lc;
+                
+                lc = LayerColor::create(Color4B::RED);
                 lc->setOpacity(128);
                 lc->setContentSize(page->getContentSize());
-                lc->ignoreAnchorPointForPosition(false);
+                lc->setIgnoreAnchorPointForPosition(false);
                 lc->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
                 lc->setScale(_pageScale);
                 lc->setPosition(Vec2(gameSize.width/2 + kPagePositionCorrectionX, gameSize.height/2));
+                _gameNode->addChild(lc);
+
+                lc = LayerColor::create(Color4B(0, 0, 255, 100));
+                lc->setContentSize(kTrayArrangeSize);
+                lc->setPosition(kTrayArrangeRect.origin.x, kTrayArrangeRect.origin.y);
                 _gameNode->addChild(lc);
             }
             
@@ -153,17 +167,24 @@ namespace ComprehensionTest
 //            _comprehensionScene->drawQuestionTitle(_problemData->questionText, _gameNode);
             string directionContent = LanguageManager::getInstance()->isEnglish() ? "Fill in the blank(s)." : "Jaza nafasi.";
             _comprehensionScene->drawQuestionTitle(directionContent, _gameNode, 50.f);
-            
-            if (FileUtils::getInstance()->isFileExist(kPrefixPath + _problemData->soundPath))
-            {
-                auto soundButton = _comprehensionScene->drawSoundButton(_gameNode);
-                soundButton->addTouchEventListener([this](Ref*,Widget::TouchEventType e) {
-                    if (e == Widget::TouchEventType::ENDED) {
-                        GameSoundManager::getInstance()->playEffectSound(kPrefixPath + _problemData->soundPath);
-                    }
-                });
+            if (!_problemData->soundPath.empty()) {
+                string audioPath = _comprehensionScene->getBookFolder()+"/quiz/"+_problemData->soundPath;
+                bool audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+                if (!audioExist) {
+                    audioPath = _comprehensionScene->getBookFolder()+"/page/"+_problemData->soundPath;
+                    audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+                }
+                if (audioExist)
+                {
+                    auto soundButton = _comprehensionScene->drawSoundButton(_gameNode);
+                    soundButton->addTouchEventListener([this, audioPath](Ref*,Widget::TouchEventType e) {
+                        if (e == Widget::TouchEventType::ENDED) {
+                            GameSoundManager::getInstance()->playEffectSoundVoiceOnly(audioPath);
+                        }
+                    });
+                }
             }
-
+            
             
             {
                 float padding = 16.0f;
@@ -174,8 +195,10 @@ namespace ComprehensionTest
                 questionImageShadow->setScale(0.7f);
                 _gameNode->addChild(questionImageShadow);
                 
-                auto questionImage = Sprite::create(kPrefixCommonImagePath + _problemData->questionImage);
-                if (questionImage == nullptr) { NativeAlert::show("Image does not exist.", kPrefixCommonImagePath + _problemData->questionImage, "OK"); return; }
+                auto questionImage = Sprite::create(_comprehensionScene->getBookFolder()+"/quiz/" + _problemData->questionImage);
+                if (!questionImage) questionImage =Sprite::create(_comprehensionScene->getBookFolder()+"/page/" + _problemData->questionImage);
+                
+                if (questionImage == nullptr) { NativeAlert::show("Image does not exist.", _problemData->questionImage, "OK"); return; }
                 auto calcWidth = (questionImageShadow->getContentSize().width - padding * 2) / questionImage->getContentSize().width;
                 auto calcHeight = (questionImageShadow->getContentSize().height - padding * 2) / questionImage->getContentSize().height;
                 float scaleFactor = MIN(calcWidth, calcHeight);
@@ -188,6 +211,10 @@ namespace ComprehensionTest
                 questionImageFrame->setPosition(questionImageShadow->getContentSize() / 2);
                 questionImageShadow->addChild(questionImageFrame);
             }
+        }
+        
+        void FillTheBlanksScene::onExit() {
+            Layer::onExit();
         }
         
         Size FillTheBlanksScene::calculateMaxWordSize()
@@ -311,8 +338,8 @@ namespace ComprehensionTest
             block->setScale(_pageScale);
             auto blockSize = block->getContentSize()*_pageScale;
             
-            auto pos = Point(trayInnerRect.origin.x+random(0.f, trayInnerSize.width-blockSize.width), random(blockSize.height * 2, trayInnerSize.height));
-            
+            //auto pos = Point(trayInnerRect.origin.x+random(0.f, trayInnerSize.width-blockSize.width), random(blockSize.height * 2, trayInnerSize.height));
+            auto pos = _randomPoints[randomAreasIndex++];
             
             block->setPosition(pos);
             
@@ -378,6 +405,7 @@ namespace ComprehensionTest
                     }
                 }
                 
+                writePlayLog();
                 if (isSolved())
                     onSolve();
             };
@@ -435,11 +463,61 @@ namespace ComprehensionTest
         
         void FillTheBlanksScene::onSolve()
         {
+            GameSoundManager::getInstance()->stopBGM();
             GameSoundManager::getInstance()->stopAllEffects();
             
             if (_comprehensionScene)
                 _comprehensionScene->onSolve();
         }
-
+        
+        void FillTheBlanksScene::createRandomAreas()
+        {
+            _randomPoints.clear();
+            
+            float xSize = kTrayArrangeSize.width / 4;
+            float ySize = kTrayArrangeSize.height / 3;
+            
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    _randomPoints.push_back(Vec2(kTrayArrangeRect.origin.x + (xSize * i) + random(-30.f, 30.f), kTrayArrangeRect.origin.y + 150.f + (ySize * j) + random(-10.f, 10.f)));
+                }
+            }
+            random_shuffle(_randomPoints.begin(), _randomPoints.end());
+        }
+        
+        void FillTheBlanksScene::writePlayLog()
+        {
+            stringstream userAnswer;
+            stringstream correctAnswer;
+            
+            userAnswer << "[";
+            correctAnswer << "[";
+            
+            auto paren = [](const string& s) {
+                return string("{") + s + string("}");
+            };
+            
+            for (WordBlock* slot : _slots) {
+                userAnswer << (slot->_pair ? paren(slot->_pair->_word) : "None") << ", ";
+                correctAnswer << paren(slot->_word) << ", ";
+            }
+            
+            userAnswer << "]";
+            correctAnswer << "]";
+            
+            StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), userAnswer.str(), correctAnswer.str());
+        }
+        
+        string FillTheBlanksScene::makeWorkPath()
+        {
+            stringstream ss;
+            ss << "ComprehensionTest";
+            ss << "/" << _comprehensionScene->getBookName();
+            ss << "/" << "filltheblanks";
+            ss << "-" << _comprehensionScene->getCurrentProblem();
+            return ss.str();
+        }
     }
 }

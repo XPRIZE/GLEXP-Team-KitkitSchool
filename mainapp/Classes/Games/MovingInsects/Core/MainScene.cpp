@@ -12,14 +12,17 @@
 
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/TodoSchoolBackButton.hpp>
+#include <Managers/StrictLogManager.h>
 
+#include "Common/Effects/FireworksEffect.hpp"
+#include "Managers/GameSoundManager.h"
 #include "CCAppController.hpp"
 
 BEGIN_NS_MOVINGINSECTS
 
 namespace {
     string contentSkin() { return MainDepot().assetPrefix() + "/Background/moving_image_bg.png"; }
-    float durationForCardPause() { return .05f; }
+    float durationForCardPause() { return .0f; }
 
     size_t numberOfChoices() { return 10; }
 }  // unnamed namespace
@@ -198,25 +201,44 @@ void MainScene::refreshChildNodes() {
         
         It->OnFrontFaceClicked = [this, It, CardID, CorrectCardID](Card&) {
             if (!TheGameBoard) { return; }
+            
+            // NB(xenosoz, 2018): Log for future analysis
+            auto workPath = [this] {
+                stringstream SS;
+                SS << "/" << "MovingInsects";
+                SS << "/" << "level-" << LevelID;
+                SS << "/" << "work-" << WorkID;
+                return SS.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("MovingInsects", workPath,
+                                                         TodoUtil::itos(CardID),
+                                                         TodoUtil::itos(CorrectCardID));
 
+            lockTouchEventForAllCards();
+            
             if (CardID == CorrectCardID) {
                 // NB(xenosoz, 2016): We hit the correct answer
                 Vector<FiniteTimeAction*> Actions;
                 Actions.pushBack(TheGameBoard->actionForPullCardToAnswerSlot(It));
-                
+                Actions.pushBack(DelayTime::create(.9f));
+                Actions.pushBack(CallFunc::create([this] {
+                    FireworksEffect::fire();
+                    int random = RandomHelper::random_int(1, 5);
+                    GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/" + StringUtils::format("card_hit_%d.m4a", random));
+                }));
+                Actions.pushBack(DelayTime::create(1.0f));
+                Actions.pushBack(CallFunc::create([this] {
+                    handleCorrectAnswer();
+                }));
+
                 Actions.pushBack(DelayTime::create(.1f));
                 Actions.pushBack(CallFunc::create([this] {
-                    MainDepot().soundForCardHit().play();
+//                    MainDepot().soundForCardHit().play();
                     if (TheProgressBar)
                         TheProgressBar->setCurrent((int)WorkID, true);
                 }));
-                
-                Actions.pushBack(DelayTime::create(.9f));
-                Actions.pushBack(CallFunc::create([this] {
-                    lockTouchEventForAllCards();
-                    handleCorrectAnswer();
-                }));
-                
+
                 It->stopAllActions();
                 It->runAction(It->movementGuard(Sequence::create(Actions)));
                 return;
@@ -229,20 +251,22 @@ void MainScene::refreshChildNodes() {
             Actions.pushBack(TheGameBoard->actionForPullCardToAnswerSlot(It));
             Actions.pushBack(CallFunc::create([this] {
                 MainDepot().soundForCardMiss().play();
+                FireworksEffect::miss();
             }));
+            
+            Actions.pushBack(ThePlayerBase->actionForPullCardWithSlotIndex(It, CardID));
+            Actions.pushBack(ThePlayerBase->actionForShakeCardWithSlotIndex(It, CardID));
             Actions.pushBack(DelayTime::create(durationForCardPause()));
             Actions.pushBack(CallFunc::create([this] {
                 releaseTouchEventForAllCards();
             }));
-            Actions.pushBack(ThePlayerBase->actionForPullCardWithSlotIndex(It, CardID));
-            Actions.pushBack(ThePlayerBase->actionForShakeCardWithSlotIndex(It, CardID));
-            
-            lockTouchEventOnlyForTheCard(It);
+  
             It->stopAllActions();
             It->runAction(It->movementGuard(Sequence::create(Actions)));
             
             if (TheCountField)
                 TheCountField->shakeGroups(.2f);
+
         };
         
         It->setVisible(false);
@@ -282,12 +306,8 @@ void MainScene::refreshChildNodes() {
 
 void MainScene::lockTouchEventOnlyForTheCard(Card* ActiveCard) {
     for (auto C : AnswerCards) {
-        if (C == ActiveCard) { continue; }
-        C->TouchEnabled.update(false);
+        if (C != ActiveCard) C->TouchEnabled.update(false);
     }
-
-    if (ActiveCard)
-        ActiveCard->TouchEnabled.update(true);
 }
 
 void MainScene::lockTouchEventForAllCards() {
@@ -298,6 +318,7 @@ void MainScene::lockTouchEventForAllCards() {
 void MainScene::releaseTouchEventForAllCards() {
     for (auto C : AnswerCards) {
         C->TouchEnabled.update(true);
+        C->TouchEventEndedPrematually = false;
     }
 }
 
@@ -397,7 +418,7 @@ void MainScene::beginTheWork() {
         if (!TheGameBoard) { return; }
         
         TheGameBoard->showEquals();
-        MainDepot().soundForCardDeath().play();
+        MainDepot().soundForOperator("=").play();
     }, MainDepot().keyForEquals().beginTime(), "MainScene::onEnter::showEquals");
 
     scheduleOnce([this, Work](float) {

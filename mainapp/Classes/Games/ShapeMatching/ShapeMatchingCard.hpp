@@ -1,6 +1,6 @@
 //
 //  ShapeMatchingCard.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 6/23/16.
 //
@@ -37,8 +37,7 @@ public:
     void startParticle();
     void stopParticle();
     void setLink(ShapeMatchingCard *card);
-    
-    
+    void setShapeScale(float scaleFactor);
     
 public:
     static Size defaultSize();

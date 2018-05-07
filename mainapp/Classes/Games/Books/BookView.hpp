@@ -46,8 +46,17 @@ public:
     void hidePageButton();
     
     static void setLibraryMode(bool libraryMode) { _libraryMode = libraryMode; }
-    void popBookScene();
+    static void setBookLanguage(std::string lang) { _languageCode = lang; }
     
+    void popBookScene();
+    void setSoundButton(bool isSelect, ui::ImageView * imageButton, Label * textLabel);
+    void showSoundButton();
+    void hideSoundButton();
+    bool getSoundSetting();
+    void setSoundSetting(bool enable);
+    static string getCurrentBook();
+    static void setCurrentBook(string book);
+
 protected:
     
 
@@ -68,21 +77,23 @@ protected:
     ui::Button *_prevButton, *_nextButton;
     Vec2 _prevButtonPos, _nextButtonPos;
     bool _buttonEnabled;
-    
 
-    
-    
-    
-    
+    Sprite * _soundView;
+    ui::ImageView * _soundOnButton;
+    ui::ImageView * _soundOffButton;
+    Label * _soundOnLabel;
+    Label * _soundOffLabel;
+
     TodoBook *_book;
     int _currentPage;
 
     bool _finishReading;
     
     static bool _libraryMode;
+    static std::string _languageCode;
     
-    
-    
+    bool _soundSetting;
+
     //float _timePage, _timeSentence;
     
     

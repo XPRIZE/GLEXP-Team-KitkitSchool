@@ -1,6 +1,6 @@
 //
 //  WordBlock.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/18/16.
 //
@@ -149,10 +149,12 @@ void WordBlock::initWord(string word)
             
             
             // 선택된 객체를 위로 올려줍니다.
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             if (onCheckTargetBegan) {
                 onCheckTargetBegan();

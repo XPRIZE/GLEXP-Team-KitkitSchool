@@ -1,6 +1,6 @@
 //
 //  CountObject.h on Jun 29, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -13,7 +13,7 @@
 #include "../Kinematics/RotateAndForward.h"
 #include "../Kinematics/CircleAndStraight.h"
 #include "../Models/Pose.h"
-#include <Games/NumberTrace/Common/ADT/Chain.h>
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 
 namespace todoschool {
@@ -48,6 +48,10 @@ public:
     Chain<bool> Moving;
     Chain<float> Scale;
     
+    std::function<void(CountObject*)> OnTouchDidBegin;
+    std::function<void(CountObject*)> OnTouchDidEnd;
+    std::function<void(CountObject*)> OnTouchDidCancel;
+
     std::function<void(CountObject*)> OnTouchUpInside;
     std::function<void(CountObject*)> OnMovingDidEnd;
 

@@ -140,22 +140,161 @@ cocos2d::Point genTwoNumbers4Subtraction(std::vector<cocos2d::Point>answerArray,
     return cocos2d::Point(curr_lhs, curr_rhs);
 }
 
+vector<DoubleDigitLevelStruct> DoubleDigit_ProblemBank::loadData(int level)
+{
+    
+    std::string rawString = cocos2d::FileUtils::getInstance()->getStringFromFile("DoubleDigit/DoubleDigit_Levels.tsv");
+    auto data = TodoUtil::readTSV(rawString);
+    
+    vector<DoubleDigitLevelStruct> problemDatas;
+    problemDatas.clear();
+    
+    for (auto row : data) {
+        if (row.size() < 1) continue;
+        if (TodoUtil::trim(row[0]).size() <= 0) continue;
+        if (row[0][0] == '#') continue;
+        for (int i=0; i<row.size(); i++) row[i] = TodoUtil::removeSpaces(TodoUtil::trim(row[i]));
+        
+        int rawLevel = TodoUtil::stoi(row[0]);
+        string rawNumber1 = row[1];
+        bool rawAddition = row[2] == "TRUE" ? true : false;
+        bool rawSubtraction = row[3] == "TRUE" ? true : false;
+        string rawNumber2 = row[4];
+        string rawResultRange = row[5];
+        string rawRegrouping = row[6];
+        int rawProblemCount = TodoUtil::stoi(row[7]);
+
+        
+        if (_maxLevel < rawLevel) _maxLevel = rawLevel;
+        if (rawLevel != level) continue;
+        
+        problemDatas.push_back({
+            rawLevel,
+            rawNumber1,
+            rawAddition,
+            rawSubtraction,
+            rawNumber2,
+            rawResultRange,
+            rawRegrouping,
+            rawProblemCount
+        });
+        
+    }
+    
+    return problemDatas;
+}
+
+int DoubleDigit_ProblemBank::getNumber(string rawNumber) {
+    if (find(begin(rawNumber), end(rawNumber), '-') != end(rawNumber)) {
+        auto numbers = TodoUtil::split(rawNumber, '-');
+        return random<int>(TodoUtil::stoi(numbers[0]), TodoUtil::stoi(numbers[1]));
+    } else if (find(begin(rawNumber), end(rawNumber), ',') != end(rawNumber)) {
+        auto numbers = TodoUtil::split(rawNumber, ',');
+        return TodoUtil::stoi(numbers.at(random<int>(0, numbers.size()-1)));
+    } else {
+        return TodoUtil::stoi(rawNumber);
+    }
+    
+}
+
+bool DoubleDigit_ProblemBank::checkRegrouping(int number1, char op, int resultCandidate) {
+    int tempNumber1 = number1;
+    int tempResultCandidate = resultCandidate;
+    while(1) {
+        if (op == '+' && tempNumber1%10 > tempResultCandidate%10) return true;
+        else if (op == '-' && tempNumber1%10 < tempResultCandidate%10) return true;
+        tempNumber1 /= 10;
+        tempResultCandidate /= 10;
+        if (!tempNumber1 || !tempResultCandidate) return false;
+    }
+}
+
+DoubleDigitValidProblem DoubleDigit_ProblemBank::getValidProblem(DoubleDigitLevelStruct &rawProblem) {
+    DoubleDigitValidProblem rt;
+    vector<char> ops;
+    if (rawProblem.addition) ops.push_back('+');
+    if (rawProblem.subtraction) ops.push_back('-');
+    int i=0;
+    while(1) {
+        
+        bool valid = true;
+        int number1 = getNumber(rawProblem.number1);
+        int number2 = getNumber(rawProblem.number2);
+        random_shuffle(ops.begin(), ops.end(), [](int n) { return rand() % n; });
+        int resultCandidate;
+        auto op = ops.at(0);
+
+        if (op == '+') resultCandidate = number1 + number2;
+        else resultCandidate = number1 - number2;
+        
+        if (rawProblem.resultRange != "" ) {
+            auto resultRanges = TodoUtil::split(rawProblem.resultRange, '-');
+            if (resultCandidate < TodoUtil::stoi(resultRanges.at(0)) || resultCandidate > TodoUtil::stoi(resultRanges.at(1))) valid = false;
+        }
+        
+        if (rawProblem.regrouping != "") {
+            if (rawProblem.regrouping == "YES") {
+                if (!checkRegrouping(number1, op, resultCandidate)) valid = false;
+            } else if (rawProblem.regrouping == "NO") {
+                if (checkRegrouping(number1, op, resultCandidate)) valid = false;
+            }
+        }
+        
+        if (valid) {
+            if (find(_answers.begin(), _answers.end(), resultCandidate) == _answers.end()) {
+                _answers.push_back(resultCandidate);
+                rt.number1 = number1;
+                rt.number2 = number2;
+                rt.op = op;
+                rt.answer = resultCandidate;
+                
+                CCLOG("answer:%d", resultCandidate);
+                //CCLOG("success:%d", i);
+                return rt;
+            }
+        }
+        
+        if (++i==1000) return rt;
+    }
+    return rt;
+}
+
+vector<int> DoubleDigit_ProblemBank::getCandidateLevelIDs() {
+    loadData(1);
+    vector<int> ret;
+    ret.clear();
+    
+    for (int i=1; i<=_maxLevel; i++) {
+        ret.push_back(i);
+    }
+    return ret;
+}
 
 
 Json::Value DoubleDigit_ProblemBank::generateParameters(int level)
 {
-    Json::Value a(Json::objectValue);
-    
-   
-    
+    Json::Value rt(Json::objectValue);
     Json::Value problems(Json::arrayValue);
-    std::vector<cocos2d::Point> answerArray;
     
+    auto problemDatas = loadData(level);
+    auto problemData = problemDatas.at(0);
     
-    switch (level) {
-            
+    for (int i=0; i<problemData.problemCount; i++) {
+
+        auto row = getValidProblem(problemData);
+
+        Json::Value problem(Json::objectValue);
+        problem["lhs"] = row.number1;
+        problem["op"] = row.op;
+        problem["rhs"] = row.number2;
+        problem["answer"] = row.answer;
+        problems.append(problem);
     }
+    rt["level"] = level;
+    rt["problems"] = problems;
     
+    return rt;
+    /*
     
     
     for (auto i=0; i<5; ++i) {
@@ -461,6 +600,7 @@ Json::Value DoubleDigit_ProblemBank::generateParameters(int level)
     a["problems"] = problems;
     
     return a;
+     */
 }
 
 

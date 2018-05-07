@@ -9,7 +9,8 @@
 #include "LetterTraceScene.h"
 #include "../Utils/MainDepot.h"
 #include <Games/LetterTrace/Common/BonusVideoPlayer/BonusVideoPlayer.h>
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
+#include <Managers/StrictLogManager.h>
 
 #include "CCAppController.hpp"
 
@@ -19,7 +20,7 @@ BEGIN_NS_LETTERTRACE
 using namespace todoschool::tracefield;
 using namespace cocos2d;
 using namespace std;
-using todoschool::woodenpuzzles::TargetDragBody;
+
 
 
 namespace {
@@ -215,7 +216,21 @@ void LetterTraceScene::refreshChildNodes() {
             return Style;
         }());
         
-        It->OnTraceWorkDidEnd = [this](TraceField*) {
+        // NB(xenosoz, 2018): Log for future analysis
+        auto makeWorkPath = [this] {
+            // NB(xenosoz, 2018): TraceWorkIndex is dynamic. That's why I made this as a function.
+            stringstream SS;
+            SS << "/" << "LetterTrace";
+            SS << "/" << "level-" << LevelID;
+            SS << "/" << "work-" << TraceWorkIndex();
+            return SS.str();
+        };
+
+        It->OnEndEditing = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("LetterTrace", makeWorkPath(), "work-middle", "work-end");
+        };
+        It->OnTraceWorkDidEnd = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("LetterTrace", makeWorkPath(), "work-end", "work-end");
             auto Guard = NodeScopeGuard(this);
             handleTraceWorkDidEnd();
         };
@@ -286,7 +301,11 @@ void LetterTraceScene::refreshChildNodes() {
         
         It->OnBonusWorkDidEnd = [this](BonusNode*) {
             auto Guard = NodeScopeGuard(this);
-            handleBonusWorkDidEnd();
+            
+            auto seq = Sequence::create(DelayTime::create(1.0),
+                             CallFunc::create([this](){ handleBonusWorkDidEnd();}),
+                             nullptr);
+            this->runAction(seq);
         };
         
         It->setVisible(false);
@@ -361,16 +380,23 @@ void LetterTraceScene::beginTheWork() {
 
     if (LevelID > 4)
     {
-        Delay += (TraceWorkIndex() > 0 ? DelayUnit : DelayUnit / 2.f);
+        Delay += DelayUnit / 4.f;//(TraceWorkIndex() > 0 ? DelayUnit : DelayUnit / 2.f);
     }
     else
     {
         Delay += DelayUnit / 4.f;
     }
     
-    scheduleOnce([this](float) {
+    TheTraceField->setOpacity(0);
+    TheTraceField->runAction(Sequence::create(FadeIn::create(Delay),
+                                           CallFunc::create([this](){
         MainDepot().soundForLetter(TheTraceWork().TraceText).play();
-    }, Delay, "beginTheWork_Delay_1");
+    }),
+                                              nullptr));
+    
+//    scheduleOnce([this](float) {
+//        MainDepot().soundForLetter(TheTraceWork().TraceText).play();
+//    }, Delay, "beginTheWork_Delay_1");
 }
 
 void LetterTraceScene::playBonusVideo() {

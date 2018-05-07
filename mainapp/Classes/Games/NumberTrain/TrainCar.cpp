@@ -79,24 +79,32 @@ void TrainCar::soundButtonSpeech() {
     
     switch(_soundType) {
         case ORDERASC:
+        {
+            auto file = LanguageManager::getInstance()->findLocalizedResource("NumberTrain/Sounds/arrange_from_smallest_to_largest.m4a");
+            GameSoundManager::getInstance()->playEffectSound(file);
             if (_isEN) {
-                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/arrange_from_smallest_to_largest.wav");
+//                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/arrange_from_smallest_to_largest.m4a");
                 delay = 6.5;
             } else {
-                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/OrderAsc.m4a");
+//                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/OrderAsc.m4a");
                 delay = 5.5;
             }
+        }
             break;
         case LARGEST:
+        {
+            auto file = LanguageManager::getInstance()->findLocalizedResource("NumberTrain/Sounds/largest_number.m4a");
+            GameSoundManager::getInstance()->playEffectSound(file);
             if (_isEN) {
-                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/largest_number.wav");
+//                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/largest_number.wav");
                 delay = 3.5;
             } else {
-                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/Largest.wav");
+//                GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/Largest.wav");
                 delay = 2.5;
 
                 
             }
+        }
 
             break;
         default: break;
@@ -166,9 +174,7 @@ void TrainCar::setAnimal(TrainCar::animalType animalType, bool isNumber, bool on
         _soundButtonNormal->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
         
-        string labelKey;
-        if (_isEN) labelKey = "Arrange the numbers in order from smallest to largest";
-        else labelKey = "panga kwa mpangilio kutoka ndogo zaidi kwenda kubwa zaidi";
+        string labelKey = LanguageManager::getInstance()->getLocalizedString("Arrange the numbers in order from smallest to largest");
         
         _label = TodoUtil::createLabel(labelKey, 45, Size(500, 190), fontName, Color4B(54, 54, 54, 255), TextHAlignment::LEFT);
         _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -187,9 +193,7 @@ void TrainCar::setAnimal(TrainCar::animalType animalType, bool isNumber, bool on
                 bPos = Vec2(-470, size.height + 50);
             }
             
-            string labelKey;
-            if (_isEN) labelKey = "Largest number";
-            else labelKey = "Namba ipi ndiyo kubwa zaidi?";
+            string labelKey = LanguageManager::getInstance()->getLocalizedString("Largest number");
             _label = TodoUtil::createLabel(labelKey, 45, Size(430, 120), fontName, Color4B(54, 54, 54, 255), TextHAlignment::LEFT);
             _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             _label->setPosition(610, 160);

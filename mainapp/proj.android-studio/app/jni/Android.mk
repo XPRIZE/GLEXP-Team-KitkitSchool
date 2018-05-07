@@ -4,11 +4,12 @@ include $(CLEAR_VARS)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/external)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos)
+$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos/audio/include)
 #$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos/prebuilt-mk)
 
-LOCAL_MODULE := cocos2dcpp_shared
+LOCAL_MODULE := MyGame_shared
 
-LOCAL_MODULE_FILENAME := libcocos2dcpp
+LOCAL_MODULE_FILENAME := libMyGame
 
 CLASSES := $(wildcard $(LOCAL_PATH)/../../../Classes/*.cpp)
 CLASSES += $(wildcard $(LOCAL_PATH)/../../../Classes/**/*.cpp)

@@ -1,6 +1,6 @@
 //
 //  TextAndImageLayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -22,25 +22,25 @@ namespace ComprehensionTest
             return true;
         }
         
-        void TextAndImageLayer::setAnswers(std::vector<std::string> imagePaths)
+        void TextAndImageLayer::setAnswers(std::string folder, std::vector<std::string> imageFiles)
         {
             Size totalSize;
             auto answersRootNode = Node::create();
             
-            if (imagePaths.size() > 0)
+            if (imageFiles.size() > 0)
             {
                 auto item = ImageAnswerItem::create();
-                item->initImage(imagePaths[0]);
+                item->initImage(folder, imageFiles[0]);
                 totalSize = Size(item->getContentSize().width * 4, item->getContentSize().height);
                 answersRootNode->setContentSize(totalSize);
             }
             
             CCLOG("total : %f, %f", totalSize.width, totalSize.height);
             
-            for (int i = 0; i < imagePaths.size(); i++)
+            for (int i = 0; i < imageFiles.size(); i++)
             {
                 ImageAnswerItem* item = ImageAnswerItem::create();
-                bool bInit = item->initImage(imagePaths[i]);
+                bool bInit = item->initImage(folder, imageFiles[i]);
                 if (bInit) item->setLetterByIndex(i);
                 
                 float posX = item->getContentSize().width * i;

@@ -1,6 +1,6 @@
 //
 //  LevelOpenPopup.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/25/16.
 //
@@ -15,6 +15,7 @@
 #include "Managers/UserManager.hpp"
 #include "Managers/CurriculumManager.hpp"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/GameSoundManager.h"
 
 #include <time.h>
 #include <algorithm>
@@ -26,7 +27,6 @@ namespace LevelOpenPopupSpace {
     const Size popupSize = Size(1626,1210);
     const string folder = "CoopScene/LevelOpenPopup/";
     const string fontName = "fonts/TodoMainCurly.ttf";
-    
     
 }
 
@@ -58,7 +58,7 @@ bool LevelOpenPopup::init(cocos2d::Node *parentView)
 
 void LevelOpenPopup::setup(std::string levelID)
 {
-    
+    string languageCode = LanguageManager::getInstance()->getCurrentLanguageCode();
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     
     auto bg = Sprite::create(folder+"popup_pretest_bg.png");
@@ -94,26 +94,29 @@ void LevelOpenPopup::setup(std::string levelID)
     bg->addChild(desc);
     
     
-    string s1 = LanguageManager::getInstance()->getLocalizedString("Are you ready for") + " " + cur->levelTitle + "?";
-    string s2;
+    string s1 = LanguageManager::getInstance()->getLocalizedString("Do you want to take a test on this egg?");
+    /*
+     string s2;
     if (cur->categoryLevel==1) s2 = "Welcome!";
     else if (cur->categoryLevel<=3) s2 = "Prove it!";
     else s2 = "Try and get 8 questions correct!";
     s2 = LanguageManager::getInstance()->getLocalizedString(s2);
-    
+    */
     {
         auto descLabel = TodoUtil::createLabel(s1, 50, Size::ZERO, fontName, Color4B(65, 5, 5, 255), TextHAlignment::CENTER);
         descLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        descLabel->setPosition(desc->getContentSize()/2+Size(50, -30+35));
+        descLabel->setPosition(desc->getContentSize()/2+Size(50, -30));
         desc->addChild(descLabel);
     }
     
+    /*
     {
         auto descLabel = TodoUtil::createLabel(s2, 50, Size::ZERO, fontName, Color4B(65, 5, 5, 255), TextHAlignment::CENTER);
         descLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         descLabel->setPosition(desc->getContentSize()/2+Size(50, -30-35));
         desc->addChild(descLabel);
     }
+     */
     
     {
         int numSS = 3;
@@ -132,11 +135,12 @@ void LevelOpenPopup::setup(std::string levelID)
         string prefix;
         
         if (cur->category=='L') {
-            prefix = StringUtils::format("%s/L%d_", LanguageManager::getInstance()->getCurrentLanguageCode().c_str(), cur->categoryLevel);
+            prefix = StringUtils::format("%s/L%d_", languageCode.c_str(), cur->categoryLevel);
         } else {
             prefix = StringUtils::format("math/M%d_", cur->categoryLevel);
         }
         
+        float thumbTargetWidth = 300;
         
         for (int i=0; i<numSS; i++) {
             auto testPanel = Sprite::create(folder+"popup_pretest_screenshotbg.png");
@@ -146,7 +150,8 @@ void LevelOpenPopup::setup(std::string levelID)
             
             auto SS = Sprite::create(folder + "ScreenShot/" + prefix + StringUtils::format("%d.png", i+1));
             if (SS) {
-                SS->setPosition(testPanel->getContentSize()/2);
+                if (SS->getContentSize().width > thumbTargetWidth) SS->setScale(thumbTargetWidth/SS->getContentSize().width);
+                SS->setPosition(testPanel->getContentSize().width/2, testPanel->getContentSize().height/2-14);
                 testPanel->addChild(SS);
             }
             
@@ -172,22 +177,29 @@ void LevelOpenPopup::setup(std::string levelID)
     });
     
     startBtn->addClickEventListener([this, cur](Ref*) {
+        GameSoundManager::getInstance()->stopAllEffects();
+
         SoundEffect::buttonEffect().play();
-        
-        
-        if (cur->categoryLevel==1) {
-            if (onOpenLevel) {
-                onOpenLevel();
-            }
-            this->dismiss(true);
-        } else {
-            CCAppController::sharedAppController()->startEggQuiz(cur->category, cur->categoryLevel-1, true, [this](bool cleared) {
-                if (cleared && onOpenLevel) {
-                    onOpenLevel();
-                }
-                this->dismiss(true);
-            });
+        if (onOpenLevel) {
+            onOpenLevel();
         }
+        this->dismiss(true);
+
+        /*
+         if (cur->categoryLevel==1) {
+         if (onOpenLevel) {
+         onOpenLevel();
+         }
+         this->dismiss(true);
+         } else {
+         CCAppController::sharedAppController()->startEggQuiz(cur->category, cur->categoryLevel-1, true, [this](bool cleared) {
+         if (cleared && onOpenLevel) {
+         onOpenLevel();
+         }
+         this->dismiss(true);
+         });
+         }
+         */
     });
     startBtn->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     startBtn->setPosition(Vec2(popupSize.width/2, 114));
@@ -198,26 +210,11 @@ void LevelOpenPopup::setup(std::string levelID)
     cancelBtn->setZoomScale(0);
                             
     cancelBtn->addClickEventListener([this](Ref*) {
+        GameSoundManager::getInstance()->stopAllEffects();
         this->dismiss(true);
     });
     cancelBtn->setPosition(Vec2(1522, 1070));
     bg->addChild(cancelBtn);
     
-    
-    if (UserManager::getInstance()->isDebugMode()) {
-        auto postBtn = ui::Button::create();
-        postBtn->setTitleText("Post Test");
-        postBtn->setTitleFontName(fontName);
-        postBtn->setTitleColor(Color3B::WHITE);
-        postBtn->setTitleFontSize(50);
-        postBtn->setPosition(Vec2(popupSize.width*0.75, 114));
-        bg->addChild(postBtn);
-        
-        postBtn->addClickEventListener([this, cur](Ref*) {
-            
-            CCAppController::sharedAppController()->startEggQuiz(cur->category, cur->categoryLevel, false, [this](bool cleared) {
-            });
-        });
-    }
-
+    GameSoundManager::getInstance()->playEffectSoundForAutoStart(folder + "Audio/" + StringUtils::format("%s/", languageCode.c_str())+"guide.m4a");
 }

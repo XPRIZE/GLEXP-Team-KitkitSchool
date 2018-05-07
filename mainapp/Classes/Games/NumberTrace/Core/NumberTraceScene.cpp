@@ -8,6 +8,7 @@
 
 #include "NumberTraceScene.h"
 #include "../Utils/MainDepot.h"
+#include "Managers/StrictLogManager.h"
 
 #include "CCAppController.hpp"
 
@@ -141,8 +142,22 @@ void NumberTraceScene::refreshChildNodes() {
         It->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         It->setPosition(Point(GameSize.width / 2.f, 0.f));
         It->setLocalZOrder(ZOrder++);
+        
+        // NB(xenosoz, 2018): Log for future analysis
+        auto makeWorkPath = [this] {
+            // NB(xenosoz, 2018): TheProblemID is dynamic. That's why I made this as a function.
+            stringstream SS;
+            SS << "/" << "NumberTrace";
+            SS << "/" << "level-" << LevelID;
+            SS << "/" << "work-" << TheProblemID();
+            return SS.str();
+        };
 
-        It->OnTraceWorkDidEnd = [this](TraceField*) {
+        It->OnEndEditing = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("NumberTrace", makeWorkPath(), "work-middle", "work-end");
+        };
+        It->OnTraceWorkDidEnd = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("NumberTrace", makeWorkPath(), "work-end", "work-end");
             MainDepot().soundForTraceEnd().play();
             handleTraceWorkDidEnd();
         };

@@ -20,13 +20,12 @@
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
 #include "Managers/GameSoundManager.h"
-
+#include "Managers/StrictLogManager.h"
 
 #include "Utils/TodoUtil.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Common/Controls/CompletePopup.hpp"
-#include "Common/Controls/TutorialVideoPlayer.hpp"
 
 
 #include "CCAppController.hpp"
@@ -159,23 +158,9 @@ void AnimalPuzzleScene::onEnter()
 
 void AnimalPuzzleScene::onEnterTransitionDidFinish()
 {
-    /*
-    if (_currentLevel==1) {
-     
-        auto v = TutorialVideoPlayer::create();
-        addChild(v);
-        v->playVideo("TutorialVideo/xprize_tutorial_alphabet.m4v");
-        v->onCompleted = [this]() {
-            onStart();
-        };
-        
-        
-        
-    } else
-     */
-    {
-        onStart();
-    }
+
+    onStart();
+
 }
 
 void AnimalPuzzleScene::onStart()
@@ -188,14 +173,14 @@ void AnimalPuzzleScene::onStart()
     loadData(_currentLevel);
     _currentPuzzleIndex = 0;
     
-    if (_currentLevel>=5) {
-        random_shuffle(_puzzles.begin(), _puzzles.end());
-        auto p = _puzzles.front();
-        _puzzles.clear();
-        _puzzles.push_back(p);
-    
-
-    }
+//    if (_currentLevel>=5) {
+//        random_shuffle(_puzzles.begin(), _puzzles.end());
+//        auto p = _puzzles.front();
+//        _puzzles.clear();
+//        _puzzles.push_back(p);
+//
+//
+//    }
     
     _progressBar->setMax(_puzzles.size());
     
@@ -235,8 +220,8 @@ void AnimalPuzzleScene::onPuzzleComplete()
     label->setPosition(labelPos);
     addChild(label);
     
-    float voiceDelay = (e.text.length()>15) ? 2.0 : 1.0;
-    
+    float voiceDelay = (e.text.length()>15) ? 3.5 : 2.5;
+
     if (_currentPuzzleIndex>=_puzzles.size()) {
         auto seq = Sequence::create(DelayTime::create(1.0),
                                     CallFunc::create([this, e](){ playSound(e.text); }),
@@ -347,6 +332,7 @@ void AnimalPuzzleScene::createPuzzle(int index)
         string shadow = folder + info.pieceShadowVector.at(i)+".png";
         
         auto piece = AnimalPiece::create();
+        piece->_pieceId = i;
         piece->setTexture(face, depth, shadow);
         
         auto pSize = piece->getContentSize();
@@ -373,17 +359,31 @@ void AnimalPuzzleScene::createPuzzle(int index)
 
         
         piece->onSnapped = [this, piece]() {
+            // NB(xenosoz, 2018): Log for future analysis (#1/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "AnimalPuzzle";
+                SS << "/" << "level-" << _currentLevel;
+                SS << "/" << "work-" << _currentPuzzleIndex;
+                return SS.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("AnimalPuzzle", workPath, TodoUtil::itos(piece->_pieceId), TodoUtil::itos(piece->_pieceId));
+            
+            
             _numSnappedPieces++;
             
             piece->_body->setVisible(true);
             
             auto bodyPos = piece->getPosition();
+            
+            
             piece->_body->retain();
             piece->_body->removeFromParent();
             piece->_body->setPosition(bodyPos);
             _depthNode->addChild(piece->_body);
             piece->_body->release();
-            
+
             piece->retain();
             piece->removeFromParent();
             _pieceNode->addChild(piece);
@@ -394,6 +394,19 @@ void AnimalPuzzleScene::createPuzzle(int index)
             } else {
                 snapEffect().play();
             }
+        };
+        
+        piece->onLaid = [this, piece] {
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            string workPath = [this] {
+                stringstream SS;
+                SS << "/" << "AnimalPuzzle";
+                SS << "/" << "level-" << _currentLevel;
+                SS << "/" << "work-" << _currentPuzzleIndex;
+                return SS.str();
+            }();
+            
+            StrictLogManager::shared()->game_Peek_Answer("AnimalPuzzle", workPath, TodoUtil::itos(piece->_pieceId), "None");
         };
         
         _gameNode->addChild(piece);
@@ -408,7 +421,7 @@ void AnimalPuzzleScene::createPuzzle(int index)
 
 void AnimalPuzzleScene::loadData(int level)
 {
-    string P = resourcePath + "AnimalPuzzle_Levels.tsv";
+    string P = LanguageManager::getInstance()->findLocalizedResource("Games/" + resourcePath + "AnimalPuzzle_Levels.tsv");
     string S = FileUtils::getInstance()->getStringFromFile(P);
     
     todoschool::CommentStream IS(S);
@@ -437,21 +450,12 @@ void AnimalPuzzleScene::loadData(int level)
     AnimalPuzzleLevelStruct e;
 
 
-    const string engTag = "en-US";
+    //const string engTag = "en-US";
     
     while (IS >> LanguageTag >> levelID >> puzzleID >> e.text )
     {
         
-        if (LanguageTag!=engTag) {
-            if (LanguageTag==Lang && levelID==level) {
-                AnimalPuzzleLevelStruct info = _puzzles[puzzleID-1];
-                info.text = e.text;
-                _puzzles[puzzleID-1] = info;
-            }
-            continue;
-                
-            
-        }
+        
         
         if (!(IS >> e.folderName >> e.backgroundFilename >> pieceNum >> e.maskFilename)) return;
         
@@ -480,7 +484,7 @@ void AnimalPuzzleScene::loadData(int level)
             e.piecePosVector.push_back(Point(x, y));
         }
         
-        if (LanguageTag==engTag && levelID==level) {
+        if (levelID==level) {
             _puzzles.push_back(e);
         }
     }
@@ -499,15 +503,13 @@ void AnimalPuzzleScene::playSound(string name)
     
     for (int i=0; i<name.length(); i++) {
         char c = name[i];
-        if (c>'A' && c<'Z') c = c+'a'-'A';
+        if (c>='A' && c<='Z') c = c+'a'-'A';
         lower += c;
     }
     
-    string lang = LanguageManager::getInstance()->getCurrentLanguageCode();
-    string path = "AnimalPuzzle/Sound/"+lang+"/"+lower+".m4a";
+    string path = LanguageManager::getInstance()->findLocalizedResource("Games/AnimalPuzzle/Sound/"+lower+".m4a");
     
     GameSoundManager::getInstance()->playEffectSound(path);
-    
 }
 
 ////////////////////
@@ -521,6 +523,7 @@ bool AnimalPiece::init()
 
     _snapped = false;
     onSnapped = nullptr;
+    onLaid = nullptr;
     _touchEnabled = false;
     
     auto *listener = EventListenerTouchOneByOne::create();
@@ -537,10 +540,12 @@ bool AnimalPiece::init()
             this->setPicked(true);
             pickEffect().play();
             
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+            
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             return true;
         }
@@ -565,7 +570,6 @@ bool AnimalPiece::init()
         
         if (_targetPos.distance(getPosition())<snapRadiusOnMoved) {
             this->snapTarget();
-            
         }
     };
     
@@ -576,20 +580,7 @@ bool AnimalPiece::init()
         if (_targetPos.distance(getPosition())<snapRadiusOnEnded) {
             this->snapTarget();
         } else {
-            auto P = getParent();
-            auto pos = P->convertToWorldSpace(this->getPosition());
-            Vec2 loc = pos;
-            
-            auto winSize = Director::getInstance()->getWinSize();
-            const auto margin = Size(50, 50);
-            
-            loc.x = MAX(margin.width, loc.x);
-            loc.x = MIN(winSize.width-margin.width, loc.x);
-            loc.y = MAX(margin.height, loc.y);
-            loc.y = MIN(winSize.height-margin.height, loc.y);
-            if (loc.distance(pos)>5) {
-                runAction(EaseOut::create(MoveTo::create(0.12, loc), 2.0));
-            }
+            this->layTarget();
         }
         
         
@@ -672,6 +663,29 @@ void AnimalPiece::snapTarget()
     
     if (onSnapped) {
         onSnapped();
+    }
+
+}
+
+void AnimalPiece::layTarget()
+{
+    auto P = getParent();
+    auto pos = P->convertToWorldSpace(this->getPosition());
+    Vec2 loc = pos;
+    
+    auto winSize = Director::getInstance()->getWinSize();
+    const auto margin = Size(50, 50);
+    
+    loc.x = MAX(margin.width, loc.x);
+    loc.x = MIN(winSize.width-margin.width, loc.x);
+    loc.y = MAX(margin.height, loc.y);
+    loc.y = MIN(winSize.height-margin.height, loc.y);
+    if (loc.distance(pos)>5) {
+        runAction(EaseOut::create(MoveTo::create(0.12, loc), 2.0));
+    }
+    
+    if (onLaid) {
+        onLaid();
     }
 
 }

@@ -97,6 +97,30 @@ std::istream& TodoUtil::safegetline(std::istream& is, std::string& t)
     }
 }
 
+
+std::string TodoUtil::combineCSV(std::vector<std::string> csv)
+{
+    std::string ret = "";
+    
+    for (auto v : csv) {
+        bool comma = (v.find(",")!=std::string::npos);
+        
+        if (comma) ret += "\"";
+        
+        for (int i=0; i<v.length(); i++) {
+            auto c = v[i];
+            if (c=='"') ret+="\"";
+            ret+=std::string(1, c);
+        }
+        
+        if (comma) ret += "\"";
+        ret += ",";
+        
+    }
+    
+    return ret;
+}
+
 std::vector<std::string> TodoUtil::splitCSV(std::string& line)
 {
     std::vector<std::string> columns;

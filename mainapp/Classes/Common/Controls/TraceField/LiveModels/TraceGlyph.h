@@ -19,19 +19,19 @@ class TraceGlyph {
     vector<TraceStroke> Strokes;
     
     // NB(xenosoz, 2016): Bounding box with points in TraceStroke.
-    Rect TightBoundingBox;
+    AARect TightBoundingBox;
     
     // NB(xenosoz, 2016): Bounding box with the size of Label.
-    Rect RoughBoundingBox;
+    AARect RoughBoundingBox;
 
 public:
     void appendStroke(const TraceStroke& Stroke);
     void appendStroke(TraceStroke&& Stroke);
-    void refreshBoundingBox(const Rect& RoughBB);
+    void refreshBoundingBox(const AARect& RoughBB);
     
     const vector<TraceStroke>& strokes() const;
-    const Rect& tightBoundingBox() const;
-    const Rect& roughBoundingBox() const;
+    const AARect& tightBoundingBox() const;
+    const AARect& roughBoundingBox() const;
 
 private:
     void refreshTightBoundingBox();

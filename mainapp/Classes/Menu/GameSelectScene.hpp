@@ -1,6 +1,6 @@
 //
 //  GameSelectScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 09/12/17.
 //

@@ -1,13 +1,13 @@
 //
 //  FireworksEffect.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 9/7/17.
 //
 //
 
 #include "FireworksEffect.hpp"
-#include "ccMacros.h"
+#include "base/ccMacros.h"
 
 void FireworksEffect::fire()
 {

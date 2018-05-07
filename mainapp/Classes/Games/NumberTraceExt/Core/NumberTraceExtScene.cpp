@@ -8,18 +8,19 @@
 
 #include "NumberTraceExtScene.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
 
 #include "CCAppController.hpp"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 
 BEGIN_NS_NUMBERTRACEEXT
 
 using namespace todoschool::tracefield;
 using namespace cocos2d;
 using namespace std;
-using todoschool::woodenpuzzles::TargetDragBody;
+
 
 
 namespace
@@ -174,7 +175,7 @@ Node* NumberTraceExtScene::getNumberObjectNode(int count, NumberObjectType type)
             }
             innerWrapper->setContentSize(Size(curX, -k1x10BlockSize.height));
             innerWrapper->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            wrapper->addChild(innerWrapper);
+            //wrapper->addChild(innerWrapper);
         }
         else
         {
@@ -478,8 +479,23 @@ void NumberTraceExtScene::initUI()
             
             return Style;
         }());
+        
+        // NB(xenosoz, 2018): Log for future analysis
+        auto makeWorkPath = [this] {
+            // NB(xenosoz, 2018): _currentProblemIndex is dynamic. That's why I made this as a function.
+            stringstream SS;
+            SS << "/" << "NumberTraceExt";
+            SS << "/" << "level-" << _currentLevel;
+            SS << "/" << "work-" << _currentProblemIndex;
+            return SS.str();
+        };
 
-        It->OnTraceWorkDidEnd = [this](TraceField*) {
+        It->OnEndEditing = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("NumberTraceExt", makeWorkPath(), "work-middle", "work-end");
+        };
+
+        It->OnTraceWorkDidEnd = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("NumberTraceExt", makeWorkPath(), "work-end", "work-end");
             auto Guard = NodeScopeGuard(this);
             handleSuccess();
         };
@@ -555,11 +571,11 @@ void NumberTraceExtScene::playNumberSound(int number)
     if (LanguageManager::getInstance()->isEnglish())
     {
         
-        sprintf(filename,  + "%s/Sounds.en_US/C_%03d.m4a" , MainDepot().assetPrefix().c_str(), number);
+        sprintf(filename,  + "%s/Sounds/C_%03d.m4a" , MainDepot().assetPrefix().c_str(), number);
     }
     else
     {
-        sprintf(filename,  + "%s/Sounds.sw_TZ/%d.m4a" , MainDepot().assetPrefix().c_str(), number);
+        sprintf(filename,  + "%s/Sounds/%d.m4a" , MainDepot().assetPrefix().c_str(), number);
         
     }
     GameSoundManager::getInstance()->playEffectSound(filename);

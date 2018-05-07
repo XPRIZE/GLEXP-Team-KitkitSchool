@@ -1,6 +1,6 @@
 //
 //  CountObject.cpp on Jun 29, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -10,8 +10,8 @@
 #include "../Utils/CountFieldDepot.h"
 #include "../Kinematics/WalkIn.h"
 #include "../Kinematics/WalkOut.h"
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Repr/AllRepr.h"
+#include "Common/Basic/NodeScopeGuard.h"
 #include <functional>
 
 using namespace cocos2d;
@@ -171,7 +171,6 @@ void CountObject::rest() {
 }
 
 void CountObject::glow(bool on) {
-    
     if (on) {
         if (!GlowSprite) {
             GlowSprite = Sprite::create("NumberTrace/daily_mango_active_number_glow.png");
@@ -191,7 +190,7 @@ void CountObject::glow(bool on) {
                                             nullptr);
                 
                 GlowSprite->runAction(RepeatForever::create(seq));
-            }), NULL));
+            }), nullptr));
             
         }
     } else {
@@ -245,15 +244,13 @@ bool CountObject::handleTouchBegan(cocos2d::Touch* T, cocos2d::Event* E) {
     if (!activeSprite()->getBoundingBox().containsPoint(PointInParentSpace))
         return DONT_CATCH_EVENT;
     
-    //return CATCH_EVENT;
-    auto Guard = NodeScopeGuard(this);
-    
     glow(false);
     
-    if (OnTouchUpInside)
-        OnTouchUpInside(this);
+    auto Guard = NodeScopeGuard(this);
+    if (OnTouchDidBegin)
+        OnTouchDidBegin(this);
 
-    return DONT_CATCH_EVENT;
+    return CATCH_EVENT;
 }
 
 void CountObject::handleTouchMoved(cocos2d::Touch* T, cocos2d::Event* E) {
@@ -261,18 +258,22 @@ void CountObject::handleTouchMoved(cocos2d::Touch* T, cocos2d::Event* E) {
 }
 
 void CountObject::handleTouchEnded(cocos2d::Touch* T, cocos2d::Event* E) {
-    Point PointInParentSpace = activeSprite()->getParent()->convertToNodeSpace(T->getLocation());
-    if (!activeSprite()->getBoundingBox().containsPoint(PointInParentSpace))
-        return;
+    auto Guard = NodeScopeGuard(this);
 
-//    auto Guard = NodeScopeGuard(this);
-//
-//    if (OnTouchUpInside)
-//        OnTouchUpInside(this);
+    Point PointInParentSpace = activeSprite()->getParent()->convertToNodeSpace(T->getLocation());
+    if (activeSprite()->getBoundingBox().containsPoint(PointInParentSpace)) {
+        if (OnTouchUpInside)
+            OnTouchUpInside(this);
+    }
+    
+    if (OnTouchDidEnd)
+        OnTouchDidEnd(this);
 }
 
 void CountObject::handleTouchCancelled(cocos2d::Touch* T, cocos2d::Event* E) {
-    // Do nothing.
+    auto Guard = NodeScopeGuard(this);
+    if (OnTouchDidCancel)
+        OnTouchDidCancel(this);
 }
 
 void CountObject::clearInternals() {

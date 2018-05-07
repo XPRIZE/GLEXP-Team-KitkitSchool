@@ -1,6 +1,6 @@
 //
 //  CompletePopup.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/29/16.
 //
@@ -24,7 +24,8 @@ public:
     void dismiss();
 
     void setTitleText(const std::string& titleText);
-
+    static const int TAG = 9876;
+    
 protected:
     
     Node *_mainView;
@@ -32,9 +33,10 @@ protected:
     Label *_titleTextLabel;
 
     std::function<void(void)> _callback;
+    void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
     
-    
-    
+private:
+    bool _closeTouched = false;
     
 };
 #endif /* CompletePopup_hpp */

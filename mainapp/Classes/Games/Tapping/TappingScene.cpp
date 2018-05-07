@@ -15,6 +15,7 @@
 #include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
@@ -37,8 +38,10 @@ namespace TappingSceneSpace {
     const Rect area2 = Rect(1280-1000, 300, 2000, 1000);
     const Rect area3 = Rect(1280-1000, 300, 2000, 1200);
     
+    const vector<std::string> cardFileNames = {"Cards_1.m4a", "Cards_2.m4a", "Cards_3.m4a", "Cards_4.m4a", "Cards_5.m4a", "Cards_6.m4a"};
+    
     SoundEffect balloonBlowEffect() { return SoundEffect("Tapping/SFX_Balloon-blow-up.m4a"); }
-    SoundEffect balloonPopEffect() { return SoundEffect("Tapping/SFX_Balloon-pop.m4a"); }
+    SoundEffect balloonFlyingEffect() { return SoundEffect("Tapping/SFX_Balloon_up.m4a"); }
     SoundEffect bubblePopEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Star_Pop2.m4a"); }
     
     const int balloonEndurance = 10;
@@ -109,6 +112,7 @@ bool TappingScene::init()
 
     
     _popCount = 0;
+    _accBallonCount = 0;
     
     
     
@@ -139,12 +143,7 @@ void TappingScene::onEnterTransitionDidFinish()
 
 void TappingScene::onStart()
 {
-    
-
-
-    
-    
-    
+ 
 //    _
 //    float appearTime = 0;
 //    putObjects(appearTime);
@@ -169,7 +168,7 @@ void TappingScene::setLevel(int level)
         bubblePopEffect().preload();
     } else {
         balloonBlowEffect().preload();
-        balloonPopEffect().preload();
+        balloonFlyingEffect().preload();
     }
     
     if (_currentLevel==1) {
@@ -240,6 +239,7 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, flo
         
     }
     balloon->setPosition(bPoint);
+    balloon->_balloonId = _accBallonCount;
     
     auto duration = random(0.55, 0.95);
     balloon->runAction(RepeatForever::create(Sequence::create(EaseOut::create(MoveBy::create(duration, Vec2(0, 10)), 1.2),
@@ -249,6 +249,7 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, flo
 
     _gameNode->addChild(balloon);
     _balloons.push_back(balloon);
+    _accBallonCount += 1;
     
     if (isBubble) {
         balloon->setOpacity(0);
@@ -258,7 +259,7 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, flo
         auto fadeoutAction = FadeOut::create(0.2);
         auto delayAction = DelayTime::create(2.5 + 3.0*(100-_popCount)/100.0);
         auto seq = Sequence::create(initDelay, fadeinAction, enableAction, delayAction, fadeoutAction, CallFunc::create([this, balloon](){
-            balloonPoped(balloon, false);
+            balloonFlown(balloon, false);
         }), nullptr);
         balloon->runAction(seq);
     } else {
@@ -269,15 +270,30 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, flo
                                       nullptr));
     }
     
+    balloon->OnTouched = [balloon, this] {
+        // NB(xenosoz, 2018): Log for future analysis
+        string workPath = [balloon, this] {
+            stringstream ss;
+            ss << "/" << "Tapping";
+            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "work-" << balloon->_balloonId;
+            return ss.str();
+        }();
+
+        StrictLogManager::shared()->game_Peek_Answer("Tapping", workPath,
+                                                     TodoUtil::itos(balloon->_tapCount),
+                                                     TodoUtil::itos(balloon->_maxTap));
+    };
+    
     balloon->OnPoped = [balloon, this]() {
-        balloonPoped(balloon, true);
+        balloonFlown(balloon, true);
     };
     
     
     
 }
 
-void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
+void TappingScene::balloonFlown(TappingBalloon *balloon, bool touched)
 {
     balloon->_touchEnabled = false;
     
@@ -303,14 +319,36 @@ void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
         label->runAction(labelSeq);
     };
     
+    auto countImage = [&](int count, Vec2 p) {
+        auto image = Sprite::create(StringUtils::format("Tapping/tapping_image_number_%d.png", count));
+        if(image)
+        {
+            image->setPosition(p);
+            
+            ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/star_particle.plist");
+            _particleEffect->setScale(6.0f);
+            _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            _particleEffect->setPosition(p);
+            _gameNode->addChild(image);
+            _gameNode->addChild(_particleEffect, ++_zOrder);
+            
+            auto imageSeq = Sequence::create(MoveBy::create(0.7, Vec2(0, 50)), CallFunc::create([image](){
+                image->removeFromParent();
+            }), NULL);
+            image->runAction(imageSeq);
+        } else {
+            popLabel(count, 200, p);
+        }
+    };
+    
     if (_currentLevel==1) {
-        balloon->runPopAnimation();
         
         _progressBar->setCurrent(_popCount+1, true);
         _popCount++;
         
-        popLabel(_popCount*balloonEndurance, 200, balloon->getCenter());
+        countImage(_popCount*balloonEndurance, balloon->getCenter());
         
+        balloon->runFlyAnimation();
         
         if (_popCount==3) {
             CompletePopup::create()->show(1.0, [](){
@@ -324,12 +362,12 @@ void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
             this->runAction(seq);
         }
     } else if (_currentLevel==2) {
-        balloon->runPopAnimation();
+        balloon->runFlyAnimation();
         
         _progressBar->setCurrent(_popCount+1, true);
         _popCount++;
         
-        popLabel(_popCount*balloonEndurance, 200, balloon->getCenter()  );
+        countImage(_popCount*balloonEndurance, balloon->getCenter());
         
         if (_popCount==10) {
             CompletePopup::create()->show(1.0, [](){
@@ -346,12 +384,12 @@ void TappingScene::balloonPoped(TappingBalloon *balloon, bool touched)
     } else if (_currentLevel==3) {
         if (touched) {
             
-            balloon->runPopAnimation();
+            balloon->runFlyAnimation();
             
             _progressBar->setCurrent(_popCount+1, true);
             _popCount++;
             
-            popLabel(_popCount, 100, p);
+            _popCount % 10 ? popLabel(_popCount, 100, p) : countImage(_popCount, balloon->getCenter());
             
             if (_popCount==100) {
                 CompletePopup::create()->show(1.0, [](){
@@ -386,6 +424,7 @@ void TappingBalloon::setupBubble()
     auto size = _body->getContentSize();
     _touchRect = Rect(-size.width/2, -size.height/2, size.width, size.height);
     
+    _balloonId = 0;
     _maxTap = 1;
     _tapCount = 0;
     
@@ -396,6 +435,7 @@ void TappingBalloon::setupBubble()
         auto P = convertToNodeSpace(T->getLocation());
         if (_touchRect.containsPoint(P)) {
             _tapCount++;
+            if (OnTouched) OnTouched();
             if (_tapCount==_maxTap && OnPoped) OnPoped();
             return true;
         }
@@ -422,6 +462,7 @@ void TappingBalloon::setupBalloon(int maxTap, cocos2d::Color3B color)
     _knot = Sprite::create("Tapping/tg_balloon_string_knot.png");
     addChild(_knot);
     
+    _balloonId = 0;
     _maxTap = maxTap;
     _tapCount = 0;
     
@@ -454,6 +495,8 @@ void TappingBalloon::setupBalloon(int maxTap, cocos2d::Color3B color)
             
             this->addChild(label);
             
+            if (OnTouched) OnTouched();
+            
             if (_tapCount<_maxTap) {
                 balloonBlowEffect().stop();
                 balloonBlowEffect().play();
@@ -472,28 +515,29 @@ void TappingBalloon::setupBalloon(int maxTap, cocos2d::Color3B color)
     
 }
 
-void TappingBalloon::runPopAnimation()
+void TappingBalloon::runFlyAnimation()
 {
     _touchEnabled = false;
     
+    string cardAudioFileName = "Tapping/Cards_"+TodoUtil::itos(random(1, 6))+".m4a";
+    
+    GameSoundManager::getInstance()->preloadEffect(cardAudioFileName);
+    
     if (_isBalloon) {
         
-        balloonPopEffect().play();
         balloonBlowEffect().stop();
-        
-        
-        _body->setTexture("Tapping/tg_balloonburst_effect.png");
-        _shade->setVisible(false);
+
         _knot->setVisible(false);
+        _shade->setVisible(false);
         
-        auto popSpwan = Spawn::create(EaseOut::create(ScaleTo::create(0.3, 1.3), 3), EaseOut::create(FadeOut::create(0.3), 3), NULL);
+        auto resetPosition = MoveTo::create(2, Vec2(0, Director::getInstance()->getVisibleSize().height));
+        auto sequence = Sequence::create(resetPosition, CallFunc::create([this](){
+                        removeFromParent();
+                    }), NULL);
+        GameSoundManager::getInstance()->playEffectSound(cardAudioFileName);
+        balloonFlyingEffect().play();
+        _body->runAction(sequence);
         
-        auto popSeq = Sequence::create(popSpwan, CallFunc::create([this](){
-            removeFromParent();
-        }), NULL);
-        
-        _body->setScale(0.9);
-        _body->runAction(popSeq);
     } else {
         
         bubblePopEffect().play();
@@ -569,13 +613,8 @@ void TappingBalloon::inflateBalloon(int count)
         this->_touchEnabled = true;
     }),
                                      nullptr));
-    
-                                     
-    
-    
-    
-}
 
+}
 
 
 

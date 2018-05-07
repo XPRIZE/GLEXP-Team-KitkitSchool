@@ -1,6 +1,6 @@
 //
 //  SplashScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/28/16.
 //
@@ -8,7 +8,12 @@
 
 #include "SplashScene.hpp"
 #include "Menu/MainScene.hpp"
+#include "Menu/WelcomeVideoScene.hpp"
 #include "CCAppController.hpp"
+#include "Managers/VoiceMoldManager.h"
+#include "Common/Controls/TouchEventLogger.h"
+#include "Common/Controls/TodoLoadingScene.hpp"
+#include "Managers/GameSoundManager.h"
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include "platform/android/jni/JniHelper.h"
@@ -67,7 +72,7 @@ void SplashScene::onEnter() {
         return;
     }
 
-    
+
     // Wait for 0.5 seconds to load main scene
     this->scheduleOnce(schedule_selector(SplashScene::finishSplash), 0.2f);
 }
@@ -75,10 +80,93 @@ void SplashScene::onEnter() {
 void SplashScene::finishSplash(float dt) {
     // ... do whatever other initializations here
     // Show the actual main scene
-
     
-    Director::getInstance()->replaceScene(MainScene::createScene());
+    CCLOG("finishSplash");
+    
+    manageCache();
+
+    VoiceMoldManager::shared()->secureVoiceData();
+    VoiceMoldManager::shared()->warmup();
+    
+    if (UserDefault::getInstance()->getBoolForKey("WelcomeVideoPlayed", false)) {
+        std::function<Scene*(void)> creator = []() {
+            auto scene = MainScene::createScene();
+            scene->setName("MainScene");
+            return scene;
+        };
+        //Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(TodoLoadingScene::createScene(creator)));
+        Director::getInstance()->replaceScene(TransitionFade::create(1.f, TodoLoadingScene::createScene(creator)));
+
+    } else {
+        this->scheduleOnce(schedule_selector(SplashScene::checkOpeningVideo), 2.f);
+    }
 }
+
+void SplashScene::checkOpeningVideo(float dt) {
+    auto scene = WelcomeVideoScene::createScene();
+    Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(scene));
+}
+
+void SplashScene::manageCache() {
+    
+    vector<string> fileList = {
+        /*"MainScene/character_shadow.png",
+        "MainScene/cloud_day_1.png",
+        "MainScene/cloud_day_2.png",
+        "MainScene/cloud_day_3.png",
+        "MainScene/day_grass_ground.png",
+        "MainScene/main_bg_sky.png",
+        "MainScene/main_coop_literacy.png",
+        "MainScene/main_coop_math.png",*/
+        "MainScene/main_leaves_left.png",
+        "MainScene/main_leaves_right.png",
+        "MainScene/mainscreen_exitbutton_active.png",
+        "MainScene/mainscreen_exitbutton_normal.png",
+        "MainScene/panel_day.png",
+        "MainScene/panel_english.png",
+        "MainScene/panel_math.png",
+        "MainScene/panel_prek.png",
+        "MainScene/right_mountain.png",
+        "CoopScene/coop_bg.jpg",
+        "CoopScene/coop_bird_shadow.png",
+        "CoopScene/coop_cell_light.png",
+        "CoopScene/coop_cell_shade.png",
+        "CoopScene/coop_egg_shadow.png",
+        "CoopScene/coop_roof_literacy.png",
+        "CoopScene/coop_roof_math.png",
+        "CoopScene/coop_slot_bottom_literacy.png",
+        "CoopScene/coop_slot_bottom_math.png"
+        "CoopScene/coop_woodpanel_english.png",
+        "CoopScene/coop_woodpanel_level_literacy.png",
+        "CoopScene/coop_woodpanel_level_math.png",
+        "CoopScene/coop_woodpanel_math.png",
+        "CoopScene/coop_woodpanel_prek.png",
+        "CoopScene/coop_woodpanel_title_literacy.png",
+        "CoopScene/coop_woodpanel_title_math.png",
+        "CoopScene/effect_egg_glow_1.png",
+        "CoopScene/effect_egg_glow_2.png",
+        "CoopScene/effect_egg_glow_3.png",
+        "CoopScene/effect_egg_nest_enlarged.png",
+        "CoopScene/main_effect_sparkle_1.png",
+        "CoopScene/main_effect_sparkle_2.png",
+        "CoopScene/main_effect_sparkle_3.png",
+        "CoopScene/new_creature_effect.png",
+        "MainScene/DailyScene/daily_arrow_left_active.png",
+        "MainScene/DailyScene/daily_arrow_left_normal.png",
+        "MainScene/DailyScene/daily_arrow_right_active.png",
+        "MainScene/DailyScene/daily_arrow_right_normal.png",
+        "MainScene/DailyScene/daily_beam_large.png"
+    };
+    
+    for (auto it : fileList) {
+        if (!FileUtils::getInstance()->isFileExist(it)) continue;
+        Director::getInstance()->getTextureCache()->addImage(it);
+        CCLOG("add cache: %s", it.c_str());
+    }
+    
+}
+
+
 
 
 string SplashScene::getLaunchString() {

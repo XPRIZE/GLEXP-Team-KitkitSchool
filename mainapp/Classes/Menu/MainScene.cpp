@@ -1,6 +1,6 @@
 //
 //  MainScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/20/16.
 //
@@ -13,8 +13,8 @@
 
 
 #include "MainScene.hpp"
-#include "CoopScene.hpp"
-#include "DailyScene.hpp"
+#include "CoopScene2.hpp"
+
 
 
 #include "GradeSelector.hpp"
@@ -22,6 +22,9 @@
 #include "Bird.hpp"
 #include "Common/Controls/TodoLoadingScene.hpp"
 #include "Common/Controls/CompletePopup.hpp"
+#include "Common/Controls/PopupBase.hpp"
+#include "Common/Controls/TouchEventLogger.h"
+
 
 #include "Managers/LanguageManager.hpp"
 #include "Managers/CurriculumManager.hpp"
@@ -29,10 +32,11 @@
 #include "Managers/GameSoundManager.h"
 #include "Managers/StrictLogManager.h"
 
-#include "DailyData.hpp"
 
 
 #include "Common/Effects/FireworksEffect.hpp"
+
+#include "3rdParty/CCNativeAlert.h"
 
 
 namespace MainSceneSpace {
@@ -40,7 +44,8 @@ namespace MainSceneSpace {
     static Size visibleSize;
     static Size frameSize;
     
-    const Vec2 coopPos = Vec2(designSize.width-220-241, designSize.height-660-172);
+    const Vec2 coop1Pos = Vec2(designSize.width-220-241, designSize.height-660-172);
+    const Vec2 coop2Pos = Vec2(designSize.width-220-241-550, designSize.height-660-172);
     
     //static Vec2 quitPos;
     
@@ -96,9 +101,11 @@ bool MainScene::init()
         return false;
     }
     
-    visibleSize = Director::getInstance()->getVisibleSize();
-
+    manageCache();
+    //std::string s = Director::getInstance()->getTextureCache()->getCachedTextureInfo();
+    //CCLOG("Cached texture info : %s",s.c_str());
     
+    visibleSize = Director::getInstance()->getVisibleSize();
     _debugView = nullptr;
     
     _rootNode = Node::create();
@@ -116,9 +123,6 @@ bool MainScene::init()
     _groundNode = Node::create();
     _groundNode->setContentSize(designSize);
     _rootNode->addChild(_groundNode);
-    
-    
-    
     
     Sprite* sky = Sprite::create("MainScene/main_bg_sky.png");
     sky->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -203,22 +207,48 @@ bool MainScene::init()
     _groundNode->addChild(mountain);
     
     
-    ui::Button* coop = ui::Button::create("MainScene/main_coop.png");
-    coop->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    coop->setPosition(coopPos);
-    coop->addClickEventListener([this](Ref*) {
+    _debugCommand = "";
+    
+    ui::Button* coop1 = ui::Button::create("MainScene/main_coop_math.png");
+    coop1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    coop1->setPosition(coop1Pos);
+    coop1->addClickEventListener([this](Ref*) {
         if (_transitionBegins) {
             return;
         }
+        
+        if (_debugCommand=="lrllrlrr") {
+            this->confirmDebug();
+            return;
+        }
+
         _transitionBegins = true;
-
         StrictLogManager::shared()->curriculumChoice_TouchCoop();
-        zoomCoop();
+        zoomCoop(_coop1Node);
     });
-
-    //_groundNode->addChild(coop, coopBackZ);
-    _groundNode->addChild(coop);
-    _coopNode = coop;
+    _groundNode->addChild(coop1);
+    _coop1Node = coop1;
+    
+    ui::Button* coop2 = ui::Button::create("MainScene/main_coop_literacy.png");
+    coop2->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    coop2->setPosition(coop2Pos);
+    coop2->addClickEventListener([this](Ref*) {
+        if (_transitionBegins) {
+            return;
+        }
+        
+        if (_debugCommand=="lrllrlrr") {
+            this->confirmDebug();
+            return;
+        }
+        
+        _transitionBegins = true;
+        StrictLogManager::shared()->curriculumChoice_TouchCoop();
+        zoomCoop(_coop2Node);
+    });
+    _groundNode->addChild(coop2);
+    _coop2Node = coop2;
+    
     
     
     Sprite* grass = Sprite::create("MainScene/day_grass_ground.png");
@@ -248,12 +278,32 @@ bool MainScene::init()
     _rootNode->addChild(_frameNode);
     
     
-    _leavesLeft = Sprite::create("MainScene/main_leaves_left.png");
+    //_leavesLeft = Sprite::create("MainScene/main_leaves_left.png");
+    {
+        auto btn = cocos2d::ui::Button::create("MainScene/main_leaves_left.png");
+        btn->setZoomScale(0);
+        btn->addClickEventListener([this](Ref*) {
+            this->_debugCommand = this->_debugCommand + "l";
+        });
+        _leavesLeft = btn;
+        
+    }
     _leavesLeft->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     _leavesLeft->setPosition(Vec2(0, frameSize.height-474));
     _frameNode->addChild(_leavesLeft);
     
-    _leavesRight = Sprite::create("MainScene/main_leaves_right.png");
+    
+    //_leavesRight = Sprite::create("MainScene/main_leaves_right.png");
+    {
+        auto btn = cocos2d::ui::Button::create("MainScene/main_leaves_right.png");
+        btn->setZoomScale(0);
+        btn->addClickEventListener([this](Ref*) {
+            this->_debugCommand = this->_debugCommand + "r";
+        });
+        _leavesRight = btn;
+        
+    }
+    
     _leavesRight->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     _leavesRight->setPosition(Vec2(frameSize.width, frameSize.height-382));
     _frameNode->addChild(_leavesRight);
@@ -299,8 +349,136 @@ bool MainScene::init()
     return true;
 }
 
-
-
+void MainScene::manageCache() {
+    
+    vector<string> fileList = {
+        "MainScene/DailyScene/daily_bg_large.png",
+        "MainScene/DailyScene/daily_birdshadow.png",
+        "MainScene/DailyScene/daily_bluebutton_active.png",
+        "MainScene/DailyScene/daily_bluebutton_effect_glow.png",
+        "MainScene/DailyScene/daily_bluebutton_normal.png",
+        "MainScene/DailyScene/daily_coinstatus_bg.png",
+        "MainScene/DailyScene/daily_freechoice_circleicon_available.png",
+        "MainScene/DailyScene/daily_freechoice_circleicon_new.png",
+        "MainScene/DailyScene/daily_freechoice_circleicon_new_effect_1.png",
+        "MainScene/DailyScene/daily_freechoice_circleicon_new_effect_2.png",
+        "MainScene/DailyScene/daily_freechoice_circleicon_unavailable.png",
+        "MainScene/DailyScene/daily_freechoice_close_active.png",
+        "MainScene/DailyScene/daily_freechoice_close_normal.png",
+        "MainScene/DailyScene/daily_freechoice_popup_icon_done.png",
+        "MainScene/DailyScene/daily_freechoice_popup_level_active_glow.png",
+        "MainScene/DailyScene/daily_freechoice_popup_level_done.png",
+        "MainScene/DailyScene/daily_freechoice_popup_level_normal.png",
+        "MainScene/DailyScene/daily_freechoice_popup_level_unavailable.png",
+        "MainScene/DailyScene/daily_freechoice_popup_panel.png",
+        //"MainScene/DailyScene/daily_freechoice_popup_shade_bg.png",
+        "MainScene/DailyScene/daily_freechoice_popup_window.png",
+        "MainScene/DailyScene/daily_panel_literacy.png",
+        "MainScene/DailyScene/daily_panel_math.png",
+        "MainScene/DailyScene/daily_panel_prek.png",
+        "MainScene/DailyScene/daily_treetop_right.png",
+        "MainScene/DailyScene/daily_treetrunk.png",
+        "MainScene/DailyScene/freechoice_icon_disabled.png",
+        "MainScene/DailyScene/freechoice_icon_new.png",
+        "MainScene/DailyScene/freechoice_icon_new_bg.png",
+        "MainScene/DailyScene/freechoice_icon_new_effect.png",
+        "MainScene/DailyScene/freechoice_icon_normal.png",
+        "MainScene/DailyScene/freechoice_icon_normal_bg.png",
+        "MainScene/DailyScene/freechoice_popup_bg.png",
+        "MainScene/DailyScene/freechoice_popup_button_close.png",
+        "MainScene/DailyScene/freechoice_popup_button_open.png"
+        /*"BirdAnimation/coop_egg_english_1.png",
+        "BirdAnimation/coop_egg_english_2.png",
+        "BirdAnimation/coop_egg_english_3.png",
+        "BirdAnimation/coop_egg_english_4.png",
+        "BirdAnimation/coop_egg_english_5.png",
+        "BirdAnimation/coop_egg_english_6.png",
+        "BirdAnimation/coop_egg_english_7.png",
+        "BirdAnimation/coop_egg_english_8.png",
+        "BirdAnimation/coop_egg_math_1.png",
+        "BirdAnimation/coop_egg_math_2.png",
+        "BirdAnimation/coop_egg_math_3.png",
+        "BirdAnimation/coop_egg_math_4.png",
+        "BirdAnimation/coop_egg_math_5.png",
+        "BirdAnimation/coop_egg_math_6.png",
+        "BirdAnimation/coop_egg_math_7.png",
+        "BirdAnimation/coop_egg_math_8.png",
+        "BirdAnimation/egg_crack.png",
+        
+        "MainScene/FreeChoiceThumbnail/freechoice_game_AbcBook.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_AlphabetPuzzle.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_AnimalPuzzle.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_BirdPhonics.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_Book.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_BubblePop.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_Comprehension.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_Counting.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_DoubleDigit.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_EquationMaker.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_FeedingTime.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_FindTheMatch.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_FishTank.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_HundredPuzzle.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterMatching.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterTrace.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterTracingCard.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_LineMatching.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_MangoShop.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_MissingNumber.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_MovingInsects.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_MultiTrace.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberMatching.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberPuzzle.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTracing.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTracingExt.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTrain.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_PatternTrain.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_ReadingBird.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_SentenceMaker.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_ShapeMatching.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_ShowAndTell.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_SoundTrain.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_Spelling.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_StarFall.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_Tapping.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_ThirtyPuzzle.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_TutorialTrace.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_WhatIsThis.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_WordMachine.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_WordNote.png",
+        "MainScene/FreeChoiceThumbnail/freechoice_game_WordTracing.png"*/
+    };
+    /*
+    vector<string> directoryList = {
+        "MainScene",
+        "CoopScene",
+        "MainScene/DailyScene",
+        "BirdAnimation",
+        "MainScene/FreeChoiceThumbnail"
+    };
+    
+    for (auto it : directoryList) {
+        for (auto f : FileUtils::getInstance()->listFiles(it)) {
+            if (f.find("jpg") == string::npos && f.find(".png") == string::npos) continue;
+            fileList.push_back(f);
+        }
+    }
+    */
+    
+    for (auto it : CurriculumManager::getInstance()->levels) {
+        LevelCurriculum cur = it.second;
+        if (!UserManager::getInstance()->isLevelOpen(cur.levelID)) continue;
+        auto bird = Bird::create(cur.category, cur.categoryLevel, cur.levelID);
+        bird->loadAnimation();
+    }
+    
+    for (auto it : fileList) {
+        if (!FileUtils::getInstance()->isFileExist(it)) continue;
+        Director::getInstance()->getTextureCache()->addImage(it);
+        CCLOG("add cache: %s", it.c_str());
+    }
+    
+}
 
 void MainScene::onEnter()
 {
@@ -308,6 +486,7 @@ void MainScene::onEnter()
     
     visibleSize = Director::getInstance()->getVisibleSize();
 
+    _debugCommand = "";
     
     stopAllActions();
     setScale(1.0);
@@ -321,8 +500,12 @@ void MainScene::onEnter()
 
     _transitionBegins = false;
     
-    _coopNode->setPosition(coopPos);
-    _coopNode->setScale(1);
+    _coop1Node->setPosition(coop1Pos);
+    _coop1Node->setScale(1);
+    
+    _coop2Node->setPosition(coop2Pos);
+    _coop2Node->setScale(1);
+    
    // _groundNode->reorderChild(_coopNode, coopBackZ);
     
  
@@ -343,8 +526,9 @@ void MainScene::onEnter()
         
         const float appearDelay = 2.2;
         
-        auto eng = LanguageManager::getInstance()->isEnglish();
-        auto logo = Sprite::create(eng ? "System/logo_kitkitschool.png" : "System/logo_kitkitshule.png");
+        //auto eng = LanguageManager::getInstance()->isEnglish();
+        auto logoPath = LanguageManager::getInstance()->findLocalizedResource("System/logo_phase02.png");
+        auto logo = Sprite::create(logoPath);
         logo->setPosition(designSize/2);
         _rootNode->addChild(logo);
         logo->runAction(Sequence::create(DelayTime::create(1.7),
@@ -353,8 +537,8 @@ void MainScene::onEnter()
                                          CallFunc::create([](){ SoundEffect::iconSpawnEffect().play(); }),
                                          DelayTime::create(0.7),
                                          CallFunc::create([this](){
-            this->scheduleOnce([this](float){ zoomCoop(); }, 0.01, "zoomCoop");
-            //zoomCoop();
+            //this->scheduleOnce([this](float){ zoomCoop(); }, 0.01, "zoomCoop");
+            _transitionBegins = false;
         }),
                                          nullptr));
         
@@ -367,10 +551,14 @@ void MainScene::onEnter()
                                                 EaseIn::create( MoveTo::create(1.0, Vec2(0, 0)), 2.0),
                                                 nullptr));
         
-        _coopNode->runAction(Sequence::create(DelayTime::create(2.0),
+        _coop1Node->runAction(Sequence::create(DelayTime::create(2.0),
                                               EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
                                               EaseIn::create(MoveBy::create(0.12, Vec2(0, -50)), 2.0),
                                               nullptr));
+        _coop2Node->runAction(Sequence::create(DelayTime::create(2.2),
+                                               EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
+                                               EaseIn::create(MoveBy::create(0.12, Vec2(0, -50)), 2.0),
+                                               nullptr));
         
         _quitButton->runAction(Sequence::create(DelayTime::create(1.94),
                                                 EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
@@ -398,16 +586,13 @@ void MainScene::onEnter()
 //                                                
 //                                               nullptr));
         
-        
-        GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/LogoFall.m4a");
+        GameSoundManager::getInstance()->playEffectSoundForAutoStart("Common/Sounds/Effect/LogoFall.m4a");
 
     } else {
 
         GameSoundManager::getInstance()->playBGM("Common/Music/BGM1_TitleScreen_intro.m4a");
-
         
     }
-    
 
 }
 
@@ -418,21 +603,87 @@ void MainScene::onExitTransitionDidStart()
     _transitionBegins = true;
 }
 
-void MainScene::zoomCoop()
+void MainScene::zoomCoop(Node *coop)
 {
-    auto scene = CoopScene::createScene();
+    CoopScene2::CoopType type = CoopScene2::CoopType::CT_MATH;
     
+    if (coop==_coop1Node) type = CoopScene2::CoopType::CT_MATH;
+    if (coop==_coop2Node) type = CoopScene2::CoopType::CT_LITERACY;
     
-    auto p1 = _groundNode->convertToWorldSpace(coopPos);
+    auto scene = CoopScene2::createScene(type);
+    scene->setName("CoopScene2");
+
+
+    auto p1 = _groundNode->convertToWorldSpace(coop->getPosition());
     auto p2 = _rootNode->convertToWorldSpace(designSize/2);
     auto diff = p1 - p2;
-    
+
     auto coopSpawn = Spawn::create(MoveBy::create(0.5, -(diff*5.0)), ScaleBy::create(0.5, 5), NULL);
     this->runAction(coopSpawn);
-    
+
     SoundEffect::coopClickEffect().play();
-    
-    Director::getInstance()->pushScene(TransitionFade::create(0.8, scene));
+
+    auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(scene));
+    fadeScene->setName("(TransitionFade CoopScene2)");
+    Director::getInstance()->pushScene(fadeScene);
 }
 
 
+void MainScene::confirmDebug()
+{
+    
+    _debugCommand = "";
+    
+    
+    auto pSize = Size(500, 500);
+    auto popup = PopupBase::create(this, pSize);
+    
+    auto textedit = ui::TextField::create("password to debug", "fonts/OpenSans-Bold.ttf", 50);
+    textedit->setPosition(Vec2(pSize.width*0.5, pSize.height*0.7));
+    popup->addChild(textedit);
+    
+    {
+        auto btn = ui::Button::create();
+        btn->setTitleText("Cancel");
+        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleColor(Color3B::WHITE);
+        btn->setTitleFontSize(50);
+        
+        btn->addClickEventListener([popup](Ref*) {
+            popup->dismiss(true);
+        });
+        
+        btn->setPosition(Vec2(pSize.width*0.25, pSize.height*0.3));
+        popup->addChild(btn);
+        
+    }
+    
+    {
+        auto btn = ui::Button::create();
+        btn->setTitleText("OK");
+        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleColor(Color3B::WHITE);
+        btn->setTitleFontSize(50);
+        
+        btn->addClickEventListener([this, popup, textedit](Ref*) {
+            if (textedit->getString()=="2019") {
+                popup->dismiss(false);
+                UserManager::getInstance()->setDebugMode(true);
+                this->zoomCoop(this->_coop1Node);
+
+                
+            } else {
+                NativeAlert::show("Wrong Password!", "", "OK");
+            }
+        });
+        
+        btn->setPosition(Vec2(pSize.width*0.75, pSize.height*0.3));
+        popup->addChild(btn);
+    }
+    
+    
+    
+    
+    popup->show(this, true);
+    
+}

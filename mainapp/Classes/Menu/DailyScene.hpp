@@ -1,6 +1,6 @@
 //
 //  DailyScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 09/10/17.
 //

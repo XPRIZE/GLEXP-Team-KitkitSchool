@@ -1,6 +1,6 @@
 //
 //  GameVideoScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 9/6/17.
 //
@@ -18,6 +18,7 @@
 
 #include "Managers/UserManager.hpp"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 #include "CCAppController.hpp"
 #include "Common/Controls/CompletePopup.hpp"
@@ -93,9 +94,14 @@ void GameVideoScene::onEnterTransitionDidFinish()
     
     _videoNode->addChild(v);
     
+    
     auto path = getVideoFile(_filename);
     v->playVideo(path);
+    StrictLogManager::shared()->game_Peek_Answer("Video", _filename, "video-middle", "video-end");
+
     v->onCompleted = [this]() {
+        StrictLogManager::shared()->game_Peek_Answer("Video", _filename, "video-end", "video-end");
+
         auto CP = CompletePopup::create();
         
         CP->show(1.5f, [this] {

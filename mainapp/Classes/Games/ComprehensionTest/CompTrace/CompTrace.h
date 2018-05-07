@@ -16,6 +16,8 @@
 class CompTrace {
 
     
+
+    
     std::function<void()> OnSuccess;
     std::function<void()> OnFail;
 

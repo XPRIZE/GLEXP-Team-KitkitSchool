@@ -32,8 +32,9 @@ public:
     void stopReading();
     
     void setTitle(string title, string titleImagePath, string audioPath, TDBookLayout layout, float delay);
-    void setPage(TodoPage *page, string folder, TDBookLayout layout, bool withAudio);
+    void setPage(TodoBook *book, TodoPage *page, TDBookLayout layout, bool withAudio);
     void setCreditPage();
+    void setPageNum(int page, Node *_pageView, Vec2 pos);
     
     
     
@@ -74,11 +75,12 @@ protected:
     std::vector<ui::Button*> _wordButtons;
     std::vector<TodoWord> _words;
     
+    TodoBook *_book;
     TodoPage *_page;
     
-    string _resourceFolder;
+    //string _resourceFolder;
     int _readingSentenceIndex;
-    int _readingAudioID;
+    //int _readingAudioID; -> change as BGM
     
     bool _isTitle;
     string _titleAudioPath;
@@ -91,7 +93,7 @@ protected:
     
     bool _pauseReading;
     float _pauseLength;
-    
+
     
     
 };

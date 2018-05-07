@@ -1,6 +1,6 @@
 //
 //  ReorderingScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 20/12/2016.
 //
@@ -10,6 +10,7 @@
 #include "Utils/TodoUtil.h"
 #include "3rdParty/CCNativeAlert.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 namespace ReorderingSceneSpace
 {
@@ -22,8 +23,10 @@ namespace ReorderingSceneSpace
     //        const Size kTrayInnerSize = Size(1800.f, 600.f);
     //        const Size kTrayOuterSize = Size(2188.f, 752.f);
     const Size kTrayInnerSize = Size(1800.f, 450.f);
+    const Size kTrayArrangeSize = Size(2000.f, 500.f);
     const Size kTrayOuterSize = Size(2188.f, 612.f);
     const Rect kTrayInnerRect = Rect((kGameSize.width-kTrayInnerSize.width) / 2, 0.f, kTrayInnerSize.width, kTrayInnerSize.height);
+    const Rect kTrayArrangeRect = Rect((kGameSize.width-kTrayArrangeSize.width) / 2, 0.f, kTrayArrangeSize.width, kTrayArrangeSize.height);
     const Rect kTrayOuterRect = Rect((kGameSize.width-kTrayOuterSize.width) / 2, 0.f, kTrayOuterSize.width, kTrayOuterSize.height);
     
     const float kTextSlotSpaceY = 20.f;
@@ -61,7 +64,7 @@ namespace ComprehensionTest
         Layer* ReorderingScene::createLayer(ComprehensionScene *parent)
         {
             auto layer = ReorderingScene::create();
-            layer->_parent = parent;
+//            layer->_parent = parent;
             layer->_comprehensionScene = parent;
             return layer;
         }
@@ -102,6 +105,13 @@ namespace ComprehensionTest
 //                lc1->ignoreAnchorPointForPosition(false);
                 lc1->setPosition(kTrayInnerRect.origin.x, kTrayInnerRect.origin.y);
                 _gameNode->addChild(lc1);
+                
+                lc1 = LayerColor::create(Color4B(0, 0, 255, 100));
+                lc1->setContentSize(kTrayArrangeSize);
+                //                lc1->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+                //                lc1->ignoreAnchorPointForPosition(false);
+                lc1->setPosition(kTrayArrangeRect.origin.x, kTrayArrangeRect.origin.y);
+                _gameNode->addChild(lc1);
             }
         }
         
@@ -132,15 +142,15 @@ namespace ComprehensionTest
                 }
             }
             
-            if (bDebug)
-            {
-                auto lc1 = LayerColor::create(Color4B(0, 200, 200, 100));
-                lc1->setContentSize(Size(imageSize.width * _itemVector.size(), imageSize.height));
-                lc1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-                lc1->ignoreAnchorPointForPosition(false);
-                lc1->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height / 2 + 150.f);
-                _gameNode->addChild(lc1);
-            }
+//            if (bDebug)
+//            {
+//                auto lc1 = LayerColor::create(Color4B(0, 200, 200, 100));
+//                lc1->setContentSize(Size(imageSize.width * _itemVector.size(), imageSize.height));
+//                lc1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+//                lc1->setIgnoreAnchorPointForPosition(false);
+//                lc1->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height / 2 + 150.f);
+//                _gameNode->addChild(lc1);
+//            }
             
             _gameNode->addChild(wrapperNode);
         }
@@ -185,7 +195,7 @@ namespace ComprehensionTest
                 auto lc1 = LayerColor::create(Color4B(0, 0, 255, 100));
                 lc1->setContentSize(Size(textSize.width * _itemVector.size(), textSize.height));
                 lc1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-                lc1->ignoreAnchorPointForPosition(false);
+                lc1->setIgnoreAnchorPointForPosition(false);
                 lc1->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height / 2 + 150.f);
                 _gameNode->addChild(lc1);
             }
@@ -193,11 +203,12 @@ namespace ComprehensionTest
             _gameNode->addChild(wrapperNode);
         }
         
-        Node* ReorderingScene::createImageBlock(string imagePath)
+        /*
+        Node* ReorderingScene::createImageBlock(string imageFile)
         {
             
             auto block = ImageBlock::create();
-            block->initAsBlock(imagePath);
+            block->initAsBlock(_comprehensionScene->getBookFolder(), imageFile);
             block->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             auto blockSize = block->getContentSize();
             auto pos = Point(kTrayInnerRect.origin.x+random(0.f, kTrayInnerSize.width), random(0.f, kTrayInnerSize.height));
@@ -297,6 +308,74 @@ namespace ComprehensionTest
                     }
                 }
                 
+                writePlayLog();
+                if (isSolved())
+                    onSolve();
+            };
+            
+            return block;
+        }
+         */
+        
+        Node* ReorderingScene::createImageBlock(string imageFile)
+        {
+            auto block = ImageBlock::create();
+            block->initAsBlock(_comprehensionScene->getBookFolder(), imageFile);
+            block->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            auto blockSize = block->getContentSize();
+            auto pos = Point(kTrayInnerRect.origin.x+random(0.f, kTrayInnerSize.width), random(0.f, kTrayInnerSize.height));
+            block->setPosition(pos);
+            
+            block->onCheckTarget = [this, block, blockSize](){
+                
+                // 들어갈 수 있는 빈칸이 있나 찾아봅니다.
+                ImageBlock *newSlot = nullptr;
+                float minDist = -1;
+                
+                for (auto slot : _imageSlots)
+                {
+                    // 슬롯과 블록의 부모노드가 다르기 때문에 원점을 world좌표계로 변환한 후 비교합니다.
+                    auto sp = slot->convertToWorldSpace(Vec2::ZERO);
+                    auto bp = block->convertToWorldSpace(Vec2::ZERO);
+                    auto dist = sp.distance(bp);
+                    if (dist < kImageMinDistance) // 들어갈 수 있는 슬롯 중에서 가장 가까운 것을 고릅니다.
+                    {
+                        if (minDist < 0 || minDist > dist)
+                        {
+                            minDist = dist;
+                            newSlot = slot;
+                        }
+                    }
+                }
+                
+                if (newSlot != nullptr && newSlot->_pair == nullptr && newSlot->getSolutionValue() == block->getValue())
+                {
+                    newSlot->_pair = block;
+                    block->_pair = newSlot;
+                    
+                    // position은 부모좌표계 기준이므로, slot의 위치를 block의 부모좌표계로 변환해서 세팅합니다.
+                    auto newBP = _gameNode->convertToNodeSpace(newSlot->getParent()->convertToWorldSpace(newSlot->getPosition()));
+                    block->setPosition(newBP);
+                }
+                else
+                {
+                    auto blockCenter = block->getPosition();
+                    if (kTrayOuterRect.containsPoint(blockCenter)) // tray로 돌아갔으면 거기 놔둡니다.
+                    {
+                        if (block->_pair)
+                        {
+                            block->_pair->_pair = nullptr;
+                            block->_pair = nullptr;
+                        }
+                        block->setSnapped(false);
+                        
+                    }
+                    else // 아니면 원래 자리로 돌려보냅니다.
+                    {
+                        block->returnToOrigin();
+                    }
+                }
+                
                 if (isSolved())
                     onSolve();
             };
@@ -304,13 +383,22 @@ namespace ComprehensionTest
             return block;
         }
         
-        Node* ReorderingScene::createTextBlock(string text, float scaleFactor)
+        /*
+        Node* ReorderingScene::createTextBlock(int index, string text, float scaleFactor)
         {
             auto block = TextBlock::create();
             block->initAsBlock(text);
             block->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             auto blockSize = block->getContentSize();
-            auto pos = Point(kTrayInnerRect.origin.x+random(0.f + blockSize.width / 2, kTrayInnerSize.width - blockSize.width / 2), random(0.f, kTrayInnerSize.height));
+            
+            
+            float tx = kTrayArrangeRect.origin.x + (kTrayArrangeRect.size.width/2) + random(-200.f, 200.f);
+            //CCLOG("%d", (int)((int)(kTrayArrangeRect.size.height) / _itemVector.size()) * index);
+            float ty = 100.f + (kTrayArrangeRect.size.height /_itemVector.size()) * index + random(0.f, 10.f);
+            auto pos = Point(tx, ty);
+            
+            //auto pos = Point(kTrayInnerRect.origin.x+random(0.f + blockSize.width / 2, kTrayInnerSize.width - blockSize.width / 2), random(0.f, kTrayInnerSize.height));
+            
             block->setScale(scaleFactor);
             block->setPosition(pos);
             
@@ -407,6 +495,85 @@ namespace ComprehensionTest
                     }
                 }
                 
+                writePlayLog();
+                if (isSolved())
+                    onSolve();
+            };
+            // (e) Touch Callback
+            
+            return block;
+        }
+         */
+        
+        Node* ReorderingScene::createTextBlock(int index, string text, float scaleFactor)
+        {
+            auto block = TextBlock::create();
+            block->initAsBlock(text);
+            block->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            auto blockSize = block->getContentSize();
+            
+            
+            float tx = kTrayArrangeRect.origin.x + (kTrayArrangeRect.size.width/2) + random(-200.f, 200.f);
+            //CCLOG("%d", (int)((int)(kTrayArrangeRect.size.height) / _itemVector.size()) * index);
+            float ty = 100.f + (kTrayArrangeRect.size.height /_itemVector.size()) * index + random(0.f, 10.f);
+            auto pos = Point(tx, ty);
+            
+            //auto pos = Point(kTrayInnerRect.origin.x+random(0.f + blockSize.width / 2, kTrayInnerSize.width - blockSize.width / 2), random(0.f, kTrayInnerSize.height));
+            
+            block->setScale(scaleFactor);
+            block->setPosition(pos);
+            
+            // (s) Touch Callback
+            block->onCheckTarget = [this, block, blockSize](){
+                
+                // 들어갈 수 있는 빈칸이 있나 찾아봅니다.
+                TextBlock* newSlot = nullptr;
+                float minDist = -1;
+                
+                for (auto slot : _textSlots)
+                {
+                    // 슬롯과 블록의 부모노드가 다르기 때문에 원점을 world좌표계로 변환한 후 비교합니다.
+                    auto sp = slot->convertToWorldSpace(Vec2::ZERO);
+                    auto bp = block->convertToWorldSpace(Vec2::ZERO);
+                    auto dist = sp.distance(bp);
+                    if (dist < kTextMinDistance) // 들어갈 수 있는 슬롯 중에서 가장 가까운 것을 고릅니다.
+                    {
+                        if (minDist < 0 || minDist > dist)
+                        {
+                            minDist = dist;
+                            newSlot = slot;
+                        }
+                    }
+                }
+                
+                if (newSlot != nullptr && newSlot->_pair == nullptr && newSlot->getSolutionValue() == block->getValue())
+                {
+                    newSlot->_pair = block;
+                    block->_pair = newSlot;
+                    
+                    // position은 부모좌표계 기준이므로, slot의 위치를 block의 부모좌표계로 변환해서 세팅합니다.
+                    auto newBP = _gameNode->convertToNodeSpace(newSlot->getParent()->convertToWorldSpace(newSlot->getPosition()));
+                    block->setPosition(newBP);
+                }
+                else
+                {
+                    auto blockCenter = block->getPosition();
+                    if (kTrayOuterRect.containsPoint(blockCenter)) // tray로 돌아갔으면 거기 놔둡니다.
+                    {
+                        if (block->_pair)
+                        {
+                            block->_pair->_pair = nullptr;
+                            block->_pair = nullptr;
+                        }
+                        block->setSnapped(false);
+                        
+                    }
+                    else // 아니면 원래 자리로 돌려보냅니다.
+                    {
+                        block->returnToOrigin();
+                    }
+                }
+                
                 if (isSolved())
                     onSolve();
             };
@@ -423,6 +590,7 @@ namespace ComprehensionTest
             addChild(tray);
         }
         
+        /*
         bool ReorderingScene::isSolved()
         {
             if (_currentType == GameType::Image)
@@ -444,6 +612,28 @@ namespace ComprehensionTest
                         return false;
                     
                     if (_textSlots[i]->getSolutionValue() != _textSlots[i]->_pair->getValue())
+                        return false;
+                }
+            }
+            return true;
+        }
+         */
+        
+        bool ReorderingScene::isSolved()
+        {
+            if (_currentType == GameType::Image)
+            {
+                for (int i = 0; i < _imageSlots.size(); i++)
+                {
+                    if (_imageSlots[i]->_pair == nullptr)
+                        return false;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _textSlots.size(); i++)
+                {
+                    if (_textSlots[i]->_pair == nullptr)
                         return false;
                 }
             }
@@ -489,7 +679,12 @@ namespace ComprehensionTest
                 
                 // 최대 아이템 갯수를 기반으로, 아래의 위의 보정값을 파라미터로 전달함
                 createTextSlots(wrapperNodeCorrectionY, scaleFactor);
-                for (auto text : _itemVector) { _gameNode->addChild(createTextBlock(text, scaleFactor)); }
+                int index = 0;
+                for (auto text : _itemVector)
+                {
+                    _gameNode->addChild(createTextBlock(index, text, scaleFactor));
+                    index++;
+                }
             }
         }
         
@@ -507,9 +702,9 @@ namespace ComprehensionTest
                 }
             }
             
-            _questionText = rawData[1];
+            //_questionText = rawData[1];
             
-            for (auto splitImagePath : TodoUtil::splitCSV(rawData[2]))
+            for (auto splitImagePath : TodoUtil::splitCSV(rawData[1]))
             {
                 _itemVector.push_back(TodoUtil::trim(splitImagePath));
             }
@@ -519,6 +714,46 @@ namespace ComprehensionTest
                 NativeAlert::show("Error", "There are no items", "OK");
                 return;
             }
+        }
+        
+        void ReorderingScene::writePlayLog()
+        {
+            stringstream userAnswer;
+            stringstream correctAnswer;
+            userAnswer << "[";
+            correctAnswer << "[";
+            
+            auto paren = [](const string& s) {
+                return string("{") + s + string("}");
+            };
+            
+            if (_currentType == GameType::Image) {
+                for (int i = 0; i < _imageSlots.size(); i++) {
+                    userAnswer << (_imageSlots[i]->_pair ? paren(_imageSlots[i]->_pair->getValue()) : "None") << ", ";
+                    correctAnswer << paren(_imageSlots[i]->getSolutionValue()) << ", ";
+                }
+            }
+            else {
+                for (int i = 0; i < _textSlots.size(); i++) {
+                    userAnswer << (_textSlots[i]->_pair ? paren(_textSlots[i]->_pair->getValue()) : "None") << ", ";
+                    correctAnswer << paren(_textSlots[i]->getSolutionValue()) << ", ";
+                }
+            }
+            
+            userAnswer << "]";
+            correctAnswer << "]";
+            
+            StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), userAnswer.str(), correctAnswer.str());
+        }
+        
+        string ReorderingScene::makeWorkPath()
+        {
+            stringstream ss;
+            ss << "ComprehensionTest";
+            ss << "/" << _comprehensionScene->getBookName();
+            ss << "/" << "reordering";
+            ss << "-" << _comprehensionScene->getCurrentProblem();
+            return ss.str();
         }
     }
 }

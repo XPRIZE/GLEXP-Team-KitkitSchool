@@ -66,9 +66,9 @@ namespace {
         }
         else if (BS == BallSize::Large) {
             if (BK == BallKind::CorrectAnswer || BK == BallKind::ActiveAnswer)
-                return 250.f;
+                return 210.f;
             if (BK == BallKind::PassiveAnswer)
-                return 200.f;
+                return 160.f;
         }
 
         assert(false);
@@ -135,7 +135,7 @@ void DummyBall::refreshChildNodes() {
         It->setTextColor(textColor(TheBallSize, TheBallKind));
 
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        It->setPosition(Point(CS.width / 2.f, CS.height / 2.f - 10.f));
+        It->setPosition(Point(CS.width / 2.f, CS.height / 2.f - 10.f + (TheBallSize == BallSize::Large ? 25 : 20)));
         
         addChild(It);
         return It;

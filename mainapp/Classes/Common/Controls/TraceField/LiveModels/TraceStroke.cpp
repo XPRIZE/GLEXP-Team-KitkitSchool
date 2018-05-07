@@ -30,7 +30,7 @@ const Rect& TraceStroke::boundingBox() const {
 }
     
 void TraceStroke::updateBoundingBox(const Rect& BB, bool IsFirstInput) {
-    BoundingBox = (IsFirstInput ? BB : BoundingBox.union_(BB));
+    BoundingBox = (IsFirstInput ? BB : BoundingBox.unionWithRect(BB));
 }
 
 

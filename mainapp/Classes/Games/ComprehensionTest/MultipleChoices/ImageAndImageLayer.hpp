@@ -1,6 +1,6 @@
 //
 //  ImageAndImageLayer.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -28,8 +28,8 @@ namespace ComprehensionTest
             CREATE_FUNC(ImageAndImageLayer);
             virtual bool init() override;
             
-            void setQuestionImage(std::string imagePath);
-            void setAnswers(std::vector<std::string> imagePaths);
+            void setQuestionImage(std::string folder, std::string imageFile);
+            void setAnswers(std::string folder, std::vector<std::string> imageFiles);
             
             MultipleChoicesScene* parentScene;
             

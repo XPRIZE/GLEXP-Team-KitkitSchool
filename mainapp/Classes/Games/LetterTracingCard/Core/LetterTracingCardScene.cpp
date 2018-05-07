@@ -10,6 +10,8 @@
 #include "../Utils/MainDepot.h"
 
 #include <Managers/LanguageManager.hpp>
+#include <Managers/StrictLogManager.h>
+#include <Common/Basic/CommentStream.h>
 #include "CCAppController.hpp"
 
 BEGIN_NS_LETTERTRACINGCARD
@@ -40,6 +42,24 @@ bool LetterTracingCardScene::init()
 
 void LetterTracingCardScene::initData()
 {
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    auto p = LanguageManager::getInstance()->findLocalizedResource("Games/" + MainDepot().assetPrefix() + "/LetterTracingCard_Levels.tsv");
+
+    string s = FileUtils::getInstance()->getStringFromFile(p);
+    CommentStream stream(s);
+    
+    _levelData.clear();
+
+    string LanguageTag, CardNumber, TraceText, FullText, Image, Voice;
+    int Level = 0;
+    while (stream >> LanguageTag >> Level >> CardNumber >> TraceText >> FullText >> Image >> Voice)
+    {
+        if (Level == _currentLevel)
+        {
+            _levelData.push_back(make_tuple(TraceText, FullText, Image, Voice));
+        }
+    }
+#else
     _levelDataEn = {
         { { make_tuple("a", "anga.png", "animals"), make_tuple("a", "5.4_foxjump.png", "ax"), make_tuple("a", "5.4_foxjump.png", "apple"), } },
         { { make_tuple("b", "5.4_foxjump.png", "bear"), make_tuple("b", "5.4_foxjump.png", "bat"), make_tuple("b", "5.4_foxjump.png", "banjo"), } },
@@ -68,7 +88,7 @@ void LetterTracingCardScene::initData()
         { { make_tuple("y", "5.4_foxjump.png", "yam"), make_tuple("y", "5.4_foxjump.png", "yellow"), make_tuple("y", "5.4_foxjump.png", "yolk"), } },
         { { make_tuple("z", "5.4_foxjump.png", "zebra"), make_tuple("z", "5.4_foxjump.png", "zipper"), make_tuple("z", "5.4_foxjump.png", "zigzag"), } },
     };
-    
+
     _levelDataSw = {
         { { make_tuple("a", "anga.png", "anga"), make_tuple("a", "5.4_foxjump.png", "adabu"), make_tuple("a", "5.4_foxjump.png", "ardhi"), } },
         { { make_tuple("b", "5.4_foxjump.png", "baba"), make_tuple("b", "5.4_foxjump.png", "boga"), make_tuple("b", "5.4_foxjump.png", "bega"), } },
@@ -85,7 +105,7 @@ void LetterTracingCardScene::initData()
         { { make_tuple("m", "5.4_foxjump.png", "maziwa"), make_tuple("m", "5.4_foxjump.png", "mpira"), make_tuple("m", "5.4_foxjump.png", "maji"), } },
         { { make_tuple("n", "5.4_foxjump.png", "neno"), make_tuple("n", "5.4_foxjump.png", "ndizi"), make_tuple("n", "5.4_foxjump.png", "nanasi"), } },
         { { make_tuple("o", "5.4_foxjump.png", "oa"), make_tuple("o", "5.4_foxjump.png", "ogelea"), make_tuple("o", "5.4_foxjump.png", "ofisi"), } },
-        { { make_tuple("p", "5.4_foxjump.png", "popo"), make_tuple("p", "5.4_foxjump.png", "pira"), make_tuple("p", "5.4_foxjump.png", "papai"), } },
+        { { make_tuple("p", "5.4_foxjump.png", "popo"), make_tuple("p", "5.4_foxjump.png", "pipa"), make_tuple("p", "5.4_foxjump.png", "papai"), } },
         { { make_tuple("r", "5.4_foxjump.png", "rafiki"), make_tuple("r", "5.4_foxjump.png", "redio"), make_tuple("r", "5.4_foxjump.png", "rangi"), } },
         { { make_tuple("s", "5.4_foxjump.png", "samaki"), make_tuple("s", "5.4_foxjump.png", "sabuni"), make_tuple("s", "5.4_foxjump.png", "sikio"), } },
         { { make_tuple("t", "5.4_foxjump.png", "takataka"), make_tuple("t", "5.4_foxjump.png", "tausi"), make_tuple("t", "5.4_foxjump.png", "tembo"), } },
@@ -102,10 +122,10 @@ void LetterTracingCardScene::initData()
         { { make_tuple("gh", "5.4_foxjump.png", "ghala"), make_tuple("gh", "5.4_foxjump.png", "gharika"), } }, //make_tuple("gh", "5.4_foxjump.png", "gharama"), } },
         { { make_tuple("dh", "5.4_foxjump.png", "dhau"), make_tuple("dh", "5.4_foxjump.png", "dhifa"), } }, // make_tuple("dh", "5.4_foxjump.png", "dhahabu"), } },
     };
-    
+#endif
     
 }
-
+#ifndef IMPORT_TSV_FILE_LETTER_TRACING_CARD
 std::vector<std::vector<std::vector<std::tuple<string, string, string>>>> LetterTracingCardScene::getLevelData()
 {
     if (LanguageManager::getInstance()->isEnglish())
@@ -117,6 +137,7 @@ std::vector<std::vector<std::vector<std::tuple<string, string, string>>>> Letter
         return _levelDataSw;
     }
 }
+#endif
 
 void LetterTracingCardScene::initUI()
 {
@@ -167,28 +188,65 @@ void LetterTracingCardScene::initProblem()
 
     // (s)temp
     _currentProblem = new Problem();
+
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    _currentProblem->characters = std::get<0>(_levelData[0]);
+    _currentProblem->word = std::get<1>(_levelData[0]);
+    _currentProblem->imageName = std::get<2>(_levelData[0]);
+    _currentProblem->audioName = std::get<3>(_levelData[0]);
+#else
     _currentProblem->characters = std::get<0>(getLevelData()[_currentLevel - 1][_currentProblemIndex][0]);
     _currentProblem->imageName = std::get<1>(getLevelData()[_currentLevel- 1][_currentProblemIndex][0]);
     _currentProblem->word = std::get<2>(getLevelData()[_currentLevel- 1][_currentProblemIndex][0]);
+#endif
+    
     card->drawCardWithProblem(_currentProblem);
     
     // (e)temp
-    
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    int currentProblemSize = (int)_levelData.size();
+#else
     int currentProblemSize = getLevelData()[_currentLevel - 1][_currentProblemIndex].size();
+#endif
+
     Size cardSize = card->getContentSize();
     auto rootNode = Node::create();
     rootNode->setContentSize(Size(cardSize.width * currentProblemSize, cardSize.height));
     for (int i = 0; i < currentProblemSize; i++)
     {
         _currentProblem = new Problem();
+        
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+        _currentProblem->characters = std::get<0>(_levelData[i]);
+        _currentProblem->word = std::get<1>(_levelData[i]);
+        _currentProblem->imageName = std::get<2>(_levelData[i]);
+        _currentProblem->audioName = std::get<3>(_levelData[i]);
+#else
         _currentProblem->characters = std::get<0>(getLevelData()[_currentLevel - 1][_currentProblemIndex][i]);
         _currentProblem->imageName = std::get<1>(getLevelData()[_currentLevel - 1][_currentProblemIndex][i]);
         _currentProblem->word = std::get<2>(getLevelData()[_currentLevel - 1][_currentProblemIndex][i]);
+#endif
+        // NB(xenosoz, 2018): Log for future analysis
+        auto makeWorkPath = [this] {
+            // NB(xenosoz, 2018): _currentProblemIndex is dynamic. That's why I made this as a function.
+            stringstream SS;
+            SS << "/" << "LetterTracingCard";
+            SS << "/" << "level-" << _currentLevel;
+            SS << "/" << "work-" << _currentProblemIndex;
+            return SS.str();
+        };
         
         auto card = Card::create();
         card->drawCardWithProblem(_currentProblem);
         _cardVector.push_back(card);
-        card->onComplete = [this]() {
+        card->onEditing = [this, makeWorkPath]() {
+            StrictLogManager::shared()->game_Peek_Answer("LetterTracingCard", makeWorkPath(),
+                                                         "work-middle", "work-end");
+        };
+        card->onComplete = [this, makeWorkPath]() {
+            StrictLogManager::shared()->game_Peek_Answer("LetterTracingCard", makeWorkPath(),
+                                                         "work-end", "work-end");
+
             for (auto c : _cardVector)
             {
                 c->traceWord->Enabled.update(true);
@@ -224,7 +282,11 @@ void LetterTracingCardScene::handleSuccess()
 {
 //    TheProgressBar->setCurrent(_currentProblemIndex + 1, true);
     
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    if (_currentProblemIndex + 1 < 1)
+#else
     if (_currentProblemIndex + 1 < getLevelData()[_currentLevel - 1].size())
+#endif
     {
         _currentProblemIndex++;
         this->runAction(Sequence::create(DelayTime::create(0.5f), CallFunc::create([this]() {
@@ -275,5 +337,29 @@ void LetterTracingCardScene::setCurrentLevel(int level)
 {
     _currentLevel = level;
 }
+
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+std::vector<int> LetterTracingCardScene::getLevelIDs()
+{
+    std::vector<int> result;
+    
+    auto p = LanguageManager::getInstance()->findLocalizedResource("Games/" + MainDepot().assetPrefix() + "/LetterTracingCard_Levels.tsv");
+    
+    string s = FileUtils::getInstance()->getStringFromFile(p);
+    CommentStream stream(s);
+    
+    string LanguageTag, CardNumber, TraceText, FullText, Image, Voice;
+    int Level = 0;
+    while (stream >> LanguageTag >> Level >> CardNumber >> TraceText >> FullText >> Image >> Voice)
+    {
+        if(std::find(result.begin(), result.end(), Level) == result.end())
+        {
+            result.push_back(Level);
+        }
+    }
+    
+    return result;
+}
+#endif
 
 END_NS_LETTERTRACINGCARD

@@ -1,6 +1,6 @@
 //
 //  GameSelectScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 09/12/17.
 //
@@ -14,9 +14,6 @@
 #include "CustomDirector.h"
 
 #include "GameSelectScene.hpp"
-#include "CoopScene.hpp"
-#include "DailyScene.hpp"
-
 
 #include "GradeSelector.hpp"
 
@@ -30,7 +27,6 @@
 #include "Managers/GameSoundManager.h"
 #include "Managers/StrictLogManager.h"
 
-#include "DailyData.hpp"
 
 
 #include "Common/Effects/FireworksEffect.hpp"
@@ -107,25 +103,13 @@ void GameSelectScene::clearGameButton()
 
 void GameSelectScene::addDebugGameButton(Node *parent, std::string gameName, Vector<ui::Button*>& iconVector)
 {
-    /*
-    std::string iconFilename = StringUtils::format("icons/main_gameicon_%s.png",gameName.c_str());
 
-    bool noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
-    if (noIcon) {
-        iconFilename = "icons/main_gameicon_frame_shadow.png";
-    }
-    */
-    
     std::string iconFilename = StringUtils::format("icons/game_icon_%s.png", gameName.c_str());
     
     
     bool noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
     if (noIcon) {
-        iconFilename = StringUtils::format("icons/main_gameicon_%s.png", gameName.c_str());
-        noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
-        if (noIcon) {
-            iconFilename = "icons/main_gameicon_frame_shadow.png";
-        }
+        iconFilename = "icons/main_gameicon_frame_shadow.png";
     }
     
     auto btn = ui::Button::create(iconFilename);
@@ -165,20 +149,13 @@ void GameSelectScene::addDebugGameButton(Node *parent, std::string gameName, Vec
         }
         
     });
-/*
-    Sprite* btnShadow = Sprite::create("icons/main_gameicon_frame_shadow.png");
-    btnShadow->setPosition(btn->getContentSize()/2.f);
-    btn->addChild(btnShadow,-1);
-    Sprite* btnFrame = Sprite::create("icons/main_gameicon_frame.png");
-    btnFrame->setPosition(btn->getContentSize()/2.f);
-    btn->addChild(btnFrame);
-    */
+
     
     Sprite* btnShadow = Sprite::create("icons/game_icon_frame_shadow.png");
     btnShadow->setPosition(btn->getContentSize()/2.f);
     btn->addChild(btnShadow,-1);
     Sprite* btnFrame = Sprite::create("icons/game_icon_frame.png");
-    if (gameName=="EggQuiz") {
+    if (gameName=="EggQuizLiteracy" || gameName=="EggQuizMath") {
         btnFrame = Sprite::create("icons/game_icon_frame_EggQuiz.png");
     }
     btnFrame->setPosition(btn->getContentSize()/2.f);
@@ -192,12 +169,6 @@ void GameSelectScene::addDebugGameButton(Node *parent, std::string gameName, Vec
     cover->setVisible(false);
     btn->addChild(cover);
     
-
- 
-    
-
-    
-    
     parent->addChild(btn);
     iconVector.pushBack(btn);
 }
@@ -208,6 +179,7 @@ void GameSelectScene::addAllDebugGameButtons(char category, Vector<ui::Button*>&
     clearGameButton();
     
     if (category=='M') {
+        addDebugGameButton(_rootNode, "EggQuizMath", iconVector);
         addDebugGameButton(_rootNode, "NumberTracing", iconVector);
         addDebugGameButton(_rootNode, "NumberTracingExt", iconVector);
         addDebugGameButton(_rootNode, "NumberPuzzle", iconVector);
@@ -222,17 +194,19 @@ void GameSelectScene::addAllDebugGameButtons(char category, Vector<ui::Button*>&
         addDebugGameButton(_rootNode, "TutorialTrace", iconVector);
         addDebugGameButton(_rootNode, "HundredPuzzle", iconVector);
         addDebugGameButton(_rootNode, "NumberTrain", iconVector);
-        addDebugGameButton(_rootNode, "SoundTrain", iconVector);
         addDebugGameButton(_rootNode, "PatternTrain", iconVector);
         addDebugGameButton(_rootNode, "AnimalPuzzle", iconVector);
+        addDebugGameButton(_rootNode, "ThirtyPuzzle", iconVector);
+        addDebugGameButton(_rootNode, "FeedingTime", iconVector);
+        addDebugGameButton(_rootNode, "MangoShop", iconVector);
+        addDebugGameButton(_rootNode, "MissingNumber", iconVector);
 
-        
-       
     } else if (category=='L') {
+        addDebugGameButton(_rootNode, "EggQuizLiteracy", iconVector);
         addDebugGameButton(_rootNode, "Book", iconVector);
         addDebugGameButton(_rootNode, "AlphabetPuzzle", iconVector);
         addDebugGameButton(_rootNode, "WordMachine", iconVector);
-        addDebugGameButton(_rootNode, "LetterTracing", iconVector);
+        addDebugGameButton(_rootNode, "LetterTrace", iconVector);
         addDebugGameButton(_rootNode, "LetterTracingCard", iconVector);
         addDebugGameButton(_rootNode, "WordTracing", iconVector);
         addDebugGameButton(_rootNode, "Comprehension", iconVector);
@@ -243,12 +217,13 @@ void GameSelectScene::addAllDebugGameButtons(char category, Vector<ui::Button*>&
         addDebugGameButton(_rootNode, "AnimalPuzzle", iconVector);
     //    addDebugGameButton(_rootNode, "CompMatching", iconVector);
         addDebugGameButton(_rootNode, "SentenceMaker", iconVector);
-        addDebugGameButton(_rootNode, "EggQuiz", iconVector);
         addDebugGameButton(_rootNode, "BirdPhonics", iconVector);
         addDebugGameButton(_rootNode, "ShapeMatching", iconVector);
-
-        
-
+        addDebugGameButton(_rootNode, "SoundTrain", iconVector);
+        addDebugGameButton(_rootNode, "WordNote", iconVector);
+        addDebugGameButton(_rootNode, "WhatIsThis", iconVector);
+        addDebugGameButton(_rootNode, "ReadingBird", iconVector);
+        addDebugGameButton(_rootNode, "LineMatching", iconVector);
     }
     
     
@@ -263,16 +238,37 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     auto dayCur = cur->getDayCurriculum(day);
     auto gameInfo = dayCur->games.at(gameIndex);
     
-    std::string iconFilename = StringUtils::format("icons/game_icon_%s.png",gameInfo.gameName.c_str());
+    auto gameName = gameInfo.gameName;
+    auto gameParameter = gameInfo.gameParameter;
+
+    if (gameName == "EggQuizMath" || gameName == "EggQuizLiteracy") {
+        if (gameParameter.find("MiniTest") != string::npos) {
+            gameName = "EggQuiz_MiddleTest";
+        }
+    }
     
+    std::string iconFilename = StringUtils::format("icons/game_icon_%s.png",gameName.c_str());
+    
+    
+    if (gameName == "Video") {
+        string videoName = gameParameter;
+        size_t lastindex = gameParameter.find_last_of(".");
+        if (lastindex != string::npos) {
+            videoName = gameParameter.substr(0, lastindex);
+        }
+            
+        
+        std::string videoIcon = StringUtils::format("icons/%s.png",videoName.c_str());
+        if (FileUtils::getInstance()->isFileExist(videoIcon)) {
+            iconFilename = videoIcon;
+        }
+        
+    }
+
     
     bool noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
     if (noIcon) {
-        iconFilename = StringUtils::format("icons/main_gameicon_%s.png",gameInfo.gameName.c_str());
-        noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
-        if (noIcon) {
-            iconFilename = "icons/main_gameicon_frame_shadow.png";
-        }
+        iconFilename = "icons/main_gameicon_frame_shadow.png";
     }
     auto btn = ui::Button::create(iconFilename);
     
@@ -284,44 +280,50 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
         
     }
     
-    btn->addTouchEventListener([levelID, day, gameIndex, this](Ref *pSender, ui::Widget::TouchEventType eEventType) {
-        if (_transitionBegins) {
-            return;
-        }
-        if (!_backButton->isTouchEnabled()) return;
-        
-        auto btn = (ui::Button*)pSender;
-        auto cover = btn->getChildByName("gameIconCover");
-        switch (eEventType) {
-            case ui::Widget::TouchEventType::BEGAN:
-                cover->setVisible(true);
-                break;
-            case ui::Widget::TouchEventType::MOVED:
-                cover->setVisible(btn->isHighlighted());
-                break;
-
-            case ui::Widget::TouchEventType::ENDED:
-                StrictLogManager::shared()->dailyGameChoice_ChooseDailyGame(levelID, day, gameIndex);
-                
-                cover->setVisible(false);
-                _transitionBegins = true;
-                SoundEffect::buttonEffect().play();
-                CCAppController::sharedAppController()->startCurriculumGame(levelID, day, gameIndex);
-                break;
-                
-            default:
-                break;
-        }
-        
-    });
+    bool dayCleared = UserManager::getInstance()->isDayCleared(levelID, day);
+    bool gameCleared = UserManager::getInstance()->isGameCleared(levelID, day, gameIndex);
+    bool isAvailable = dayCleared || !gameCleared;
     
+    
+    if (isAvailable) {
+        btn->addTouchEventListener([levelID, day, gameIndex, this](Ref *pSender, ui::Widget::TouchEventType eEventType) {
+            if (_transitionBegins) {
+                return;
+            }
+            if (!_backButton->isTouchEnabled()) return;
+            
+            auto btn = (ui::Button*)pSender;
+            auto cover = btn->getChildByName("gameIconCover");
+            switch (eEventType) {
+                case ui::Widget::TouchEventType::BEGAN:
+                    cover->setVisible(true);
+                    break;
+                case ui::Widget::TouchEventType::MOVED:
+                    cover->setVisible(btn->isHighlighted());
+                    break;
+
+                case ui::Widget::TouchEventType::ENDED:
+                    StrictLogManager::shared()->dailyGameChoice_ChooseDailyGame(levelID, day, gameIndex);
+                    
+                    cover->setVisible(false);
+                    _transitionBegins = true;
+                    SoundEffect::buttonEffect().play();
+                    CCAppController::sharedAppController()->startCurriculumGame(levelID, day, gameIndex);
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+        });
+    }
 
     
     Sprite* btnShadow = Sprite::create("icons/game_icon_frame_shadow.png");
     btnShadow->setPosition(btn->getContentSize()/2.f);
     btn->addChild(btnShadow,-1);
     Sprite* btnFrame = Sprite::create("icons/game_icon_frame.png");
-    if (gameInfo.gameName=="EggQuiz") {
+    if (gameInfo.gameName=="EggQuizLiteracy" || gameInfo.gameName=="EggQuizMath") {
         btnFrame = Sprite::create("icons/game_icon_frame_EggQuiz.png");
     }
     btnFrame->setPosition(btn->getContentSize()/2.f);
@@ -337,7 +339,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     btn->addChild(cover);
     
     
-    if (gameInfo.gameName!="EggQuiz" && gameInfo.gameName!="Book" && gameInfo.gameName!="Comprehension" && gameInfo.gameName!="Video") {
+    if (gameInfo.gameName!="EggQuizLiteracy" && gameInfo.gameName!="EggQuizMath" && gameInfo.gameName!="Book" && gameInfo.gameName!="Comprehension" && gameInfo.gameName!="Video") {
         
         Sprite* levelBG = Sprite::create("icons/game_level_circle.png");
         levelBG->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
@@ -353,7 +355,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
         }
         levelNumber->setPosition(levelBG->getContentSize()/2.f);
         levelBG->addChild(levelNumber);
-        levelBG->setVisible(!UserManager::getInstance()->isGameCleared(levelID, day, gameIndex));
+        levelBG->setVisible(!gameCleared);
         
         {
             Sprite* levelBG = Sprite::create("icons/game_level_circle.png");
@@ -366,27 +368,24 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
         
     }
     
-    
-    /*
-    Sprite* cover = Sprite::create("icons/main_gameicon_activated.png");
-    cover->setPosition(btn->getContentSize()/2.f);
-    cover->setName("gameIconCover");
-    cover->setVisible(false);
-    btn->addChild(cover);
-    */
-    
-    
-    
-    
-    
+
     
     Sprite* complete = Sprite::create("icons/game_icon_frame_completed.png");
     complete->setPosition(btn->getContentSize()/2.f);
     complete->setName("gameCompleteCover");
-    complete->setVisible(UserManager::getInstance()->isGameCleared(levelID, day, gameIndex));
+    complete->setVisible(gameCleared);
     btn->addChild(complete);
     
+    Sprite* coin = Sprite::create("icons/game_icon_frame_completed_coin.png");
+    coin->setPosition(btn->getContentSize()/2.f);
+    coin->setName("gameCoinCover");
+    coin->setVisible(gameCleared && !dayCleared && !dayCur->isEggQuiz);
+    btn->addChild(coin);
+
+    if (UserManager::getInstance()->getPretestProgressType(levelID) == PretestProgressType::pass)     coin->setVisible(false);
+    
     parent->addChild(btn);
+    
     iconVector.pushBack(btn);
 }
 
@@ -423,6 +422,9 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
                         break;
                     }
                 }
+                if (dayCur->isEggQuiz && !dayCur->isMiniQuiz) {
+                    UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                }
                 addDayGameButtons(levelID, day, gameIcons);
                 
                 checkDayClear();
@@ -439,7 +441,12 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
             if (dayCur) {
                 for (int i=0; i<dayCur->numGames; i++) {
                     UserManager::getInstance()->setGameCleared(levelID, day, i);
+
                 }
+                if (dayCur->isEggQuiz && !dayCur->isMiniQuiz) {
+                    UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                }
+
                 addDayGameButtons(levelID, day, gameIcons);
                 
                 checkDayClear();
@@ -457,11 +464,15 @@ void GameSelectScene::layoutGameButton(Node *parent, Vector<ui::Button*>& iconVe
     auto numIcon = iconVector.size();
     float step = parent->getContentSize().width / (numIcon+1);
     
-    float y = UserManager::getInstance()->isGameTestingMode() ? 180 : 150;
-    
     for (int i=0; i<numIcon; i++) {
         auto btn = iconVector.at(i);
-        btn->setPosition(Vec2(step*(i+1), y));
+        if (UserManager::getInstance()->isGameTestingMode()) {
+            btn->setPosition(Vec2(step*(i+1), 180+(i%2)*250));
+
+        } else {
+            btn->setPosition(Vec2(step*(i+1), 150));
+
+        }
     }
 }
 
@@ -476,7 +487,8 @@ bool GameSelectScene::init()
     
     {
         auto levelID = UserManager::getInstance()->getCurrentLevelID();
-        auto day = UserManager::getInstance()->getCurrentDay(levelID);
+        //auto day = UserManager::getInstance()->getCurrentDay(levelID);
+        auto day = UserManager::getInstance()->getPlayingDay();
         StrictLogManager::shared()->dailyGameChoice_Begin(levelID, day);
     }
 
@@ -647,6 +659,8 @@ bool GameSelectScene::init()
     _backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     _backButton->setPosition(Vec2(25, winSize.height-25));
     _backButton->onBack = [this] {
+        this->stopAllActions();
+        GameSoundManager::getInstance()->stopBGM();
         StrictLogManager::shared()->dailyGameChoice_End_Quit(_levelID, _day);
     };
     addChild(_backButton);
@@ -746,7 +760,12 @@ void GameSelectScene::onEnter()
         
         Bird* bird = Bird::create(cur->category, cur->categoryLevel, cur->levelID);
         
-        bird->setStatus(Bird::BirdStatus::EGG_HATCHED);
+        if (UserManager::getInstance()->getPretestProgressType(levelID) == PretestProgressType::required) {
+            bird->setStatus(Bird::BirdStatus::EGG);
+        } else {
+            bird->setStatus(Bird::BirdStatus::EGG_HATCHED);
+        }
+
         
         bird->onTouchBegan = [bird](){
             bird->runTouchAnimation();
@@ -763,16 +782,11 @@ void GameSelectScene::onEnter()
             auto shadowScale = bird->getBoundingBox().size.width / _birdShadow->getContentSize().width;
             _birdShadow->setScale(shadowScale);
             
-            _day = UserManager::getInstance()->getCurrentDay(levelID);
+            //_day = UserManager::getInstance()->getCurrentDay(levelID);
+            _day = UserManager::getInstance()->getPlayingDay();
             if (_day>cur->days.size()) _day = cur->days.size();
             
-            /*
-            if (day==0 && !__firstEnter) {
-             
-                showDailyScene(levelID);
-                
-            } else
-             */
+            
             if (_day>0) {
     
                 addDayGameButtons(levelID, _day, gameIcons);
@@ -911,9 +925,14 @@ void GameSelectScene::checkDayClear()
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     if (!cur) return;
     
-    auto day = UserManager::getInstance()->getCurrentDay(levelID);
+    //auto day = UserManager::getInstance()->getCurrentDay(levelID);
+    auto day = UserManager::getInstance()->getPlayingDay();
     auto dayCurr = cur->getDayCurriculum(day);
     if (!dayCurr) return;
+    
+    auto pretestProgressType = UserManager::getInstance()->getPretestProgressType(levelID);
+    bool birdActionFlag = (pretestProgressType != PretestProgressType::pass && pretestProgressType != PretestProgressType::fail) ? true : false;
+    if (!birdActionFlag) _bird->setStatus(Bird::BirdStatus::EGG);
     
     if (!UserManager::getInstance()->isDayCleared(levelID, day)) {
         int numClearedGame = 0;
@@ -926,45 +945,60 @@ void GameSelectScene::checkDayClear()
             
             _backButton->setTouchEnabled(false);
             
-            
             GameSoundManager::getInstance()->stopBGM();
             
             UserManager::getInstance()->setDayCleared(levelID, day);
             
             int reward = dayCurr->numGames;
-            if (dayCurr->dayOrder == cur->numDays) reward = 10;
+            if (dayCurr->isEggQuiz) reward = 10;
+            if (dayCurr->isMiniQuiz) reward = 8;
+            
+            if (UserManager::getInstance()->getPretestProgressType(levelID) == PretestProgressType::pass) {
+                if (cur->categoryLevel == 1) reward = 100;
+                if (cur->categoryLevel == 2) reward = 200;
+            }
             
             auto stars = UserManager::getInstance()->getStars();
             UserManager::getInstance()->updateStars(stars+reward);
             
-            
             SoundEffect::birdJumpEffect().preload();
             SoundEffect::birdGrowEffect().preload();
             
-            auto seq = Sequence::create(DelayTime::create(1.0),
-                                        CallFunc::create([](){ SoundEffect::birdJumpEffect().play();}),
-                                        EaseOut::create(MoveBy::create(0.3, Vec2(0, 30)), 2.0),
-                                        EaseIn::create(MoveBy::create(0.3, Vec2(0, -30)), 2.0),
-                                        CallFunc::create([](){ SoundEffect::birdJumpEffect().play();}),
-                                        EaseOut::create(MoveBy::create(0.3, Vec2(0, 30)), 2.0),
-                                        EaseIn::create(MoveBy::create(0.3, Vec2(0, -30)), 2.0),
-                CallFunc::create([this, reward](){
-                _bird->runTouchAnimation();
-                SoundEffect::birdJumpEffect().play();
+            auto seq = Sequence::create(
+                CallFunc::create([this, birdActionFlag](){
+                    if (birdActionFlag) _bird->loadAnimation();
+                }),
+                DelayTime::create(1.0),
+                CallFunc::create([](){ SoundEffect::birdJumpEffect().play();}),
+                EaseOut::create(MoveBy::create(0.3, Vec2(0, 30)), 2.0),
+                EaseIn::create(MoveBy::create(0.3, Vec2(0, -30)), 2.0),
+                CallFunc::create([](){ SoundEffect::birdJumpEffect().play();}),
+                EaseOut::create(MoveBy::create(0.3, Vec2(0, 30)), 2.0),
+                EaseIn::create(MoveBy::create(0.3, Vec2(0, -30)), 2.0),
+                CallFunc::create([this, birdActionFlag, reward, dayCurr](){
+                    if (birdActionFlag) _bird->runTouchAnimation();
+                    SoundEffect::birdJumpEffect().play();
                 
-                auto birdPos = _bird->getPosition() + Vec2(0, 300);
-                auto birdParent = _bird->getParent();
+                    auto birdPos = _bird->getPosition() + Vec2(0, 300);
+                    auto birdParent = _bird->getParent();
                 
-                _coinTab->addCoin(reward, birdParent->convertToWorldSpace(birdPos));
+                    for (auto icon : gameIcons) {
+                        icon->getChildByName("gameCoinCover")->setVisible(false);
+                    }
                 
-               
-            }), EaseOut::create(MoveBy::create(1.6, Vec2(0, 150)), 2.0),
-                CallFunc::create([this, levelID](){
+                _coinTab->addCoin(reward, birdParent->convertToWorldSpace(birdPos), dayCurr->isEggQuiz?false:true);
                 
+                }), nullptr
+            );
+            
+			auto seq2 = Sequence::create(EaseOut::create(MoveBy::create(1.6, Vec2(0, 150)), 2.0),
+                CallFunc::create([this, birdActionFlag, levelID](){
                 
-                _bird->loadAnimation();
-                _bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(levelID));
-                _bird->runTouchAnimation();
+                if (birdActionFlag) {
+                    _bird->setBirdProgress(UserManager::getInstance()->ratioDayCleared(levelID));
+                    _bird->runTouchAnimation();
+                }
+                
                 SoundEffect::birdGrowEffect().play();
                 
                 auto shadowScale = _bird->getBoundingBox().size.width / _birdShadow->getContentSize().width;
@@ -979,22 +1013,27 @@ void GameSelectScene::checkDayClear()
                 _backButton->setTouchEnabled(true);
                 
                 ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
-// 
-//                auto d = DailyScene::create(this, levelID);
-//                d->showClear(day);
-//                d->onSelectDay = [this, d](int day) {
-//                    d->dismiss();
-//                    UserManager::getInstance()->setCurrentDay(day);
-//                    this->onEnter();
-//                };
-                
                 
             }), nullptr);
             
-            _bird->runAction(seq);
+            _bird->runAction(Sequence::create(seq, seq2, nullptr));
             
 
             
+        } else {
+            
+            if (UserManager::getInstance()->getPretestProgressType(levelID) == PretestProgressType::fail) {
+                
+                UserManager::getInstance()->setCurrentDay(levelID, 1);
+                UserManager::getInstance()->setPlayingDay(1);
+                
+                runAction(Sequence::create(DelayTime::create(1.f),
+                    CallFunc::create([this](){
+                        _backButton->setTouchEnabled(true);
+                        ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
+                    }),
+                nullptr));
+            }
         }
     }
 }
@@ -1004,10 +1043,11 @@ void GameSelectScene::spawnGameEggs(float delay)
 {
 
     SoundEffect::iconSpawnEffect().preload();
+    GameSoundManager::getInstance()->playBGM("Common/Music/BGM1_TitleScreen_intro.m4a");
     this->runAction(Sequence::create(DelayTime::create(1.0+delay),
                                      CallFunc::create([](){SoundEffect::iconSpawnEffect().play(); }),
                                      DelayTime::create(1.5),
-                                     CallFunc::create([](){GameSoundManager::getInstance()->playBGM("Common/Music/BGM1_TitleScreen_intro.m4a");}),
+                                     //CallFunc::create([](){}),
                                      nullptr));
     
     for (auto icon : gameIcons) {

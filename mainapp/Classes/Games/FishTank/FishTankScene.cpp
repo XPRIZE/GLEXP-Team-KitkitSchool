@@ -8,6 +8,7 @@
 
 #include "FishTankScene.h"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Common/Controls/CompletePopup.hpp"
@@ -1373,9 +1374,9 @@ bool FishTankScene::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event)
 void FishTankScene::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
 {
     if (m_selectedFish) {
-        m_selectedFish->m_node->setPosition(m_selectedFish->m_node->getPosition() + touch->getDelta());
+        m_selectedFish->m_node->setPosition(m_selectedFish->m_node->getPosition() + touch->getDelta() / 2.5f);
     }else if(m_selectedCard){
-        m_selectedCard->m_spriteCardLarge->setPosition(m_selectedCard->m_spriteCardLarge->getPosition() + touch->getDelta());
+        m_selectedCard->m_spriteCardLarge->setPosition(m_selectedCard->m_spriteCardLarge->getPosition() + touch->getDelta() / 2.5f);
         // 현재 선택된 카드가 들어갈 슬롯
         for (int i=0; i<m_vecSlotObject.size(); i++) {
             FishTankSlotObject *slotObject = m_vecSlotObject.at(i);
@@ -1389,7 +1390,26 @@ void FishTankScene::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
                         this->checkSlotChar(m_selectedCard->m_Answer);
                     }
                     
+                    // NB(xenosoz, 2018): Log for future analysis (#1/2)
+                    auto workPath = [this] {
+                        stringstream ss;
+                        ss << "/" << "FishTank";
+                        ss << "/" << "level-" << m_currentLevel;
+                        ss << "/" << "work-" << m_currentStage;
+                        return ss.str();
+                    }();
                     
+                    auto wrapStr = [](const string& s) {
+                        stringstream ss;
+                        ss << "'" << s << "'";
+                        return ss.str();
+                    };
+                    
+                    StrictLogManager::shared()->game_Peek_Answer("FishTank", workPath,
+                                                                 wrapStr(m_selectedCard->m_Answer),
+                                                                 wrapStr(m_selectedCard->m_Answer));
+
+                    //
                     GameSoundManager::getInstance()->playEffectSound(this->getSoundName(K_SOUND_CARD_SLOT_IN));
                     slotObject->m_isAnswered = true;
                     m_selectedCard->m_mySlot = slotObject;
@@ -1452,6 +1472,25 @@ void FishTankScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
         m_selectedFish = NULL;
     }else{
         if (m_selectedCard) {
+            // NB(xenosoz, 2018): Log for future analysis (#2/2)
+            auto workPath = [this] {
+                stringstream ss;
+                ss << "/" << "FishTank";
+                ss << "/" << "level-" << m_currentLevel;
+                ss << "/" << "work-" << m_currentStage;
+                return ss.str();
+            }();
+            
+            auto wrapStr = [](const string& s) {
+                stringstream ss;
+                ss << "'" << s << "'";
+                return ss.str();
+            };
+            
+            StrictLogManager::shared()->game_Peek_Answer("FishTank", workPath,
+                                                         wrapStr(m_selectedCard->m_Answer),
+                                                         "None");
+
             GameSoundManager::getInstance()->playEffectSound(this->getSoundName(K_SOUND_CARD_MISS));
             // 잘못된 slot이면 오류 처리
             for (int i=0; i<m_vecSlotObject.size(); i++) {

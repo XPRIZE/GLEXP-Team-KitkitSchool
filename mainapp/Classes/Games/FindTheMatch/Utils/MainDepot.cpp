@@ -9,11 +9,15 @@
 
 #include "MainDepot.h"
 #include "MainNS.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 #include <string>
 
 BEGIN_NS_FINDTHEMATCH
 
+
+std::string MainDepot::gameName() const {
+    return "FindTheMatch";
+}
 
 std::string MainDepot::assetPrefix() const {
     return "FindTheMatch";

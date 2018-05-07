@@ -1,6 +1,6 @@
 //
 //  MainScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/20/16.
 //
@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "ui/UIButton.h"
+#include <string>
 
 USING_NS_CC;
 
@@ -37,13 +38,10 @@ public:
     
 private:
     
-    void zoomCoop();
-
-    
-    
-
-
-    
+    void zoomCoop(Node *coop);
+    void confirmDebug();
+    void manageCache();
+    void playLogoFall(float dt);
     
     Vector<Sprite*> clouds;
     
@@ -58,13 +56,15 @@ private:
     Node *_skyNode;
     Node *_groundNode;
     Node *_leavesLeft, *_leavesRight;
+    std::string _debugCommand;
+    
 
     
     ui::Button *_quitButton;
     
     
     
-    Node *_coopNode;
+    Node *_coop1Node, *_coop2Node;
     
     Node *_debugView;
     

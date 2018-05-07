@@ -1,6 +1,6 @@
 //
 //  Bird.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/23/16.
 //
@@ -19,21 +19,11 @@ USING_NS_CC;
 
 class Bird : public Node {
 public:
-    enum BirdType {
-        BIRD_L0 = 1,
-        BIRD_M0,
-        BIRD_L1,
-        BIRD_L2,
-        BIRD_L3,
-        BIRD_L4,
-        BIRD_L5,
-        BIRD_M1,
-        BIRD_M2,
-        BIRD_M3,
-        BIRD_M4,
-        BIRD_M5,
-        BIRD_MAX
-    };
+    
+    static int getBirdID(char category, int level);
+    static Vec2 getBirdAnchor(int id);
+    
+    
     
     enum BirdStatus {
         EGG = 0,
@@ -56,9 +46,9 @@ public:
     
     void loadAnimation();
     
-    void setupAnim(std::string animFilePrefix, int birdIndex, int numSheets, int numAni1Frames, int numAni2Frames, int numAniTouchFrames, float fps, float scale);
+    void setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frames, int numAni2Frames, int numAniTouchFrames, float fps, float scale);
     
-    BirdType getType() { return _type; }
+    int getBirdID() { return _birdID; }
     char getCategory() { return _category; }
     int getCategoryLevel() { return _categoryLevel; }
     std::string getLevelID() { return _levelID; }
@@ -81,7 +71,7 @@ protected:
     
     std::string _loadedAnimationSub;
     
-    BirdType _type;
+    int _birdID;
     BirdStatus _status;
     float _scale;
     float _progressScale;

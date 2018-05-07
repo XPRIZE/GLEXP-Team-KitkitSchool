@@ -1,6 +1,6 @@
 //
 //  ProblemData.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 09/12/2016.
 //
@@ -21,15 +21,15 @@ namespace ComprehensionTest
             
             ProblemData* result = new ProblemData();
             
-            result->questionText = rawData[1];
+            //result->questionText = rawData[1];
             
-            result->leftType = rawData[2];
-            result->rightType = rawData[3];
+//            result->leftType = rawData[2];
+//            result->rightType = rawData[3];
             
             result->leftValue.clear();
             
             index = 1;
-            for (auto eachValue : TodoUtil::splitCSV(rawData[4]))
+            for (auto eachValue : TodoUtil::splitCSV(rawData[1]))
             {
                 result->leftValue.push_back(std::pair<int, std::string>(index++, TodoUtil::trim(eachValue)));
             }
@@ -37,11 +37,24 @@ namespace ComprehensionTest
             
             index = 1;
             result->rightValue.clear();
-            for (auto eachValue : TodoUtil::splitCSV(rawData[5]))
+            for (auto eachValue : TodoUtil::splitCSV(rawData[2]))
             {
                 result->rightValue.push_back(std::pair<int, std::string>(index++, TodoUtil::trim(eachValue)));
             }
-         
+            
+            {
+                auto value = result->leftValue[0].second;
+                auto isImage = (value.find(".png") != std::string::npos) || (value.find(".jpg") != std::string::npos);
+                result->leftType = (isImage) ? "image" : "text";
+            }
+            
+            {
+                auto value = result->rightValue[0].second;
+                auto isImage = (value.find(".png") != std::string::npos) || (value.find(".jpg") != std::string::npos);
+                result->rightType = (isImage) ? "image" : "text";
+            }
+            
+          
             if (result->leftValue.size() != result->rightValue.size()) {
                 NativeAlert::show("Error in Comp Matching problem", "left/right does not match - " + TodoUtil::itos(result->leftValue.size()) + "!=" + TodoUtil::itos(result->rightValue.size()) + " ["+rawData[4]+"] - ["+rawData[5]+"]", "OK");
               

@@ -33,6 +33,10 @@ namespace BookViewSpace {
 using namespace BookViewSpace;
 
 bool BookView::_libraryMode = false;
+static std::string _currentBook;
+std::string BookView::_languageCode = "en";
+
+
 
 BookView* BookView::create(const cocos2d::Size &size, std::string &bookPath)
 {
@@ -51,13 +55,13 @@ BookView* BookView::create(const cocos2d::Size &size, std::string &bookPath)
 bool BookView::init(const Size &size, std::string &bookPath)
 {
     if (!Node::init()) return false;
-    
-    
+
     GameSoundManager::getInstance()->stopAllEffects();
     GameSoundManager::getInstance()->unloadAllEffect();
     
     _buttonEnabled = false;
-    
+    _soundSetting = true;
+
     // for memory release
     Director::getInstance()->getTextureCache()->removeUnusedTextures();
 
@@ -82,10 +86,93 @@ bool BookView::init(const Size &size, std::string &bookPath)
     _bgView->setScale(bgScale);
     _bgView->setPosition(size/2);
     addChild(_bgView);
-    
 
-   
-    
+    if (_libraryMode && _book->bookType == TDBookType::WithAudio && (_bookLayout == TDBookLayout::Portrait || _bookLayout == TDBookLayout::Portrait_Traditional)) {
+        
+        _soundView = Sprite::create("Common/Controls/book_readaloud_base.png");
+
+        Size soundSize = _soundView->getContentSize();
+
+        bool isEnglish = _languageCode == "en";
+        
+        std::string textAloud = (isEnglish) ? "Read Aloud?" : "Sauti";
+        auto labelAloud = Label::createWithTTF(textAloud, "fonts/TodoSchoolV2.ttf", 90);
+        labelAloud->setTextColor(Color4B(255, 248, 219, 255));
+        labelAloud->setPosition(soundSize.width / 2, soundSize.height / 2 + 255);
+        _soundView->addChild(labelAloud);
+
+
+        _soundOnButton = ImageView::create("Common/Controls/book_readaloud_button_normal.png");
+        _soundOnButton->setTouchEnabled(true);
+        _soundOnButton->addTouchEventListener([this, isEnglish](Ref*, Widget::TouchEventType type) {
+            if (type == Widget::TouchEventType::BEGAN) {
+                if (!_soundSetting) {
+                    if (isEnglish) {
+                        GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/soundon.m4a");
+                    } else {
+                        GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/washasauti.m4a");
+                    }
+                }
+                setSoundButton(true, _soundOnButton, _soundOnLabel);
+                setSoundButton(false, _soundOffButton, _soundOffLabel);
+                _soundSetting = true;
+                BookView::setSoundSetting(_soundSetting);
+            }
+        });
+
+        std::string textOn = (isEnglish) ? "on" : "Washa";
+        float textSizeOnOff = (isEnglish) ? 120 : 95;
+        _soundOnLabel = Label::createWithTTF(textOn, "fonts/TodoSchoolV2.ttf", textSizeOnOff);
+        _soundOnLabel->setTextColor(Color4B(255, 255, 255, 255));
+        _soundOnLabel->setPosition(Vec2(_soundOnButton->getContentSize().width / 2, 156));
+        _soundOnButton->addChild(_soundOnLabel);
+
+        _soundOnButton->setAnchorPoint(Vec2(0.5f, 0.0f));
+        _soundOnButton->setPosition(Vec2(soundSize.width / 2, soundSize.height / 2 - 90));
+        _soundView->addChild(_soundOnButton);
+
+        _soundOffButton = ImageView::create("Common/Controls/book_readaloud_button_normal.png");
+        _soundOffButton->setTouchEnabled(true);
+        _soundOffButton->addTouchEventListener([this, isEnglish](Ref*, Widget::TouchEventType type) {
+            if (type == Widget::TouchEventType::BEGAN) {
+                bool beforeSoundSetting = _soundSetting;
+
+                setSoundButton(false, _soundOnButton, _soundOnLabel);
+                setSoundButton(true, _soundOffButton, _soundOffLabel);
+                _soundSetting = false;
+                BookView::setSoundSetting(_soundSetting);
+                if (_currentPageView != nullptr) {
+                    _currentPageView->stopReading();
+                }
+                
+                if (beforeSoundSetting) {
+                    if (isEnglish) {
+                        GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/soundoff.m4a");
+                    } else {
+                        GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/zimasauti.m4a");
+                    }
+                }
+            }
+        });
+
+        std::string textOff = (isEnglish) ? "off" : "Zima";
+        _soundOffLabel = Label::createWithTTF(textOff, "fonts/TodoSchoolV2.ttf", textSizeOnOff);
+        _soundOffLabel->setTextColor(Color4B(255, 255, 255, 255));
+        _soundOffLabel->setPosition(Vec2(_soundOffButton->getContentSize().width / 2, 156));
+        _soundOffButton->addChild(_soundOffLabel);
+
+        _soundOffButton->setAnchorPoint(Vec2(0.5f, 0.0f));
+        _soundOffButton->setPosition(Vec2(soundSize.width / 2, soundSize.height / 2 - 340));
+        _soundView->addChild(_soundOffButton);
+
+        _soundView->setPosition(Vec2(size.width / 4, size.height / 2));
+        addChild(_soundView);
+
+        _soundSetting = BookView::getSoundSetting();
+        setSoundButton(_soundSetting, _soundOnButton, _soundOnLabel);
+        setSoundButton(!_soundSetting, _soundOffButton, _soundOffLabel);
+    }
+
     _contentsView = Node::create();
     _contentsView->setContentSize(size);
     addChild(_contentsView);
@@ -166,10 +253,14 @@ bool BookView::init(const Size &size, std::string &bookPath)
         nextPage();
     });
     addChild(_nextButton);
-    
-    
-    
 
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_glow.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_rotatingleft.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_rotatingright.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_sparkle_1.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_starmedal.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_done_touch.png");
+    Director::getInstance()->getTextureCache()->addImage("Common/Controls/CompletePopup/game_effect_done_normal.png");
     
     _currentPage = -1;
     _currentPageView = nullptr;
@@ -194,8 +285,6 @@ void BookView::onExit()
     GameSoundManager::getInstance()->unloadAllEffect();
     
 }
-
-
 
 void BookView::setBook(TodoBook *book)
 {
@@ -222,12 +311,13 @@ void BookView::viewTitle(float delay)
     }
     
     _currentPageView = BookPage::create();
-    _currentPageView->setTitle(_book->bookTitle, _book->imagePrefix+_book->titleImageFilename, _book->imagePrefix+_book->titleAudioFilename, _bookLayout, delay);
+    _currentPageView->setTitle(_book->bookTitle, _book->imagePrefix+_book->titleImageFilename, _soundSetting ? _book->imagePrefix+_book->titleAudioFilename : "", _bookLayout, delay);
     _currentPageView->setScale(_pageScale);
     _currentPageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _currentPageView->setPosition(getContentSize()/2);
     _contentsView->addChild(_currentPageView);
-    
+
+    showSoundButton();
 }
 
 
@@ -258,35 +348,22 @@ void BookView::viewPage(int page)
         _currentPageView = nullptr;
     }
     
-    
     _currentPageView = BookPage::create();
-    _currentPageView->setPage(&(_book->pages[_currentPage]), _book->filePrefix, _bookLayout, _book->bookType == TDBookType::WithAudio);
+    _currentPageView->setPage(_book, &(_book->pages[_currentPage]), _bookLayout, _book->bookType == TDBookType::WithAudio && _soundSetting);
     
     _currentPageView->setScale(_pageScale);
     _currentPageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _currentPageView->setPosition(getContentSize()/2);
+    
     _contentsView->addChild(_currentPageView);
-    
-    
-    
+
 }
 
 void BookView::nextPage()
 {
     
     if (!_buttonEnabled) return;
-    
-    if (_currentPage+1>=_book->pages.size()) {
-        LogManager::getInstance()->logEvent(_book->bookTitle, "finish_read", "", _currentPage);
-        CompletePopup::create()->show(0.0, [](){
-            CCAppController::sharedAppController()->handleGameComplete(1);
-            //TodoSchoolBackButton::popGameScene();
-        });
-        
-        return;
-        
-    }
-    
+
     hidePageButton();
     
     if (true) {
@@ -304,8 +381,7 @@ void BookView::nextPage()
 
         _currentPageView->hideLeftHalf(false);
         
-        
-        
+        float nextDuration = (_currentPage + 1 >= _book->pages.size()) ? turnDuration * 2 : turnDuration;
         oldPage->runAction(Sequence::create(CallFunc::create([oldPage](){ oldPage->hideRightHalf(true); }),
                                             DelayTime::create(turnDuration),
                                             CallFunc::create([this, oldPage](){
@@ -314,10 +390,22 @@ void BookView::nextPage()
                                                 _currentPageView->showLeftHalf(true);
   
                                             }),
-                                            DelayTime::create(turnDuration),
+                                            DelayTime::create(nextDuration),
                                             CallFunc::create([this](){
-                                                showPageButton();
-                                                _currentPageView->startReading();
+                                                if (_currentPage + 1 >= _book->pages.size()) {
+                                                    LogManager::getInstance()->logEvent(
+                                                            _book->bookTitle, "finish_read", "",
+                                                            _currentPage);
+                                                    CompletePopup::create()->show(0.0, []() {
+                                                        CCAppController::sharedAppController()->handleGameComplete(1);
+                                                        //TodoSchoolBackButton::popGameScene();
+                                                    });
+                                                } else {
+                                                    showPageButton();
+                                                    _currentPageView->startReading();
+                                                }
+
+                                                hideSoundButton();
                                             }),
                                             DelayTime::create(turnDuration),
                                             CallFunc::create([oldPage](){
@@ -327,7 +415,7 @@ void BookView::nextPage()
         
         
         
-        
+
     } else {
 
 
@@ -340,7 +428,7 @@ void BookView::nextPage()
             _contentsView->setPositionX(w);
             viewPage(_currentPage+1);
             showPageButton();
-            _currentPageView->startReading();
+           _currentPageView->startReading();
         }),
                                                   
                                                   MoveBy::create(0.15, Vec2(-w, 0)),
@@ -422,7 +510,6 @@ void BookView::previousPage()
             }
             showPageButton();
             _currentPageView->startReading();
-            
         }),
                                                   MoveBy::create(0.15, Vec2(w, 0)),
                                                   nullptr));
@@ -463,15 +550,30 @@ void BookView::popBookScene()
 {
     if (_libraryMode) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-        JniMethodInfo t;
-        
-        bool result = JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "sendToBack", "()V");
-        if (result)
-        {
-            t.env->CallStaticVoidMethod(t.classID, t.methodID);
-            t.env->DeleteLocalRef(t.classID);
+        if (_finishReading) {
+            LogManager::getInstance()->logEvent(_book->bookTitle, "finish_read", "", _currentPage);
+            CCAppController::sharedAppController()->handleGameComplete(1);
+
+        } else {
+            JniMethodInfo t;
+
+            bool result = JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "sendToBack", "()V");
+            if (result)
+            {
+                t.env->CallStaticVoidMethod(t.classID, t.methodID);
+                t.env->DeleteLocalRef(t.classID);
+            }
         }
-        
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+	{
+		auto uri = ref new Windows::Foundation::Uri("kitkitlibrary:");
+		concurrency::create_task(Windows::System::Launcher::LaunchUriAsync(uri)).then([](bool launchResult)
+		{
+
+		});
+	}
+
+
 #else
         Director::getInstance()->end();
 #endif
@@ -479,13 +581,85 @@ void BookView::popBookScene()
     } else {
         if (_finishReading) {
             LogManager::getInstance()->logEvent(_book->bookTitle, "finish_read", "", _currentPage);
-            CompletePopup::create()->show(0.0, [](){
-                CCAppController::sharedAppController()->handleGameComplete(1);
-                //TodoSchoolBackButton::popGameScene();
-            });
+            CCAppController::sharedAppController()->handleGameComplete(1);
+
         } else {
             (Director::getInstance())->popScene();
         }
     }
 
+}
+
+void BookView::setSoundButton(bool isSelect, ui::ImageView *imageButton, Label *textLabel) {
+    Size size = imageButton->getContentSize();
+
+    if (isSelect) {
+        imageButton->loadTexture("Common/Controls/book_readaloud_button_active.png");
+        textLabel->setTextColor(Color4B(255, 255, 255, 255));
+        textLabel->setPosition(size.width / 2, 156 - 15);
+
+    } else {
+        imageButton->loadTexture("Common/Controls/book_readaloud_button_normal.png");
+        textLabel->setTextColor(Color4B(87, 44, 0, 255));
+        textLabel->setPosition(size.width / 2, 156);
+
+    }
+}
+
+void BookView::showSoundButton() {
+    if (_soundView != nullptr) {
+        _soundView->setVisible(true);
+    }
+}
+
+void BookView::hideSoundButton() {
+    if (_soundView != nullptr) {
+        _soundView->setVisible(false);
+    }
+}
+
+string BookView::getCurrentBook() {
+    return _currentBook;
+}
+
+void BookView::setCurrentBook(string book) {
+    _currentBook = book;
+}
+
+bool BookView::getSoundSetting() {
+    bool result = true;
+
+    string soundOffBook = UserDefault::getInstance()->getStringForKey("SOUND_OFF_BOOK", "");
+    vector<std::string> splitSoundOffBook = TodoUtil::split(soundOffBook, ',');
+    if (splitSoundOffBook.size() == 0) {
+        return true;
+    }
+
+    for (string soundOffBook : splitSoundOffBook) {
+        if (soundOffBook == getCurrentBook()) {
+            return false;
+        }
+    }
+
+    return result;
+}
+
+void BookView::setSoundSetting(bool enable) {
+    string soundOffBook = UserDefault::getInstance()->getStringForKey("SOUND_OFF_BOOK", "");
+    vector<std::string> splitSoundOffBook = TodoUtil::split(soundOffBook, ',');
+    splitSoundOffBook.erase(std::remove(splitSoundOffBook.begin(), splitSoundOffBook.end(), getCurrentBook()), splitSoundOffBook.end());
+
+    if (enable == false) {
+        splitSoundOffBook.push_back(getCurrentBook());
+    }
+
+    string strSave = "";
+    for (int i = 0; i < splitSoundOffBook.size(); ++i) {
+        strSave += splitSoundOffBook[i];
+        if (i < splitSoundOffBook.size() - 1) {
+            strSave += ",";
+        }
+    }
+
+    UserDefault::getInstance()->setStringForKey("SOUND_OFF_BOOK", strSave);
 }

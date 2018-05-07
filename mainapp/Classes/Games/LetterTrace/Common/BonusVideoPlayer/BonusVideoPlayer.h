@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
+#include <Common/Controls/KitkitVideoPlayer.hpp>
+
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 #include <cocos/ui/CocosGUI.h>
 #include <string>
@@ -19,7 +20,7 @@ namespace todoschool {
 
 class BonusVideoPlayer : public cocos2d::Node {
     typedef cocos2d::Node Super;
-    cocos2d::experimental::ui::VideoPlayer* TheVideoPlayer;
+    KitkitVideoPlayer* TheVideoPlayer;
 
 public:
     // NB(xenosoz, 2016): Here, "Path = (Path) + Filename".
@@ -43,7 +44,7 @@ public:
 
 private:
     void clearInternals();
-    void handleVideoPlayerStateUpdated(cocos2d::Ref*, cocos2d::experimental::ui::VideoPlayer::EventType);
+    void handleVideoPlayerStateUpdated(cocos2d::Ref*, VideoPlayer::EventType);
 };
 
 } // namespace todoschool

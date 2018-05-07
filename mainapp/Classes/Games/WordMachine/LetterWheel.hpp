@@ -1,6 +1,6 @@
 //
 //  LetterWheel.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/28/16.
 //

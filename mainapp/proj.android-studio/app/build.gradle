@@ -1,43 +1,49 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "com.enuma.xprize"
-        minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 23
-        versionName "1.1.20170925.en"
+        minSdkVersion PROP_MIN_SDK_VERSION
+        targetSdkVersion PROP_TARGET_SDK_VERSION
+        versionCode 30
+        versionName "1.1.20180327.en_US"
 
-//        externalNativeBuild {
-//            ndkBuild {
-//                targets 'cocos2dcpp'
-//                arguments 'NDK_MODULE_PATH=../../cocos2d:../../cocos2d/cocos:../../cocos2d/external:../../cocos2d/cocos/prebuilt-mk::../../cocos2d/extensions'
-//                arguments '-j' + Runtime.runtime.availableProcessors()
-//                arguments 'NDK_TOOLCHAIN_VERSION=4.9'
-//                abiFilters 'armeabi'
-//            }
-//        }
-//
-//        ndk {
-//            abiFilters 'armeabi'
-//        }
+        externalNativeBuild {
+            ndkBuild {
+                if (!project.hasProperty("PROP_NDK_MODE") || PROP_NDK_MODE.compareTo('none') != 0) {
+                    // skip the NDK Build step if PROP_NDK_MODE is none
+                    targets 'MyGame'
+                    arguments 'NDK_TOOLCHAIN_VERSION=4.9'
+                    arguments 'APP_PLATFORM=android-'+PROP_APP_PLATFORM
+                    
+                    def module_paths = [project.file("../../cocos2d").absolutePath,
+                                        project.file("../../cocos2d/cocos").absolutePath,
+                                        project.file("../../cocos2d/external").absolutePath]
+                    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                        // should use '/'
+                        module_paths = module_paths.collect {it.replaceAll('\\\\', '/')}
+                        arguments 'NDK_MODULE_PATH=' + module_paths.join(";")
+                    }
+                    else {
+                        arguments 'NDK_MODULE_PATH=' + module_paths.join(':')
+                    }
+                    
+                    arguments '-j' + Runtime.runtime.availableProcessors()
+                    abiFilters.addAll(PROP_APP_ABI.split(':').collect{it as String})
+                }
+            }
+        }
     }
-
-//    externalNativeBuild {
-//        ndkBuild {
-//            path "jni/Android.mk"
-//        }
-//    }
 
     sourceSets.main {
         java.srcDir "src"
         res.srcDir "res"
-        jniLibs.srcDir "libs"
         manifest.srcFile "AndroidManifest.xml"
-        assets.srcDir "assets"
     }
 
     sourceSets.release {
@@ -45,6 +51,23 @@ android {
     }
     sourceSets.debug {
         manifest.srcFile "debug/AndroidManifest.xml"
+    }
+    sourceSets {
+        general {
+            assets.srcDir "../../Resources"
+        }
+        noresource {
+            assets.srcDir "assets"
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            if (!project.hasProperty("PROP_NDK_MODE") || PROP_NDK_MODE.compareTo('none') != 0) {
+                // skip the NDK Build step if PROP_NDK_MODE is none
+                path "jni/Android.mk"
+            }
+        }
     }
 
     signingConfigs {
@@ -54,35 +77,50 @@ android {
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
-//       release {
-//            if (project.hasProperty("RELEASE_STORE_FILE")) {
-//                storeFile file(RELEASE_STORE_FILE)
-//                storePassword RELEASE_STORE_PASSWORD
-//                keyAlias RELEASE_KEY_ALIAS
-//                keyPassword RELEASE_KEY_PASSWORD
-//            }
-//        }
+       release {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
     }
     productFlavors {
-        english {
+        general {
+
+        }
+        noresource {
+
+        }
+        /*english {
 
         }
         swahili {
 
-        }
+        }*/
     }
     buildTypes {
-        debug {
-            minifyEnabled false
-            debuggable true
-            jniDebuggable true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            if (project.hasProperty("RELEASE_STORE_FILE")) {
-//                signingConfig signingConfigs.release
-//            }
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.release
+            }
+
+            externalNativeBuild {
+                ndkBuild {
+                    arguments 'NDK_DEBUG=0'
+                }
+            }
+        }
+
+        debug {
+            externalNativeBuild {
+                ndkBuild {
+                    arguments 'NDK_DEBUG=1'
+                }
+            }
         }
     }
 }
@@ -90,6 +128,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':libcocos2dx')
-    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
-    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
+    compile project(':pocketsphinx-aar')
+    compile project(':models')
+    compile project(':kitkitlogger')
+//    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
+//    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
 }

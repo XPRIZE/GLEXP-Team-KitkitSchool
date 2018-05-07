@@ -101,6 +101,7 @@ public:
     
     Vec2 _targetPos;
 
+    std::function<void()> onTouched;
     std::function<void()> onSnapped;
     
 protected:
@@ -108,9 +109,7 @@ protected:
     Vec2 _spriteCenter;
     
     bool _snapped;
-    
-        
-    
+
     
     
     

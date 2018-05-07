@@ -7,6 +7,7 @@
 //
 
 #include "ButtonUtility.hpp"
+#include "cocos2d.h"
 
 void ButtonUtility::scaledButtonListener(Ref* sender, cocos2d::ui::Widget::TouchEventType type)
 {

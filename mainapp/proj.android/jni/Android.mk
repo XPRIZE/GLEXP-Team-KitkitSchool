@@ -1,27 +1,19 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d)
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d/external)
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d/cocos)
-#$(call import-add-path,$(LOCAL_PATH)/../../cocos2d/cocos/prebuilt-mk)
+$(call import-add-path,$(LOCAL_PATH)/../../cocos2d/cocos/audio/include)
 
-LOCAL_MODULE := cocos2dcpp_shared
+LOCAL_MODULE := MyGame_shared
 
-LOCAL_MODULE_FILENAME := libcocos2dcpp
-
-CLASSES := $(wildcard $(LOCAL_PATH)/../../Classes/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/*.c)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/**/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/**/**/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/**/**/**/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/**/**/**/**/*.cpp)
-CLASSES += $(wildcard $(LOCAL_PATH)/../../Classes/**/**/**/**/**/**/*.cpp)
-CLASSES := $(CLASSES:$(LOCAL_PATH)/%=%)
+LOCAL_MODULE_FILENAME := libMyGame
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
-LOCAL_SRC_FILES += $(CLASSES)
+                   ../../Classes/AppDelegate.cpp \
+                   ../../Classes/HelloWorldScene.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

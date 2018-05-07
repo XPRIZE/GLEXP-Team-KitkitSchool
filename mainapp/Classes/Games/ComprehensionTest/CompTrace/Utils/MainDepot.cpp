@@ -1,6 +1,6 @@
 //
 //  MainDepot.cpp on Jul 15, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -8,10 +8,10 @@
 
 
 #include "MainDepot.h"
-#include "../../../LetterTrace/Utils/MainDepot.h"
 #include <Managers/LanguageManager.hpp>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Sounds/CommonSound.hpp"
+//#include <Games/NumberTrace/Common/Repr/AllRepr.h>
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -38,7 +38,7 @@ Size MainDepot::gameSize() const {
 }
 
 Sprite* MainDepot::createBackgroundSprite() const {
-    Sprite* It = Sprite::create(assetPrefix() + "/wordtracing_blackboard.png");
+    Sprite* It = Sprite::create(assetPrefix() + "/wordtracing_blackboard.jpg");
     
     Size WindowSize = windowSize();
     Size SpriteSize = It->getContentSize();
@@ -77,15 +77,17 @@ void MainDepot::preloadSoundEffects() const {
 }
 
 SoundEffect MainDepot::soundForWord(const std::string& Word) const {
-    return lettertrace::MainDepot().soundForWord(Word);
+    return CommonSound().soundForWord(Word);
 }
     
 SoundEffect MainDepot::soundForGoodAssetTouch() const {
-    return lettertrace::MainDepot().soundForGoodAssetTouch();
+    string P = "Common/Sounds/Effect";
+    return SoundEffect(P + "/Cards_2.m4a");
 }
     
 SoundEffect MainDepot::soundForWorkComplete() const {
-    return lettertrace::MainDepot().soundForWorkComplete();
+    string P = "Common/Sounds/Effect";
+    return SoundEffect(P + "/Cards_4.m4a");
 }
 
 

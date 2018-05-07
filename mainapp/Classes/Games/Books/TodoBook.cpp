@@ -9,21 +9,39 @@
 #include "TodoBook.hpp"
 #include "Utils/TodoUtil.h"
 #include "cocos2d.h"
+#include <fstream>
+//
+//TDBookType TodoBook::getBookType(string &filedata)
+//{
+//    auto data = TodoUtil::readCSV(filedata);
+//
+//    for (auto row : data) {
+//        if (row.size() < 1) continue;
+//        string type = row[0];
+//        if (type=="title") {
+//            return (row[5] == "text") ? TDBookType::TextOnly : TDBookType::WithAudio;
+//        }
+//    }
+//
+//    return TDBookType::Unknown;
+//}
 
-TDBookType TodoBook::getBookType(string &filedata)
+string TodoBook::getWordAudioPath(string wordAudio)
 {
-    auto data = TodoUtil::readCSV(filedata);
+    auto wordAudioPath = filePrefix+"word/"+wordAudio;
     
-    for (auto row : data) {
-        if (row.size() < 1) continue;
-        string type = row[0];
-        if (type=="title") {
-            return (row[5] == "text") ? TDBookType::TextOnly : TDBookType::WithAudio;
-        }
+    if (FileUtils::getInstance()->isFileExist(wordAudioPath)) {
+        return wordAudioPath;
     }
     
-    return TDBookType::Unknown;
+    wordAudioPath = commonPrefix+"word/"+wordAudio;
+    if (FileUtils::getInstance()->isFileExist(wordAudioPath)) {
+        return wordAudioPath;
+    }
+    
+    return "";
 }
+
 
 void TodoBook::readData(string &filedata)
 {
@@ -53,7 +71,6 @@ void TodoBook::readData(string &filedata)
             bookType = (row[5] == "text") ? TDBookType::TextOnly : TDBookType::WithAudio;
             
             if (row.size()>6) fontSize = TodoUtil::stoi(row[6]);
-            
         }
         else if (type == "page")
         {
@@ -198,14 +215,15 @@ void TodoBook::readCredit(string &filedata)
 }
 
 
-bool TodoBook::readFile(string prefix)
+bool TodoBook::readFile(string prefix, string filename)
 {
-    string bookdataPath = prefix + "bookinfo.csv";
+    string bookdataPath = prefix + filename;
     string bookdata = cocos2d::FileUtils::getInstance()->getStringFromFile(bookdataPath);
     
     if (bookdata.length() == 0) return false;
     
     filePrefix = prefix;
+    commonPrefix = prefix + "../Common/";
     imagePrefix = prefix+pagePrefix;
     
     readData(bookdata);
@@ -220,19 +238,141 @@ bool TodoBook::readFile(string prefix)
     return true;
 }
 
+
+bool TodoBook::writeFile(string prefix, string filename)
+{
+   
+    std::string writeString = "";
+
+    std::vector<std::string> row;
+    row.clear();
+    
+    // title
+    {
+        row.push_back("title");
+        row.push_back(bookTitle);
+        row.push_back(titleAudioFilename);
+        row.push_back(titleImageFilename);
+        switch (bookLayout) {
+            case TDBookLayout::Portrait:
+                row.push_back("portrait");
+                break;
+            case TDBookLayout::Portrait_Traditional:
+                row.push_back("portrait_traditional");
+                break;
+            case TDBookLayout::Square:
+                row.push_back("square");
+                break;
+            case TDBookLayout::Landscape:
+                row.push_back("landscape");
+                break;
+        }
+        
+        switch(bookType) {
+            case TDBookType::TextOnly:
+                row.push_back("text");
+                break;
+            case TDBookType::WithAudio:
+                row.push_back("audio");
+                break;
+        }
+        
+        if (fontSize>0) row.push_back(TodoUtil::dtos(fontSize));
+        
+        writeString += TodoUtil::combineCSV(row) + "\n";
+        row.clear();
+    }
+    
+    
+    //page
+    for (auto page : pages) {
+        if (page.creditPage) continue;
+        row.push_back("page");
+        row.push_back(TodoUtil::itos(page.pageNum));
+        row.push_back(page.pageImageFilename);
+        row.push_back(page.wordwrap ? "wordwrap" : "");
+        writeString += TodoUtil::combineCSV(row) + "\n";
+        row.clear();
+        
+        for (auto para : page.paragraphs) {
+            writeString += "paragraph\n";
+            
+            for (auto sen : para.sentences) {
+                row.push_back("sentence");
+                
+                if (bookType==TDBookType::TextOnly) {
+                    row.push_back("");
+                    row.push_back("");
+                    string sentenceString = "";
+                    
+                    for (auto w : sen.words) {
+                        sentenceString += w.word + " ";
+                    }
+                    row.push_back(TodoUtil::trim(sentenceString));
+                    writeString += TodoUtil::combineCSV(row) + "\n";
+                    row.clear();
+                } else if (bookType==TDBookType::WithAudio) {
+                    row.push_back(sen.sentenceAudioFilename);
+                    row.push_back(TodoUtil::dtos(sen.startTimingInPage));
+                    writeString += TodoUtil::combineCSV(row) + "\n";
+                    row.clear();
+                    
+                    for (auto w : sen.words) {
+                        row.push_back("word");
+                        row.push_back(TodoUtil::dtos(w.startTimingInSentence));
+                        row.push_back(TodoUtil::dtos(w.endTimingInSentence));
+                        row.push_back(w.word);
+                        row.push_back(w.wordAudioFilename);
+                        row.push_back(TodoUtil::dtos(w.wordAudioLength));
+                        writeString += TodoUtil::combineCSV(row) + "\n";
+                        row.clear();
+                        
+                        
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    
+    string bookdataPath = filePrefix + filename;
+            
+    bool ret = FileUtils::getInstance()->writeStringToFile(writeString, bookdataPath);
+    return ret;
+    
+    
+}
+
+
+
 string TodoBook::checkData()
 {
     string ret = "";
     
-    auto titleImage = imagePrefix + titleImageFilename;
-    if (!FileUtils::getInstance()->isFileExist(titleImage)) ret+= "missing title image ["+titleImageFilename+"]\n";
+    auto checkImage = [&ret, this](string filename, string msg) {
+        auto path = imagePrefix + filename;
+        if (FileUtils::getInstance()->isFileExist(path)) return;
+        path = imagePrefix + filename + ".png";
+        if (FileUtils::getInstance()->isFileExist(path)) return;
+        path = imagePrefix + filename + ".jpg";
+        if (FileUtils::getInstance()->isFileExist(path)) return;
+        ret+= msg + " ["+filename+"]\n";
+    };
+    
+
+    checkImage(titleImageFilename, "missing title image");
+//    auto titleImage = imagePrefix + titleImageFilename;
+//    if (!FileUtils::getInstance()->isFileExist(titleImage)) ret+= "missing title image ["+titleImageFilename+"]\n";
     
     auto titleAudio = imagePrefix + titleAudioFilename;
-    if (!FileUtils::getInstance()->isFileExist(titleImage)) ret+= "missing title audio ["+titleAudioFilename+"]\n";
+    if (!FileUtils::getInstance()->isFileExist(titleAudio)) ret+= "missing title audio ["+titleAudioFilename+"]\n";
     
     for (auto p : pages) {
-        auto pageImage = imagePrefix + p.pageImageFilename;
-        if (!FileUtils::getInstance()->isFileExist(pageImage)) ret += "missing page image ["+p.pageImageFilename+"]\n";
+        checkImage(p.pageImageFilename, "missing page image");
+
+//        auto pageImage = imagePrefix + p.pageImageFilename;
+//        if (!FileUtils::getInstance()->isFileExist(pageImage)) ret += "missing page image ["+p.pageImageFilename+"]\n";
         
         for (auto para : p.paragraphs) {
             for (auto s : para.sentences) {
@@ -242,9 +382,9 @@ string TodoBook::checkData()
                 
                 for (auto w : s.words) {
                     if (w.wordAudioFilename=="-") continue;
-                    auto wordAudioPath = filePrefix+"word/"+w.wordAudioFilename;
-                    if (!FileUtils::getInstance()->isFileExist(wordAudioPath)) ret += "missing word audio ["+w.wordAudioFilename+"]\n";
-                    
+                    if (getWordAudioPath(w.wordAudioFilename).empty()) {
+                        ret += "missing word audio ["+w.wordAudioFilename+"]\n";
+                    }
                 }
                 
                 
@@ -255,3 +395,5 @@ string TodoBook::checkData()
     return ret;
     
 }
+
+

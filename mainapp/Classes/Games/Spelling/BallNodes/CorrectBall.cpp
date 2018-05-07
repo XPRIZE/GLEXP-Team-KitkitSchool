@@ -9,12 +9,12 @@
 
 #include "CorrectBall.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetTouchBody.h>
+#include "Common/Components/TargetTouchBody.h"
 
 
 BEGIN_NS_SPELLING
 
-using todoschool::woodenpuzzles::TargetTouchBody;
+
 
 
 namespace {

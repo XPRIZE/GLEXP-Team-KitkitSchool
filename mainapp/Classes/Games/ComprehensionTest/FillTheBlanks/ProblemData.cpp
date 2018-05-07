@@ -1,6 +1,6 @@
 //
 //  ProblemData.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 13/12/2016.
 //
@@ -17,25 +17,27 @@ namespace ComprehensionTest
         {
             ProblemData* pm = new ProblemData();
             
-            pm->questionText = rawData[1];
-            pm->questionImage = rawData[2];
+            //pm->questionText = rawData[1];
+            pm->questionImage = rawData[1];
             
-            TodoUtil::replaceAll(rawData[3], "\\\"", "\"");
+            TodoUtil::replaceAll(rawData[2], "\\\"", "\"");
             
             bool replaceMode = false;
-            for (int i = 0; i < rawData[3].length(); i++)
+            auto &text = rawData[2];
+            
+            for (int i = 0; i < text.length(); i++)
             {
-                if (rawData[3][i] == '[') { replaceMode = true; continue; }
-                if (rawData[3][i] == ']') { replaceMode = false; continue; }
+                if (text[i] == '[') { replaceMode = true; continue; }
+                if (text[i] == ']') { replaceMode = false; continue; }
                 
-                if (replaceMode && rawData[3][i] == ' ')
+                if (replaceMode && text[i] == ' ')
                 {
-                    rawData[3][i] = '^';
+                    text[i] = '^';
                 }
             }
             
             // wordSet
-            for (std::string eachValue : TodoUtil::split(rawData[3], ' '))
+            for (std::string eachValue : TodoUtil::split(text, ' '))
             {
                 TodoUtil::replaceAll(eachValue, "^", " ");
                 
@@ -82,13 +84,17 @@ namespace ComprehensionTest
             }
             
             // wrongWordSet
-            pm->wrongWordSet = TodoUtil::splitCSV(rawData[4]);
-            for (int i = 0; i < pm->wrongWordSet.size(); i++)
-            {
-                pm->wrongWordSet[i] = TodoUtil::trim(pm->wrongWordSet[i]);
+            if (rawData.size()>3) {
+                pm->wrongWordSet = TodoUtil::splitCSV(rawData[3]);
+                for (int i = 0; i < pm->wrongWordSet.size(); i++)
+                {
+                    pm->wrongWordSet[i] = TodoUtil::trim(pm->wrongWordSet[i]);
+                }
             }
             
-            pm->soundPath = rawData[6];
+            if (rawData.size()>4) {
+                pm->soundPath = rawData[4];
+            }
             
             return pm;
         }

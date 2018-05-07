@@ -11,8 +11,8 @@
 
 
 #include "cocos2d.h"
+#include "3rdParty/json/json.h"
 #include <string>
-
 
 USING_NS_CC;
 using namespace std;
@@ -68,11 +68,11 @@ public:
     Sprite *_animal;
     Sprite *_body, *_soundButtonActive, *_soundButtonNormal;
     
-    Scale9Sprite *_bubble;
+    ui::Scale9Sprite *_bubble;
     Label *_label;
     
     bool _isEN;
-    
+    Json::Value _desc;
     
 };
 

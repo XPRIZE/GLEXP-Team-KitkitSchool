@@ -9,7 +9,7 @@
 
 #include "PostSolveEnhancer.h"
 #include <cocos/physics/CCPhysicsHelper.h>
-#include <chipmunk.h>
+#include <chipmunk/chipmunk.h>
 
 
 namespace todoschool {
@@ -30,7 +30,7 @@ float PostSolveEnhancer::restitution() const {
     if (!ContactInfo) { return 0.f; }
     auto A = static_cast<cpArbiter*>(ContactInfo);
     
-    return cpArbiterGetElasticity(A);
+    return cpArbiterGetRestitution(A);
 }
 
 float PostSolveEnhancer::friction() const {
@@ -67,7 +67,7 @@ cocos2d::Vec2 PostSolveEnhancer::totalImpulseWithFriction() const {
     if (!ContactInfo) { return cocos2d::Vec2::ZERO; }
     auto A = static_cast<cpArbiter*>(ContactInfo);
     
-    cpVect SV = cpArbiterTotalImpulseWithFriction(A);
+    cpVect SV = cpArbiterTotalImpulse(A);
     return cocos2d::PhysicsHelper::cpv2point(SV);
 }
     

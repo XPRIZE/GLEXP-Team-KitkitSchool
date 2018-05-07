@@ -41,13 +41,13 @@ cocos2d::Scene* CompTrace::createScene() {
 
 cocos2d::Layer* CompTrace::createLayer(ComprehensionScene* parent)
 {
-    using namespace todoschool::comptrace;
+   
     
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     
     auto It = CompTraceScene::create();
     
-    Problem p;
+    CompTraceScene::Problem p;
     
 
     {
@@ -62,16 +62,27 @@ cocos2d::Layer* CompTrace::createLayer(ComprehensionScene* parent)
             }
         }
         
-        p.TeaserFileName = rawData[2];
-        p.Text = rawData[3];
-        
+        if (rawData.size() > 3)
+        {
+            p.Type = CompTraceScene::ProblemType::IMAGE_AND_SOUND;
+            p.QuestionSound = rawData[1];
+            p.TeaserFileName = rawData[2];
+            p.Text = rawData[3];
+            p.AnswerSound = rawData[4];
+        }
+        else
+        {
+            p.Type = CompTraceScene::ProblemType::IMAGE;
+            p.TeaserFileName = rawData[1];
+            p.Text = rawData[2];
+        }
     }
     
-    
+    It->_comprehensionScene = parent;
     It->TheTraceWork.update(p);
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
-    It->_comprehensionScene = parent;
+    
     return It;
     
 }

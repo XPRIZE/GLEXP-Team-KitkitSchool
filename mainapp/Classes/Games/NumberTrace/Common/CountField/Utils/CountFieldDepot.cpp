@@ -23,7 +23,7 @@
 #include "../ChildNodes/Spider.h"
 #include "../ChildNodes/StagBeetle.h"
 
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 
 
 BEGIN_NS_COUNTFIELD

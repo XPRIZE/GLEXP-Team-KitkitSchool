@@ -1,17 +1,17 @@
 //
 //  SoundTrainScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 30/08/2017.
 //
 //
 
 #include "SoundTrainScene.hpp"
-#include "SoundTrainProblemBank.hpp"
 
 #include "CCAppController.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Effects/FireworksEffect.hpp"
 
@@ -29,7 +29,7 @@ const string soundMove = "NumberTrain/Sounds/Train1.m4a";
 const string soundWhistle1 = "SoundTrain/Sound/Pattern_Train_1.m4a";
 const string soundWhistle2 = "SoundTrain/Sound/Pattern_Train_2.m4a";
 const string soundWhistle3 = "SoundTrain/Sound/Pattern_Train_3.m4a";
-const string fontName = "fonts/TodoSchoolV2.ttf";
+const string fontName = "fonts/Andika-R.ttf";
 bool isSW = false;
 bool isEN = false;
 
@@ -61,9 +61,9 @@ void SoundTrainScene::setLevel(int level)
     LOGFN();
     _currentLevel = level;
     SoundTrainProblemBank *problemBank = new SoundTrainProblemBank();
-    _problem = problemBank->generateProblems(_currentLevel);
-    _progressBar->setMax(_problem["words"].size());
-    _totalProblemCount = _problem["words"].size();
+    _problems = problemBank->loadData(_currentLevel);
+    _progressBar->setMax(_problems.size());
+    _totalProblemCount = _problems.size();
 }
 
 
@@ -166,13 +166,12 @@ void SoundTrainScene::setProblem(){
         return;
     }
     
-    auto word = _problem["words"][_currentProblemIndex].asString();
+    auto problem = _problems[_currentProblemIndex];
 
-    _trainName = ReplaceAll(word, string("-"), string(""));
-    _questions = split(word.c_str(), '-');
-    _answers = split(word.c_str(), '-');
+    _trainName = ReplaceAll(problem.answer, string(","), string(""));
+    _questions = TodoUtil::split(problem.answer, ',');
+    _answers = TodoUtil::split(problem.answer, ',');
     random_shuffle(_answers.begin(), _answers.end(), [](int n) { return rand() % n; });
-    
 
     runAction(Sequence::create(
         CallFunc::create([this](){
@@ -205,8 +204,12 @@ void SoundTrainScene::checkAnswer() {
     LOGFN();
     bool hasIncorrectAnswer = false;
     bool finished = true;
+    stringstream userAnswer;
+    stringstream correctAnswer;
 
     for (auto v : _freightTrains) {
+        userAnswer << (v->_cardInTrain ? v->_cardInTrain->_letter : "_");
+        correctAnswer << (v->_correctAnswer);
         
         if (!v->_cardInTrain) {
             finished = false;
@@ -222,8 +225,20 @@ void SoundTrainScene::checkAnswer() {
             hasIncorrectAnswer = true;
         }
     }
-    
-    
+
+    // NB(xenosoz, 2018): Log for future analysis
+    auto workPath = [this] {
+        stringstream ss;
+        ss << "/" << "SoundTrain";
+        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "work-" << _currentProblemIndex;
+        return ss.str();
+    }();
+
+    StrictLogManager::shared()->game_Peek_Answer("SoundTrain", workPath,
+                                                 userAnswer.str(), correctAnswer.str());
+
+
     if (hasIncorrectAnswer) FireworksEffect::miss();
     if (finished && !hasIncorrectAnswer) onCorrect();
 
@@ -242,22 +257,37 @@ void SoundTrainScene::removeObjects() {
 }
 
 void SoundTrainScene::playSound(string letter){
-    if (isSW) {
-        string filePath1 = "SoundTrain/VoiceSW/"+letter+".m4a";
-        string filePath2 = "Common/Sounds/Imma.sw_TZ/LetterNames/"+letter+".wav";
-        string filePath3 = "Common/Sounds/Imma.sw_TZ/Words/"+letter+".wav";
+    CCLOG("playSound");
+    {
+        string filepath = LanguageManager::getInstance()->findLocalizedResource("SoundTrain/Sounds/"+letter+".m4a");
+        if (FileUtils::getInstance()->isFileExist(filepath)) { GameSoundManager::getInstance()->playEffectSound(filepath); return; }
         
-        if (FileUtils::getInstance()->isFileExist(filePath1)) {
-            GameSoundManager::getInstance()->playEffectSound(filePath1); return;
-        } else if (FileUtils::getInstance()->isFileExist(filePath2)) {
-            GameSoundManager::getInstance()->playEffectSound(filePath2); return;
-        } else if (FileUtils::getInstance()->isFileExist(filePath3)) {
-            GameSoundManager::getInstance()->playEffectSound(filePath3); return;
-        }
-    } else if (isEN) {
-        string filePath = "SoundTrain/VoiceEN/"+letter+".wav";
-        GameSoundManager::getInstance()->playEffectSound(filePath); return;
+        filepath = LanguageManager::getInstance()->findLocalizedResource("LetterVoice/"+letter+".m4a");
+        if (FileUtils::getInstance()->isFileExist(filepath)) { GameSoundManager::getInstance()->playEffectSound(filepath); return; }
+
+        filepath = LanguageManager::getInstance()->findLocalizedResource("WordVoice/"+letter+".m4a");
+        if (FileUtils::getInstance()->isFileExist(filepath)) { GameSoundManager::getInstance()->playEffectSound(filepath); return; }
+
     }
+    
+//    
+//    
+//    if (isSW) {
+//        string filePath1 = "SoundTrain/VoiceSW/"+letter+".m4a";
+//        string filePath2 = "Common/Sounds/Imma.sw_TZ/LetterNames/"+letter+".wav";
+//        string filePath3 = "Common/Sounds/Imma.sw_TZ/Words/"+letter+".wav";
+//        
+//        if (FileUtils::getInstance()->isFileExist(filePath1)) {
+//            GameSoundManager::getInstance()->playEffectSound(filePath1); return;
+//        } else if (FileUtils::getInstance()->isFileExist(filePath2)) {
+//            GameSoundManager::getInstance()->playEffectSound(filePath2); return;
+//        } else if (FileUtils::getInstance()->isFileExist(filePath3)) {
+//            GameSoundManager::getInstance()->playEffectSound(filePath3); return;
+//        }
+//    } else if (isEN) {
+//        string filePath = "SoundTrainVoice/"+letter+".wav";
+//        GameSoundManager::getInstance()->playEffectSound(filePath); return;
+//    }
 }
 
 void SoundTrainScene::cardCome() {
@@ -389,8 +419,8 @@ void SoundTrainScene::trainCome() {
     _locomotive->setPosition(getLocomotiveStartX(), locomotiveY);
     _gameNode->addChild(_locomotive);
     
-    auto locomotiveLabel = TodoUtil::createLabel(_trainName, 120 - _trainName.size() * 5, Size(360, 130), fontName, Color4B(255, 255, 255,255), TextHAlignment::CENTER);
-    locomotiveLabel->setPosition(360, 250);
+    auto locomotiveLabel = TodoUtil::createLabel(_trainName, 120 - _trainName.size() * 5, Size::ZERO, fontName, Color4B(255, 255, 255,255), TextHAlignment::CENTER);
+    locomotiveLabel->setPosition(360, 270);
     locomotiveLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _locomotive->addChild(locomotiveLabel);
     
@@ -454,6 +484,10 @@ void SoundTrainScene::trainCome() {
             GameSoundManager::getInstance()->playEffectSound(soundCome);
             _locomotive->runAction(EaseOut::create(MoveTo::create(getMoveTime(getLocomotiveStartX()-getLocomotiveArriveX()), Vec2(getLocomotiveArriveX(),locomotiveY)), 2));
         }),
+        DelayTime::create(1.7),
+        CallFunc::create([this](){
+            soundButtonSpeech();
+        }),
         nullptr
     ));
     
@@ -476,7 +510,6 @@ void SoundTrainScene::trainCome() {
             }),
             DelayTime::create(0.5),
             CallFunc::create([this, train](){
-                soundButtonSpeech();
                 train->toggleConnector();
             }),
             nullptr
@@ -591,6 +624,8 @@ void SoundTrainScene::trainCombine() {
                     DelayTime::create(0.21*(i+1)),
                     CallFunc::create([this, i](){
                         auto train = _freightTrains[i];
+                        // train->getParent()->reorderChild(train, train->getLocalZOrder());
+                    
                         train->retain();
                         train->removeFromParent();
                         _locomotive->addChild(train);

@@ -1,6 +1,6 @@
 //
 //  Card.h
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 9/5/17.
 //
@@ -10,6 +10,7 @@
 #define Card_h
 
 #include "../Utils/MainNS.h"
+#include "../Utils/MainDepot.h"
 #include "../Models/Problem.h"
 #include <Common/Controls/TraceField/TraceField.h>
 
@@ -25,6 +26,7 @@ public:
 public:
     void drawCardWithProblem(Problem* problem);
     bool isComplete;
+    function<void()> onEditing;
     function<void()> onComplete;
     tracefield::TraceField* traceWord;
     ImageView* frontFace;
@@ -33,6 +35,10 @@ public:
     void FlipToBack();
 private:
     string word;
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    string imageName;
+    string audioName;
+#endif
 };
 
 END_NS_LETTERTRACINGCARD

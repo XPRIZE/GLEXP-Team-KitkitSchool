@@ -10,8 +10,7 @@
 #define TODOSCHOOL_COUNTFIELD_COUNTFIELD_H
 
 #include "ChildNodes/CountObject.h"
-#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
-#include <Games/NumberTrace/Common/ADT/Chain.h>
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 #include <functional>
 
@@ -19,12 +18,13 @@
 namespace todoschool {
 namespace countfield {
 
-class CountField: public TodoSchoolNode<CountField> {
-    typedef TodoSchoolNode<CountField> Super;
+class CountField: public cocos2d::Node {
 
     bool ShouldUpdateByValueChange;
     
 public:
+    CREATE_FUNC(CountField);
+    
     cocos2d::Vector<CountObject*> CountObjects;
     std::string TheAssetType;
     Chain<size_t> AssetCount;
@@ -46,8 +46,9 @@ public:
 private:
     void clearInternals();
     void updateCountObjects();
+    void updateEnabledValueForAllCountObjects(bool Value);
 
-    void handleEnabledValueUpdated(bool& enabled);
+    void handleEnabledValueUpdated(bool& Value);
     void handleAssetCountValueUpdated(size_t&);
 
     void handleCountObjectReachedRestPoint(CountObject*);

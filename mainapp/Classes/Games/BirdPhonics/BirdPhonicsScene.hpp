@@ -25,11 +25,15 @@ using namespace std;
 
 namespace BirdPhonicsSceneSpace
 {
-    typedef std::pair<char, std::string> WordPair;
+    typedef std::pair<std::string, std::string> WordPair;
     
     struct Problem {
-        std::vector<char> phonics;
+        int workSheet;
+        std::vector<std::string> phonics_owner;
+        std::vector<std::string> phonics_sound;
         std::vector<WordPair> words;
+        std::vector<std::string> words_sound;
+        std::vector<std::string> phonic_positions;
     };
     
     
@@ -38,17 +42,23 @@ namespace BirdPhonicsSceneSpace
     class Bread : public Node {
     public:
         CREATE_FUNC(Bread);
-        void setWord(string word, char phonic);
+        Bread(): onGoodDown(nullptr), onBadDown(nullptr) {}
+    
+        void setWord(string word, string phonic_owner, string word_sound, string phonic_position);
         void setTargetBird(Bird* bird);
         
+        std::function<void()> onGoodDown;
+        std::function<void()> onBadDown;
+
+        
         std::string _word;
-        char _phonic;
+        string _phonic_owner;
         SoundEffect _wordEffect;
         Vec2 _orgPos;
         Bird *_targetBird;
         bool _touchEnabled;
         
-        
+        bool _isEaten;
         
     };
     
@@ -58,7 +68,7 @@ namespace BirdPhonicsSceneSpace
 
         
         void setType(int type, std::function<void(void)> func);
-        void setPhonic(char phonic);
+        void setPhonic(string phonic_owner, string phonic_sound);
         void setLight(Sprite *light) { _light = light; }
         void setTouchEnabled(bool enabled) { _touchEnabled = enabled; }
         
@@ -71,7 +81,7 @@ namespace BirdPhonicsSceneSpace
         void eatBread(Bread *bread);
         
         
-        char _phonic;
+        string _phonic_owner;
         
     protected:
         Sprite *_light;
@@ -115,7 +125,7 @@ public:
     
     void showProblem(int index);
     void createBread();
-    
+    static vector<int> getLevelIDs();
     
     
 private:

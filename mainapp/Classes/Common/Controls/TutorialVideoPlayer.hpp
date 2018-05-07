@@ -1,6 +1,6 @@
 //
 //  TutorialVideoPlayer.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/20/16.
 //
@@ -15,6 +15,8 @@
 
 #include "cocos2d.h"
 #include <cocos/ui/CocosGUI.h>
+
+#include "KitkitVideoPlayer.hpp"
 
 USING_NS_CC;
 using namespace std;
@@ -34,7 +36,7 @@ public:
     std::function<void()> onCompleted;
     
 protected:
-    cocos2d::experimental::ui::VideoPlayer *_player;
+    KitkitVideoPlayer *_player;
     
     void handleVideoComplete();
     

@@ -1,6 +1,6 @@
 //
 //  LevelOpenPopup.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/25/16.
 //
@@ -24,6 +24,7 @@ public:
     static LevelOpenPopup* create(Node* parentView);
     bool init(Node* parentView);
     void setup(std::string levelID);
+    void playGuideVoice(float dt);
     
     std::function<void()> onOpenLevel;
     

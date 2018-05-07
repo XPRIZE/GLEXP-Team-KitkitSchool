@@ -15,6 +15,7 @@
 #include "CCAppController.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Effects/FireworksEffect.hpp"
 
@@ -44,6 +45,8 @@ Scene* NumberTrainScene::createScene(int levelID)
 
 void NumberTrainScene::setLevel(int level)
 {
+    _currentLevel = level;
+    
     NumberTrainProblemBank *problemBank = new NumberTrainProblemBank();
     _problem = problemBank->generateParameters(level);
     
@@ -539,6 +542,9 @@ void NumberTrainScene::answerCome(float delay)
                 
             } else {
                 card->_targetSlot = nullptr;
+                card->runAction(MoveTo::create(0.2, card->_originalPos));
+                
+                /*
                 Size winSize = getContentSize();
                 Vec2 newPos = card->getPosition();
                 float margin = 60;
@@ -549,8 +555,11 @@ void NumberTrainScene::answerCome(float delay)
                 if (card->getPosition().distance(newPos) != 0) {
                     card->runAction(EaseOut::create( MoveTo::create( 0.3, newPos ), 1.2));
                 }
+                  */
+                
             }
             
+            this->writeActionLog();
             this->checkReadyToSubmit();
         };
         
@@ -580,6 +589,46 @@ void NumberTrainScene::answerGo()
     
 }
 
+void NumberTrainScene::writeActionLog()
+{
+    // NB(xenosoz, 2018): Log for future analysis
+
+    stringstream userAnswer;
+    stringstream correctAnswer;
+        
+    userAnswer << "[";
+    correctAnswer << "[";
+    
+    int answerIdx = 0;
+    for (auto t : _trainCars) {
+        if (!t->_hasSlot) { continue; }
+        
+        userAnswer << (t->_cardInSlot ? TodoUtil::itos(t->_cardInSlot->_number) : "None");
+        userAnswer << ", ";
+        
+        correctAnswer << _correctAnswer[answerIdx];
+        correctAnswer << ", ";
+        
+        answerIdx += 1;
+    }
+    
+    userAnswer << "]";
+    correctAnswer << "]";
+    
+    
+    auto workPath = [this] {
+        stringstream ss;
+        ss << "/" << "PatternTrain";
+        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "work-" << _currentProblemIndex;
+        return ss.str();
+    }();
+    
+    StrictLogManager::shared()->game_Peek_Answer("PatternTrain", workPath,
+                                                 userAnswer.str(), correctAnswer.str());
+    
+}
+
 void NumberTrainScene::checkReadyToSubmit()
 {
     checkAnswer();
@@ -602,7 +651,6 @@ void NumberTrainScene::checkReadyToSubmit()
 
 void NumberTrainScene::checkAnswer()
 {
-    
     _isReadyToSubmit = false;
     bool finished = true;
     
@@ -643,6 +691,11 @@ void NumberTrainScene::onCorrect()
 {
     FireworksEffect::fire();
     GameSoundManager::getInstance()->playEffectSound("NumberTrain/Sounds/MouseSuccess.m4a");
+    
+    
+    for (auto card : _answerCards) {
+        card->_enableTouch = false;
+    }
     
     
     //GameController::getInstance()->onSolve();

@@ -40,6 +40,7 @@ class MainScene: public Scene {
 public:
     Chain<MainSheet> TheSheet;
 
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

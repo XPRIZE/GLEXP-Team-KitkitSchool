@@ -16,6 +16,7 @@
 #include "ui/CocosGUI.h"
 #include "Common/Basic/SoundEffect.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 
 
@@ -37,11 +38,12 @@ namespace BirdPhonicsSceneSpace {
   //  const char* dropEffect = "Counting/panelput.m4a";
     
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/Andika-R.ttf";
     const Size gameSize = Size(2560, 1800);
     
     const float floorY = 878;
-    
+    bool singleTouch = true;
+    double chirpTime;
 
     
     
@@ -50,8 +52,11 @@ namespace BirdPhonicsSceneSpace {
     
     SoundEffect lightEffect() { return SoundEffect("BirdPhonics/Effect/Light_on.m4a"); }
     
-
-    
+    double getCurrentTimeOfDouble() {
+        struct timeval time;
+        gettimeofday(&time, NULL);
+        return static_cast<double>(time.tv_sec + static_cast<double>(time.tv_usec) / 1000000.f);
+    }
 }
 
 using namespace BirdPhonicsSceneSpace;
@@ -61,13 +66,12 @@ using namespace BirdPhonicsSceneSpace;
  Bread
  *************/
 
-void Bread::setWord(string word, char phonic)
+void Bread::setWord(string word, string phonic_owner, string word_sound, string phonic_position)
 {
     _word = word;
-    _phonic = phonic;
+    _phonic_owner = phonic_owner;
     _touchEnabled = false;
-    
-    
+    _isEaten = false;
     auto sprite = Sprite::create("BirdPhonics/phonics_bread_answers.png");
     auto size = sprite->getContentSize();
     
@@ -76,49 +80,61 @@ void Bread::setWord(string word, char phonic)
     
     setContentSize(size);
     setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    
     {
-        auto w1 = word.substr(0, 1);
-        auto w2 = word.substr(1);
-        
-        auto l1 = TodoUtil::createLabel(w1, 150, Size::ZERO, defaultFont, Color4B(120, 43, 0, 255));
-        l1->setAnchorPoint(Vec2::ZERO);
-        auto s1 = l1->getContentSize();
-        
-        
-        auto ss = Size(30, 150);
-        
-        auto l2 = TodoUtil::createLabel(w2, 150, Size::ZERO, defaultFont, Color4B(69, 31, 9, 255));
-        l2->setAnchorPoint(Vec2::ZERO);
-        auto s2 = l2->getContentSize();
-        
+        auto split = TodoUtil::split(phonic_position, ',');
         auto l = Node::create();
-        l->setContentSize(Size(s1.width+s2.width+ss.width/2, MAX(s1.height, s2.height)));
-        l2->setPosition(Vec2(s1.width+ss.width/2, 0));
-        l->addChild(l1);
-        l->addChild(l2);
+        float width = 0;
+        float maxHeight = 0;
+        for (int i = 0; i < word.length(); ++i)
+        {
+            Label* label;
+            string str;
+            if (std::find(split.begin(), split.end(), TodoUtil::itos(i + 1)) != split.end())
+            {
+                label = TodoUtil::createLabel(str + word.at(i), 150, Size::ZERO, defaultFont,
+                                              Color4B(120, 43, 0, 255));
+            }
+            else
+            {
+                label = TodoUtil::createLabel(str + word.at(i), 150, Size::ZERO, defaultFont,
+                                              Color4B(69, 31, 9, 255));
+            }
+            
+            label->setAnchorPoint(Vec2::ZERO);
+            label->setPosition(Vec2(width, 0));
+
+            width += label->getContentSize().width;
+            if (label->getContentSize().height > maxHeight)
+            {
+                maxHeight = label->getContentSize().height;
+            }
+            
+            l->addChild(label);
+        }
         
+        l->setContentSize(Size(width, maxHeight));
         l->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        l->setPosition(size/2);
+        l->setPosition(size.width/2, size.height/2+20);
         addChild(l);
-        
+
     }
     
-    auto path = StringUtils::format("BirdPhonics/Word/%s.m4a", word.c_str());
+    auto path = StringUtils::format("Games/BirdPhonics/sounds/%s", word_sound.c_str());
     _wordEffect.setPath(path);
     
+    singleTouch = true;
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
         
         if (!_touchEnabled) return false;
+        if (_isEaten) return false;
         
         auto P = getParent();
         auto pos = P->convertToNodeSpace(T->getLocation());
         auto box = this->getBoundingBox();
         
         if (box.containsPoint(pos)) {
-            
             _wordEffect.stop();
             _wordEffect.play();
             
@@ -129,17 +145,21 @@ void Bread::setWord(string word, char phonic)
     
     listener->onTouchBegan = [this](Touch* T, Event* E) {
         
+        if (!singleTouch) return false;
+        if (_isEaten) return false;
+        
         auto P = getParent();
         auto pos = P->convertToNodeSpace(T->getLocation());
         if (this->getBoundingBox().containsPoint(pos)) {
-            
+            singleTouch = false;
             _wordEffect.stop();
             _wordEffect.play();
             
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             return true;
         }
@@ -175,11 +195,21 @@ void Bread::setWord(string word, char phonic)
     listener->onTouchEnded = [this](Touch* T, Event* E) {
         auto breadBox = this->getBoundingBox();
         auto birdBox = this->_targetBird->getBoundingBox();
+        singleTouch = true;
+        
         if (birdBox.intersectsRect(breadBox)) {
             this->_targetBird->eatBread(this);
+            
+            if (onGoodDown) {
+                onGoodDown();
+            }
         } else {
             this->_targetBird->readyToEat(false);
             this->runAction(EaseOut::create(MoveTo::create(0.2, this->_orgPos), 2.0));
+            
+            if (onBadDown) {
+                onBadDown();
+            }
         }
         
         //        if (_snapped) return;
@@ -258,13 +288,13 @@ void Bird::setType(int type, std::function<void(void)> func)
     
 }
 
-void Bird::setPhonic(char phonic)
+void Bird::setPhonic(string phonic_owner, string phonic_sound)
 {
-    _phonic = phonic;
+    _phonic_owner = phonic_owner;
     
-    auto path = StringUtils::format("BirdPhonics/Phonic/%c_sound_f.wav", phonic);
+    string path;
+    path = StringUtils::format("Games/BirdPhonics/sounds/%s", phonic_sound.c_str());
     _phonicEffect.setPath(path);
-    
     
 }
 
@@ -291,6 +321,7 @@ void Bird::chirp(bool autocalm)
         _body->setTexture(_activeName);
         _phonicEffect.stop();
         _phonicEffect.play();
+        chirpTime = getCurrentTimeOfDouble();
         _isChirping = true;
     }
     
@@ -322,6 +353,7 @@ void Bird::readyToEat(bool ready)
 
 void Bird::eatBread(Bread *bread)
 {
+    bread->_isEaten = true;
     bread->_touchEnabled = false;
     _touchEnabled = false;
     
@@ -335,7 +367,17 @@ void Bird::eatBread(Bread *bread)
     bread->runAction(breadSeq);
     
     bread->_wordEffect.stop();
-    bread->_wordEffect.play();
+    double now = getCurrentTimeOfDouble();
+
+    if (now - chirpTime > 0.5f) {
+        bread->_wordEffect.play();
+
+    } else {
+        this->runAction(Sequence::create(DelayTime::create(0.5),
+                                         CallFunc::create([this, bread]() {
+                                            bread->_wordEffect.play();
+        }), nullptr));
+    }
 
     calm();
 
@@ -352,9 +394,8 @@ void Bird::eatBread(Bread *bread)
         bread->setVisible(false);
         solveEffect().play();
         this->_body->setTexture(_correctName);
-    }),
-                                    
-                                    JumpBy::create(1.0, Vec2::ZERO, 100, 3),
+	}), nullptr);
+	auto birdSeq2 = Sequence::create(JumpBy::create(1.0, Vec2::ZERO, 100, 3),
                                     CallFunc::create([this, bread](){
         calm();
         _touchEnabled = true;
@@ -363,7 +404,7 @@ void Bird::eatBread(Bread *bread)
 
                                     nullptr);
     
-    this->runAction(birdSeq);
+    this->runAction(Sequence::create( birdSeq, birdSeq2, nullptr));
                                 
 }
 
@@ -478,7 +519,6 @@ void BirdPhonicsScene::onEnter()
 {
     Layer::onEnter();
 
-
    // _progressBar->setMax((int)sheet.size());
 
 }
@@ -490,48 +530,75 @@ void BirdPhonicsScene::onEnterTransitionDidFinish()
 
 void BirdPhonicsScene::onStart()
 {
+    string p = LanguageManager::getInstance()->findLocalizedResource("Games/BirdPhonics/BirdPhonics_level.tsv");
+    string s = FileUtils::getInstance()->getStringFromFile(p);
+    auto data = TodoUtil::readTSV(s);
     
-    {
-        Problem p;
-        p.phonics.push_back('h');
-        p.phonics.push_back('c');
-        p.words.push_back(WordPair('h', "high"));
-        p.words.push_back(WordPair('h', "heat"));
-        p.words.push_back(WordPair('c', "care"));
-        p.words.push_back(WordPair('c', "call"));
-        
-        _problems.push_back(p);
-    }
-
-    {
-        Problem p;
-        p.phonics.push_back('t');
-        p.phonics.push_back('b');
-        p.words.push_back(WordPair('t', "truck"));
-        p.words.push_back(WordPair('t', "train"));
-        p.words.push_back(WordPair('b', "bird"));
-        p.words.push_back(WordPair('b', "bus"));
-        
-        _problems.push_back(p);
-    }
-
+    // data[0][2] : Worksheet or WorksheetAll
+    bool bWorkSheetAll = data[0][2] == "WorksheetAll" ? true : false;
     
+    int maxWorkSheet = 0;
+    for (vector<string> row : data)
     {
-        Problem p;
-        p.phonics.push_back('g');
-        p.phonics.push_back('j');
-        p.words.push_back(WordPair('g', "grass"));
-        p.words.push_back(WordPair('g', "give"));
-        p.words.push_back(WordPair('j', "giraffe"));
-        p.words.push_back(WordPair('j', "jungle"));
+        if (row.size() < 1)
+            continue;
         
-        _problems.push_back(p);
-    }
+        if (TodoUtil::trim(row[0]).size() <= 0)
+            continue;
+        
+        if (row[0][0] == '#')
+            continue;
 
+        if (TodoUtil::stoi(row[1]) == _currentLevel)
+        {
+            Problem p;
+            p.workSheet = TodoUtil::stoi(row[2]);
+            
+            if (p.workSheet > maxWorkSheet)
+            {
+                maxWorkSheet = p.workSheet;
+            }
+            
+            p.phonics_owner.push_back("blue");
+            p.phonics_sound.push_back(row[4]);
+            
+            p.phonics_owner.push_back("red");
+            p.phonics_sound.push_back(row[5]);
+
+            p.words.push_back(WordPair(row[8], row[6]));
+            p.words_sound.push_back(row[7]);
+            p.phonic_positions.push_back(row[9]);
+            
+            p.words.push_back(WordPair(row[12], row[10]));
+            p.words_sound.push_back(row[11]);
+            p.phonic_positions.push_back(row[13]);
+            
+            p.words.push_back(WordPair(row[16], row[14]));
+            p.words_sound.push_back(row[15]);
+            p.phonic_positions.push_back(row[17]);
+            
+            p.words.push_back(WordPair(row[20], row[18]));
+            p.words_sound.push_back(row[19]);
+            p.phonic_positions.push_back(row[21]);
+            
+            _problems.push_back(p);
+        }
+    }
     
+    if (bWorkSheetAll == false)
+    {
+        int curWorksheet = RandomHelper::random_int(1, maxWorkSheet);
+        
+        for (int i = _problems.size() - 1; i >= 0; --i)
+        {
+            if (_problems.at(i).workSheet != curWorksheet)
+            {
+                _problems.erase(_problems.begin() + i);
+            }
+        }
+    }
     
     _progressBar->setMax(_problems.size());
-    
 
     showProblem(0);
   
@@ -594,15 +661,13 @@ void BirdPhonicsScene::showProblem(int index)
     auto problem = _problems[index];
     
     int birdIndex = 0;
-    for (auto phonic : problem.phonics) {
+    for (int i = 0; i < problem.phonics_owner.size(); ++i) {
         auto bird = _birds[birdIndex];
         
-        bird->setPhonic(phonic);
+        bird->setPhonic(problem.phonics_owner.at(i), problem.phonics_sound.at(i));
         bird->setTouchEnabled(true);
         birdIndex++;
     }
-    
-    
     
     runAction(Sequence::create(DelayTime::create(1.0),
                                CallFunc::create([this](){ lightEffect().play(); _birds[0]->turnLight(true); }),
@@ -633,10 +698,24 @@ void BirdPhonicsScene::createBread()
     _breads.clear();
     auto problem = _problems[_currentProblemIndex];
     
-    for (auto wordPair : problem.words)
+    string workPath = [this] {
+        stringstream ss;
+        ss << "/" << "BirdPhonics";
+        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "work-" << _currentProblemIndex;
+        return ss.str();
+    }();
+
+    for (int i = 0; i < problem.words.size(); ++i)
     {
         auto b = Bread::create();
-        b->setWord(wordPair.second, wordPair.first);
+        b->setWord(problem.words.at(i).second, problem.words.at(i).first, problem.words_sound.at(i), problem.phonic_positions.at(i));
+        b->onGoodDown = [this, b, workPath] {
+            StrictLogManager::shared()->game_Peek_Answer("BirdPhonics", workPath, b->_word, b->_word);
+        };
+        b->onBadDown = [this, b, workPath] {
+            StrictLogManager::shared()->game_Peek_Answer("BirdPhonics", workPath, b->_word, "None");
+        };
         addChild(b);
         _breads.push_back(b);
     }
@@ -658,7 +737,7 @@ void BirdPhonicsScene::createBread()
         
         bread->_touchEnabled = true;
         for (auto bird : _birds) {
-            if (bird->_phonic == bread->_phonic) {
+            if (bird->_phonic_owner == bread->_phonic_owner) {
                 bread->_targetBird = bird;
             }
         }
@@ -667,4 +746,31 @@ void BirdPhonicsScene::createBread()
     }
 }
 
+std::vector<int> BirdPhonicsScene::getLevelIDs()
+{
+    std::vector<int> result;
+    
+    string p = LanguageManager::getInstance()->findLocalizedResource("Games/BirdPhonics/BirdPhonics_level.tsv");
+    string s = FileUtils::getInstance()->getStringFromFile(p);
+    auto data = TodoUtil::readTSV(s);
+    int level;
+    for (auto row : data)
+    {
+        if (row.size() < 1)
+            continue;
+        
+        if (TodoUtil::trim(row[0]).size() <= 0)
+            continue;
+        
+        if (row[0][0] == '#')
+            continue;
+        
+        level = TodoUtil::stoi(row[1]);
+        if(std::find(result.begin(), result.end(), level) == result.end())
+        {
+            result.push_back(level);
+        }
+    }
 
+    return result;
+}

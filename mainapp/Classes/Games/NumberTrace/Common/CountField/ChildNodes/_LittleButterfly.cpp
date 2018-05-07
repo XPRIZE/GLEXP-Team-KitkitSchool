@@ -18,7 +18,7 @@ namespace todoschool {
 namespace countfield {
 
 bool LittleButterfly::init() {
-    if (!Super::init()) { return false; }
+    if (!Node::init()) { return false; }
 
     setContentSize(Size(256.f, 256.f));
 
@@ -69,7 +69,8 @@ void LittleButterfly::clear() {
         Sprite* It = Sprite::createWithSpriteFrame(Frames.front());
         It->setPosition(Point(0, 0));
         It->setScale(2.f);
-        It->setBlendFunc((BlendFunc){GL_ZERO, GL_ONE_MINUS_SRC_ALPHA});
+		BlendFunc bf = { GL_ZERO, GL_ONE_MINUS_SRC_ALPHA };
+		It->setBlendFunc(bf);
         addChild(It);
         return It;
     }());
@@ -81,7 +82,8 @@ void LittleButterfly::clear() {
 
 void LittleButterfly::handleActiveValueUpdated(bool &) {
     if (Active.value()) {
-        TheSprite->setBlendFunc((BlendFunc){GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA});
+		BlendFunc bf = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+        TheSprite->setBlendFunc(bf);
         TheSprite->runAction(TheAnimation);
     }
     else {

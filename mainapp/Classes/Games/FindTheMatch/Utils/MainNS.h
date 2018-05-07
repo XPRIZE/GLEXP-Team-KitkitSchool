@@ -17,12 +17,12 @@
     } \
     }
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/ADT/Optional.h>
+#include <Common/ADT/Chain.h>
+#include <Common/ADT/Optional.h>
 #include <Games/NumberTrace/Common/Basic/Button.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
+#include "Common/Repr/AllRepr.h"
 #include <Common/Basic/SoundEffect.h>
 #include <Common/Controls/ProgressIndicator.hpp>
 #include <Common/Controls/CompletePopup.hpp>

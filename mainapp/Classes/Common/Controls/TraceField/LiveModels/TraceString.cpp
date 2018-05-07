@@ -81,48 +81,48 @@ Point TraceString::offsetForGlyphAt(size_t N) const {
 }
     
 Point TraceString::centerForGlyphAt(size_t N) const {
-    Rect BB = Glyphs[N].roughBoundingBox();
+    AARect BB = Glyphs[N].roughBoundingBox();
     return Offsets[N] + Point(BB.midX(), BB.midY());
 }
     
 Point TraceString::minPointForGlyphAt(size_t N) const {
-    Rect BB = Glyphs[N].roughBoundingBox();
+    AARect BB = Glyphs[N].roughBoundingBox();
     return Offsets[N] + Point(BB.minX(), BB.minY());
 }
 
 Point TraceString::maxPointForGlyphAt(size_t N) const {
-    Rect BB = Glyphs[N].roughBoundingBox();
+    AARect BB = Glyphs[N].roughBoundingBox();
     return Offsets[N] + Point(BB.maxX(), BB.maxY());
 }
     
-Rect TraceString::tightBoundingBoxForGlyphAt(size_t N) const {
-    Rect BB = Glyphs[N].tightBoundingBox();
+AARect TraceString::tightBoundingBoxForGlyphAt(size_t N) const {
+    AARect BB = Glyphs[N].tightBoundingBox();
     BB.origin += Offsets[N];
     return BB;
 }
 
-Rect TraceString::roughBoundingBoxForGlyphAt(size_t N) const {
-    Rect BB = Glyphs[N].roughBoundingBox();
+AARect TraceString::roughBoundingBoxForGlyphAt(size_t N) const {
+    AARect BB = Glyphs[N].roughBoundingBox();
     BB.origin += Offsets[N];
     return BB;
 }
 
 void TraceString::refreshBoundingBox() {
     Point Offset = Point::ZERO;
-    Rect StringTightBB = (Glyphs.size() > 0 ? Glyphs[0].tightBoundingBox() : Rect::zero());
-    Rect StringRoughBB = (Glyphs.size() > 0 ? Glyphs[0].roughBoundingBox() : Rect::zero());
+    AARect StringTightBB = (Glyphs.size() > 0 ? Glyphs[0].tightBoundingBox() : AARect::zero());
+    AARect StringRoughBB = (Glyphs.size() > 0 ? Glyphs[0].roughBoundingBox() : AARect::zero());
     
     for (size_t GlyphIndex = 0; GlyphIndex < Glyphs.size(); ++GlyphIndex) {
         const float Spacing = 40.f;  // XXX
-        Rect LocalRoughBB = Glyphs[GlyphIndex].roughBoundingBox();
+        AARect LocalRoughBB = Glyphs[GlyphIndex].roughBoundingBox();
         
         if (GlyphIndex > 0) {
             Offset.x += Spacing;
             Offset.x -= LocalRoughBB.minX();
         }
 
-        Rect GlyphTightBB = Glyphs[GlyphIndex].tightBoundingBox();
-        Rect GlyphRoughBB = Glyphs[GlyphIndex].roughBoundingBox();
+        AARect GlyphTightBB = Glyphs[GlyphIndex].tightBoundingBox();
+        AARect GlyphRoughBB = Glyphs[GlyphIndex].roughBoundingBox();
         GlyphTightBB.origin += Offset;
         GlyphRoughBB.origin += Offset;
         StringTightBB = StringTightBB.union_(GlyphTightBB);
@@ -136,11 +136,11 @@ void TraceString::refreshBoundingBox() {
     RoughBoundingBox = StringRoughBB;
 }
 
-const Rect& TraceString::tightBoundingBox() const {
+const AARect& TraceString::tightBoundingBox() const {
     return TightBoundingBox;
 }
 
-const Rect& TraceString::roughBoundingBox() const {
+const AARect& TraceString::roughBoundingBox() const {
     return RoughBoundingBox;
 }
 

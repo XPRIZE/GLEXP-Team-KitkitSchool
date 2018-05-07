@@ -1,6 +1,6 @@
 //
 //  TodoLoadingScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/28/16.
 //
@@ -57,7 +57,8 @@ void TodoLoadingScene::update(float delta)
     _currentTimer += delta;
     
     if (_nextSceneLoaded && _transitionFinished && _currentTimer>_loadingTime) {
-     
+
+        CCLOG("_nextSceneLoaded");
         GameSoundManager::getInstance()->unloadAllEffect();
         
         Director::getInstance()->replaceScene(TransitionFade::create(_fadeOutTime, _nextScene));
@@ -72,6 +73,8 @@ void TodoLoadingScene::update(float delta)
 bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingTime, float fadeOutTime)
 //bool TodoLoadingScene::init(Scene* &nextScene, float loadingTime, float fadeOutTime)
 {
+    CCLOG("TodoLoadingScene::init");
+
     
     if (!Layer::init()) {
         return false;
@@ -108,11 +111,7 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
     
     
     string loadingFile;
-//    if (cur) {
-//        loadingFile = StringUtils::format("BirdAnimation/Loading/%c%d.png", cur->category, cur->categoryLevel);
-//    } else {
-//        loadingFile = "System/transition_yellowbird.png";
-//    }
+
     loadingFile = "System/xprize_image_loading.png";
     
     
@@ -123,18 +122,6 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
     addChild(loadingImage);
     
     Size imageSize = loadingImage->getContentSize();
-    
-//    Sprite *loadingMark = Sprite::create("System/transition_ABC123.png");
-//    loadingMark->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-//    loadingMark->setPosition(Vec2(winSize.width/2-imageSize.width/2 - 20, winSize.height/2+imageSize.height/2));
-//    addChild(loadingMark);
-    
-//    loadingMark->runAction(RepeatForever::create(
-//                             Sequence::create(DelayTime::create(0.2),
-//                                              MoveBy::create(0.0, Vec2(10, 0)),
-//                                              DelayTime::create(0.2),
-//                                              MoveBy::create(0.0, Vec2(-10, 0)), nullptr)));
-    
     
     std::string loadingText = LanguageManager::getInstance()->isEnglish() ? "Loading..." : "Tafadhali subiri...";
     
@@ -153,6 +140,8 @@ bool TodoLoadingScene::init(std::function<Scene*(void)> &creator, float loadingT
 void TodoLoadingScene::onEnterTransitionDidFinish()
 {
     Layer::onEnterTransitionDidFinish();
+    CCLOG("TodoLoadingScene::onEnterTransitionDidFinish");
+
     
     _transitionFinished = true;
     

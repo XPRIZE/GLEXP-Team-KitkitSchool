@@ -1,6 +1,6 @@
 //
 //  MultipleChoicesScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -60,7 +60,7 @@ namespace ComprehensionTest
             
             std::string _questionText;
             float _questionTextFontSize;
-            std::string _questionImagePath;
+            std::string _questionImageFile;
             std::vector<std::string> _answers;
             std::vector<std::string> _solutions;
             
@@ -68,6 +68,9 @@ namespace ComprehensionTest
             void createFixedResources();
             Node* createMultiLine(string text, float fontSize, Size dim, Color4B fontColor);
             Node* createWord(string word, float fontSize, Color4B fontColor);
+            std::string lineWrappnig(std::string original);
+            
+            std::string makeWorkPath() const;
         };
     }
 }

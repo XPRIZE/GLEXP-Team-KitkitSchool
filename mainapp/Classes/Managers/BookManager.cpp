@@ -1,6 +1,6 @@
 //
 //  BookManager.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/3/16.
 //
@@ -29,7 +29,7 @@ void BookManager::addBookInfo(BookInfo *info)
 
 
 
-void BookManager::addBookInfo(string title, LanguageManager::LanguageType lang, string path, string imagePath)
+void BookManager::addBookInfo(string title, LanguageManager::LocaleType lang, string path, string imagePath)
 {
     BookInfo *info = new BookInfo;
     info->bookTitle = title;
@@ -52,7 +52,7 @@ BookInfo* BookManager::findBookInfo(string title)
 }
 
 
-vector<BookInfo*> BookManager::getBookVector(LanguageManager::LanguageType lang)
+vector<BookInfo*> BookManager::getBookVector(LanguageManager::LocaleType lang)
 {
     vector<BookInfo*> ret;
     

@@ -65,6 +65,7 @@ private:
     
     ProgressIndicator *_progressBar;
     
+    void writeActionLog();
     void checkReadyToSubmit();
     void checkAnswer();
     
@@ -89,7 +90,7 @@ private:
     
     Vec2 _guardPos;
     
-    
+    int _currentLevel;
     Json::Value _problem;
     int _totalProblems;
     int _currentProblemIndex;

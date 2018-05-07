@@ -1,6 +1,6 @@
 //
 //  ImageAnswerItem.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 27/12/2016.
 //
@@ -38,9 +38,9 @@ namespace ComprehensionTest
             return true;
         }
         
-        bool ImageAnswerItem::initImage(std::string imagePath, float marginX, float marginY)
+        bool ImageAnswerItem::initImage(std::string folder, std::string image, float marginX, float marginY)
         {
-            _id = imagePath;
+            _id = image;
             
             setContentSize(kImageSize);
             
@@ -50,20 +50,21 @@ namespace ComprehensionTest
             _background->setPosition(getContentSize() / 2);
             addChild(_background);
             
-            auto image = Sprite::create("ComprehensionTest/Image/" + imagePath);
-            if (image == nullptr)
+            auto sprite = Sprite::create(folder + "/quiz/" + image);
+            if (!sprite) sprite = Sprite::create(folder + "/page/" + image);
+            if (sprite == nullptr)
             {
-                NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK");
+                NativeAlert::show("Image does not exist.", image, "OK");
                 return false;
             }
             
-            float widthFactor = (kImageSize.width - kImageAbsPadding) / image->getContentSize().width;
-            float heightFactor = (kImageSize.height - kImageAbsPadding) / image->getContentSize().height;
+            float widthFactor = (kImageSize.width - kImageAbsPadding) / sprite->getContentSize().width;
+            float heightFactor = (kImageSize.height - kImageAbsPadding) / sprite->getContentSize().height;
             auto scaleFactor = MIN(widthFactor, heightFactor);
-            image->setScale(scaleFactor);
-            image->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            image->setPosition(getContentSize() / 2);
-            addChild(image);
+            sprite->setScale(scaleFactor);
+            sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            sprite->setPosition(getContentSize() / 2);
+            addChild(sprite);
             
             _normalAnswerSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_answers_1.png");
             _normalAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);

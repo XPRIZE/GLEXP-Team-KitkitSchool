@@ -1,6 +1,6 @@
 //
 //  ProblemData.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 13/12/2016.
 //
@@ -32,7 +32,7 @@ namespace ComprehensionTest
         class ProblemData
         {
         public:
-            std::string questionText;
+            //std::string questionText;
             std::string questionImage;
             std::vector<Word*> wordSet;
             std::vector<std::string> wrongWordSet;

@@ -1,6 +1,6 @@
 //
 //  ImageAndImageLayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 26/12/2016.
 //
@@ -32,15 +32,16 @@ namespace ComprehensionTest
             return true;
         }
         
-        void ImageAndImageLayer::setQuestionImage(std::string imagePath)
+        void ImageAndImageLayer::setQuestionImage(std::string folder, std::string imageFile)
         {
             auto backgroundSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img.png");
             backgroundSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
             backgroundSprite->setPosition(getContentSize().width / 2 + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(backgroundSprite);
             
-            auto questionSprite = Sprite::create("ComprehensionTest/Image/" + imagePath);
-            if (questionSprite == nullptr) { NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK"); return; }
+            auto questionSprite = Sprite::create(folder + "/quiz/" + imageFile);
+            if (!questionSprite) questionSprite = Sprite::create(folder + "/page/" + imageFile);
+            if (questionSprite == nullptr) { NativeAlert::show("Image does not exist.", imageFile, "OK"); return; }
             
             questionSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             questionSprite->setPosition(backgroundSprite->getContentSize() / 2);
@@ -52,26 +53,26 @@ namespace ComprehensionTest
             backgroundSprite->addChild(frameSprite);
         }
         
-        void ImageAndImageLayer::setAnswers(std::vector<std::string> imagePaths)
+        void ImageAndImageLayer::setAnswers(std::string folder, std::vector<std::string> imageFiles)
         {
             Size totalSize;
             auto answersRootNode = Node::create();
             
-            if (imagePaths.size() > 0)
+            if (imageFiles.size() > 0)
             {
                 auto item = ImageAnswerItem::create();
-                item->initImage(imagePaths[0], 30.f, 50.f);
-                int lineNumbers = imagePaths.size() / kMaxNumbersPerLine;
+                item->initImage(folder, imageFiles[0], 30.f, 50.f);
+                int lineNumbers = imageFiles.size() / kMaxNumbersPerLine;
                 totalSize = Size(item->getContentSize().width * kMaxNumbersPerLine, item->getContentSize().height * lineNumbers);
                 answersRootNode->setContentSize(totalSize);
             }
             
             CCLOG("total : %f, %f", totalSize.width, totalSize.height);
             
-            for (int i = 0; i < imagePaths.size(); i++)
+            for (int i = 0; i < imageFiles.size(); i++)
             {
                 ImageAnswerItem* item = ImageAnswerItem::create();
-                bool bInit = item->initImage(imagePaths[i], 30.f, 50.f);
+                bool bInit = item->initImage(folder, imageFiles[i], 30.f, 50.f);
                 if (bInit) item->setLetterByIndex(i);
                 
                 float posX = item->getContentSize().width * (i % kMaxNumbersPerLine);

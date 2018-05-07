@@ -1,6 +1,6 @@
 //
 //  ShapeMatchingCard.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 6/23/16.
 //
@@ -112,7 +112,9 @@ void ShapeMatchingCard::setImage(int level, int type, int number, const std::str
             //localizedText = LocalizedString(localizedText);
             TodoUtil::replaceAll(localizedText, " ", "\n");
             
-            shape = TodoUtil::createLabel(localizedText, 90, Size(contentSize.width-40, 300), fontName, fontColor, TextHAlignment::CENTER);
+            // shape = TodoUtil::createLabel(localizedText, 90, Size(contentSize.width-40, 300), fontName, fontColor, TextHAlignment::CENTER);
+            shape = TodoUtil::createLabel(localizedText, 90, Size::ZERO, fontName, fontColor, TextHAlignment::CENTER);
+            shape->setName("shape");
         }
         
     }
@@ -136,6 +138,11 @@ void ShapeMatchingCard::setImage(int level, int type, int number, const std::str
     
     
 }
+
+void ShapeMatchingCard::setShapeScale(float scaleFactor) {
+    this->getChildByName("shape")->setScale(scaleFactor);
+}
+
 
 bool ShapeMatchingCard::isTouchedIn(Point pt)
 {

@@ -31,6 +31,7 @@ class MainScene: public Scene {
 public:
     Chain<vector<int>> TheSheet;
     
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

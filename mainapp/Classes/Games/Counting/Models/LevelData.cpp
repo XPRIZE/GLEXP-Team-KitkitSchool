@@ -11,6 +11,8 @@
 #include <Common/Basic/CommentStream.h>
 #include <cocos/cocos2d.h>
 
+#include "Managers/LanguageManager.hpp"
+
 using namespace std;
 using namespace cocos2d;
 
@@ -62,7 +64,8 @@ Worksheet& LevelData::randomSheetFor(const string& languageTag, int levelID) {
 LevelData LevelData::defaultData() {
     LevelData it;
     
-    string p = assetPrefix() + "/Counting_Levels.tsv";
+    
+    string p = LanguageManager::getInstance()->findLocalizedResource("Games/" + assetPrefix() + "/Counting_Levels.tsv");
     string s = FileUtils::getInstance()->getStringFromFile(p);
     
     CommentStream stream(s);

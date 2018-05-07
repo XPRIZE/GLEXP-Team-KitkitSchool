@@ -8,8 +8,8 @@
 
 
 #include "TraceFieldDepot.h"
-#include <Games/NumberTrace/Common/Utils/JsonUtils.h>
-#include <Games/NumberTrace/Common/Utils/StringUtils.h>
+#include "Utils/JsonUtils.h"
+#include "Utils/StringUtils.h"
 
 
 BEGIN_NS_TRACEFIELD

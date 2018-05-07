@@ -1,6 +1,6 @@
 //
 //  DailyScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 09/10/17.
 //
@@ -26,9 +26,10 @@
 #include "Common/Controls/PopupBase.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Common/Controls/CoinTab.hpp"
+#include "Common/Controls/TouchEventLogger.h"
 
 #include "Bird.hpp"
-#include "CoopScene.hpp"
+
 
 
 
@@ -407,7 +408,6 @@ bool DailyScene::init(string levelID)
 
 void DailyScene::refreshData()
 {
-    
     if (_doneClearedDay) return;
     
     std::map<std::string, int> lastAvailable;
@@ -418,6 +418,7 @@ void DailyScene::refreshData()
     _freechoiceGames.clear();
     
     _currentDay = UserManager::getInstance()->getCurrentDay(_levelID);
+
     if (_currentDay<=0) _currentDay = 1;
     _maxAvailableDay = _currentDay;
     
@@ -428,6 +429,7 @@ void DailyScene::refreshData()
     for (int i=0; i<_cur->numDays; i++) {
         
         auto day = i+1;
+        
         
         bool cleared = UserManager::getInstance()->isDayCleared(_levelID, day);
         
@@ -444,7 +446,8 @@ void DailyScene::refreshData()
         
         for (auto game : dayCur->games) {
             if (game.gameLevel<=0) continue;
-            if (game.gameName == "EggQuiz") continue;
+            if (game.gameName == "EggQuizLiteracy") continue;
+            if (game.gameName == "EggQuizMath") continue;
             if (game.gameName == "Comprehension") continue;
             
             bool isNew = false;
@@ -493,7 +496,7 @@ void DailyScene::refreshData()
     }
     
     _maxAvailableDay = MAX(_currentDay, _maxAvailableDay);
-    if (UserManager::getInstance()->isDayInProgress(_levelID, _currentDay)) {
+    if (UserManager::getInstance()->checkIfNextDayIsAvailable(_levelID, _currentDay)) {
         _maxAvailableDay = MAX(_currentDay+1, _maxAvailableDay);
     }
     _maxAvailableDay = MIN(_maxAvailableDay, _cur->numDays);
@@ -1237,7 +1240,7 @@ void DailyScene::showClear(int day)
     if (nextDay>cur->numDays || nextDay<=0) nextDay = -1;
     
     
-    Sprite *nextBtn = (Sprite*)_mangoBoard->getChildByTag(nextDay);
+    Sprite *nextBtn = nextDay>=0 ? (Sprite*)_mangoBoard->getChildByTag(nextDay) : nullptr;
     Sequence *nextSeq;
     
     if (nextBtn && nextDay>0) {
@@ -1367,8 +1370,11 @@ void DailyScene::dayChosen(int day)
         
 
         auto scene = GameSelectScene::createScene();
-
-        Director::getInstance()->pushScene(TransitionFade::create(0.8, scene));
+        scene->setName("GameSelectScene");
+        
+        auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(scene));
+        fadeScene->setName("(TransitionFade GameSelectScene)");
+        Director::getInstance()->pushScene(fadeScene);
     }
     
     LogManager::getInstance()->logEvent("DailyScene", "select_day", _levelID, day);

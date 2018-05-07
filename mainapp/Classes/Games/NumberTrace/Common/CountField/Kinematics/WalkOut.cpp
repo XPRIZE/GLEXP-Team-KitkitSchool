@@ -1,6 +1,6 @@
 //
 //  WalkOut.cpp on Jul 13, 2016.
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -70,8 +70,9 @@ void WalkOut::startWithTarget(Node* Target) {
 }
 
 void WalkOut::update(float Time) {
-    Super::update(Time);
-    
+    // NB(xenosoz, 2017): Calling Super::update here just says "[Action update]. override me" in every frame which is very annoying.
+    //   Super::update(Time);
+
     // NB(xenosoz, 2016): Invert causality and effect.
     //   (I just couldn't get quite amount of numerical stability by other means.)
     Engine.clear();

@@ -1,6 +1,6 @@
 //
 //  GameVideoPlayer.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 9/6/17.
 //
@@ -8,16 +8,17 @@
 
 #include "GameVideoPlayer.hpp"
 
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/NodeScopeGuard.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
+#include "Common/Controls/KitkitVideoPlayer.hpp"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "platform/android/jni/JniHelper.h"
 #endif
 
 
-using namespace cocos2d::experimental::ui;
+
 
 bool GameVideoPlayer::init()
 {
@@ -38,7 +39,7 @@ bool GameVideoPlayer::init()
     auto bg = LayerColor::create(Color4B(0, 0, 0, 0), winSize.width, winSize.height);
     addChild(bg);
     
-    _player = VideoPlayer::create();
+    _player = KitkitVideoPlayer::create();
     
     _player->setContentSize(videoSize * videoScale);
     _player->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -137,7 +138,7 @@ void GameVideoPlayer::playVideo(string filename)
 void GameVideoPlayer::handleVideoComplete()
 {
     auto seq = Sequence::create(FadeOut::create(3.0), CallFunc::create([this](){
-        auto Guard = todoschool::NodeScopeGuard(this);
+        auto Guard = NodeScopeGuard(this);
         this->removeFromParent();
         if (onCompleted) {
             onCompleted();
@@ -162,4 +163,5 @@ string GameVideoPlayer::getResourceUri(string filename)
         return uri;
     }
 #endif
+	return filename;
 }

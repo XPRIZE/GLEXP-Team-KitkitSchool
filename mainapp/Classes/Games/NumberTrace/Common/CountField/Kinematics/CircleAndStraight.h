@@ -1,6 +1,6 @@
 //
 //  CircleAndStraight.h on Jun 28, 2016
-//  enumaXprize
+//  KitkitSchool
 //
 //  Copyright (c) 2016 Enuma, Inc. All rights reserved.
 //  See LICENSE.md for more details.
@@ -9,8 +9,8 @@
 #ifndef ENUMAXPRIZE_COUNTFIELD_CIRCLEANDSTRAIGHT_H
 #define ENUMAXPRIZE_COUNTFIELD_CIRCLEANDSTRAIGHT_H
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/ADT/Optional.h>
+#include <Common/ADT/Chain.h>
+#include <Common/ADT/Optional.h>
 #include <cocos/cocos2d.h>
 #include <array>
 

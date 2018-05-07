@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../Utils/MainNS.h"
-#include <Games/NumberTrace/Common/Basic/BigLabel.h>
+#include "Common/Basic/BigLabel.h"
 
 
 BEGIN_NS_DIGITALQUIZ
@@ -27,7 +27,7 @@ private:
 
     SizeKind TheSizeKind;
     Button* ButtonNode;
-    todoschool::BigLabel* TextNode;
+    BigLabel* TextNode;
     
 public:
     Chain<string> Text;

@@ -34,6 +34,7 @@ class MainScene: public Scene {
 public:
     Chain<Worksheet> TheSheet;
     
+    int LevelID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

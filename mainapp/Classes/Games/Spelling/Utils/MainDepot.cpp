@@ -8,9 +8,9 @@
 
 
 #include "MainDepot.h"
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+
+#include "Common/Sounds/CommonSound.hpp"
+#include "Common/Basic/DeviceSpec.h"
 #include <Managers/LanguageManager.hpp>
 
 
@@ -21,7 +21,7 @@ string MainDepot::assetPrefix() const {
 }
 
 string MainDepot::defaultFont() const {
-    return "fonts/TodoSchoolV2.ttf";
+    return "fonts/Andika-R.ttf";
 }
 
 Size MainDepot::windowSize() const {
@@ -112,24 +112,16 @@ bool MainDepot::allowFadeInOutForAnswerBall() const {
 
 SoundEffect MainDepot::soundForLetterName(const string& Letter) const {
     if (Letter.empty()) { return SoundEffect::emptyEffect(); }
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        default:
-            CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
-            /* Fall through */
-        case LanguageManager::ENGLISH: return Pam_enUS().soundForLetterName(Letter).preloaded();
-        case LanguageManager::SWAHILI: return Imma_swTZ().soundForLetterName(Letter).preloaded();
-    }
+    
+    return CommonSound().soundForLetterName(Letter).preloaded();
+    
 }
 
 SoundEffect MainDepot::soundForWord(const string& Word) const {
     if (Word.empty()) { return SoundEffect::emptyEffect(); }
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        default:
-            CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
-            /* Fall through */
-        case LanguageManager::ENGLISH: return Pam_enUS().soundForWord(Word).preloaded();
-        case LanguageManager::SWAHILI: return Imma_swTZ().soundForWord(Word).preloaded();
-    }
+    
+    return CommonSound().soundForWord(Word).preloaded();
+        
 }
 
 SoundEffect MainDepot::soundForCardBirth() const {

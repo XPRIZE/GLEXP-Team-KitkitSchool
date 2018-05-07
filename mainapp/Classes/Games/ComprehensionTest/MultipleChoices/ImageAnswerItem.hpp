@@ -1,6 +1,6 @@
 //
 //  ImageAnswerItem.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 27/12/2016.
 //
@@ -32,7 +32,7 @@ namespace ComprehensionTest
             ImageAnswerItem();
             CREATE_FUNC(ImageAnswerItem);
             
-            bool initImage(std::string imagePath, float marginX = 0.f, float marginY = 0.f);
+            bool initImage(std::string folder, std::string image, float marginX = 0.f, float marginY = 0.f);
             void setLetterByIndex(int index);
             std::string getId();
             std::function<void()> onCheckTarget;

@@ -1,6 +1,6 @@
 //
 //  ImageBlock.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 20/12/2016.
 //
@@ -37,11 +37,11 @@ bool ImageBlock::init()
     return true;
 }
 
-void ImageBlock::initAsSlot(std::string imagePath)
+void ImageBlock::initAsSlot(std::string imageFile)
 {
     CCLOG("initAsSlot");
     _bSlot = true;
-    _solutionImagePath = imagePath;
+    _solutionImageFile = imageFile;
     
     auto face = Node::create();
     face->setContentSize(wordBlockSize);
@@ -53,10 +53,10 @@ void ImageBlock::initAsSlot(std::string imagePath)
     _face->addChild(DottedRect::create(wordBlockSize));
 }
 
-void ImageBlock::initAsBlock(std::string imagePath)
+void ImageBlock::initAsBlock(std::string folder, std::string imageFile)
 {
     _bSlot = false;
-    _imagePath = imagePath;
+    _imageFile = imageFile;
     
 //    _faceOriginPos = Point(getContentSize().width / 2, getContentSize().height - 2);
     _faceOriginPos = Vec2::ZERO;
@@ -69,8 +69,9 @@ void ImageBlock::initAsBlock(std::string imagePath)
     _face->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     addChild(_face);
 
-    auto image = Sprite::create("ComprehensionTest/Image/" + imagePath);
-    if (image == nullptr) { NativeAlert::show("Image does not exist.", "ComprehensionTest/Image/" + imagePath, "OK"); return; }
+    auto image = Sprite::create(folder + "/quiz/" + imageFile);
+    if (!image) image = Sprite::create(folder + "/page/" + imageFile);
+    if (image == nullptr) { NativeAlert::show("Image does not exist.", imageFile, "OK"); return; }
     
     image->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     float scaleFactor = MIN(kImageSize.width / image->getContentSize().width, kImageSize.height / image->getContentSize().height);
@@ -92,10 +93,11 @@ void ImageBlock::initAsBlock(std::string imagePath)
             this->_originPos = getPosition();
             
             // 선택된 객체를 위로 올려줍니다.
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             return true;
         }
@@ -157,11 +159,11 @@ void ImageBlock::returnToOrigin()
 std::string ImageBlock::getValue()
 {
     if (_bSlot) return "";
-    return _imagePath;
+    return _imageFile;
 }
 
 std::string ImageBlock::getSolutionValue()
 {
     if (!_bSlot) return "";
-    return _solutionImagePath;
+    return _solutionImageFile;
 }

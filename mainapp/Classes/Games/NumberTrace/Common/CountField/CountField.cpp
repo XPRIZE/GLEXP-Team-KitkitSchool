@@ -8,9 +8,9 @@
 
 #include "CountField.h"
 #include "Utils/CountFieldDepot.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Repr/AllRepr.h"
 #include <cocos/cocos2d.h>
 
 using namespace cocos2d;
@@ -20,7 +20,7 @@ namespace todoschool {
 namespace countfield {
 
 bool CountField::init() {
-    if (!Super::init()) { return false; }
+    if (!Node::init()) { return false; }
     
     clear();
     return true;
@@ -110,13 +110,25 @@ void CountField::updateCountObjects() {
         
         It->jumpTo(BeginPoses[I]);
         It->moveIn(RestPoses[I], MoveInDuration, FadeInDuration);
-        It->Enabled.follow(Enabled);
+        It->Enabled.update(Enabled());
 
         Pose EndPose = EndPoses[I];
         
         using std::placeholders::_1;
+        It->OnTouchDidBegin = [this, It](CountObject*) {
+            updateEnabledValueForAllCountObjects(false);
+        };
+        It->OnTouchDidEnd =
+        It->OnTouchDidCancel = [this, It](CountObject*) {
+            updateEnabledValueForAllCountObjects(Enabled());
+        };
+
         It->OnTouchUpInside = [this, It, EndPose](CountObject*) {
             // NB(xenosoz, 2016): Guide the bug to the end position.
+            if (It->Moving()) {
+                return;
+            }
+
             const float MoveOutDuration = 2.f;
             const float FadeOutDuration = .5f;
 
@@ -139,9 +151,15 @@ void CountField::updateCountObjects() {
         CountObjects.pushBack(It);
     };
 }
+    
+void CountField::updateEnabledValueForAllCountObjects(bool Value) {
+    for (auto& CountObject : CountObjects) {
+        CountObject->Enabled.update(Value);
+    }
+}
 
-void CountField::handleEnabledValueUpdated(bool& enabled) {
-
+void CountField::handleEnabledValueUpdated(bool& Value) {
+    updateEnabledValueForAllCountObjects(Value);
 }
 
 void CountField::handleAssetCountValueUpdated(size_t &) {
@@ -151,6 +169,8 @@ void CountField::handleAssetCountValueUpdated(size_t &) {
 }
 
 void CountField::handleCountObjectReachedRestPoint(CountObject*) {
+    updateEnabledValueForAllCountObjects(Enabled());
+
     AssetCountInRestPoint += 1;
     
     auto Guard = ScopeGuard([this]{ retain(); },
@@ -161,6 +181,8 @@ void CountField::handleCountObjectReachedRestPoint(CountObject*) {
 }
 
 void CountField::handleCountObjectReachedEndPoint(CountObject*) {
+    updateEnabledValueForAllCountObjects(Enabled());
+
     AssetCountInEndPoint += 1;
 
     auto Guard = ScopeGuard([this]{ retain(); },

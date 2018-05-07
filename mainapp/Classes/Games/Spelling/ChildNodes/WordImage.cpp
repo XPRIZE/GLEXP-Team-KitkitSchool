@@ -9,12 +9,11 @@
 
 #include "WordImage.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetTouchBody.h>
+#include "Common/Components/TargetTouchBody.h"
 
 
 BEGIN_NS_SPELLING
 
-using todoschool::woodenpuzzles::TargetTouchBody;
 
 namespace {
     Size contentSize() { return Size(1111.f, 820.f); }

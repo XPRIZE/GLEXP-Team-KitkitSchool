@@ -144,7 +144,7 @@ bool JotPlane::onTouchBegan(Touch* touch, Event* event)
     
     if (!isTouchEnabled()) return false;
     
-    long long currentTime = std::time(nullptr);
+    long long currentTime = time(nullptr);
     
     if (sketchStartTime == 0) {
         sketchStartTime = currentTime;

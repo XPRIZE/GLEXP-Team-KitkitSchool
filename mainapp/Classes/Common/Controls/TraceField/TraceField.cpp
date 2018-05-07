@@ -17,12 +17,12 @@
 #include "Utils/TraceLocator.h"
 #include "Utils/TraceModelFactory.h"
 
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Utils/TouchEventRepeater.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/TouchEventRepeater.h"
 #include <cocos/cocos2d.h>
 
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Repr/AllRepr.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -70,6 +70,8 @@ TraceField::~TraceField() {
 
 bool TraceField::init() {
     if (!Super::init()) { return false; }
+    
+    setCascadeOpacityEnabled(true);
     
     TraceFieldDepot Depot;
     Depot.preloadSoundEffects();
@@ -129,6 +131,7 @@ void TraceField::clear() {
 
     Placeholder.OnValueUpdate = bind(&TraceField::handlePlaceholderValueUpdate, this, _1);
 
+    mbTouched = false;
     refreshChildNodes();
 }
 
@@ -170,8 +173,14 @@ void TraceField::handlePlaceholderValueUpdate(string&) {
 }
 
 bool TraceField::handleTouchBegan(Touch* T, Event* E) {
+    if (mbTouched == true) {
+        return false;
+    }
+    
     bool ShouldCatchEvent = handleActiveTouchEvent(T, E);
     if (!ShouldCatchEvent) { return false; }
+    
+    mbTouched = true;
     
     auto Guard = ScopeGuard([this] { retain(); },
                             [this] { release(); });
@@ -194,10 +203,12 @@ void TraceField::handleTouchMoved(Touch* T, Event* E) {
 }
 
 void TraceField::handleTouchEnded(Touch* T, Event* E) {
+    mbTouched = false;
     handlePassiveTouchEvent(T, E);
 }
 
 void TraceField::handleTouchCancelled(Touch* T, Event* E) {
+    mbTouched = false;
     handlePassiveTouchEvent(T, E);
 }
 
@@ -302,6 +313,7 @@ void TraceField::refreshChildNodes() {
             Background = ([&] {
                 Sprite* It = Depot.createBackgroundSprite(getContentSize());
                 It->setLocalZOrder(ZOrder++);
+                It->setCascadeOpacityEnabled(true);
                 addChild(It);
                 return It;
             }());
@@ -390,6 +402,7 @@ void TraceField::refreshChildNodes() {
             It->UseTightBoundingBox.follow(UseTightBoundingBox);
 
             It->setLocalZOrder(ZOrder++);
+            It->setCascadeOpacityEnabled(true);
             addChild(It);
             return It;
         }());
@@ -423,6 +436,7 @@ void TraceField::refreshChildNodes() {
             It->PassedIndex.follow(PassedIndex);
             It->TheStyle.follow(TheStyle);
 
+            It->setCascadeOpacityEnabled(true);
             Scroll->addChild(It);
             GlyphNodes.push_back(It);
         }
@@ -462,8 +476,9 @@ void TraceField::updateCursorPoint(float DeltaSeconds) {
     if (PassedIndex().WorldIndex < 1 && PassedIndex().GlyphIndex < GlyphNodes.size()) {
         TraceGlyphNode *GlyphNode = GlyphNodes[PassedIndex().GlyphIndex].get();
 
-        if (Cursor) {
+        if (Cursor && Cursor->getParent() != GlyphNode) {
             Cursor->removeFromParent();
+            Cursor->setCascadeOpacityEnabled(true);
             GlyphNode->addChild(Cursor);
         }
     }

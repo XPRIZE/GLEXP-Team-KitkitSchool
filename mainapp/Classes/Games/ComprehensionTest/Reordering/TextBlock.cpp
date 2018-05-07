@@ -1,6 +1,6 @@
 //
 //  TextBlock.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 20/12/2016.
 //
@@ -89,10 +89,12 @@ void TextBlock::initAsBlock(std::string text)
             this->_originPos = getPosition();
             
             // 선택된 객체를 위로 올려줍니다.
-            this->retain();
-            this->removeFromParent();
-            P->addChild(this);
-            this->release();
+            this->getParent()->reorderChild(this, this->getLocalZOrder());
+            
+//            this->retain();
+//            this->removeFromParent();
+//            P->addChild(this);
+//            this->release();
             
             return true;
         }

@@ -1,6 +1,6 @@
 //
 //  BookChoiceScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/3/16.
 //
@@ -8,12 +8,14 @@
 
 #include "BookChoiceScene.hpp"
 
-#include "Managers/BookManager.hpp"
+#include "Managers/LanguageManager.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <functional>
 
 #include "Games/Books/TodoBook.hpp"
 #include "CCAppController.hpp"
+#include "Utils/TodoUtil.h"
+#include "Common/Controls/PopupBase.hpp"
 
 
 Scene* BookChoiceScene::createScene()
@@ -41,57 +43,54 @@ bool BookChoiceScene::init()
         return false;
     }
     
-    auto lang = LanguageManager::getInstance()->getCurrentLanguage();
-    auto books = BookManager::getInstance()->getBookVector(lang);
+    Size winSize = Director::getInstance()->getWinSize();
     
-    const Size bookButtonSize = Size(228 * 2, 141 * 2);
-    auto numBooks = books.size();
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    float x = bookButtonSize.width;
-    float y = bookButtonSize.height;
+    auto chooser = PopupBase::create(this, winSize);
+    
+    auto innerView = Node::create();
 
     
-    function<void(int)> addBookButton = [&](int index) {
-        auto info = books.at(index);
-        TodoBook book;
-        book.readFile("Books/BookData/"+info->bookPath);
-        
-        auto image = Sprite::create("Books/BookData/"+info->bookImagePath + book.titleImageFilename);
-        auto imageSize = image->getContentSize();
-        auto viewSize = bookButtonSize;
-        auto scale = MIN(viewSize.width / imageSize.width, viewSize.height / imageSize.height);
-        image->setScale(scale);
-        image->setPosition(viewSize / 2);
-        image->setTag(index);
-        auto listener = EventListenerTouchOneByOne::create();
-        listener->setSwallowTouches(true);
-        
-        listener->onTouchBegan = [image](Touch* T, Event* E) {
-            return image->getBoundingBox().containsPoint(T->getLocation()) ? true : false;
-        };
-        
-        listener->onTouchEnded = [books](Touch* T, Event* E) {
-            auto info = books.at(E->getCurrentTarget()->getTag()); // tag value = index value
-            TodoBook book;
-            book.readFile(info->bookPath);
-            CCAppController::sharedAppController()->startBookScene(info->bookPath, true);
-        };
-        
-        image->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, image);
-        image->setPosition(x, y);
-        x += bookButtonSize.width * 1.5f;
-        if (x + bookButtonSize.width * 1.4f > visibleSize.width) y += bookButtonSize.height * 1.5f;
-        
-        addChild(image);
-    };
     
-    for (int i = 0; i < numBooks; i++) {
-        addBookButton(i);
+    float y = -80;
+    
+    auto list = FileUtils::getInstance()->listFiles("Books/BookData");
+    
+    for (auto folder : list) {
+        string bookPath = folder + "bookinfo.csv";
+        if (FileUtils::getInstance()->isFileExist(bookPath)) {
+            auto button = ui::Button::create();
+            button->setTitleFontSize(50);
+            button->setTitleColor(Color3B::WHITE);
+            auto book = TodoUtil::split(folder, '/').back();
+            button->setTitleText(book);
+            button->setPosition(Vec2(winSize.width/2, y-=80));
+            innerView->addChild(button);
+            
+            button->addClickEventListener([this, book, button, chooser](Ref*) {
+                chooser->dismiss(true);
+                CCAppController::sharedAppController()->startBookScene(book+"/", true);
+                
+            });
+            
+        }
+        
     }
+    
+    
+    auto height = -y + 100;
+    auto scroll = ui::ScrollView::create();
+    scroll->setContentSize(winSize);
+    scroll->setInnerContainerSize(Size(winSize.width, height));
+    innerView->setPosition(Vec2(0, height));
+    scroll->addChild(innerView);
+    chooser->addChild(scroll);
+    
+    
+    chooser->show(this, true);
     
     auto backButton = TodoSchoolBackButton::create();
     backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-    backButton->setPosition(Vec2(25, visibleSize.height-25));
+    backButton->setPosition(Vec2(25, winSize.height-25));
     addChild(backButton);
     
     return true;

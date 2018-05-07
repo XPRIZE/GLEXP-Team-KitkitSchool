@@ -17,14 +17,14 @@
     } \
     }
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/ADT/Optional.h>
-#include <Games/NumberTrace/Common/ADT/FunctionVector.h>
-#include <Games/NumberTrace/Common/Basic/AARect.h>
+#include <Common/ADT/Chain.h>
+#include <Common/ADT/Optional.h>
+#include <Common/ADT/FunctionVector.h>
+#include "Common/Basic/AARect.h"
 #include <Games/NumberTrace/Common/Basic/Button.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
-#include <Common/Basic/SoundEffect.h>
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Repr/AllRepr.h"
+#include "Common/Basic/SoundEffect.h"
 #include <Common/Controls/CompletePopup.hpp>
 
 #include <Utils/Random.h>
@@ -59,7 +59,7 @@ using cocos2d::AffineTransform;
 using cocos2d::Mat4;
 using cocos2d::Point;
 using cocos2d::Size;
-using Rect = todoschool::AARect;  // NB(xenosoz, 2016): Replacing cocos2d::Rect;
+//using Rect = AARect;  // NB(xenosoz, 2016): Replacing cocos2d::Rect;
 using cocos2d::Color3B;
 using cocos2d::Color4B;
 using cocos2d::BlendFunc;

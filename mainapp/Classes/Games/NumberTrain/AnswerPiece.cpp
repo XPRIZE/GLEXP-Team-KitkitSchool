@@ -17,6 +17,8 @@ bool AnswerPiece::init()
     if (!Node::init()) return false;
     
     _snapped = false;
+    _enableTouch = true;
+    
     onTouchBegan = nullptr;
     onTouchEnded = nullptr;
     
@@ -46,6 +48,7 @@ bool AnswerPiece::init()
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) {
+        if (!_enableTouch) return false;
         auto P = getParent();
         auto pos = P->convertToNodeSpace(T->getLocation());
         if (this->getBoundingBox().containsPoint(pos)) {
@@ -61,7 +64,7 @@ bool AnswerPiece::init()
     };
     
     listener->onTouchMoved = [this](Touch* T, Event* E) {
-        
+        if (!_enableTouch) return;
         auto P = getParent();
         auto pl = P->convertToNodeSpace(T->getPreviousLocation());
         auto cl = P->convertToNodeSpace(T->getLocation());
@@ -71,6 +74,7 @@ bool AnswerPiece::init()
     };
     
     listener->onTouchEnded = [this](Touch* T, Event* E) {
+        if (!_enableTouch) return;
         setPicked(false);
         if (onTouchEnded) onTouchEnded();
         
@@ -174,6 +178,9 @@ void AnswerPiece::snapTarget(TrainCar *target)
     
     
     this->runAction(Sequence::create(MoveTo::create(0.1, targetWorldPos), CallFunc::create([this](){
+        
+        //this->getParent()->reorderChild(this, this->getLocalZOrder());
+        
         this->retain();
         this->removeFromParent();
         this->setPosition(this->_targetSlot->_slotPos);
@@ -197,6 +204,8 @@ void AnswerPiece::unSnap(cocos2d::Node *root)
     
     auto pos = this->convertToWorldSpace(this->getContentSize()/2);
     this->setPosition(pos);
+    
+    //this->getParent()->reorderChild(this, this->getLocalZOrder());
     this->retain();
     this->removeFromParent();
     root->addChild(this);

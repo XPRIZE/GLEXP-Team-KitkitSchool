@@ -1,6 +1,6 @@
 //
 //  CompletePopup.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/29/16.
 //
@@ -10,7 +10,7 @@
 #include "ui/UIButton.h"
 #include "Managers/LanguageManager.hpp"
 #include "Common/Basic/SoundEffect.h"
-
+#include "Managers/GameSoundManager.h"
 
 namespace CompletePopupNS {
     std::string labelText() {
@@ -91,6 +91,8 @@ bool CompletePopup::init() {
             auto P = star->getParent();
             auto pos = P->convertToNodeSpace(T->getLocation());
             if (star->getBoundingBox().containsPoint(pos)) {
+                if (_closeTouched) return true;
+                _closeTouched = true;
                 SoundEffect::buttonEffect().play();
                 this->dismiss();
                 return true;
@@ -102,7 +104,10 @@ bool CompletePopup::init() {
         
     }
 
-    
+    auto keyListener = EventListenerKeyboard::create();
+    keyListener->onKeyReleased = CC_CALLBACK_2(CompletePopup::onKeyReleased, this);
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyListener, this);
+
     const auto blinkTime = 0.3;
     
     auto e1 = Sprite::create(folder+"game_effect_sparkle_1.png");
@@ -137,13 +142,16 @@ bool CompletePopup::init() {
     btn->loadTextures(folder+"game_effect_done_normal.png", folder+"game_effect_done_touch.png");
     btn->setPosition(Vec2(p.x, p.y-450));
     btn->addClickEventListener([this](Ref*) {
+        if (_closeTouched) return;
+        _closeTouched = true;
         SoundEffect::buttonEffect().play();
         this->dismiss();
     });
     
     _mainView->addChild(btn);
     
-    SoundEffect::wowEffect().preload();
+    //SoundEffect::wowEffect().preload();
+    GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/SFX_ChildrenCheerNew.m4a", false, 1.0f, 0, 0);
 
     
     return true;
@@ -154,6 +162,7 @@ void CompletePopup::show(float delay, std::function<void(void)> callback) {
     Size winSize = getContentSize();
     
     auto scene = Director::getInstance()->getRunningScene();
+    this->setTag(CompletePopup::TAG);
     scene->addChild(this);
     
     
@@ -173,6 +182,7 @@ void CompletePopup::show(float delay, std::function<void(void)> callback) {
                                           );
     
     scheduleOnce([](float) {
+        CCLOG("play?");
         SoundEffect::wowEffect().play();
      
     }, delay+0.1, "wowSound");;
@@ -202,6 +212,15 @@ void CompletePopup::dismiss() {
         _callback();
     }
     
+}
+
+void CompletePopup::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event) {
+    
+    if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE) {
+        CCLOG("key CompletePopup");
+        SoundEffect::buttonEffect().play();
+        this->dismiss();
+    }
 }
 
 void CompletePopup::setTitleText(const std::string& titleText) {

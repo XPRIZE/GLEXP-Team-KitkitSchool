@@ -1,6 +1,6 @@
 //
 //  SoundTrainScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 30/08/2017.
 //
@@ -10,6 +10,7 @@
 #include "SoundTrainHeader.h"
 #include "SoundCard.hpp"
 #include "SoundTrain.hpp"
+#include "SoundTrainProblemBank.hpp"
 
 #include "Common/Controls/ProgressIndicator.hpp"
 
@@ -45,7 +46,7 @@ private:
 
     Size _winSize, _gameSize;
     Sprite *_locomotive, *_lionFront, *_lionBack, *_steam, *_soundBubble, *_soundButtonNormal, *_soundButtonActive;
-    Json::Value _problem;
+    vector<SoundTrainLevelStruct> _problems;
     vector<SoundTrain*> _freightTrains;
     vector<SoundCard*> _cards;
     vector<string> _questions, _answers;

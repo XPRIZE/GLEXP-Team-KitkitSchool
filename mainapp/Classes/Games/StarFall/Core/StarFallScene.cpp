@@ -10,6 +10,7 @@
 #include "StarFallScene.h"
 #include "../Models/Worksheet.h"
 #include "../Utils/StarFallDepot.h"
+#include "Managers/StrictLogManager.h"
 
 #include "CCAppController.hpp"
 
@@ -243,8 +244,6 @@ void StarFallScene::appendNewTargetTextNode() {
     StarFallDepot Depot;
     Size GameSize = Depot.gameSize();
 
-    float PointX = random(100.f, GameSize.width - 100.f);
-    float PointY = (TheKeyboardNode ? TheKeyboardNode->getContentSize().height : 0.f);
     string Title = ([&] {
         if (WordList().empty()) { return string(); }
 
@@ -274,8 +273,14 @@ void StarFallScene::appendNewTargetTextNode() {
 
     TargetTextNodes.push_back([&] {
         TargetTextNode* It = TargetTextNode::create();
+
+        float HalfW = It->getContentSize().width / 2.f;
+        float HalfH = It->getContentSize().height / 2.f;
+        float PointX = random(HalfW, GameSize.width - HalfW);
+        float PointY = (TheKeyboardNode ? TheKeyboardNode->getContentSize().height : 0.f);
+
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        It->setPosition(Point(PointX, GameSize.height - 100.f));
+        It->setPosition(Point(PointX, GameSize.height - HalfH / 2.f));
 
         It->GamePlaying.follow(GamePlaying);
         It->TitleText.update(Title);
@@ -358,7 +363,28 @@ void StarFallScene::refreshActiveTextForSanity() {
         }
     }
     
+    string workPath = [this] {
+        stringstream SS;
+        SS << "/" << "StarFall";
+        SS << "/" << "level-" << LevelID;
+        SS << "/" << "work-" << HitCount();
+        return SS.str();
+    }();
+    
+    auto wrapStr = [](const string& s) {
+        stringstream SS;
+        SS << "'";
+        SS << s;  // XXX: maybe we need to escape "'".
+        SS << "'";
+        return SS.str();
+    };
+    
     if (ExactHitNode) {
+        // NB(xenosoz, 2018): Log for future analysis (#1/2)
+        StrictLogManager::shared()->game_Peek_Answer("StarFall", workPath,
+                                                     wrapStr(ActiveText()),
+                                                     wrapStr(ExactHitNode->TitleText()));
+
         StarFallDepot().soundForKeyInput().play();
         
         // NB(xenosoz, 2016): Try word sound first, and then hit
@@ -367,8 +393,9 @@ void StarFallScene::refreshActiveTextForSanity() {
         
         SE.play();
         HitCount.update(HitCount() + 1);
-        
-        ActiveText.update("");
+        this->runAction(Sequence::create(DelayTime::create(0.3f), CallFunc::create([this]() {
+            this->ActiveText.update("");
+        }), nullptr));
         
         TargetTextNodes.remove(ExactHitNode);
         ExactHitNode->removeFromParent();
@@ -378,6 +405,12 @@ void StarFallScene::refreshActiveTextForSanity() {
     if (Promising) {
         StarFallDepot().soundForKeyInput().play();
         return;
+    }
+    else {
+        // NB(xenosoz, 2018): Log for future analysis (#2/2)
+        StrictLogManager::shared()->game_Peek_Answer("StarFall", workPath,
+                                                     wrapStr(ActiveText()),
+                                                     "None");
     }
 
     // NB(xenosoz, 2016): Clear the input text if it's not promising.

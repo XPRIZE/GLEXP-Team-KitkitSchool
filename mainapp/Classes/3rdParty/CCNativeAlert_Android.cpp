@@ -89,4 +89,22 @@ void NativeAlert::alertDidDismiss( std::string alertID, int buttonIndex)
 }
 
 NS_CC_END
+
+#else
+NS_CC_BEGIN
+void NativeAlert::show( std::string title, std::string message, std::string cancelButtonTitle )
+{
+    
+}
+
+void NativeAlert::showWithCallback( std::string title, std::string message, std::string cancelButtonTitle, std::string returnButtonTitle, std::string otherButtonTitle, int tag, const std::function<void( int tag, ButtonType type)> &callback )
+{
+    
+}
+
+void NativeAlert::alertDidDismiss( std::string alertID, int buttonIndex)
+{
+    
+}
+NS_CC_END
 #endif

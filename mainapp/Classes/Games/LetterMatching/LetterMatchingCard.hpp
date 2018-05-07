@@ -1,6 +1,6 @@
 //
 //  WordMatchingCard.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 6/30/16.
 //

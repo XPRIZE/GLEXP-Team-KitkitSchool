@@ -9,7 +9,7 @@
 
 #include "TraceGlyph.h"
 #include "../Utils/TraceFieldDepot.h"
-#include <Games/NumberTrace/Common/Basic/BigLabel.h>
+#include "Common/Basic/BigLabel.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -22,7 +22,7 @@ void TraceGlyph::appendStroke(TraceStroke&& Stroke) {
     Strokes.push_back(std::move(Stroke));
 }
 
-void TraceGlyph::refreshBoundingBox(const Rect& RoughBB) {
+void TraceGlyph::refreshBoundingBox(const AARect& RoughBB) {
     RoughBoundingBox = RoughBB;
     refreshTightBoundingBox();
 }
@@ -31,11 +31,11 @@ const vector<TraceStroke>& TraceGlyph::strokes() const {
     return Strokes;
 }
 
-const Rect& TraceGlyph::tightBoundingBox() const {
+const AARect& TraceGlyph::tightBoundingBox() const {
     return TightBoundingBox;
 }
 
-const Rect& TraceGlyph::roughBoundingBox() const {
+const AARect& TraceGlyph::roughBoundingBox() const {
     return RoughBoundingBox;
 }
     
@@ -43,7 +43,7 @@ void TraceGlyph::refreshTightBoundingBox() {
     bool IsFirstInput = true;
 
     for (const TraceStroke& S : Strokes) {
-        Rect BB = S.boundingBox();
+        AARect BB = S.boundingBox();
         TightBoundingBox = (IsFirstInput ? BB : TightBoundingBox.union_(BB));
 
         IsFirstInput = false;

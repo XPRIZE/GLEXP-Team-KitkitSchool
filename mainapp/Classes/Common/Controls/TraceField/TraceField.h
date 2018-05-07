@@ -70,6 +70,7 @@ public:
     function<void(TraceField*)> OnEndEditing;
     function<void(TraceField*)> OnTraceWorkDidEnd;
 
+    bool mbTouched;
 public:
     static TraceField* create();
     static TraceField* createWithCustomCursor(const std::string &filename);

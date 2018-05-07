@@ -1,6 +1,6 @@
 //
 //  CoinTab.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 9/18/17.
 //
@@ -25,7 +25,7 @@ public:
     void setCoinLabel(int num);
     
     
-    void addCoin(int numCoin, Vec2 fromPosWorld);
+    void addCoin(int numCoin, Vec2 fromPosWorld, bool modeGameSelect = false);
     
     
 

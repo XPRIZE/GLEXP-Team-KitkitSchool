@@ -1,6 +1,6 @@
 //
 //  TodoLoadingScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/28/16.
 //

@@ -42,8 +42,7 @@ public:
 
 
 private:
-    Json::Value swahiliJsonForMainGameWork();
-    Json::Value englishJsonForMainGameWork();
+
 
     vector<SoundEffect> soundEffectsToPreload() const;
 };

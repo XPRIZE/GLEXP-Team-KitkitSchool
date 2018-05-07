@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <Games/NumberTrace/Common/Basic/BigLabel.h>
-#include <Common/Basic/SoundEffect.h>
+#include "Common/Basic/BigLabel.h"
+#include "Common/Basic/SoundEffect.h"
 #include <cocos/cocos2d.h>
 #include <cocos/ui/CocosGUI.h>
 #include <string>

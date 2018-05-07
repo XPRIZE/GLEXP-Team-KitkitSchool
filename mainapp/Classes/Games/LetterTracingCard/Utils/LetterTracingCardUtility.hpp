@@ -1,6 +1,6 @@
 //
 //  LetterTracingCardUtility.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by HyeonGyu Yu on 9/15/17.
 //

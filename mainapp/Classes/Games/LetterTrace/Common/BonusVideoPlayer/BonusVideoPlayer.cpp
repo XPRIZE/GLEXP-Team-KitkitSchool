@@ -7,21 +7,22 @@
 //
 
 #include "BonusVideoPlayer.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/NodeScopeGuard.h"
 #include <cocos/cocos2d.h>
 #include <string>
 #include <functional>
 
+
 using namespace cocos2d;
 using namespace std;
 
-using cocos2d::experimental::ui::VideoPlayer;
+
 
 
 namespace {
     // XXX: Do we need the default video file?
-    string DefaultVideoFilePath = "LetterTrace/BonusVideos.en/empty.m4v";
+    string DefaultVideoFilePath = "LetterTrace/BonusVideos/empty.m4v";
 }
 
 
@@ -61,7 +62,7 @@ void BonusVideoPlayer::clear() {
         TheVideoPlayer->removeFromParent();
     
     TheVideoPlayer = ([&]{
-        auto It = VideoPlayer::create();
+        auto It = KitkitVideoPlayer::create();
         It->setContentSize(GameSize);
         It->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         It->setPosition(Point::ZERO);

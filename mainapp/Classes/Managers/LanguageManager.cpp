@@ -1,6 +1,6 @@
 //
 //  LanguageManager.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Sungwoo Kang on 6/30/16.
 //
@@ -28,12 +28,31 @@ void LanguageManager::init()
 #if false
     auto defaultLang = LanguageType::ENGLISH;
 #endif
-    auto defaultLang = LanguageType::SWAHILI;
-    //auto defaultLang = UserDefault::getInstance()->getStringForKey("appLanguage", "sw") == "en" ? LanguageType::ENGLISH : LanguageType::SWAHILI;
+    //auto defaultLang = LanguageType::SWAHILI;
+    auto defaultLang = "sw-TZ";//UserDefault::getInstance()->getStringForKey("appLanguage", "en") == "en" ? "en-US" : "sw-TZ";
 
-    _langType = static_cast<LanguageType>(UserDefault::getInstance()->getIntegerForKey("Language", defaultLang));
+    auto localeCode = UserDefault::getInstance()->getStringForKey("LocaleCode", defaultLang);
 
+    auto localeType = convertLocaleCodeToType(localeCode);
+    if (localeType>=LocaleType_MAX) localeType = sw_TZ;
     
+    
+    _supportedLocales.clear();
+    for (int i=0; i<LocaleType_MAX; i++) {
+        LocaleType l = (LocaleType)i;
+        auto lc = convertLocaleTypeToCode(l);
+        auto lp = "Localized/"+lc+"/CurriculumData.tsv";
+        if (FileUtils::getInstance()->isFileExist(lp)) _supportedLocales.push_back(l);
+        
+    }
+    
+    if (std::find(_supportedLocales.begin(), _supportedLocales.end(), localeType)==_supportedLocales.end()) {
+        localeType = _supportedLocales.front();
+    }
+    
+    
+
+    setCurrentLocale(localeType);
 
     
     initLocalizationMap();
@@ -42,73 +61,133 @@ void LanguageManager::init()
     
 }
 
-void LanguageManager::setCurrentLanguage(LanguageManager::LanguageType type)
+LanguageManager::LocaleType LanguageManager::convertLocaleCodeToType(std::string localeCode)
 {
-    _langType = type;
-    UserDefault::getInstance()->setIntegerForKey("Language", static_cast<int>(_langType));
-    UserDefault::getInstance()->flush();
-}
-
-LanguageManager::LanguageType LanguageManager::getCurrentLanguage()
-{
-    return _langType;
-}
-
-std::string LanguageManager::getCurrentLanguageString()
-{
-    std::string lang="";
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        case LanguageManager::ENGLISH:
-            lang = "English";
-            break;
-            
-        case LanguageManager::SWAHILI:
-            lang = "Swahili";
-            break;
-        default:
-            break;
+    if (localeCode.length()<5) return LocaleType_MAX;
+    auto lang = localeCode.substr(0, 2);
+    auto region = localeCode.substr(3, 2);
+    
+    if (lang=="en") {
+        if (region=="US") return en_US;
+        if (region=="KE") return en_KE;
+        if (region=="GB") return en_GB;
+    } else if (lang=="sw") {
+        if (region=="TZ") return sw_TZ;
     }
     
-    return lang;
+    return LocaleType_MAX;
+}
+
+std::string LanguageManager::convertLocaleTypeToCode(LanguageManager::LocaleType localeType)
+{
+    switch (localeType) {
+        case en_US: return "en-US"; break;
+        case en_GB: return "en-GB"; break;
+        case en_KE: return "en-KE"; break;
+        case sw_TZ: return "sw-TZ"; break;
+        default: break;
+    }
+    
+    return "sw-TZ";
     
 }
+
+void LanguageManager::setCurrentLocale(LocaleType type)
+{
+    bool dirty = false;
+    if (_currentLocale != type) dirty = true;
+    
+    
+    _currentLocale = type;
+
+    if (dirty) {
+        auto langCode = convertLocaleTypeToCode(type);
+        UserDefault::getInstance()->setStringForKey("LocaleCode", langCode);
+        UserDefault::getInstance()->flush();
+    }
+    
+    _localizedResourcePaths.clear();
+    switch (_currentLocale) {
+        default:
+            CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
+            // fall through
+        case sw_TZ: _localizedResourcePaths = { "sw-TZ" }; break;
+        case en_US: _localizedResourcePaths = { "en-US" }; break;
+        case en_GB: _localizedResourcePaths = { "en-GB", "en-US" }; break;
+        case en_KE: _localizedResourcePaths = { "en-KE", "en-US" }; break;
+            
+    }
+
+    
+    std::vector<std::string> paths = {};
+    
+    for (auto p : _localizedResourcePaths) {
+        auto localizedPath = "Localized/"+p;
+        paths.push_back(localizedPath);
+        paths.push_back(localizedPath+"/Games");
+    }
+    paths.push_back("Games");
+    paths.push_back("Main");
+    
+    
+    FileUtils::getInstance()->setSearchPaths(paths);
+    
+    
+}
+
+LanguageManager::LocaleType LanguageManager::getCurrentLocaleType()
+{
+    return _currentLocale;
+}
+
+LanguageManager::LocaleType LanguageManager::findNextLocale()
+{
+    LocaleType next = (LocaleType)((int)_currentLocale+1);
+  
+    while (next!=_currentLocale) {
+        if (std::find(_supportedLocales.begin(), _supportedLocales.end(), next)!=_supportedLocales.end()) return next;
+        next = (LocaleType)((int)next+1);
+        if (next>=LocaleType_MAX) next = (LocaleType)0;
+        
+    }
+    
+    return _currentLocale;
+}
+
 
 std::string LanguageManager::getCurrentLanguageCode()
 {
-    switch (LanguageManager::getInstance()->getCurrentLanguage()) {
-        case LanguageManager::ENGLISH: return "en"; break;
-        case LanguageManager::SWAHILI: return "sw"; break;
-        default:
-            return "";
-            break;
-    }
-
+    
+    std::string langCode = convertLocaleTypeToCode(_currentLocale);
+    return langCode.substr(0, 2);
+    
 }
 
 std::string LanguageManager::getCurrentLanguageTag()
 {
-    // NB(xenosoz, 2016): Please refer to IETF language tag.
-    switch (_langType) {
-        case ENGLISH: return "en-US";
-        case SWAHILI: return "sw-TZ";
-    }
-
-    return "";
+    return getCurrentLocaleCode();
 }
+
+std::string LanguageManager::getCurrentLocaleCode()
+{
+    std::string langCode=convertLocaleTypeToCode(_currentLocale);
+    return langCode;
+}
+
 
 std::string LanguageManager::soundPathForWordFile(std::string& wordFile)
 {
     std::string folder;
     
-    switch (_langType) {
-        case ENGLISH: folder = "Common/Sounds/Pam.en_US/"; break;
-        case SWAHILI: folder = "Common/Sounds/Imma.sw_TZ/"; break;
-    }
+//    switch (_langType) {
+//        case ENGLISH: folder = "Common/Sounds/Pam.en_US/"; break;
+//        case SWAHILI: folder = "Common/Sounds/Imma.sw_TZ/"; break;
+//    }
     
-    std::string path = folder+"LetterNames/"+wordFile;
-    if (cocos2d::FileUtils::getInstance()->isFileExist(path)) return path;
-    path = folder+"Words/"+wordFile;
-    if (cocos2d::FileUtils::getInstance()->isFileExist(path)) return path;
+    std::string path = findLocalizedResource("LetterVoice/"+wordFile);
+    if (path!="") return path;
+    path = findLocalizedResource("WordVoice/"+wordFile);
+    if (path!="") return path;
     
     return "";
     
@@ -119,15 +198,31 @@ std::string LanguageManager::getLocalizedString(std::string str)
     
     std::string localized;
     
-    switch (_langType) {
-        case ENGLISH: localized = _localizationMapEnglish[str]; break;
-        case SWAHILI: localized = _localizationMapSwahili[str]; break;
+    switch (_currentLocale) {
+        case en_US: localized = _localizationMapEnglish[str]; break;
+        case sw_TZ: localized = _localizationMapSwahili[str]; break;
     }
     
     if (localized.empty()) return str;
     
     return localized;
     
+}
+
+std::string LanguageManager::findLocalizedResource(std::string path)
+{
+    
+    // handled by Cocos...
+    
+    return path;
+//    
+//    for (auto p : _localizedResourcePaths) {
+//        auto localizedPath = "Localized/"+p+"/"+path;
+//        if (FileUtils::getInstance()->isFileExist(localizedPath)) return localizedPath;
+//    }
+//
+//
+//    return "";
 }
 
 void LanguageManager::initLocalizationMap()
@@ -213,8 +308,8 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["HundredPuzzle"] = "100 Puzzle";
     _localizationMapSwahili["HundredPuzzle"] = "Fumbo la Nambari 100";
     
-    _localizationMapEnglish["LetterTracing"] = "Letter Tracing";
-    _localizationMapSwahili["LetterTracing"] = "Kufuatisha Herufi";
+    _localizationMapEnglish["LetterTrace"] = "Letter Trace";
+    _localizationMapSwahili["LetterTrace"] = "Kufuatisha Herufi";
     
     _localizationMapEnglish["MovingInsects"] = "Bug Math";
     _localizationMapSwahili["MovingInsects"] = "Mchezo wa Mdudu";
@@ -251,4 +346,51 @@ void LanguageManager::initLocalizationMap()
     
     _localizationMapEnglish["NumberPuzzle"] = "Number Blocks";
     _localizationMapSwahili["NumberPuzzle"] = "Fumbo la Nambari";
+    
+    _localizationMapEnglish["Arrange the numbers in order from smallest to largest"] = "Arrange the numbers in order from smallest to largest";
+    _localizationMapSwahili["Arrange the numbers in order from smallest to largest"] = "panga kwa mpangilio kutoka ndogo zaidi kwenda kubwa zaidi";
+
+    _localizationMapEnglish["Largest number"] = "Largest number";
+    _localizationMapSwahili["Largest number"] = "Namba ipi ndiyo kubwa zaidi?";
+    
+    _localizationMapEnglish["BirdPhonics"] = "Bird Phonics";
+    _localizationMapSwahili["BirdPhonics"] = "Sauti Ndege";
+    
+    _localizationMapEnglish["FeedingTime"] = "Feeding Time";
+    _localizationMapSwahili["FeedingTime"] = "Wakati wa kula";
+    
+    _localizationMapEnglish["LineMatching"] = "Line Matching";
+    _localizationMapSwahili["LineMatching"] = "Linganisha mistari";
+    
+    _localizationMapEnglish["MangoShop"] = "Mango Shop";
+    _localizationMapSwahili["MangoShop"] = "Duka la embe";
+    
+    _localizationMapEnglish["MissingNumber"] = "Missing Number";
+    _localizationMapSwahili["MissingNumber"] = "Namba iliyopotea";
+    
+    _localizationMapEnglish["ReadingBird"] = "Reading Bird";
+    _localizationMapSwahili["ReadingBird"] = "Ndege anayesoma";
+    
+    _localizationMapEnglish["WhatIsThis"] = "What is this?";
+    _localizationMapSwahili["WhatIsThis"] = "Hii ni nini?";
+    
+    _localizationMapEnglish["ThirtyPuzzle"] = "30 Puzzle";
+    _localizationMapSwahili["ThirtyPuzzle"] = "Panga Namba";
+    
+    _localizationMapEnglish["WordNote"] = "Word Note";
+    _localizationMapSwahili["WordNote"] = "Tunga neno";
+    
+    _localizationMapEnglish["Do you want to take a test on this egg?"] = "Do you want to take a test on this egg?";
+    _localizationMapSwahili["Do you want to take a test on this egg?"] = "Je, unataka kufanya jaribio kuhusu hili yai?";
+
 }
+
+std::vector<std::string> LanguageManager::getLocalizationMapKeys() {
+    std::vector<std::string> rt;
+    rt.clear();
+    for (auto it: _localizationMapEnglish) {
+        rt.push_back(it.first);
+    }
+    return rt;
+}
+

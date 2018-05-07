@@ -9,8 +9,8 @@
 
 #include "BonusNode.h"
 #include "../Utils/MainDepot.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/ScopeGuard.h"
 
 using namespace cocos2d;
 using namespace std;

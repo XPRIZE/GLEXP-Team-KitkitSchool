@@ -105,10 +105,13 @@ public:
     void setPicked(bool picked);
     
     void snapTarget();
+    void layTarget();
     std::function<void()> onSnapped;
+    std::function<void()> onLaid;
+
     
     
-    
+    int _pieceId;
     Sprite *_face, *_body, *_shadow;
     Vec2 _targetPos;
     bool _snapped;

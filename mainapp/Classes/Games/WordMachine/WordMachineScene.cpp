@@ -1,6 +1,6 @@
 //
 //  WordMachineScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 7/1/16.
 //
@@ -12,11 +12,11 @@
 #include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/UserManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <Common/Controls/CompletePopup.hpp>
 #include <Common/Basic/SoundEffect.h>
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Sounds/CommonSound.hpp"
 #include "Utils/TodoUtil.h"
 
 
@@ -32,20 +32,11 @@ const Size panelSize = Size(692, 564);
 
 namespace {
     SoundEffect soundForLetterName(const string& Letter) {
-        if (LanguageManager::getInstance()->isSwahili())
-            return Imma_swTZ().soundForLetterName(Letter);
-
-        return Pam_enUS().soundForLetterName(Letter);
+        return CommonSound().soundForLetterName(Letter);
     }
     
     SoundEffect soundForPhonic(const char c) {
-        if (LanguageManager::getInstance()->isSwahili())
-            return Imma_swTZ().soundForLetterName(string{c});
-        
-        auto path = StringUtils::format("WordMachine/Phonic/%c_sound.m4a", tolower(c));
-        
-        return SoundEffect(path);
-        
+        return CommonSound().soundForPhonic(string{c});
     }
     
 }  // unnamed namespace
@@ -241,7 +232,7 @@ bool WordMachineScene::init(int levelID)
     // Start Button
     
     GameSoundManager::getInstance()->preloadEffect("WordMachine/button.m4a");
-    GameSoundManager::getInstance()->preloadEffect("WordMachine/UI_Star_Collected.m4a");
+    GameSoundManager::getInstance()->preloadEffect("Common/Sounds/Effect/UI_Star_Collected.m4a");
     GameSoundManager::getInstance()->preloadEffect("WordMachine/boing1.m4a");
     
     
@@ -249,7 +240,8 @@ bool WordMachineScene::init(int levelID)
     _startButton->loadTextures("WordMachine/Images/wm_button_1.png", "WordMachine/Images/wm_button_2.png");
     _startButton->setPosition(Vec2(_gameSize.width / 2, _gameSize.height / 2 - 500.f));
     _startButton->addClickEventListener([this](Ref*) {
-        
+        _leftCard->removeAllChildren();
+        _rightCard->removeAllChildren();
         startMachine();
         _startButton->setEnabled(false);
         GameSoundManager::getInstance()->playEffectSound("WordMachine/button.m4a");
@@ -445,7 +437,6 @@ void WordMachineScene::handleSuccess()
 void WordMachineScene::showImageCard()
 {
     if (_targetIsLegit) {
-        
         std::string resPath = "WordMachine/WordCards/";
         
         auto targetImage = resPath + _currentProblem.goodImage;
@@ -464,21 +455,33 @@ void WordMachineScene::showImageCard()
         auto ab = Button::create(alterImage);
         ab->setPosition(panelSize/2);
         alter->addChild(ab);
-        
-        
         alter->setPosition(Vec2(panelSize/2) + Vec2(0, panelSize.height));
+        
+        auto abCallFunc = [this, alter, ab]() {
+            ab->addClickEventListener([this, alter](Ref*) {
+                GameSoundManager::getInstance()->playEffectSound("WordMachine/boing1.m4a");
+                alter->runAction(Sequence::create(EaseOut::create(MoveBy::create(0.05, Vec2(-30, 0)), 2.0),
+                                                  EaseInOut::create(MoveBy::create(0.1, Vec2(60, 0)), 2.0),
+                                                  EaseIn::create(MoveBy::create(0.05, Vec2(-30, 0)), 2.0),
+                                                  nullptr));
+                
+                // NB(xenosoz, 2018): Log for future analysis (#1/2)
+                string workPath = [this] {
+                    stringstream SS;
+                    SS << "/" << "WordMachine";
+                    SS << "/" << "level-" << _levelID;
+                    SS << "/" << "work-" << _currentProblemID;
+                    return SS.str();
+                }();
+                StrictLogManager::shared()->game_Peek_Answer("WordMachine", workPath, _currentProblem.badImage, _currentProblem.goodImage);
+            });
+        };
+        
         alter->runAction(Sequence::create(DelayTime::create(random<float>(0.0, 0.2)),
                                           EaseBounceOut::create(MoveTo::create(0.5, panelSize/2)),
+                                          CallFunc::create(abCallFunc),
                                           nullptr));
         
-        ab->addClickEventListener([alter](Ref*) {
-            GameSoundManager::getInstance()->playEffectSound("WordMachine/boing1.m4a");
-            alter->runAction(Sequence::create(EaseOut::create(MoveBy::create(0.05, Vec2(-30, 0)), 2.0),
-                                              EaseInOut::create(MoveBy::create(0.1, Vec2(60, 0)), 2.0),
-                                              EaseIn::create(MoveBy::create(0.05, Vec2(-30, 0)), 2.0),
-                                              nullptr));
-        });
-
         
         auto target = Node::create();
         target->setContentSize(panelSize);
@@ -493,38 +496,50 @@ void WordMachineScene::showImageCard()
         tb->setTag(0);
         target->addChild(tb);
 
-        
+        auto audioPath = resPath + _currentProblem.sound;
         target->setPosition(Vec2(panelSize/2) + Vec2(0, panelSize.height));
+        auto tbCallFunc = [this, target, alter, audioPath, tb, ab]() {
+            tb->addClickEventListener([this, target, alter, audioPath, ab](Ref* btn) {
+                Button *tb = (Button*)btn;
+                
+                if (tb->getTag()==1) return;
+                tb->setTag(1);
+                alter->runAction(EaseIn::create(MoveBy::create(0.3, Vec2(0, panelSize.height)), 2.0));
+                
+                target->setScale(1.1);
+                GameSoundManager::getInstance()->playEffectSound("Common/Sounds/Effect/UI_Star_Collected.m4a");
+                _progressBar->setCurrent(_currentProblemID, true);
+                
+                target->runAction(Sequence::create(DelayTime::create(0.5),
+                                                   CallFunc::create([audioPath](){
+                    GameSoundManager::getInstance()->playEffectSound(audioPath);
+                    
+                }),
+                                                   DelayTime::create(1.5),
+                                                   EaseIn::create(MoveBy::create(0.3, Vec2(0, panelSize.height)), 2.0),
+                                                   CallFunc::create([this](){
+                    handleCorrectAnswer();
+                }),
+                                                   nullptr));
+                
+                // NB(xenosoz, 2018): Log for future analysis (#2/2)
+                string workPath = [this] {
+                    stringstream SS;
+                    SS << "/" << "WordMachine";
+                    SS << "/" << "level-" << _levelID;
+                    SS << "/" << "work-" << _currentProblemID;
+                    return SS.str();
+                }();
+                StrictLogManager::shared()->game_Peek_Answer("WordMachine", workPath, _currentProblem.goodImage, _currentProblem.goodImage);
+                tb->addClickEventListener(nullptr);
+                ab->addClickEventListener(nullptr);
+            });
+        };
+                          
         target->runAction(Sequence::create(DelayTime::create(random<float>(0.0, 0.2)),
                                            EaseBounceOut::create(MoveTo::create(0.5, panelSize/2)),
+                                           CallFunc::create(tbCallFunc),
                                            nullptr));
-        
-        auto audioPath = resPath + _currentProblem.sound;
-        
-        tb->addClickEventListener([this, target, alter, audioPath](Ref* btn) {
-            Button *tb = (Button*)btn;
-            
-            if (tb->getTag()==1) return;
-            tb->setTag(1);
-            alter->runAction(EaseIn::create(MoveBy::create(0.3, Vec2(0, panelSize.height)), 2.0));
-            
-            target->setScale(1.1);
-            GameSoundManager::getInstance()->playEffectSound("WordMachine/UI_Star_Collected.m4a");
-            _progressBar->setCurrent(_currentProblemID, true);
-            
-            target->runAction(Sequence::create(DelayTime::create(0.5),
-                                               CallFunc::create([audioPath](){
-                GameSoundManager::getInstance()->playEffectSound(audioPath);
-                
-            }),
-                                               DelayTime::create(1.5),
-                                               EaseIn::create(MoveBy::create(0.3, Vec2(0, panelSize.height)), 2.0),
-                                               CallFunc::create([this](){
-                handleCorrectAnswer();
-            }),
-                                               nullptr));
-        });
-        
         
         
         if (random<int>(0, 1)==0) {

@@ -1,6 +1,6 @@
 //
 //  ImageObject.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 06/12/2016.
 //
@@ -31,7 +31,7 @@ public:
     ObjectLocation location;
     bool isClosed = false;
     
-    void setImage(std::string imagePath);
+    void setImage(std::string folder, std::string imageFile);
     Vec2 getDotPosition();
     void drawDot(DotDirection direction);
     bool isTouchedIn(Vec2 touchPoint);

@@ -1,6 +1,6 @@
 //
 //  PatternTrainScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 08/09/2017.
 //
@@ -11,6 +11,7 @@
 #include "CCAppController.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Effects/FireworksEffect.hpp"
 
@@ -333,9 +334,11 @@ Box* PatternTrainScene::createAnswerBox(string letter, Vec2 pos, bool setVisible
         
         Slot *newSlot = nullptr;
         newSlot = replaceableSlotNearByBox(box);
+        Box *existingBox;
         
-        if (newSlot) {
-            auto existingBox = newSlot->_boxInSlot;
+        if (newSlot && !(existingBox = newSlot->_boxInSlot)) {
+            
+            /*auto existingBox = newSlot->_boxInSlot;
             
             if (existingBox) {
                 existingBox->unload(_gameNode);
@@ -347,8 +350,7 @@ Box* PatternTrainScene::createAnswerBox(string letter, Vec2 pos, bool setVisible
                     existingBox->runAction(MoveTo::create(0.2, existingBox->_originalPos));
                     existingBox->runAction(ScaleTo::create(0.05, 1));
                 }
-                
-            }
+            }*/
             
             if (_currentLevel > 3 && !box->_duplicated) {
                 _reservedBoxWork = true;
@@ -358,11 +360,13 @@ Box* PatternTrainScene::createAnswerBox(string letter, Vec2 pos, bool setVisible
             }
             box->loadOnSlot(newSlot);
             GameSoundManager::getInstance()->playEffectSound(soundSlotIn);
+            this->checkReadyToSubmit();
+            
         } else {
             box->_targetSlot = nullptr;
             box->runAction(MoveTo::create(0.2, box->_originalPos));
         }
-        this->checkReadyToSubmit();
+        
     };
     
     box->_targetSlot = nullptr;
@@ -377,6 +381,7 @@ void PatternTrainScene::generateNewAnswerBox() {
     
     _reservedOriginBox->_duplicated = true;
     Box *newBox;
+    newBox = nullptr;
     
     if (_reservedLetter == "A") {
         if (_reservedAnswerA.size()) {
@@ -384,6 +389,7 @@ void PatternTrainScene::generateNewAnswerBox() {
             _reservedAnswerA.pop_back();
         }
     }
+
     if (_reservedLetter == "B") {
         if (_reservedAnswerB.size()) {
             newBox = _reservedAnswerB[_reservedAnswerB.size()-1];
@@ -519,7 +525,7 @@ void PatternTrainScene::trainCome() {
                     _tutorialBox->setGlobalZOrderManual(100);
                     _tutorialBox->setScale(0.88);
                     _tutorialBox->loadOnSlot(freightCar->_slotsInFreightCar[j]);
-                    freightCar->loadBox(_tutorialBox, j);
+                   // freightCar->loadBox(_tutorialBox, j);
                 }
             } else {
                 box->setType(letter, _selectedBox[letter.c_str()], (PatternTrainProblemBank::shape)_shape);
@@ -597,8 +603,16 @@ void PatternTrainScene::checkAnswer() {
     bool finished = true;
     vector<string> wrongAnswer;
     
+    stringstream userAnswer;
+    stringstream correctAnswer;
+    
     for (auto freightCar : _freightCars) {
         for (auto slot : freightCar->_slotsInFreightCar) {
+            
+            userAnswer << (slot->_boxInSlot ? slot->_boxInSlot->_assignedLetter : "_");
+            correctAnswer << (slot->_replaceable ?
+                              slot->_correctAnswer :
+                              (slot->_boxInSlot ? slot->_boxInSlot->_assignedLetter : "_"));
 
             if (!slot->_replaceable) continue;
             if (!slot->_boxInSlot) {
@@ -618,6 +632,19 @@ void PatternTrainScene::checkAnswer() {
             }
         }
     }
+    
+    // NB(xenosoz, 2018): Log for future analysis
+    auto workPath = [this] {
+        stringstream ss;
+        ss << "/" << "PatternTrain";
+        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "work-" << _currentProblemIndex;
+        return ss.str();
+    }();
+    
+    StrictLogManager::shared()->game_Peek_Answer("PatternTrain", workPath,
+                                                 userAnswer.str(), correctAnswer.str());
+
     
     if (hasIncorrectAnswer) {
         FireworksEffect::miss();
@@ -713,6 +740,9 @@ void PatternTrainScene::trainCombine() {
                 runAction(Sequence::create(
                     //DelayTime::create(0.21*(i+1)),
                     CallFunc::create([this, freightCar](){
+                    
+                    //freightCar->getParent()->reorderChild(freightCar, freightCar->getLocalZOrder());
+                    
                         freightCar->retain();
                         freightCar->removeFromParent();
                         _locomotive->addChild(freightCar);

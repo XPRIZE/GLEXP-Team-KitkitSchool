@@ -15,27 +15,28 @@
 #include "ui/CocosGUI.h"
 #include "Managers/GameSoundManager.h"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "Utils/TodoUtil.h"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Common/Controls/CompletePopup.hpp"
-#include <Games/NumberTrace/Common/Basic/AARect.h>
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Basic/AARect.h"
+#include "Common/Repr/AllRepr.h"
 
 #include "CCAppController.hpp"
 
 using namespace cocos2d::ui;
 using namespace std;
 using namespace todoschool::counting;
-using todoschool::AARect;
+
 
 
 namespace CountingSceneSpace {
-    const char* solveEffect = "Counting/UI_Star_Collected.m4a";
-    const char* missEffect = "Counting/Help.m4a";
-    const char* hintEffect = "Counting/tokenappear.m4a";
-    const char* touchEffect = "Counting/tokenappear.m4a";
-    const char* dropEffect = "Counting/panelput.m4a";
+    const char* solveEffect = "Common/Sounds/Effect/UI_Star_Collected.m4a";
+    const char* missEffect = "Common/Sounds/Effect/Help.m4a";
+    const char* hintEffect = "Common/Sounds/Effect/tokenappear.m4a";
+    const char* touchEffect = "Common/Sounds/Effect/tokenappear.m4a";
+    const char* dropEffect = "Common/Sounds/Effect/panelput.m4a";
     const int tagForMissAction = 100;
 }
 
@@ -96,6 +97,19 @@ bool CountingScene::init()
     _answerPadPos = Point(gameSize.width-82, gameSize.height/2);
     _answerPad->setPosition(_answerPadPos);
     _answerPad->setAnswerCallback([this](int answer) {
+        // NB(xenosoz, 2018): Log for future analysis
+        auto workPath = [this] {
+            stringstream ss;
+            ss << "/" << "Counting";
+            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "work-" << _currentProblemID;
+            return ss.str();
+        }();
+        
+        StrictLogManager::shared()->game_Peek_Answer("Counting", workPath,
+                                                     TodoUtil::itos(answer),
+                                                     TodoUtil::itos(_currentProblem.totalCount));
+        
         if (_currentProblem.totalCount == answer) {
             onSolve();
         } else {
@@ -402,12 +416,16 @@ void CountingScene::putObjects(float& appearTime)
         object->onTouchEvent = [this, object](Widget::TouchEventType event) {
             if (!_touchEnabled || !object) { return; }
             
+            object->getParent()->reorderChild(object, object->getLocalZOrder());
+            
             if (object->value() != 0) {
                 // NB(xenosoz, 2016): Nonzero value
                 //   -> We already finished counting.
                 return;
             }
             if (event != Widget::TouchEventType::BEGAN) { return; }
+            
+
             
             _touchedObjects++;
             _touchedValue += object->weight();

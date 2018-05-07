@@ -9,11 +9,10 @@
 
 #include "MainDepot.h"
 #include "MainNS.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 #include <Managers/LanguageManager.hpp>
-#include <Common/Sounds/AdultVoice_enUS.h>
-#include <Common/Sounds/AdultVoice_swTZ.h>
-#include <Common/Sounds/Pam_enUS.h>
+#include "Common/Sounds/CommonSound.hpp"
+
 #include <string>
 
 
@@ -114,30 +113,25 @@ void MainDepot::preloadSoundEffects() const {
 }
 
 SoundEffect MainDepot::soundForCardinalNumber(int N) const {
-    SoundEffect SE = AdultVoice_enUS().cardinalNumber(N);
-    if (LanguageManager::getInstance()->isSwahili())
-        SE = AdultVoice_swTZ().cardinalNumber(N);
-
+    SoundEffect SE = CommonSound().cardinalNumber(N);
+    
     return SE;
 }
 
 SoundEffect MainDepot::soundForOperator(const string &Op) const {
     auto soundForPlus = [] {
-        SoundEffect SE = AdultVoice_enUS().plus();
-        if (LanguageManager::getInstance()->isSwahili())
-            SE = AdultVoice_swTZ().plus();
+        SoundEffect SE = CommonSound().plus();
         return SE;
     };
 
     auto soundForMinus = [] {
-        SoundEffect SE = AdultVoice_enUS().minus();
-        if (LanguageManager::getInstance()->isSwahili())
-            SE = AdultVoice_swTZ().minus();
+        SoundEffect SE = CommonSound().minus();
         return SE;
     };
     
-    if (Op == "+") { return soundForPlus(); }
-    if (Op == "-") { return soundForMinus(); }
+    if (Op == "+") { return CommonSound().plus(); }
+    if (Op == "-") { return CommonSound().minus(); }
+    if (Op == "=") { return CommonSound().equals(); }
     
     return SoundEffect();
 }
@@ -181,7 +175,8 @@ vector<SoundEffect> MainDepot::soundEffectsToPreload() const {
         
         soundForOperator("+"),
         soundForOperator("-"),
-
+        soundForOperator("="),
+        
         soundForCardBirth(),
         soundForCardHit(0),
         soundForCardHit(1),

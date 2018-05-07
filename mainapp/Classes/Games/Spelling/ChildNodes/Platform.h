@@ -39,7 +39,7 @@ public:
     void hideShadowForBallID(size_t SlotIndex) const;
     void showShadowForBallID(size_t SlotIndex) const;
     
-    FiniteTimeAction* actionForEnter(function<void()> Callback = nullptr);
+    FiniteTimeAction* actionForEnter2(function<void()> Callback = nullptr);
     FiniteTimeAction* actionForExit(function<void()> Callback = nullptr);
     
     using Super::setPosition;

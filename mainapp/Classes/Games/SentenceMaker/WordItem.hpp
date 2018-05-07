@@ -1,6 +1,6 @@
 //
 //  WordItem.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/18/16.
 //
@@ -21,12 +21,14 @@ USING_NS_CC;
 using namespace cocos2d::ui;
 using namespace std;
 
+class GreenDashedRect;
 class WordItem : public Node
 {
 public:
     static Size wordItemSize;
     
     static void setWordItemWidth(float width);
+    static bool _touchEnabled;
     
     CREATE_FUNC(WordItem);
     
@@ -36,14 +38,16 @@ public:
     
     void setPicked(bool picked);
     void setSnapped(bool snapped);
+    void setOriginPos();
     
     void returnToOrigin();
     
     std::function<void()> onCheckTargetBegan;
-    std::function<void()> onCheckTargetEnded;
+    std::function<void(Touch* touch)> onCheckTargetMoved;
+    std::function<void(Touch* touch)> onCheckTargetEnded;
     
     string _word;
-    WordItem *_pair; // 블록은 들어간 칸, 빈칸은 끼워진 블록을 참조합니다.
+    GreenDashedRect *_pair; // 블록은 들어간 칸, 빈칸은 끼워진 블록을 참조합니다.
     
 protected:
     Node *_face, *_shadow;

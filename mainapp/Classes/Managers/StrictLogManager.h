@@ -13,9 +13,14 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 
 
 class StrictLogManager {
+public:
+    std::string _touchEvent_NodeName;
+    std::stringstream _touchEvent_Seq;
+    
 public:
     // NB(xenosoz, 2017): Curriculum choice (Menu/MainScene)
     void curriculumChoice_Begin();
@@ -56,7 +61,11 @@ public:
     void game_Begin(const std::string& gameName, int gameLevel);
     void game_End_Quit(const std::string& gameName, int gameLevel, double duration);
     void game_End_Complete(const std::string& gameName, int gameLevel, double duration, int result);
-    
+    void game_Peek_Answer(const std::string& gameName,
+                          const std::string& workPath,  // NB(xenosoz, 2018): work ~= problem
+                          const std::string& userAnswer,
+                          const std::string& correctAnswer);
+
     void video_Begin(const std::string& videoName);
     void video_End_Quit(const std::string& videoName, double duration);
     void video_End_Complete(const std::string& videoName, double duration, int result);
@@ -79,6 +88,16 @@ public:
     // NB(xenosoz, 2017): Stars
     void starStat_UpdateStarsInKitKitSchool(int oldStars, int newStars);
     
+    
+    // NB(xenosoz, 2017): Touch Events
+    //   We use alternative base-64 encoding for the points (no padding at the end).
+    void touchEvent_Begin(const std::string& nodeName, float x, float y);
+    void touchEvent_Move(const std::string& nodeName, float x, float y);
+    void touchEvent_End(const std::string& nodeName, float x, float y);
+    void touchEvent_Cancel(const std::string& nodeName, float x, float y);
+    void _touchEvent_Append(float x, float y);
+    void _touchEvent_Flush(const std::string& eventName);
+
     
     // NB(xenosoz, 2017): Launcher (XXX)
     // 런처 시작(언제)

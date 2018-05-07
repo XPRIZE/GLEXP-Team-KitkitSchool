@@ -1,6 +1,6 @@
 //
 //  SoundTrain.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 04/09/2017.
 //

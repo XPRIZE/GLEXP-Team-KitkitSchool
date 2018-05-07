@@ -1,6 +1,6 @@
 //
 //  TextAnswerItem.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 27/12/2016.
 //

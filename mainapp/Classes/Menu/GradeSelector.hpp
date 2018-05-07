@@ -31,8 +31,10 @@ public:
     bool init() override;
 
     void setGameName(std::string gameName);
-    void setChoices(const Choices& choices);
-    //void setCreator(Creator creator);
+    void setChoices(const std::vector<int> choices);
+    void setChoices(const std::vector<std::string> choices);
+    std::vector<int> _choicesInt;
+    std::vector<std::string> _choicesStr;
     
     cocos2d::Scene* minimalSceneByWrapping();
     
@@ -43,6 +45,8 @@ public:
 private:
     void clearInternals();
     void refreshChildNodes();
-    
-    void handleSelection(int choice);
+    void handleSelection(std::string gameName, int choice);
+    void handleSelection(std::string gameName, std::string choice);
+    bool _isInteger = false;
+    cocos2d::Size _winSize;
 };

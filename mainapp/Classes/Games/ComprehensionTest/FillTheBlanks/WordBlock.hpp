@@ -1,6 +1,6 @@
 //
 //  WordBlock.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 12/18/16.
 //

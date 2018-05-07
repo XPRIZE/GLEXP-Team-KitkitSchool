@@ -1,4 +1,4 @@
-﻿#ifndef GAME_SOUND_MANAGER_H
+#ifndef GAME_SOUND_MANAGER_H
 #define GAME_SOUND_MANAGER_H
 
 #include <string>
@@ -38,24 +38,18 @@ public:
 public:
     void playBGM(std::string name);
     void stopBGM();
-    
-    
-    void preloadGameEffect();
-    
-    unsigned int playHelpSound();
-    unsigned int playMissEffectSound();
-    unsigned int playFlyingStartEffectSound();
+    void pauseBGM();
+    void resumeBGM();
+
     unsigned int playChildVoice(int num);
     unsigned int playChildVoiceWithType(int num, eChildVoice vType = K_CHILD_VOIDE_NONE);
     unsigned int playAdultVoice(int num, eAdultVoice vType = K_ADULT_VOIDE_NONE);
     unsigned int playEffectSound(std::string name,
                                  bool isLoop = false, float pitch = 1.f,
                                  float pan = 0.f, float gain = 1.f);
-
     
-
-
-
+    void playEffectSoundForAutoStart(std::string name);
+    void playEffectSoundVoiceOnly(std::string name);
 
     void pauseEffect(unsigned int uSoundId);
     void resumeEffect(unsigned int uSoundId);
@@ -81,6 +75,7 @@ public:
     
     
 private:
+
     SET_STRING m_SetLoadedList;
     std::string m_FilePath;
     

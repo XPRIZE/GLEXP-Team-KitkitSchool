@@ -1,6 +1,6 @@
 //
 //  CCAppController.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/1/16.
 //
@@ -28,28 +28,31 @@ public:
     PlayTimer* getPlayTimer() { return _playTimer; }
 
 
-    BookView* createBookView(std::string bookName);
 
     
     bool gameExists(std::string gameName);
     
+    
+    std::function<Scene*(void)> getGameCreator(std::string gameName, int level, std::string param="");
+    
     void startGameWithLevelChoice(std::string gameName);
-    bool startGame(std::string gameName, int level, bool checkOnly = false);
+    bool startGame(std::string gameName, int level, std::string param="", bool checkOnly = false);
     void startFreeChoiceGame(std::string gameName, int level);
     void startCurriculumGame(std::string levelID, int day, int gameIndex);
     void startBookScene(std::string bookFolder, bool replaceParent = false);
+
+
     void startComprehensionScene(std::string bookFolder, int set, bool replaceParent = false);
-    void startVideoScene(std::string filename, bool replaceParent = false);
+	void startVideoScene(std::string filename, bool replaceParent = false);
     
     void startQuiz(std::string classroom, int studentNumber, std::string courseKind);
-    void startEggQuiz(char category, int categoryLevel, bool isPreTest, std::function<void(bool)> callback);
-    
+   // void startEggQuiz(char category, int categoryLevel, bool isPreTest, std::function<void(bool)> callback);
     
     void handleGameQuit();
     void handleGameComplete(int result);
     
     bool isDebug();
-    
+
     
 private:
     PlayTimer* _playTimer;
@@ -57,6 +60,7 @@ private:
     std::string _currentParam;
     int _currentLevel;
     bool _isFreeChoice;
+    bool _allowSkipTutorial;
     
     
     std::string _currentCurrLevelID;

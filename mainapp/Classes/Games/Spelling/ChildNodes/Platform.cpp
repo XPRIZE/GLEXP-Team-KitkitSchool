@@ -86,7 +86,7 @@ void Platform::showShadowForBallID(size_t SlotIndex) const {
                                        nullptr));
 }
 
-FiniteTimeAction* Platform::actionForEnter(function<void()> Callback /* = nullptr */) {
+FiniteTimeAction* Platform::actionForEnter2(function<void()> Callback /* = nullptr */) {
     Size GameSize = MainDepot().gameSize();
     Size CS = getContentSize();
     Vector<FiniteTimeAction*> Actions;
@@ -107,7 +107,7 @@ FiniteTimeAction* Platform::actionForEnter(function<void()> Callback /* = nullpt
     
     Actions.pushBack(CallFunc::create([this, Callback] {
         if (!Callback) { return; }
-        NodeScopeGuard(this);
+        NodeScopeGuard guard(this);
         Callback();
     }));
     
@@ -128,7 +128,7 @@ FiniteTimeAction* Platform::actionForExit(function<void()> Callback /* = nullptr
     
     Actions.pushBack(CallFunc::create([this, Callback] {
         if (!Callback) { return; }
-        NodeScopeGuard(this);
+        NodeScopeGuard guard(this);
         Callback();
     }));
     

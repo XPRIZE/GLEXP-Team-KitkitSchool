@@ -24,15 +24,15 @@
 using namespace cocos2d;
 using namespace std;
 
-
-
-
-
-
-TutorialVideoScene::TutorialVideoScene() {
+TutorialVideoScene::TutorialVideoScene():
+_gameName(""),
+_fileName("")
+{
+    
 }
 
-bool TutorialVideoScene::init() {
+bool TutorialVideoScene::init()
+{
     if (!Super::init()) { return false; }
     
     auto winSize = Director::getInstance()->getWinSize();
@@ -42,25 +42,17 @@ bool TutorialVideoScene::init() {
     LayerColor* white = LayerColor::create(cocos2d::Color4B::WHITE,winSize.width, winSize.height);
     addChild(white);
     
-    
     _videoNode = Node::create();
     _videoNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _videoNode->setPosition(winSize/2+Size(0, -50));
     _videoNode->setContentSize(winSize);
-    
     addChild(_videoNode);
-    
     
     _frame = Sprite::create("TutorialVideo/Xprize_tutorial-video_image_frame.png");
     _frame->setPosition(winSize/2+Size(0, -50));
     
     //    it->setBlendFunc(BlendFunc::DISABLE);
     addChild(_frame);
-    
-
-   
-    
-    
     
     {
         auto skip = ui::Button::create("TutorialVideo/Xprize_tutorial-video_button_close.png");
@@ -73,6 +65,8 @@ bool TutorialVideoScene::init() {
                 Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(this->_creator)));
             }
         });
+        
+        _skipBtn = skip;
         
     }
     return true;
@@ -91,7 +85,15 @@ void TutorialVideoScene::onEnterTransitionDidFinish()
     
     _videoNode->addChild(v);
     
-    auto path = getTutorialFile(_gameName);
+    string path;
+    if (_fileName != "")
+    {
+        path = getTutorialFileWithCustomName(_fileName);
+    }
+    else
+    {
+        path = getTutorialFile(_gameName);
+    }
     v->playVideo(path);
     v->onCompleted = [this]() {
 
@@ -101,44 +103,62 @@ void TutorialVideoScene::onEnterTransitionDidFinish()
     
 }
 
-
-
-cocos2d::Scene* TutorialVideoScene::createScene(string gameName, std::function<cocos2d::Scene*(void)> creator) {
-
-    
+cocos2d::Scene* TutorialVideoScene::createScene(string gameName, std::function<cocos2d::Scene*(void)> creator, bool allowSkip)
+{
     auto scene = Scene::create();
     auto winSize = Director::getInstance()->getWinSize();
-    
     
     auto node = TutorialVideoScene::create();
     node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     node->setPosition(winSize / 2.f);
-    
     node->_creator = creator;
     node->_gameName = gameName;
+    scene->addChild(node);
     
+    if (!allowSkip) node->_skipBtn->removeFromParent();
+    
+    return scene;
+}
 
+cocos2d::Scene* TutorialVideoScene::createSceneWithCustomFileName(string fileName, std::function<cocos2d::Scene*(void)> creator, bool allowSkip)
+{
+    auto scene = Scene::create();
+    auto winSize = Director::getInstance()->getWinSize();
     
+    auto node = TutorialVideoScene::create();
+    node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    node->setPosition(winSize / 2.f);
+    node->_creator = creator;
+    node->_fileName = fileName;
     scene->addChild(node);
 
-    
+    if (!allowSkip) node->_skipBtn->removeFromParent();
+
     return scene;
 }
 
 bool TutorialVideoScene::tutorialExists(std::string gameName)
 {
-    
     auto path = getTutorialFile(gameName);
     auto exists = FileUtils::getInstance()->isFileExist(path);
     return exists;
-    
-    
+}
+
+bool TutorialVideoScene::tutorialExistsWithCustomName(std::string fileName)
+{
+    auto path = getTutorialFileWithCustomName(fileName);
+    auto exists = FileUtils::getInstance()->isFileExist(path);
+    return exists;
 }
 
 std::string TutorialVideoScene::getTutorialFile(std::string gameName)
 {
-    auto lang = LanguageManager::getInstance()->getCurrentLanguageCode();
-    auto path = "TutorialVideo/"+lang+"/xPrize Tutorial - "+gameName+".m4v";
+    auto path = LanguageManager::getInstance()->findLocalizedResource("TutorialVideo/xPrize Tutorial - " + gameName + ".m4v");
     return path;
 }
 
+std::string TutorialVideoScene::getTutorialFileWithCustomName(std::string fileName)
+{
+    auto path = LanguageManager::getInstance()->findLocalizedResource("TutorialVideo/" + fileName);
+    return path;
+}

@@ -25,10 +25,10 @@ public:
     TraceGlyph glyphWithKnotList(const TraceKnotList& KnotList, Rect RoughBB) const;
     
     TraceString resizeStringVertically(const TraceString& Source,
-                                       Rect TargetRect,
+                                       AARect TargetRect,
                                        bool UseTightBB = false) const;
     TraceString resizeString(const TraceString& Source,
-                             Rect TargetRect,
+                             AARect TargetRect,
                              bool UseTightBB = false) const;
     
 private:

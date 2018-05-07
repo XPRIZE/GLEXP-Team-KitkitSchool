@@ -1,6 +1,6 @@
 //
 //  MatchingScene.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by timewalker on 05/12/2016.
 //
@@ -12,6 +12,7 @@
 #include "Utils/TodoUtil.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/StrictLogManager.h"
 
 #define GRAY_1  Color4B(100, 100, 100, 255)
 #define GRAY_2  Color4B(130, 130, 130, 255)
@@ -101,8 +102,8 @@ namespace ComprehensionTest
                 {
                     auto obj = ImageObject::create();
                     obj->location = ObjectLocation::LeftSide;
-                    obj->setImage(eachLeftValue.second);
-                    obj->id = eachLeftValue.first;
+                    obj->setImage(_comprehensionScene->getBookFolder(), eachLeftValue.second);
+                    obj->id = TodoUtil::itos(eachLeftValue.first);
                     obj->drawDot(DotDirection::Right);
                     obj->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
                     auto pos = Point(_leftLayer->getPosition().x - kGapBetweenLeftRight, _leftLayer->getPosition().y + _leftLayer->getContentSize().height / 2);
@@ -119,7 +120,7 @@ namespace ComprehensionTest
                     auto obj = TextObject::create();
                     obj->location = ObjectLocation::LeftSide;
                     obj->setText(eachLeftValue.second);
-                    obj->id = eachLeftValue.first;
+                    obj->id = TodoUtil::itos(eachLeftValue.first);
                     obj->drawDot(DotDirection::Right);
                     obj->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
                     auto pos = Point(_leftLayer->getPosition().x - kGapBetweenLeftRight + gap, _leftLayer->getPosition().y + _leftLayer->getContentSize().height / 2);
@@ -134,8 +135,8 @@ namespace ComprehensionTest
                 {
                     auto obj = ImageObject::create();
                     obj->location = ObjectLocation::RightSide;
-                    obj->setImage(eachRightValue.second);
-                    obj->id = eachRightValue.first;
+                    obj->setImage(_comprehensionScene->getBookFolder(), eachRightValue.second);
+                    obj->id = TodoUtil::itos(eachRightValue.first);
                     obj->drawDot(DotDirection::Left);
                     obj->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
                     auto pos = Point(_rightLayer->getPosition().x + kGapBetweenLeftRight, _rightLayer->getPosition().y + _rightLayer->getContentSize().height / 2);
@@ -152,7 +153,7 @@ namespace ComprehensionTest
                     auto obj = TextObject::create();
                     obj->location = ObjectLocation::RightSide;
                     obj->setText(eachRightValue.second);
-                    obj->id = eachRightValue.first;
+                    obj->id = TodoUtil::itos(eachRightValue.first);
                     obj->drawDot(DotDirection::Left);
                     obj->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
                     auto pos = Point(_rightLayer->getPosition().x + kGapBetweenLeftRight - gap, _rightLayer->getPosition().y + _rightLayer->getContentSize().height / 2);
@@ -201,7 +202,7 @@ namespace ComprehensionTest
         {
             _leftLayer = LayerColor::create(Color4B(100, 0, 0, bDebug ? 100 : 0));
             _leftLayer->setContentSize(Size(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height));
-            _leftLayer->ignoreAnchorPointForPosition(false);
+            _leftLayer->setIgnoreAnchorPointForPosition(false);
             _leftLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
             _leftLayer->setPosition(_gameNode->getContentSize() / 2);
             _gameNode->addChild(_leftLayer);
@@ -209,7 +210,7 @@ namespace ComprehensionTest
             auto itemSize = _problemData->leftValue.size();
             _leftLayer = LayerColor::create(Color4B(100, 100, 100, bDebug ? 100 : 0));
             _leftLayer->setContentSize(Size(imageFrameSize.width, imageFrameSize.height * itemSize + kItemGapY * (itemSize - 1)));
-            _leftLayer->ignoreAnchorPointForPosition(false);
+            _leftLayer->setIgnoreAnchorPointForPosition(false);
             _leftLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
             _leftLayer->setPosition(_gameNode->getContentSize().width / 2 - kWrapperLayerMarginX, _gameNode->getContentSize().height / 2 - kWrapperLayerMarginY);
             _gameNode->addChild(_leftLayer);
@@ -219,7 +220,7 @@ namespace ComprehensionTest
         {
             _rightLayer = LayerColor::create(Color4B(0, 100, 0, bDebug ? 100 : 0));
             _rightLayer->setContentSize(Size(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height));
-            _rightLayer->ignoreAnchorPointForPosition(false);
+            _rightLayer->setIgnoreAnchorPointForPosition(false);
             _rightLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
             _rightLayer->setPosition(_gameNode->getContentSize() / 2);
             _gameNode->addChild(_rightLayer);
@@ -227,7 +228,7 @@ namespace ComprehensionTest
             auto itemSize = _problemData->leftValue.size();
             _rightLayer = LayerColor::create(Color4B(100, 100, 100, bDebug ? 100 : 0));
             _rightLayer->setContentSize(Size(imageFrameSize.width, imageFrameSize.height * itemSize + kItemGapY * (itemSize - 1)));
-            _rightLayer->ignoreAnchorPointForPosition(false);
+            _rightLayer->setIgnoreAnchorPointForPosition(false);
             _rightLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
             _rightLayer->setPosition(_gameNode->getContentSize().width / 2 + kWrapperLayerMarginX, _gameNode->getContentSize().height / 2 - kWrapperLayerMarginY);
             _gameNode->addChild(_rightLayer);
@@ -299,12 +300,14 @@ namespace ComprehensionTest
                 {
                     if (_selectedId == _imageObjectVector[i]->id && _selectedLocation == _imageObjectVector[i]->location)
                     {
+                        StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), _selectedId, "None");
                         canceled();
                         return;
                     }
                     
                     if (_selectedId == _imageObjectVector[i]->id && _selectedLocation != _imageObjectVector[i]->location)
                     {
+                        StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), _selectedId, _selectedId);
                         matched(_imageObjectVector[i]->getDotPosition());
                         return;
                     }
@@ -317,19 +320,22 @@ namespace ComprehensionTest
                 {
                     if (_selectedId == _textObjectVector[i]->id && _selectedLocation == _textObjectVector[i]->location)
                     {
+                        StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), _selectedId, "None");
                         canceled();
                         return;
                     }
                     
                     if (_selectedId == _textObjectVector[i]->id && _selectedLocation != _textObjectVector[i]->location)
                     {
+                        StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), _selectedId, _selectedId);
                         matched(_textObjectVector[i]->getDotPosition());
                         return;
                     }
                 }
             }
             
-            
+            StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), _selectedId, "None");
+
             _bDrag = false;
             _drawNodeLine->clear();
             _drawNodeCircle->clear();
@@ -405,6 +411,16 @@ namespace ComprehensionTest
             if (_comprehensionScene) {
                 _comprehensionScene->onSolve();
             }
+        }
+        
+        string MatchingScene::makeWorkPath() {
+            stringstream ss;
+            ss << "ComprehensionTest";
+            ss << "/" << _comprehensionScene->getBookName();
+            ss << "/" << "matching";
+            ss << "-" << _comprehensionScene->getCurrentProblem();
+
+            return ss.str();
         }
 
     }  // namespace Matching

@@ -1,6 +1,6 @@
 //
 //  UserManager.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Seokkwon Lee on 11/4/16.
 //
@@ -48,28 +48,32 @@ void UserManager::init()
 
     }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    _debugMode = true;
+    _gameTestingMode = true;
+#else
     _debugMode = false;
     _gameTestingMode = false;
-    //_debugMode = false;
-    //_gameTestingMode = false;
+    
+#endif
     _allowReset = false;
     _userName = "";
     
     refreshUsername();
-    
-    
+
+
 
 }
 
 void UserManager::clearStatus()
 {
     _currentLevelID = "";
-    
+
     _currentDay = 0;
     _levelOpenedMap.clear();
     _dayClearedMap.clear();
     _gameClearedMap.clear();
-    
+
 }
 
 
@@ -87,16 +91,19 @@ void UserManager::resetStatus()
                 UserDefault::getInstance()->setBoolForKey(getGameClearedKey(levelID, d.dayOrder, i).c_str(), false);
             }
         }
-        
-        
+
+
         string key = getCurrentDayKey(levelID);
         UserDefault::getInstance()->setIntegerForKey(key.c_str(), 0);
-
+        
+        setPretestProgressType(levelID, PretestProgressType::required);
     }
+
+    UserDefault::getInstance()->setBoolForKey(getFinishTutorialKey().c_str(), false);
 
     _currentDay = 0;
     setCurrentLevelID("");
-    
+
 
     UserDefault::getInstance()->flush();
 
@@ -132,7 +139,7 @@ void UserManager::setCurrentLevelID(string levelID)
 string UserManager::getCurrentDayKey(string levelID)
 {
     return _userName+"_currentDay_"+levelID;
-    
+
 }
 
 
@@ -141,21 +148,21 @@ int UserManager::getCurrentDay(string levelID)
     if (levelID==_currentLevelID && _currentDay>0) {
         return _currentDay;
     }
-    
+
     string key = getCurrentDayKey(levelID);
     _currentDay = UserDefault::getInstance()->getIntegerForKey(key.c_str(), 1);
-    
+
     return _currentDay;
 }
 
 void UserManager::setCurrentDay(string levelID, int day)
 {
     if (_currentDay!=day) {
-        
-        if (_currentDay>0 && !isDayCleared(levelID, _currentDay)) {
-            clearDayProgress(levelID, _currentDay);
-        }
-        
+
+//        if (_currentDay>0 && !isDayCleared(levelID, _currentDay)) {
+//            clearDayProgress(levelID, _currentDay);
+//        }
+
         _currentDay = day;
         if (levelID.length()>0) {
             string key = getCurrentDayKey(levelID);
@@ -199,21 +206,40 @@ bool UserManager::isLevelCleared(string levelID)
 {
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     //int num = 0;
-    
+
     auto lastDayCur = cur->days.back();
-    
+
     return (isDayCleared(levelID, lastDayCur.dayOrder));
-    
-    
-    
+
+
+
     /*
     for (auto d : cur->days) {
         if (isDayCleared(levelID, d.dayOrder)) num++;
     }
     return (num==cur->days.size());
      */
-    
 
+
+}
+
+PretestProgressType UserManager::getPretestProgressType(string levelID) {
+    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
+    if (cur->categoryLevel == 1
+        || cur->categoryLevel == 2) {
+        return (PretestProgressType)UserDefault::getInstance()->getIntegerForKey(("pretest_progress_"+levelID).c_str(), (int)PretestProgressType::required);
+    } else {
+        return PretestProgressType::finish;
+    }
+}
+
+void UserManager::setPretestProgressType(string levelID, PretestProgressType type) {
+    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
+    if (cur->categoryLevel == 1
+        || cur->categoryLevel == 2) {
+        UserDefault::getInstance()->setIntegerForKey(("pretest_progress_"+levelID).c_str(), (int)type);
+    }
+    return;
 }
 
 string UserManager::getDayClearedKey(string levelID, int day)
@@ -244,16 +270,21 @@ void UserManager::setDayCleared(string levelID, int day, bool isCleared)
     UserDefault::getInstance()->flush();
 }
 
-bool UserManager::isDayInProgress(string levelID, int day)
+bool UserManager::checkIfNextDayIsAvailable(string levelID, int day)
 {
+    int clearedNumOfGamesInDay = 0, numOfGamesInDay = 0;
+
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     auto dayCurr = cur->getDayCurriculum(day);
     if (!dayCurr) return false;
-    
-    for (int i=0; i<dayCurr->numGames; i++) {
-        if (UserManager::getInstance()->isGameCleared(levelID, day, i)) return true;
+
+    numOfGamesInDay = dayCurr->numGames;
+
+    for (int num = 0; num <= numOfGamesInDay; num++) {
+        if(UserManager::getInstance()->isGameCleared(levelID, _currentDay, num)) clearedNumOfGamesInDay++;
     }
-    
+    if (clearedNumOfGamesInDay >= numOfGamesInDay-1) return true;
+
     return false;
 }
 
@@ -262,12 +293,12 @@ void UserManager::clearDayProgress(string levelID, int day)
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
     auto dayCurr = cur->getDayCurriculum(day);
     if (!dayCurr) return;
-    
+
     for (int i=0; i<dayCurr->numGames; i++) {
         UserManager::getInstance()->setGameCleared(levelID, day, i, false);
     }
-    
-    
+
+
 }
 
 int UserManager::numDayCleared(string levelID)
@@ -383,14 +414,14 @@ string UserManager::getProgressDataKey()
 Json::Value UserManager::getProgressData()
 {
     std::string progressString = UserDefault::getInstance()->getStringForKey(getProgressDataKey().c_str());
-    
+
     Json::Value progressJson;
-    
+
     if(progressString != ""){
         Json::Reader reader;
         reader.parse(progressString, progressJson);
     }
-    
+
     return progressJson;
 }
 
@@ -398,7 +429,7 @@ void UserManager::setProgressData(Json::Value json)
 {
     Json::FastWriter writer;
     std::string progressString = writer.write(json);
-    
+
     UserDefault::getInstance()->setStringForKey(getProgressDataKey().c_str(), progressString);
 }
  */
@@ -426,9 +457,10 @@ int UserManager::getBirdStatus(int birdType)
 }
 */
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 const std::string UserManager::getAppVersion()
 {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     JniMethodInfo t;
     std:: string a("");
     if (JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "getAppVersion", "()Ljava/lang/String;"))
@@ -438,9 +470,11 @@ const std::string UserManager::getAppVersion()
         t.env->DeleteLocalRef(jstr);
         return a;
     }
+#endif
     return "";
 }
 #endif
+
 
 
 void UserManager::refreshUsername()
@@ -468,7 +502,7 @@ const std::string UserManager::getCurrentUsername()
 #else  // iOS
     return "username";
 #endif
-    
+
 }
 
 
@@ -477,7 +511,7 @@ void UserManager::updateStars(int numStars)
 {
     int oldStars = getStars();
     StrictLogManager::shared()->starStat_UpdateStarsInKitKitSchool(oldStars, numStars);
-    
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "updateStars", "(I)V"))
@@ -509,12 +543,16 @@ int UserManager::getStars()
 #else // iOS
     auto coins = UserDefault::getInstance()->getIntegerForKey("coinNum", 0);
     return coins;
-    
+
 #endif
-    
+
 }
 
 
+string UserManager::getFinishTutorialKey()
+{
+    return _userName + "hasPlayedMenuTutorial";
+}
 
 void UserManager::finishTutorial()
 {
@@ -527,14 +565,14 @@ void UserManager::finishTutorial()
         t.env->DeleteLocalRef(t.classID);
     }
 #endif
-    UserDefault::getInstance()->setBoolForKey("hasPlayedMenuTutorial", true);
+    UserDefault::getInstance()->setBoolForKey(getFinishTutorialKey().c_str(), true);
     UserDefault::getInstance()->flush();
-    
+
 }
 
 bool UserManager::hasPlayedMenuTutorial()
 {
-    auto ret = UserDefault::getInstance()->getBoolForKey("hasPlayedMenuTutorial", false);
+    auto ret = UserDefault::getInstance()->getBoolForKey(getFinishTutorialKey().c_str(), false);
     return ret;
 }
 
@@ -550,6 +588,13 @@ void UserManager::sendAppToBack()
         t.env->CallStaticVoidMethod(t.classID, t.methodID);
         t.env->DeleteLocalRef(t.classID);
     }
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+	auto uri = ref new Windows::Foundation::Uri("kitkitlauncher:");
+	concurrency::create_task(Windows::System::Launcher::LaunchUriAsync(uri)).then([](bool launchResult)
+	{
+
+	});
+
 #else
     exit(0);
 #endif

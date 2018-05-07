@@ -1,6 +1,6 @@
 //
 //  DottedRect.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 1/6/17.
 //

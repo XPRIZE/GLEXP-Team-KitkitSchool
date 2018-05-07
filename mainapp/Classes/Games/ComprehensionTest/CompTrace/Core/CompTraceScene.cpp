@@ -8,17 +8,17 @@
 
 #include "CompTraceScene.h"
 #include "../Utils/MainDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
-
+#include "Common/Components/TargetDragBody.h"
+#include "Common/Basic/NodeScopeGuard.h"
+#include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 #include "CCAppController.hpp"
+#include "Managers/GameSoundManager.h"
 
-
-BEGIN_NS_COMPTRACE
 
 using namespace todoschool::tracefield;
 using namespace cocos2d;
 using namespace std;
-using todoschool::woodenpuzzles::TargetDragBody;
 
 
 namespace {
@@ -30,7 +30,7 @@ namespace {
     float kTraceFieldCorrectionY = -120.f;
     
     Size traceSize() {
-        auto gameSize = MainDepot().gameSize();
+        auto gameSize = todoschool::comptrace::MainDepot().gameSize();
         return Size(gameSize.width*0.8, gameSize.height * 0.38);
     }
     
@@ -56,7 +56,7 @@ CompTraceScene::CompTraceScene()
 bool CompTraceScene::init() {
     if (!Super::init()) { return false; }
 
-    MainDepot().preloadSoundEffects();
+    todoschool::comptrace::MainDepot().preloadSoundEffects();
 
     clearInternals();
     refreshChildNodes();
@@ -76,11 +76,32 @@ void CompTraceScene::clearInternals() {
         ImageNode->removeAllChildren();
         
         
-        MainDepot Depot;
+        todoschool::comptrace::MainDepot Depot;
+        
+        if (W.Type == ProblemType::IMAGE_AND_SOUND)
+        {
+            //TodoUtil::replace(W.QuestionSound, "m4a", "wav");
+            string audioPath = _comprehensionScene->getBookFolder()+"/quiz/"+W.QuestionSound;
+            bool audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            if (!audioExist) {
+                audioPath = _comprehensionScene->getBookFolder()+"/page/"+W.QuestionSound;
+                audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            }
+            if (audioExist)
+            {
+                auto soundButton = _comprehensionScene->drawSoundButton(TheGameNode);
+                soundButton->addTouchEventListener([this, audioPath](Ref*,Widget::TouchEventType e) {
+                    if (e == Widget::TouchEventType::ENDED) {
+                        GameSoundManager::getInstance()->stopAllEffects();
+                        GameSoundManager::getInstance()->playEffectSoundVoiceOnly(audioPath);
+                    }
+                });
+            }
+        }
         
         
-        
-        auto image = Sprite::create("ComprehensionTest/Image/"+TheTraceWork().TeaserFileName);
+        auto image = Sprite::create(_comprehensionScene->getBookFolder()+ "/quiz/" +TheTraceWork().TeaserFileName);
+        if (!image) image = Sprite::create(_comprehensionScene->getBookFolder()+ "/page/" +TheTraceWork().TeaserFileName);
         if (image) {
             _traceFieldOffset = Vec2(0.f, -440.f + kTraceFieldCorrectionY);
             
@@ -99,7 +120,7 @@ void CompTraceScene::clearInternals() {
 }
 
 void CompTraceScene::refreshChildNodes() {
-    MainDepot Depot;
+    todoschool::comptrace::MainDepot Depot;
     Size WindowSize = Depot.windowSize();
     Size GameSize = Depot.gameSize();
     
@@ -116,13 +137,10 @@ void CompTraceScene::refreshChildNodes() {
     ImageNode = Node::create();
     ImageNode->setContentSize(imageS());
     ImageNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    auto imageP = Point(MainDepot().gameSize().width/2.f, MainDepot().gameSize().height - 550 + kImageCorrectionY);
+    auto imageP = Point(todoschool::comptrace::MainDepot().gameSize().width/2.f, todoschool::comptrace::MainDepot().gameSize().height - 550 + kImageCorrectionY);
     ImageNode->setPosition(imageP);
     TheGameNode->addChild(ImageNode);
     
-
-    
-        
     // NB(xenosoz, 2016): Descendants of the game node.
     
     using std::placeholders::_1;
@@ -196,28 +214,45 @@ void CompTraceScene::refreshChildNodes() {
     }());
 }
 
-
-
-
 void CompTraceScene::beginTraceWork() {
-
-
-
     // NB(xenosoz, 2016): Visual work.
     TheTraceField->setVisible(true);
     _guide->setVisible(true);
     
-
-
     
-    // NB(xenosoz, 2016): The sound.
-    float Delay = 0.f;
-    const float DelayUnit = 1.2f;
-
-    Delay += DelayUnit / 2.f;
-    scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
-        MainDepot().soundForWord(TheTraceWork().Text).play();
-    }, Delay, "CompTraceScene::beginTraceWork::soundForWord");
+    
+    if (TheTraceWork().Type == ProblemType::IMAGE)
+    {
+        // NB(xenosoz, 2016): The sound.
+        float Delay = 0.f;
+        const float DelayUnit = 1.2f;
+        
+        Delay += DelayUnit / 2.f;
+        scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
+            todoschool::comptrace::MainDepot().soundForWord(TheTraceWork().Text).play();
+        }, Delay, "CompTraceScene::beginTraceWork::soundForWord");
+    }
+    else
+    {
+        float Delay = 0.f;
+        const float DelayUnit = 1.2f;
+        
+        Delay += DelayUnit / 2.f;
+        scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
+            auto p = TheTraceWork();
+            //TodoUtil::replace(p.QuestionSound, "m4a", "wav");
+            string audioPath = _comprehensionScene->getBookFolder()+"/quiz/"+p.QuestionSound;
+            bool audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            if (!audioExist) {
+                audioPath = _comprehensionScene->getBookFolder()+"/page/"+p.QuestionSound;
+                audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            }
+            if (audioExist)
+            {
+                GameSoundManager::getInstance()->playEffectSoundVoiceOnly(audioPath);
+            }
+        }, Delay, "CompTraceScene::beginTraceWork::soundForWord");
+    }
 }
 
 void CompTraceScene::handleTraceWorkDidFinish() {
@@ -226,18 +261,67 @@ void CompTraceScene::handleTraceWorkDidFinish() {
 
 void CompTraceScene::handleSuccess() {
 
-    if (_comprehensionScene) {
-        _comprehensionScene->onSolve();
-    } else {
-        auto CP = CompletePopup::create();
-        CP->show(1.f, [this] {
-            auto Guard = NodeScopeGuard(this);
+    TheTraceField->Enabled.update(false);
+    
+    // NB(xenosoz, 2016): The sound.
+    float Delay = 0.f;
+    const float DelayUnit = 1.2f;
+    Delay += DelayUnit / 2.f;
+
+    writePlayLog();
+
+    if (TheTraceWork().Type == ProblemType::IMAGE)
+    {
+        if (_comprehensionScene)
+        {
+            _comprehensionScene->onSolve();
+        }
+        else
+        {
+            auto CP = CompletePopup::create();
+            CP->show(1.f, [this] {
+                auto Guard = NodeScopeGuard(this);
+                if (OnSuccess)
+                    OnSuccess();
+                CCAppController::sharedAppController()->handleGameComplete(1);
+            });
+        }
+    }
+    else
+    {
+        this->runAction(Sequence::create(DelayTime::create(Delay), CallFunc::create([this](){
             
-            if (OnSuccess)
-                OnSuccess();
-      
-            CCAppController::sharedAppController()->handleGameComplete(1);
-        });
+            string audioPath = _comprehensionScene->getBookFolder()+"/quiz/"+TheTraceWork().AnswerSound;
+            bool audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            if (!audioExist) {
+                audioPath = _comprehensionScene->getBookFolder()+"/page/"+TheTraceWork().AnswerSound;
+                audioExist = FileUtils::getInstance()->isFileExist(audioPath);
+            }
+            if (audioExist)
+            {
+                GameSoundManager::getInstance()->playEffectSoundVoiceOnly(audioPath);
+            }
+            else
+            {
+                GameSoundManager::getInstance()->playEffectSoundVoiceOnly(_comprehensionScene->getBookFolder()+"/../Common/word/"+TheTraceWork().AnswerSound);
+            }
+            
+        }), DelayTime::create(2.f), CallFunc::create([this](){
+            if (_comprehensionScene)
+            {
+                _comprehensionScene->onSolve();
+            }
+            else
+            {
+                auto CP = CompletePopup::create();
+                CP->show(1.f, [this] {
+                    auto Guard = NodeScopeGuard(this);
+                    if (OnSuccess)
+                        OnSuccess();
+                    CCAppController::sharedAppController()->handleGameComplete(1);
+                });
+            }
+        }), nullptr));
     }
 }
 
@@ -251,12 +335,31 @@ void CompTraceScene::handleFail() {
 
 void CompTraceScene::onEnter() {
     Super::onEnter();
-
     beginTraceWork();
+}
+
+void CompTraceScene::onExit() {
+    Super::onExit();
 }
 
 void CompTraceScene::onExitTransitionDidStart() {
     Super::onExitTransitionDidStart();
 }
 
-END_NS_COMPTRACE
+void CompTraceScene::writePlayLog() {
+    string answer = TheTraceWork().Text;
+    StrictLogManager::shared()->game_Peek_Answer("ComprehensionTest", makeWorkPath(), answer, answer);
+}
+
+std::string CompTraceScene::makeWorkPath() {
+    stringstream ss;
+    ss << "ComprehensionTest";
+    ss << "/" << _comprehensionScene->getBookName();
+    ss << "/" << "comptrace";
+    ss << "-" << _comprehensionScene->getCurrentProblem();
+
+    return ss.str();
+}
+
+
+

@@ -11,6 +11,7 @@
 
 
 #include "../Utils/MainNS.h"
+#include "../Utils/MainDepot.h"
 #include "../Models/Problem.h"
 #include "../ChildNodes/Card.h"
 #include <Common/Controls/TraceField/TraceField.h>
@@ -44,6 +45,10 @@ public:
     void onEnter() override;
     void onExitTransitionDidStart() override;
     
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    static std::vector<int> getLevelIDs();
+#endif
+    
 private:
     vector<Card*> _cardVector;
     int _currentLevel;
@@ -55,12 +60,15 @@ private:
     
     void handleSuccess();
     void handleFail();
-    
+#ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
+    std::vector<std::tuple<string, string, string, string>> _levelData;
+#else
     std::vector<std::vector<std::vector<std::tuple<string, string, string>>>> getLevelData();
     
     // temp
     std::vector<std::vector<std::vector<std::tuple<string, string, string>>>> _levelDataEn;
     std::vector<std::vector<std::vector<std::tuple<string, string, string>>>> _levelDataSw;
+#endif
 };
 
 END_NS_LETTERTRACINGCARD

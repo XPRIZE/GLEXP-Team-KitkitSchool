@@ -8,8 +8,8 @@
 
 
 #include "BonusNode.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/ScopeGuard.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -29,7 +29,7 @@ namespace todoschool {
 namespace lettertrace {
     
 bool BonusNode::init() {
-    if (!Super::init()) { return false; }
+    if (!Node::init()) { return false; }
 
     BonusPlayer = nullptr;
     FullTextNode = nullptr;
@@ -40,7 +40,7 @@ bool BonusNode::init() {
 }
 
 void BonusNode::setVisible(bool Visible) {
-    Super::setVisible(Visible);
+    Node::setVisible(Visible);
     
     // NB(xenosoz, 2016): BonusPlayer contains special video player
     //   that cannot be hidden by the default parent-child relationship.

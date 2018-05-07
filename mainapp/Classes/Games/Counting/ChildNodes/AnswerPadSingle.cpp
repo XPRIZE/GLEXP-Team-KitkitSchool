@@ -1,6 +1,6 @@
 //
 //  AnswerPadSingle.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 6/26/16.
 //

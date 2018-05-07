@@ -59,6 +59,7 @@ cocos2d::Scene* NumberTrace::createScene() {
     
     auto It = NumberTraceScene::create();
     It->TheWorksheet.update(Sheet);
+    It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

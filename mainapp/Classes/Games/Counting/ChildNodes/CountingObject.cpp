@@ -9,7 +9,7 @@
 
 #include "CountingObject.hpp"
 #include <Common/Basic/CommentStream.h>
-#include <Games/NumberTrace/Common/Basic/NodeScopeGuard.h>
+#include "Common/Basic/NodeScopeGuard.h"
 #include <cocos/ui/UIButton.h>
 
 using namespace std;

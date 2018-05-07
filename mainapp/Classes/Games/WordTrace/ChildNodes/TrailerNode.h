@@ -11,8 +11,7 @@
 
 #include "../Models/Problem.h"
 #include "../Utils/MainNS.h"
-#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
-#include <Games/NumberTrace/Common/ADT/Chain.h>
+#include <Common/ADT/Chain.h>
 #include <cocos/cocos2d.h>
 #include <cocos/ui/CocosGUI.h>
 #include <functional>
@@ -20,10 +19,11 @@
 
 BEGIN_NS_WORDTRACE
 
-class TrailerNode: public TodoSchoolNode<TrailerNode> {
-    typedef TodoSchoolNode<TrailerNode> Super;
+class TrailerNode: public cocos2d::Node {
     
 public:
+    CREATE_FUNC(TrailerNode);
+    
     Label* NextLabel;
     Button* NextButtonA;
     Button* NextButtonB;
@@ -35,7 +35,7 @@ public:
     
     // NB(xenosoz, 2016): Pass the selected problem.
     std::function<void(TrailerNode&, Problem)> OnNextButtonClicked;
-    
+    bool mbClicked;
 public:
     bool init() override;
     void clear();

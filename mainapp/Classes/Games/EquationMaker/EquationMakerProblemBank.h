@@ -13,6 +13,8 @@
 #include <vector>
 #include <string>
 
+#define IMPORT_TSV_FILE_EQUATION_MAKER
+
 class EquationMakerProblemBank: public ProblemBank {
 public:
 //    enum eObjectL5{
@@ -70,6 +72,22 @@ public:
             otherFile = "";
         }
     };
+
+#ifdef IMPORT_TSV_FILE_EQUATION_MAKER
+    struct ItemTSV {
+        int level;
+        int type;
+        int mathSign;
+        int minNumber;
+        int maxNumber;
+        int repeatCount;
+        int maxLine1BlankCount;
+        int panelCount;
+    };
+    
+    ItemTSV mItemTSV;
+    static std::vector<int> getLevelIDs();
+#endif
     
 public:
     EquationMakerProblemBank();

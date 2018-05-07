@@ -11,7 +11,7 @@
 #include "../Components/RawContactBody.h"
 #include "../MonkeyPatches/PostSolveEnhancer.h"
 #include "../Utils/SpellingDepot.h"
-#include <Games/WoodenPuzzles/Components/TargetDragBody.h>
+#include "Common/Components/TargetDragBody.h"
 
 
 BEGIN_NS_SPELLING;
@@ -43,7 +43,7 @@ void SpellBall::refreshChildNodes() {
 void SpellBall::refreshChildComponents() {
     Super::refreshChildComponents();
 
-    using namespace todoschool::woodenpuzzles;  // XXX
+    //using namespace todoschool::woodenpuzzles;  // XXX
 
     removeComponent(TargetDragBody::defaultName());
     removeComponent(PhysicsBody::COMPONENT_NAME);

@@ -1,6 +1,6 @@
 //
 //  Box.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by JungJaehun on 08/09/2017.
 //
@@ -46,6 +46,8 @@ void Box::loadOnSlot(Slot *targetSlot) {
             MoveTo::create(0.1, targetWorldPos),
             //DelayTime::create(0.25),
             CallFunc::create([this](){
+            //this->getParent()->reorderChild(this, this->getLocalZOrder());
+            
                 this->retain();
                 this->removeFromParent();
                 this->_targetSlot->addChild(this);
@@ -55,6 +57,8 @@ void Box::loadOnSlot(Slot *targetSlot) {
             nullptr
         )
     );
+    
+    _enableTouch = false;
   
 };
 
@@ -62,9 +66,11 @@ void Box::unload(Node *ground) {
     LOGFN();
     if (_loading && _targetSlot) _targetSlot->_boxInSlot = nullptr;
     _loading = false;
+    _enableTouch = true;
     
     auto pos = this->convertToWorldSpace(this->getContentSize()/2);
     this->setPosition(pos);
+//    this->getParent()->reorderChild(this, this->getLocalZOrder());
     this->retain();
     this->removeFromParent();
     ground->addChild(this);
@@ -138,7 +144,8 @@ void Box::setType(string letter, string boxPath, PatternTrainProblemBank::shape 
                 auto pl = P->convertToNodeSpace(T->getPreviousLocation());
                 auto cl = P->convertToNodeSpace(T->getLocation());
                 auto delta = cl-pl;
-                this->setPosition(this->getPosition()+delta);
+                // this->setPosition(this->getPosition()+delta);
+                this->setPosition(cl);
                 if (onTouchMoved) onTouchMoved();
             }
         };

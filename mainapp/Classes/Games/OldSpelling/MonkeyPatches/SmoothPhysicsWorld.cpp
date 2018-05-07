@@ -9,7 +9,7 @@
 
 #include "SmoothPhysicsWorld.h"
 
-#include "chipmunk.h"
+#include "chipmunk/chipmunk.h"
 #include <cocos/physics/CCPhysicsBody.h>
 #include <cocos/physics/CCPhysicsShape.h>
 #include <cocos/physics/CCPhysicsContact.h>

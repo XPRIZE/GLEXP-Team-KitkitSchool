@@ -49,6 +49,7 @@ public:
     
     
     bool _snapped;
+    bool _enableTouch;
     int _number;
 
     

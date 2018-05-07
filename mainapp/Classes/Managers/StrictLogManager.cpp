@@ -230,6 +230,20 @@ void StrictLogManager::game_End_Complete(const std::string& gameName, int gameLe
     logJson(it);
 }
 
+void StrictLogManager::game_Peek_Answer(const std::string& gameName,
+                                        const std::string& workPath,
+                                        const std::string& userAnswer,
+                                        const std::string& correctAnswer)
+{
+    Json::Value it = basicLog("game_Peek_Answer");
+    
+    it["0.gameName"] = gameName;
+    it["1.workPath"] = workPath;
+    it["2.userAnswer"] = userAnswer;
+    it["3.correctAnswer"] = correctAnswer;
+    logJson(it);
+}
+
 void StrictLogManager::video_Begin(const std::string& videoName) {
     Json::Value it = basicLog("video_Begin");
     
@@ -342,6 +356,53 @@ void StrictLogManager::starStat_UpdateStarsInKitKitSchool(int oldStars, int newS
     logJson(it);
 }
 
+void StrictLogManager::touchEvent_Begin(const std::string& parentName, float x, float y) {
+    if (_touchEvent_NodeName != parentName) {
+        _touchEvent_Flush("touchEvent_Begin_Begin");
+    }
+    _touchEvent_NodeName = parentName;
+    _touchEvent_Append(x, y);
+}
+
+void StrictLogManager::touchEvent_Move(const std::string& parentName, float x, float y) {
+    if (_touchEvent_NodeName != parentName) {
+        _touchEvent_Flush("touchEvent_Begin_Move");
+    }
+    _touchEvent_NodeName = parentName;
+    _touchEvent_Append(x, y);
+}
+
+void StrictLogManager::touchEvent_End(const std::string& parentName, float x, float y) {
+    _touchEvent_Append(x, y);
+    _touchEvent_Flush("touchEvent_Begin_End");
+}
+
+void StrictLogManager::touchEvent_Cancel(const std::string& parentName, float x, float y) {
+    _touchEvent_Append(x, y);
+    _touchEvent_Flush("touchEvent_Begin_Cancel");
+}
+
+void StrictLogManager::_touchEvent_Append(float x, float y) {
+    static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    int rx = max(0, min((int)x, 4096 - 1));
+    int ry = max(0, min((int)y, 4096 - 1));
+    
+    _touchEvent_Seq << base64[rx/64] << base64[rx%64];
+    _touchEvent_Seq << base64[ry/64] << base64[ry%64];
+}
+
+void StrictLogManager::_touchEvent_Flush(const std::string& eventName) {
+    string data = _touchEvent_Seq.str();
+    if (!data.empty()) {
+        Json::Value it = basicLog(eventName);
+        it["0.nodeName"] = _touchEvent_NodeName;
+        it["1.data"] = _touchEvent_Seq.str();
+        logJson(it);
+    }
+    
+    _touchEvent_NodeName.clear();
+    _touchEvent_Seq.str("");
+}
 
 StrictLogManager* StrictLogManager::shared()
 {

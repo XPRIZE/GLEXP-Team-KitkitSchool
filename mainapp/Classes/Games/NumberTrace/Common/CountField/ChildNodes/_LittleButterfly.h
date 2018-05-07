@@ -9,18 +9,21 @@
 #ifndef TODOSCHOOL_COUNTFIELD_LITTLEBUTTERFLY_H
 #define TODOSCHOOL_COUNTFIELD_LITTLEBUTTERFLY_H
 
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/Basic/Cocos2dFwd.h>
-#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
+#include <Common/ADT/Chain.h>
+//#include <Games/NumberTrace/Common/Basic/Cocos2dFwd.h>
+//#include <Games/NumberTrace/Common/Basic/TodoSchoolNode.h>
 #include <cocos/2d/CCNode.h>
 #include <cocos/base/CCRefPtr.h>
 #include <functional>
 
+#include <cocos/2d/CCAction.h>
+#include <cocos/2d/CCSprite.h>
+
+
 namespace todoschool {
 namespace countfield {
 
-class LittleButterfly: public TodoSchoolNode<LittleButterfly> {
-    typedef cocos2d::Node Super;
+class LittleButterfly: public cocos2d::Node {
     cocos2d::RefPtr<cocos2d::Sprite> TheSprite;
     cocos2d::RefPtr<cocos2d::Action> TheAnimation;
 

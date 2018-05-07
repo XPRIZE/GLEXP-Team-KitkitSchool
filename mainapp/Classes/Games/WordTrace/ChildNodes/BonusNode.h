@@ -10,8 +10,8 @@
 #pragma once
 
 #include <Games/LetterTrace/Common/BonusVideoPlayer/BonusVideoPlayer.h>
-#include <Games/NumberTrace/Common/ADT/Chain.h>
-#include <Games/NumberTrace/Common/Basic/BigLabel.h>
+#include <Common/ADT/Chain.h>
+#include "Common/Basic/BigLabel.h"
 #include <cocos/cocos2d.h>
 #include <cocos/ui/CocosGUI.h>
 #include <functional>

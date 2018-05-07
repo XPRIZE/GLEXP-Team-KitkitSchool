@@ -1,6 +1,6 @@
 //
 //  CoinTab.cpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 9/18/17.
 //
@@ -80,74 +80,112 @@ void CoinTab::setCoinLabel(int num)
 }
 
 
-void CoinTab::addCoin(int numCoin, cocos2d::Vec2 fromPosWorld)
+void CoinTab::addCoin(int numCoin, cocos2d::Vec2 fromPosWorld, bool modeGameSelect)
 {
     
 
     if (numCoin<=0) return;
     
-    auto fromPosLocal = this->convertToNodeSpace(fromPosWorld);
-    
-    auto size = this->getContentSize();
-    auto winSize = Director::getInstance()->getWinSize();
-    
-    auto toPos = Vec2(0, size.height/2);
-    
-    
-    auto width = MIN(300 * (numCoin-1), 2100);
-    auto stepX = (numCoin==1) ? 0 : width / (numCoin-1);
-    
+    int ratio = 1;
+    if (numCoin > 99) {
+        numCoin = numCoin/10;
+        ratio = 10;
+    }
     float inoutTime = MIN(2.5 / numCoin, 0.5);
     float delayTime = MIN(1.0 / numCoin, 0.2);
     
-
     SoundEffect::startInEffect().preload();
-    
     SoundEffect::starOutEffect().play();
-    
-    auto startX = winSize.width/2 - width/2;
-    
-    for (int i=0; i<numCoin; i++) {
-        
-        Node *coin = Node::create();
-        coin->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        this->addChild(coin);
-        
-        Sprite *coinSprite = Sprite::createWithSpriteFrame(_frames.front());
-        auto coinSize = coinSprite->getContentSize();
-        coin->setContentSize(coinSize);
-        coinSprite->setPosition(coinSize/2);
-        coin->addChild(coinSprite);
-        
-        auto animation = Animation::createWithSpriteFrames(_frames, 1.0/24.0, 1);
-        auto animate = Animate::create(animation);
 
-        coinSprite->runAction(RepeatForever::create(animate));
+    
+    if (modeGameSelect) {
+        auto parent = this->getParent();
+        float step = parent->getContentSize().width / (numCoin+1);
+
+        for (int i=0; i<numCoin; i++) {
+            Node *coin = Node::create();
+            coin->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            parent->addChild(coin);
+            coin->setPosition(Vec2(step*(i+1), 150));
+            
+            Sprite *coinSprite = Sprite::createWithSpriteFrame(_frames.front());
+            auto coinSize = coinSprite->getContentSize();
+            coin->setContentSize(coinSize);
+            coinSprite->setPosition(coinSize/2);
+            coin->addChild(coinSprite);
+            
+            auto animation = Animation::createWithSpriteFrames(_frames, 1.0/24.0, 1);
+            auto animate = Animate::create(animation);
+            
+            coinSprite->runAction(RepeatForever::create(animate));
+
+            auto toPos = Vec2(this->getPositionX()-this->getContentSize().width, this->getPositionY());
+            auto inSpawn = Spawn::create(EaseOut::create(MoveTo::create(inoutTime, toPos), 2.0),
+                                         EaseOut::create(ScaleTo::create(inoutTime, 0.0), 2.0), nullptr);
+            coin->runAction(Sequence::create(DelayTime::create(delayTime*i + 0.1),
+                                             DelayTime::create(1.2),
+                                             inSpawn,
+                                             CallFunc::create([coin, ratio, this](){
+                SoundEffect::startInEffect().play();
+                this->addCoinLabel(1*ratio);
+                coin->removeFromParent();
+            }),
+                                             nullptr));
+
+        }
         
+    } else {
+        auto fromPosLocal = this->convertToNodeSpace(fromPosWorld);
         
-        auto outPos = this->convertToNodeSpace( Vec2(startX+i*stepX, fromPosWorld.y+400) );
-        auto outTime = inoutTime;
-        auto outSpawn = Spawn::create(EaseIn::create(MoveTo::create(outTime, outPos), 2.0),
-                                      EaseIn::create(ScaleTo::create(outTime, 1.0), 2.0), nullptr);
-        auto inTime = inoutTime;
-        auto inSpawn = Spawn::create(EaseOut::create(MoveTo::create(inTime, toPos), 2.0),
-                                      EaseOut::create(ScaleTo::create(inTime, 0.0), 2.0), nullptr);
+        auto size = this->getContentSize();
+        auto winSize = Director::getInstance()->getWinSize();
         
-        coin->setPosition(fromPosLocal);
-        coin->setScale(0.01);
-        coin->runAction(Sequence::create(DelayTime::create(delayTime*i + 0.1),
-                                         outSpawn,
-                                         DelayTime::create(1.2),
-                                         inSpawn,
-                                         CallFunc::create([coin, this](){
-            SoundEffect::startInEffect().play();
-            this->addCoinLabel(1);
-            coin->removeFromParent();
-        }),
-                                         nullptr));
-                        
+        auto toPos = Vec2(0, size.height/2);
         
-      
+        auto width = MIN(300 * (numCoin-1), 2100);
+        auto stepX = (numCoin==1) ? 0 : width / (numCoin-1);
+        auto startX = winSize.width/2 - width/2;
         
+        for (int i=0; i<numCoin; i++) {
+            
+            Node *coin = Node::create();
+            coin->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            this->addChild(coin);
+            
+            Sprite *coinSprite = Sprite::createWithSpriteFrame(_frames.front());
+            auto coinSize = coinSprite->getContentSize();
+            coin->setContentSize(coinSize);
+            coinSprite->setPosition(coinSize/2);
+            coin->addChild(coinSprite);
+            
+            auto animation = Animation::createWithSpriteFrames(_frames, 1.0/24.0, 1);
+            auto animate = Animate::create(animation);
+            
+            coinSprite->runAction(RepeatForever::create(animate));
+            
+            
+            auto outPos = this->convertToNodeSpace( Vec2(startX+i*stepX, fromPosWorld.y+400) );
+            auto outTime = inoutTime;
+            auto outSpawn = Spawn::create(EaseIn::create(MoveTo::create(outTime, outPos), 2.0),
+                                          EaseIn::create(ScaleTo::create(outTime, 1.0), 2.0), nullptr);
+            auto inTime = inoutTime;
+            auto inSpawn = Spawn::create(EaseOut::create(MoveTo::create(inTime, toPos), 2.0),
+                                         EaseOut::create(ScaleTo::create(inTime, 0.0), 2.0), nullptr);
+            
+            coin->setPosition(fromPosLocal);
+            coin->setScale(0.01);
+            coin->runAction(Sequence::create(DelayTime::create(delayTime*i + 0.1),
+                                             outSpawn,
+                                             DelayTime::create(1.2),
+                                             inSpawn,
+                                             CallFunc::create([coin, ratio, this](){
+                SoundEffect::startInEffect().play();
+                this->addCoinLabel(1*ratio);
+                coin->removeFromParent();
+            }),
+                                             nullptr));
+            
+        }
     }
+    
 }

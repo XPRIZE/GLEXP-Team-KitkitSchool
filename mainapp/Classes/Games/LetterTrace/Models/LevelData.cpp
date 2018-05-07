@@ -14,8 +14,8 @@
 // for data checking
 #include "Managers/UserManager.hpp"
 #include "3rdParty/CCNativeAlert.h"
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Sounds/CommonSound.hpp"
+
 
 BEGIN_NS_LETTERTRACE
 
@@ -72,22 +72,11 @@ void LevelData::checkData()
                 auto p = sheet.problemByID(i);
                 
                 SoundEffect s1, s2;
-                string v;
+                string v = "LetterTrace/BonusVideos/" + p.VideoFileName;
                 
-                if (lang=="en-US") {
-                    if (p.TraceText!="-") s1 =  Pam_enUS().soundForLetterName(p.TraceText);
-                    if (p.FullText!="-") s2 = Pam_enUS().soundForWord(p.FullText);
-                    v = "LetterTrace/BonusVideos.en/" + p.VideoFileName;
-
-                } else if (lang=="sw-TZ") {
-                    if (p.TraceText!="-") s1 = Imma_swTZ().soundForLetterName(p.TraceText);
-                    if (p.FullText!="-") s2 = Imma_swTZ().soundForWord(p.FullText);
-                    v = "LetterTrace/BonusVideos.sw/" + p.VideoFileName;
-                    
-                } else {
-                    errorList += "wrong language code : ["+lang+"]\n";
-                    continue;
-                }
+                if (p.TraceText!="-") s1 =  CommonSound().soundForLetterName(p.TraceText);
+                if (p.FullText!="-") s2 = CommonSound().soundForWord(p.FullText);
+                
                 
                 if (p.TraceText!="-" && s1.bad()) errorList += "missing sound for letter : ["+p.TraceText+"] ("+lang+")\n";
                 if (p.FullText!="-" && s2.bad()) {

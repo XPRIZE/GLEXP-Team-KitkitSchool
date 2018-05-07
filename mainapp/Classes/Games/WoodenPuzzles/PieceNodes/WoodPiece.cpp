@@ -8,10 +8,10 @@
 
 
 #include "WoodPiece.h"
-#include "../Components/TargetTouchBody.h"
-#include "../Components/TargetDragBody.h"
+#include "Common/Components/TargetTouchBody.h"
+#include "Common/Components/TargetDragBody.h"
 #include "../Utils/WoodenPuzzleDepot.h"
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
+#include "Common/Basic/ScopeGuard.h"
 
 
 BEGIN_NS_WOODENPUZZLES;

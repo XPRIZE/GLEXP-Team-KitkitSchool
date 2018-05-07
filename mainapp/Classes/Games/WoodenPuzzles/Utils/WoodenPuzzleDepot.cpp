@@ -9,12 +9,9 @@
 
 #include "WoodenPuzzleDepot.h"
 #include "WoodenPuzzleNS.h"
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
+#include "Common/Basic/DeviceSpec.h"
 #include <Managers/LanguageManager.hpp>
-#include <Common/Sounds/AdultVoice_enUS.h>
-#include <Common/Sounds/AdultVoice_swTZ.h>
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Sounds/CommonSound.hpp"
 #include <string>
 
 BEGIN_NS_WOODENPUZZLES;
@@ -110,17 +107,12 @@ float WoodenPuzzleDepot::costOfNodePositions(const vector<Node*>& FlexibleNodes,
 }
 
 SoundEffect WoodenPuzzleDepot::soundForCardinalNumber(int N) const {
-    if (LanguageManager::getInstance()->isSwahili())
-        return AdultVoice_swTZ().cardinalNumber(N).preloaded();
     
-    return AdultVoice_enUS().cardinalNumber(N).preloaded();
+    return CommonSound().cardinalNumber(N).preloaded();
 }
 
 SoundEffect WoodenPuzzleDepot::soundForLetter(const string& L) const {
-    if (LanguageManager::getInstance()->isSwahili())
-        return Imma_swTZ().soundForLetterName(L).preloaded();
-    
-    return Pam_enUS().soundForLetterName(L).preloaded();
+    return CommonSound().soundForLetterName(L).preloaded();
 }
 
 void WoodenPuzzleDepot::refineNodePositions(const vector<Node*>& FlexibleNodes,

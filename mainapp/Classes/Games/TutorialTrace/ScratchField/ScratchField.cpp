@@ -17,12 +17,12 @@
 #include <Common/Controls/TraceField/Utils/TraceLocator.h>
 #include <Common/Controls/TraceField/Utils/TraceModelFactory.h>
 
-#include <Games/NumberTrace/Common/Basic/DeviceSpec.h>
-#include <Games/NumberTrace/Common/Basic/ScopeGuard.h>
-#include <Games/NumberTrace/Common/Utils/TouchEventRepeater.h>
+#include "Common/Basic/DeviceSpec.h"
+#include "Common/Basic/ScopeGuard.h"
+#include "Common/Basic/TouchEventRepeater.h"
 #include <cocos/cocos2d.h>
 
-#include <Games/NumberTrace/Common/Repr/AllRepr.h>
+#include "Common/Repr/AllRepr.h"
 
 
 BEGIN_NS_TUTORIALTRACE
@@ -30,7 +30,7 @@ BEGIN_NS_TUTORIALTRACE
 using namespace tracefield;
 
 namespace {
-    bool showDebugLog() { return false; }
+    bool showDebugLog() { return true; }
 }  // unnamed namespace
 
 
@@ -78,7 +78,7 @@ bool ScratchField::init() {
     
     TraceFieldDepot Depot;
     Depot.preloadSoundEffects();
-    
+
     
     EnableDefaultBackground.OnValueUpdate = [this](bool&) {
         UseTightBoundingBox.update(EnableDefaultBackground());
@@ -113,6 +113,9 @@ bool ScratchField::init() {
         
         return Style;
     })());
+
+    TraceSound = TraceFieldDepot().soundForTrace();
+    TraceSoundPlaying = false;
     
     clear();
     return true;
@@ -174,13 +177,14 @@ void ScratchField::onEnter() {
     Super::onEnter();
     
     // Install event listener.
+    LiveTouchEventCount = 0;
     EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this](Touch* T, Event* E) -> bool {
         TraceIndex Old = PassedIndex();
         bool Ret = handleTouchBegan(T, E);
         TraceIndex New = PassedIndex();
-
+        
         drawScratchPath(Old, New);
         return Ret;
     };
@@ -212,19 +216,31 @@ void ScratchField::update(float DeltaSeconds) {
 }
 
 bool ScratchField::handleTouchBegan(Touch* T, Event* E) {
+    if (showDebugLog()) {
+        CCLOG("ScratchField::handleTouchBegan: Live(%d)", LiveTouchEventCount);
+    }
+
     bool ShouldCatchEvent = handleActiveTouchEvent(T, E);
     if (!ShouldCatchEvent) { return false; }
     
     auto Guard = ScopeGuard([this] { retain(); },
                             [this] { release(); });
-    
-    if (OnBeginEditing)
-        OnBeginEditing(this);
-    
+
+    if (LiveTouchEventCount <= 0) {
+        // NB(xenosoz, 2017): Fire event only for the first finger.
+        if (OnBeginEditing)
+            OnBeginEditing(this);
+    }
+    LiveTouchEventCount += 1;
+
     return true;
 }
 
 void ScratchField::handleTouchMoved(Touch* T, Event* E) {
+    if (showDebugLog()) {
+        //CCLOG("ScratchField::handleTouchMoved: Live(%d)", LiveTouchEventCount);
+    }
+    
     bool ShouldCatchEvent = handleActiveTouchEvent(T, E);
     if (!ShouldCatchEvent) { return; }
     
@@ -236,10 +252,22 @@ void ScratchField::handleTouchMoved(Touch* T, Event* E) {
 }
 
 void ScratchField::handleTouchEnded(Touch* T, Event* E) {
+    LiveTouchEventCount -= 1;
+
+    if (showDebugLog()) {
+        CCLOG("ScratchField::handleTouchEnded: Live(%d)", LiveTouchEventCount);
+    }
+
     handlePassiveTouchEvent(T, E);
 }
 
 void ScratchField::handleTouchCancelled(Touch* T, Event* E) {
+    LiveTouchEventCount -= 1;
+    
+    if (showDebugLog()) {
+        CCLOG("ScratchField::handleTouchCancelled: Live(%d)", LiveTouchEventCount);
+    }
+
     handlePassiveTouchEvent(T, E);
 }
 
@@ -305,6 +333,11 @@ bool ScratchField::handleActiveTouchEvent(Touch* T, Event* E) {
 }
 
 void ScratchField::handlePassiveTouchEvent(Touch* touch, Event* event) {
+    if (LiveTouchEventCount > 0) {
+        // NB(xenosoz, 2017): We wait for all fingers to be released.
+        return;
+    }
+
     CursorPicked.update(false);
     
     TraceLocator Locator;
@@ -331,8 +364,10 @@ void ScratchField::handlePassiveTouchEvent(Touch* touch, Event* event) {
     if (OnEndEditing)
         OnEndEditing(this);
     
-    if (OnTraceWorkDidEnd && traceWorkFinished())
-        OnTraceWorkDidEnd(this);
+    if (traceWorkFinished()) {
+        if (OnTraceWorkDidEnd)
+            OnTraceWorkDidEnd(this);
+    }
 }
 
 void ScratchField::refreshChildNodes() {
@@ -527,7 +562,7 @@ void ScratchField::updateCursorPoint(float DeltaSeconds) {
     if (PassedIndex().WorldIndex < 1 && PassedIndex().GlyphIndex < GlyphNodes.size()) {
         TraceGlyphNode *GlyphNode = GlyphNodes[PassedIndex().GlyphIndex].get();
         
-        if (Cursor) {
+        if (Cursor && Cursor->getParent() != GlyphNode) {
             Cursor->removeFromParent();
             GlyphNode->addChild(Cursor);
         }
@@ -582,14 +617,12 @@ void ScratchField::handlePassedIndexValueUpdate() {
 }
 
 void ScratchField::clearTraceSound() {
-    if (!TraceSound) { return; }
-    
     if (showDebugLog()) {
         CCLOG("Turn off tracing sound in ScratchField::clearTraceSound");
     }
     
-    TraceSound.value().stop();
-    TraceSound.reset();
+    TraceSound.stop();
+    TraceSoundPlaying = false;
 }
 
 void ScratchField::playTraceSound(float Duration) {
@@ -603,15 +636,14 @@ void ScratchField::playTraceSound(float Duration) {
     
     
     // NB(xenosoz, 2016): Playing? -> Don't bother restarting the sound.
-    if (TraceSound) { return; }
+    if (TraceSoundPlaying) { return; }
     
     if (showDebugLog()) {
         CCLOG("Trun on tracing sound in ScratchField::playTraceSound");
     }
     
-    SoundEffect SE = TraceFieldDepot().soundForTrace();
-    SE.playLoop();
-    TraceSound.reset(SE);
+    TraceSound.playLoop();
+    TraceSoundPlaying = true;
 }
 
 END_NS_TUTORIALTRACE

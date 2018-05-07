@@ -1,6 +1,6 @@
 //
 //  BookChoiceScene.hpp
-//  enumaXprize
+//  KitkitSchool
 //
 //  Created by Gunho Lee on 11/3/16.
 //

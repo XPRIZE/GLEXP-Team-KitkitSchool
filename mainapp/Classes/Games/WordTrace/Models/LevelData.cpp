@@ -14,8 +14,7 @@
 // for data checking
 #include "Managers/UserManager.hpp"
 #include "3rdParty/CCNativeAlert.h"
-#include <Common/Sounds/Pam_enUS.h>
-#include <Common/Sounds/Imma_swTZ.h>
+#include "Common/Sounds/CommonSound.hpp"
 
 BEGIN_NS_WORDTRACE
 
@@ -72,25 +71,12 @@ void LevelData::checkData()
                 auto p = sheet.problemByID(i);
                 
                 SoundEffect s2;
-                string v;
-                string teaser;
+                string v = "LetterTrace/BonusVideos/" + p.VideoFileName;
+                string teaser = "WordTrace/Teasers/"+p.TeaserFileName;
                 
                 
-                if (lang=="en-US") {
-                    if (p.Text!="-") s2 = Pam_enUS().soundForWord(p.Text);
-                    v = "LetterTrace/BonusVideos.en/" + p.VideoFileName;
-                    teaser = "WordTrace/Teasers.en/"+p.TeaserFileName;
-                    
-                    
-                } else if (lang=="sw-TZ") {
-                    if (p.Text!="-") s2 = Imma_swTZ().soundForWord(p.Text);
-                    v = "LetterTrace/BonusVideos.sw/" + p.VideoFileName;
-                    teaser = "WordTrace/Teasers.sw/"+p.TeaserFileName;
-                    
-                } else {
-                    errorList += "wrong language code : ["+lang+"]\n";
-                    continue;
-                }
+                if (p.Text!="-") s2 = CommonSound().soundForWord(p.Text);
+                
                 
                 if (p.Text!="-" && s2.bad()) errorList += "missing sound for word : ["+p.Text+"] ("+lang+")\n";
                 if (p.VideoFileName!="-" && !FileUtils::getInstance()->isFileExist(v)) errorList += "missing video : ["+p.VideoFileName+"] ("+lang+")\n";
