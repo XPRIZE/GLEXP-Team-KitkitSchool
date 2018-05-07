@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="0dp">
+    tools:layout_editor_absoluteX="0px"
+    tools:layout_editor_absoluteY="0px">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5.6dp"
-        android:layout_marginLeft="5.6dp"
-        android:layout_marginRight="5.6dp"
-        android:layout_marginTop="5.6dp"
+        android:layout_marginBottom="16px"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="16px"
+        android:layout_marginTop="16px"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -27,15 +27,15 @@
 
             <FrameLayout
                 android:id="@+id/layout_bg_0"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp">
+                android:layout_width="630px"
+                android:layout_height="474px">
 
                 <ImageView
                     android:id="@+id/iv_bg_0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="6dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View
@@ -49,16 +49,16 @@
 
             <FrameLayout
                 android:id="@+id/layout_bg_1"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp"
-                android:layout_marginLeft="21dp">
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
 
                 <ImageView
                     android:id="@+id/iv_bg_1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="4.2dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View
@@ -72,16 +72,16 @@
 
             <FrameLayout
                 android:id="@+id/layout_bg_2"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp"
-                android:layout_marginLeft="21dp">
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
 
                 <ImageView
                     android:id="@+id/iv_bg_2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="4.2dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View
@@ -97,20 +97,20 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="21dp"
+            android:layout_marginTop="60px"
             android:orientation="horizontal">
 
             <FrameLayout
                 android:id="@+id/layout_bg_3"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp">
+                android:layout_width="630px"
+                android:layout_height="474px">
 
                 <ImageView
                     android:id="@+id/iv_bg_3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="4.2dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View
@@ -124,16 +124,16 @@
 
             <FrameLayout
                 android:id="@+id/layout_bg_4"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp"
-                android:layout_marginLeft="21dp">
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
 
                 <ImageView
                     android:id="@+id/iv_bg_4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="4.2dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View
@@ -147,16 +147,16 @@
 
             <FrameLayout
                 android:id="@+id/layout_bg_5"
-                android:layout_width="220.5dp"
-                android:layout_height="165.9dp"
-                android:layout_marginLeft="21dp">
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
 
                 <ImageView
                     android:id="@+id/iv_bg_5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
-                    android:padding="4.2dp"
+                    android:padding="12px"
                     android:scaleType="fitCenter" />
 
                 <View

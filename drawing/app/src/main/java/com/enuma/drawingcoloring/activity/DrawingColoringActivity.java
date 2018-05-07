@@ -1,12 +1,15 @@
 package com.enuma.drawingcoloring.activity;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +32,16 @@ import com.enuma.drawingcoloring.utility.Util;
 import com.enuma.drawingcoloring.view.ViewDrawingColoring;
 import com.enuma.drawingcoloring.view.ViewPen;
 import com.enuma.drawingcoloring.view.base.LockableScrollView;
+import com.enuma.kitkitProvider.KitkitDBHandler;
+import com.enuma.kitkitProvider.User;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class DrawingColoringActivity extends BaseActivity {
 
@@ -43,12 +50,18 @@ public class DrawingColoringActivity extends BaseActivity {
     private final int TOTAL_PEN_COLOR_COUNT = 18;
     public static final int TOTAL_BG_COLOR_COUNT = 6;
     private final String TIME_FORMAT = "yyyy-MM-dd-HH-mm-ss";
+    private final long MAX_SAVE_AMOUNT = (200 * 1024 * 1024);
 
     ////////////////////////////////////////////////////////////////////////////////
 
     private BaseActivity mThisActivity;
     protected Preference mPreference;
     private EffectSound mEffectSound;
+    private float mScale;
+    private KitkitDBHandler mKitkitDBHandler;
+    private User mUser;
+    private String mSavePath = "";
+
     ////////////////////////////////////////////////////////////////////////////////
 
     protected ImageView mVChangeBg;
@@ -77,6 +90,7 @@ public class DrawingColoringActivity extends BaseActivity {
 
     private View mDecorView;
     private int mUiOption;
+    private boolean mbSmallLCD = false;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -87,8 +101,21 @@ public class DrawingColoringActivity extends BaseActivity {
         mThisActivity = this;
         mPreference = Preference.getInstance(mThisActivity);
         mEffectSound = EffectSound.getInstance(mThisActivity);
+        mKitkitDBHandler = new KitkitDBHandler(mThisActivity);
 
-        setContentView(R.layout.activity_drawing_coloring);
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras != null) {
+                setLanguage(extras.getString("LANGUAGE", "sw-TZ"));
+            } else {
+                setLanguage("sw-TZ");
+            }
+        }
+
+        Point size = Util.getWindowSize(mThisActivity);
+        mbSmallLCD = (size.x <= 1280);
+
+        setContentView(mbSmallLCD ? R.layout.activity_drawing_coloring_s : R.layout.activity_drawing_coloring);
         setImmersiveMode();
         setupView();
         checkSaveButton();
@@ -110,16 +137,44 @@ public class DrawingColoringActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUser();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
+
+    private void setLanguage(String language) {
+        if (language == null || language.isEmpty()) {
+            return;
+        }
+
+        try {
+            String[] splitLang = language.split("-");
+            String lang = splitLang[0];
+            String region = splitLang.length>1 ? splitLang[1] : "";
+
+            Locale locale = new Locale(lang, region);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            getBaseContext().getResources().updateConfiguration(config,
+                    getBaseContext().getResources().getDisplayMetrics());
+
+        } catch (Exception e) {
+            Log.e("" + e);
+        }
+    }
 
     private void setImmersiveMode() {
         mDecorView = getWindow().getDecorView();
         mUiOption = getWindow().getDecorView().getSystemUiVisibility();
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             mUiOption |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             mUiOption |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             mUiOption |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
         mDecorView.setSystemUiVisibility(mUiOption);
@@ -152,21 +207,10 @@ public class DrawingColoringActivity extends BaseActivity {
         mIvColoring = (ImageView) findViewById(R.id.iv_coloring);
 
         Bitmap bitmapPen = BitmapFactory.decodeResource(getResources(), R.drawable.drawingpad_crayon_1_white);
-        DisplayMetrics displayMetrics = Util.getWindowInfo(mThisActivity);
-        Log.i("width dp : " + Util.getDip(mThisActivity, displayMetrics.widthPixels));
 
-        int layoutPenHeight = displayMetrics.heightPixels;
-
-        if (Const.LCD_GROUP == 1) {
-            layoutPenHeight -= Util.getPixel(mThisActivity, 85);
-
-        } else {
-            layoutPenHeight -= Util.getPixel(mThisActivity, 121);
-
-        }
-
+        int layoutPenHeight = 1800 - (mbSmallLCD ? 121 : 242);
         if (layoutPenHeight < bitmapPen.getHeight() * (TOTAL_PEN_COLOR_COUNT + 1)) {
-            float scale = (float)layoutPenHeight / (bitmapPen.getHeight() * (TOTAL_PEN_COLOR_COUNT + 1));
+            float scale = (float) layoutPenHeight / (bitmapPen.getHeight() * (TOTAL_PEN_COLOR_COUNT + 1));
             View layoutPenGroup = findViewById(R.id.layout_pen_group);
             layoutPenGroup.setPivotX(0);
             layoutPenGroup.setPivotY(0);
@@ -174,7 +218,7 @@ public class DrawingColoringActivity extends BaseActivity {
             layoutPenGroup.setScaleY(scale);
         }
 
-        ((LockableScrollView)findViewById(R.id.scrollView)).setScrollingEnabled(false);
+        ((LockableScrollView) findViewById(R.id.scrollView)).setScrollingEnabled(false);
 
         final int[] RESOURCE_PEN = {
                 R.drawable.drawingpad_crayon_1_white,
@@ -197,20 +241,41 @@ public class DrawingColoringActivity extends BaseActivity {
                 R.drawable.drawingpad_crayon_18_lightpink
         };
 
-        Bitmap bitmapPenSelected = BitmapFactory.decodeResource(getResources(), R.drawable.drawingpad_crayon_0_highlight);
-        int marginTop = (int)getResources().getDimension(R.dimen.pen_normal_margin_top);
+        final int[] RESOURCE_PEN_S = {
+                R.drawable.drawingpad_crayon_1_white_s,
+                R.drawable.drawingpad_crayon_2_black_s,
+                R.drawable.drawingpad_crayon_3_gray_s,
+                R.drawable.drawingpad_crayon_4_brown_s,
+                R.drawable.drawingpad_crayon_5_red_s,
+                R.drawable.drawingpad_crayon_6_orange_s,
+                R.drawable.drawingpad_crayon_7_yelloworange_s,
+                R.drawable.drawingpad_crayon_8_yellow_s,
+                R.drawable.drawingpad_crayon_9_lime_s,
+                R.drawable.drawingpad_crayon_10_green_s,
+                R.drawable.drawingpad_crayon_11_emeraldgreen_s,
+                R.drawable.drawingpad_crayon_12_aqua_s,
+                R.drawable.drawingpad_crayon_13_lightblue_s,
+                R.drawable.drawingpad_crayon_14_blue_s,
+                R.drawable.drawingpad_crayon_15purpleblue_s,
+                R.drawable.drawingpad_crayon_16_magentapurple_s,
+                R.drawable.drawingpad_crayon_17_hotpink_s,
+                R.drawable.drawingpad_crayon_18_lightpink_s
+        };
+
+        Bitmap bitmapPenSelected = BitmapFactory.decodeResource(getResources(), (mbSmallLCD ? R.drawable.drawingpad_crayon_0_highlight_s : R.drawable.drawingpad_crayon_0_highlight));
+        int marginTop = (int) getResources().getDimension(mbSmallLCD ? R.dimen.pen_normal_margin_top_s : R.dimen.pen_normal_margin_top);
 
         LinearLayout layoutPen = (LinearLayout) findViewById(R.id.layout_pen);
 
         for (int i = 0; i < TOTAL_PEN_COLOR_COUNT; ++i) {
             mVPens[i] = new ViewPen(this);
-            mVPens[i].setPenImage(RESOURCE_PEN[i], null);
+            mVPens[i].setPenImage(mbSmallLCD ? RESOURCE_PEN_S[i] : RESOURCE_PEN[i], null);
             mVPens[i].setTag(new Integer(i));
 //            mVPens[i].setOnClickListener(mOnClickListener);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bitmapPenSelected.getHeight());
             if (i != 0) {
-                params.setMargins(0, -marginTop*2, 0, 0);
+                params.setMargins(0, -marginTop * 2, 0, 0);
             }
 
             layoutPen.addView(mVPens[i], params);
@@ -223,13 +288,15 @@ public class DrawingColoringActivity extends BaseActivity {
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bitmapPenSelected.getHeight());
             if (i != 0) {
-                params.setMargins(0, -marginTop*2, 0, 0);
+                params.setMargins(0, -marginTop * 2, 0, 0);
             }
 
             layoutSelectedPenEffect.addView(mVSelectedPensEffect[i], params);
         }
 
         mIvSaveEffect = (ImageView) findViewById(R.id.iv_save_effect);
+
+        mScale = Util.setScale(mThisActivity, findViewById(R.id.layout_root), false);
     }
 
     private void setNeedSave(boolean bNeedSave) {
@@ -244,7 +311,17 @@ public class DrawingColoringActivity extends BaseActivity {
         Rect rectDrawView = new Rect();
         Rect rectSaveButton = new Rect();
         mLayoutDrawing.getGlobalVisibleRect(rectDrawView);
+        rectDrawView.left = (int) (rectDrawView.left / mScale);
+        rectDrawView.top = (int) (rectDrawView.top / mScale);
+        rectDrawView.right = (int) (rectDrawView.right / mScale);
+        rectDrawView.bottom = (int) (rectDrawView.bottom / mScale);
+
         mVSave.getGlobalVisibleRect(rectSaveButton);
+        rectSaveButton.left = (int) (rectSaveButton.left / mScale);
+        rectSaveButton.top = (int) (rectSaveButton.top / mScale);
+        rectSaveButton.right = (int) (rectSaveButton.right / mScale);
+        rectSaveButton.bottom = (int) (rectSaveButton.bottom / mScale);
+
         int offsetX = rectSaveButton.centerX() - rectDrawView.centerX();
         int offsetY = rectSaveButton.centerY() - rectDrawView.centerY();
 
@@ -284,6 +361,68 @@ public class DrawingColoringActivity extends BaseActivity {
         //mEffectSound.stopSoundPool(EffectSound.SOUND_CHALK);
     }
 
+    private void getUser() {
+        mUser = mKitkitDBHandler.getCurrentUser();
+
+        if (mUser == null) {
+            mSavePath = Const.SAVE_PATH + File.separator;
+
+        } else {
+            mSavePath = Const.SAVE_PATH + File.separator + mUser.getUserName() + File.separator;
+
+        }
+    }
+
+    private void processSaveAmount() {
+        Util.setMarkTime();
+        File saveFolder = new File(mSavePath);
+
+        if (saveFolder.exists() == true) {
+            File[] filesArray = saveFolder.listFiles();
+
+            if (filesArray != null) {
+                ArrayList<File> files = new ArrayList<>(Arrays.asList(filesArray));
+
+                long folderSize = 0L;
+                for (int i = files.size() - 1; i >= 0; --i) {
+                    if (files.get(i).isDirectory() == true) {
+                        files.remove(i);
+                    } else {
+                        folderSize += files.get(i).length();
+                    }
+                }
+
+                Log.i("saveFolder Size : " + folderSize);
+                if (folderSize > MAX_SAVE_AMOUNT) {
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File o1, File o2) {
+                            return (int) (o2.lastModified() - o1.lastModified());
+                        }
+                    });
+
+                    folderSize = 0L;
+                    boolean bExcessAmount = false;
+                    for (int i = 0; i < files.size(); ++i) {
+                        folderSize += files.get(i).length();
+                        if (bExcessAmount == false && folderSize > MAX_SAVE_AMOUNT) {
+                            bExcessAmount = true;
+                        }
+
+                        if (bExcessAmount == true) {
+                            if (files.get(i).exists() == true) {
+                                Log.i("delete file : " + files.get(i).getName());
+                                files.get(i).delete();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Util.getElapsedTime("processSaveAmount");
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -310,11 +449,15 @@ public class DrawingColoringActivity extends BaseActivity {
                     }
                 } else if (id == R.id.v_save) {
                     Calendar calendar = Calendar.getInstance();
-                    String saveFileName = Const.SAVE_PATH + File.separator + Util.getTimeFormatString(TIME_FORMAT, calendar.getTimeInMillis()) + ".jpg";
+                    String saveFileName = mSavePath + Util.getTimeFormatString(TIME_FORMAT, calendar.getTimeInMillis()) + ".jpg";
 
-                    if (Util.saveImageFileFromView(mLayoutDrawing, saveFileName, null, 100) == true) {
+                    if (Util.saveImageFileFromView(mLayoutDrawing, saveFileName, null, 70) == true) {
+                        processSaveAmount();
                         setNeedSave(false);
                         startSaveAnimation(saveFileName);
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + saveFileName)));
+
+
                     }
                 }
             }
@@ -390,6 +533,11 @@ public class DrawingColoringActivity extends BaseActivity {
             if (event.findPointerIndex(mTouchId) != -1) {
                 for (int i = 0; i < mVPens.length; ++i) {
                     mVPens[i].getGlobalVisibleRect(mTempRect);
+                    mTempRect.left = (int) (mTempRect.left / mScale);
+                    mTempRect.top = (int) (mTempRect.top / mScale);
+                    mTempRect.right = (int) (mTempRect.right / mScale);
+                    mTempRect.bottom = (int) (mTempRect.bottom / mScale);
+
                     if (mTempRect.contains((int) x, (int) y) == true) {
                         setPenColor(i, true);
                         break;
@@ -397,6 +545,10 @@ public class DrawingColoringActivity extends BaseActivity {
                 }
 
                 mVDrawingColoring.getGlobalVisibleRect(mTempRect);
+                mTempRect.left = (int) (mTempRect.left / mScale);
+                mTempRect.top = (int) (mTempRect.top / mScale);
+                mTempRect.right = (int) (mTempRect.right / mScale);
+                mTempRect.bottom = (int) (mTempRect.bottom / mScale);
 
                 if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
                     stopChalkingSound();
@@ -404,7 +556,7 @@ public class DrawingColoringActivity extends BaseActivity {
                 } else {
                     final float TOUCH_TOLERANCE = 4;
 
-                    if (mTempRect.contains((int)x, (int)y) == true) {
+                    if (mTempRect.contains((int) x, (int) y) == true) {
                         if (Math.abs(x - mBeforeTouchPosX) < TOUCH_TOLERANCE &&
                                 Math.abs(y - mBeforeTouchPosY) < TOUCH_TOLERANCE) {
                             stopChalkingSound();
@@ -440,7 +592,7 @@ public class DrawingColoringActivity extends BaseActivity {
         mVDrawingColoring.setMode(mode);
 
         if (mode == ViewDrawingColoring.MODE.COLORING) {
-            mVChangeBg.setImageResource(R.drawable.selector_coloring_bg_select);
+            mVChangeBg.setImageResource(mbSmallLCD ? R.drawable.selector_coloring_bg_select_s : R.drawable.selector_coloring_bg_select);
 
             mImagesColoring = new ArrayList<>();
             mThumbnailsColoring = new ArrayList<>();
@@ -472,7 +624,7 @@ public class DrawingColoringActivity extends BaseActivity {
             });
 
         } else {
-            mVChangeBg.setImageResource(R.drawable.selector_drawing_bg_select);
+            mVChangeBg.setImageResource(mbSmallLCD ? R.drawable.selector_drawing_bg_select_s : R.drawable.selector_drawing_bg_select);
 
         }
     }

@@ -1,5 +1,6 @@
 package com.enuma.drawingcoloring.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -120,7 +122,10 @@ public class ViewDrawingColoring extends View {
         mTouchPosX = Float.MIN_VALUE;
         mTouchPosY = Float.MIN_VALUE;
 
-        mBitmapBrushAlphaChannel = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.crayon_brush_alpha);
+        Point size = Util.getWindowSize((Activity)context);
+        boolean isSmallLCD = (size.x <= 1280);
+
+        mBitmapBrushAlphaChannel = BitmapFactory.decodeResource(mContext.getResources(), isSmallLCD ? R.drawable.crayon_brush_alpha_s : R.drawable.crayon_brush_alpha);
         mBitmapBrush = Bitmap.createBitmap(mBitmapBrushAlphaChannel.getWidth(), mBitmapBrushAlphaChannel.getHeight(), Bitmap.Config.ARGB_8888);
         BRUSH_POINT_WIDTH = mBitmapBrushAlphaChannel.getWidth() / BRUSH_WIDTH_COUNT;
         BRUSH_POINT_HEIGHT = mBitmapBrushAlphaChannel.getHeight() / BRUSH_HEIGHT_COUNT;

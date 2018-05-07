@@ -7,11 +7,13 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -290,4 +292,38 @@ public class Util {
         return result;
     }
 
+    public static Point getWindowSize(Activity activity) {
+        Point result = new Point();
+        activity.getWindowManager().getDefaultDisplay().getRealSize(result);
+        return result;
+    }
+
+    public static float setScale(Activity activity, View rootView, boolean isBasicHeight1800) {
+        Point size = Util.getWindowSize(activity);
+        float BASIC_HEIGHT = 1800.f;
+
+        if (isBasicHeight1800 == false) {
+            BASIC_HEIGHT = (size.x <= 1280) ?  900.f : 1800.f;
+        }
+
+        float fixedSizeWidth = BASIC_HEIGHT * size.x / size.y;
+        float fixedSizeHeight = BASIC_HEIGHT;
+        float scale = size.y / BASIC_HEIGHT;
+
+        Log.i("display width : " + size.x);
+        Log.i("display height : " + size.y);
+        Log.i("fixed width : " + fixedSizeWidth);
+        Log.i("fixed height : " + fixedSizeHeight);
+        Log.i("scale : " + scale);
+
+        ViewGroup.LayoutParams params = rootView.getLayoutParams();
+        params.width = (int)(fixedSizeWidth + 0.5f);
+        params.height = (int)(fixedSizeHeight + 0.5f);
+        rootView.setPivotX(0);
+        rootView.setPivotY(0);
+        rootView.setScaleX(scale);
+        rootView.setScaleY(scale);
+
+        return scale;
+    }
 }

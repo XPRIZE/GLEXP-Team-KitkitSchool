@@ -1,15 +1,19 @@
 package com.enuma.drawingcoloring.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.enuma.drawingcoloring.R;
 import com.enuma.drawingcoloring.activity.DrawingColoringActivity;
+import com.enuma.drawingcoloring.utility.Log;
 import com.enuma.drawingcoloring.utility.Util;
 
 public class DialogSelectDrawingBackground extends Dialog {
@@ -62,6 +66,8 @@ public class DialogSelectDrawingBackground extends Dialog {
             view.setTag(new Integer(i));
             view.setOnClickListener(mOnClickListener);
         }
+
+        Util.setScale((Activity)mContext, findViewById(R.id.layout_root), true);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

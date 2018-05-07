@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">DrawingColoring</string>
+    <string name="title_drawing">Drawing</string>
+    <string name="title_coloring">Coloring</string>
+
+    <string name="white">Nyeupe</string>
+    <string name="green">Kijani</string>
+    <string name="blue">Bluu</string>
+    <string name="yellow">Njano</string>
+    <string name="red">Nyekundu</string>
+    <string name="black">Nyeusi</string>
+
+</resources>

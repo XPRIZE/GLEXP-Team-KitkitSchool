@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/drawingpad_coloring_button_active_s" android:state_pressed="true" />
+    <item android:drawable="@drawable/drawingpad_coloring_button_coloredpaper_normal_s" />
+</selector>

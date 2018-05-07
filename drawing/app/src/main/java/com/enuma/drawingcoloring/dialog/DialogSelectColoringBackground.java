@@ -1,9 +1,11 @@
 package com.enuma.drawingcoloring.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 
 import com.enuma.drawingcoloring.R;
 import com.enuma.drawingcoloring.core.Const;
+import com.enuma.drawingcoloring.utility.Log;
 import com.enuma.drawingcoloring.utility.Util;
 
 import java.io.File;
@@ -76,6 +79,7 @@ public class DialogSelectColoringBackground extends Dialog {
         mVRightArrow.setOnClickListener(mOnClickListener);
 
         mVPager = (ViewPager) findViewById(R.id.v_pager);
+        Util.setScale((Activity)mContext, findViewById(R.id.layout_root), true);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

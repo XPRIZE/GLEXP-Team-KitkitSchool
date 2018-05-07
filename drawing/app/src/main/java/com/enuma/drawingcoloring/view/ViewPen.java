@@ -1,15 +1,18 @@
 package com.enuma.drawingcoloring.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import com.enuma.drawingcoloring.R;
+import com.enuma.drawingcoloring.utility.Util;
 
 public class ViewPen extends AppCompatImageView {
 
@@ -44,8 +47,18 @@ public class ViewPen extends AppCompatImageView {
 
     public void init(Context context) {
         mContext = context;
-        mNormalMarginTop = mContext.getResources().getDimension(R.dimen.pen_normal_margin_top);
-        mNormalMarginLeft = mContext.getResources().getDimension(R.dimen.pen_normal_margin_left);
+        Point size = Util.getWindowSize((Activity)context);
+        boolean isSmallLCD = (size.x <= 1280);
+
+        if (isSmallLCD == true) {
+            mNormalMarginTop = mContext.getResources().getDimension(R.dimen.pen_normal_margin_top_s);
+            mNormalMarginLeft = mContext.getResources().getDimension(R.dimen.pen_normal_margin_left_s);
+
+        } else {
+            mNormalMarginTop = mContext.getResources().getDimension(R.dimen.pen_normal_margin_top);
+            mNormalMarginLeft = mContext.getResources().getDimension(R.dimen.pen_normal_margin_left);
+
+        }
     }
 
     @Override
