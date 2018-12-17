@@ -505,6 +505,11 @@ public class DrawingColoringActivity extends BaseActivity {
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            if (mVDrawingColoring.isInit() == false) {
+                Log.i("not ready");
+                return false;
+            }
+
             float x = 0;
             float y = 0;
 

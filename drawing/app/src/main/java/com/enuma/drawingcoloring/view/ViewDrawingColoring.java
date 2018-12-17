@@ -99,7 +99,7 @@ public class ViewDrawingColoring extends View {
 
     private Path mPathColoring = new Path();
     private Rect mRect = new Rect();
-
+    private boolean mbInit = false;
     ////////////////////////////////////////////////////////////////////////////////
 
     public ViewDrawingColoring(Context context) {
@@ -151,6 +151,7 @@ public class ViewDrawingColoring extends View {
             mBitmapBuffer.eraseColor(Color.TRANSPARENT);
             mRect.set(0, 0, getWidth(), getHeight());
             restoreTempBitmapFile();
+            mbInit = true;
         }
 
         canvas.drawBitmap(mBitmapBuffer, 0, 0, mPaint);
@@ -403,6 +404,9 @@ public class ViewDrawingColoring extends View {
         }
     }
 
+    public boolean isInit() {
+        return mbInit;
+    }
     ////////////////////////////////////////////////////////////////////////////////
 
     public interface Callback {
