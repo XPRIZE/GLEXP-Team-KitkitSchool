@@ -16,7 +16,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -250,6 +249,11 @@ public class ViewDrawingColoring extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mCanvasBuffer == null) {
+            Log.i("mCanvasBuffer is null");
+            return false;
+        }
+
         float x;
         float y;
 
