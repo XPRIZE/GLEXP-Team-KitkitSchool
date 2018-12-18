@@ -1,0 +1,567 @@
+ [
+  {
+  "Fish_ID": "f01",
+  "Name": "angelfish",
+  "IdleTime": 2,
+  "Speed": 2,
+  "MoveRange": [
+                300,
+                900
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f02",
+  "Name": "clownfish",
+  "IdleTime": 2.5,
+  "Speed": 3,
+  "MoveRange": [
+                200,
+                600
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f03",
+  "Name": "mbunacichlid",
+  "IdleTime": 1,
+  "Speed": 4,
+  "MoveRange": [
+                500,
+                1000
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f04",
+  "Name": "neontetra",
+  "IdleTime": 0.5,
+  "Speed": 3,
+  "MoveRange": [
+                100,
+                300
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f05",
+  "Name": "guppy",
+  "IdleTime": 0.8,
+  "Speed": 2,
+  "MoveRange": [
+                200,
+                500
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f06",
+  "Name": "rainbowshark",
+  "IdleTime": 1,
+  "Speed": 2,
+  "MoveRange": [
+                300,
+                800
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f07",
+  "Name": "jellyfish",
+  "IdleTime": 1.2,
+  "Speed": 1,
+  "MoveRange": [
+                100,
+                200
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": true
+  },
+  {
+  "Fish_ID": "f08",
+  "Name": "seaslug",
+  "IdleTime": 3,
+  "Speed": 1,
+  "MoveRange": [
+                20,
+                40
+                ],
+  "IsRare": false,
+  "IsBottom": true,
+  "Horizontal": false,
+  "IsLookTop": false,
+  "SoundTiming" : [30, 80]
+  },
+  {
+  "Fish_ID": "f09",
+  "Name": "seahorse",
+  "IdleTime": 0.5,
+  "Speed": 1,
+  "MoveRange": [
+                100,
+                200
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": true,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f10",
+  "Name": "beeshrimp",
+  "IdleTime": 5,
+  "Speed": 2,
+  "MoveRange": [
+                200,
+                400
+                ],
+  "IsRare": false,
+  "IsBottom": true,
+  "Horizontal": false,
+  "IsLookTop": false,
+  "SoundTiming" : [10, 70]
+  },
+  {
+  "Fish_ID": "f11",
+  "Name": "dumbooctopus",
+  "IdleTime": 5,
+  "Speed": 1,
+  "MoveRange": [
+                50,
+                500
+                ],
+  "IsRare": true,
+  "IsBottom": true,
+  "Horizontal": false,
+  "IsLookTop": false,
+  "SoundTiming" : [0, 60]
+  },
+  {
+  "Fish_ID": "f12",
+  "Name": "firegoby",
+  "IdleTime": 0.5,
+  "Speed": 3,
+  "MoveRange": [
+                100,
+                300
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f13",
+  "Name": "panthergrouper",
+  "IdleTime": 1.5,
+  "Speed": 2,
+  "MoveRange": [
+                300,
+                700
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f14",
+  "Name": "clowntriggerfish",
+  "IdleTime": 1,
+  "Speed": 3,
+  "MoveRange": [
+                200,
+                500
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f15",
+  "Name": "bluepowdertang",
+  "IdleTime": 0.8,
+  "Speed": 4,
+  "MoveRange": [
+                300,
+                800
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f16",
+  "Name": "regalangelfish",
+  "IdleTime": 2,
+  "Speed": 3,
+  "MoveRange": [
+                300,
+                900
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f17",
+  "Name": "juvenileemporerangelfish",
+  "IdleTime": 1,
+  "Speed": 5,
+  "MoveRange": [
+                400,
+                1000
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f18",
+  "Name": "underwaterbetta",
+  "IdleTime": 1,
+  "Speed": 3,
+  "MoveRange": [
+                200,
+                500
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f19",
+  "Name": "seadragon",
+  "IdleTime": 0.5,
+  "Speed": 1,
+  "MoveRange": [
+                100,
+                200
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": true,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "f20",
+  "Name": "axolotl",
+  "IdleTime": 3,
+  "Speed": 1,
+  "MoveRange": [
+                50,
+                100
+                ],
+  "IsRare": true,
+  "IsBottom": true,
+  "Horizontal": false,
+  "IsLookTop": false,
+  "SoundTiming" : [0, 35]
+  },
+  {
+  "Fish_ID": "d01",
+  "Name": "marimo",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d02",
+  "Name": "starfish",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d03",
+  "Name": "seashell",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d04",
+  "Name": "plant",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d05",
+  "Name": "cabbagecoral",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d06",
+  "Name": "mushroomcoral",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d07",
+  "Name": "coral",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d08",
+  "Name": "tubecoral",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d09",
+  "Name": "seaanamone",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  }
+  ,
+  {
+  "Fish_ID": "d10",
+  "Name": "lotus",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": false,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d11",
+  "Name": "murex",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d12",
+  "Name": "branchcoral",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d13",
+  "Name": "barnacle",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d14",
+  "Name": "seaweed",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d15",
+  "Name": "pearlshell",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d16",
+  "Name": "brokenpot",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d17",
+  "Name": "pancorals",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d18",
+  "Name": "hermitcrab",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d19",
+  "Name": "giantclam",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  },
+  {
+  "Fish_ID": "d20",
+  "Name": "yellowsubmarine",
+  "IdleTime": 0,
+  "Speed": 0,
+  "MoveRange": [
+                0,
+                0
+                ],
+  "IsRare": true,
+  "IsBottom": false,
+  "Horizontal": false,
+  "IsLookTop": false
+  }
+  ]
