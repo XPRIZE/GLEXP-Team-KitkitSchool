@@ -9,27 +9,16 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -43,6 +32,12 @@ import android.widget.TextView;
 
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 
 public class VideoPlayerActivity extends KitKitLoggerActivity implements SurfaceHolder.Callback, /*MediaPlayer.OnPreparedListener, */ VideoControllerView.MediaPlayerControl {
@@ -62,6 +57,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     ArrayList<MainActivity.VideoData> videoList;
     int curVideoIndex;
     String libPath;
+    String libAssetPath;
     ScrollView scrollView;
     MainActivity.VideoData currentVideo;
 
@@ -114,12 +110,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                |View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
-
-
+        Util.hideSystemUI(this);
 
         setContentView(R.layout.activity_video_player);
 
@@ -185,6 +176,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
         Bundle bundle = getIntent().getExtras();
         videoList = (ArrayList< MainActivity.VideoData>)bundle.getSerializable("videoArray");
         libPath = bundle.getString("libPath");
+        libAssetPath = bundle.getString("libAssetPath");
         curVideoIndex = bundle.getInt("currentVideoIndex");
 
 
@@ -238,6 +230,15 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
         mSettingsContentObserver = new SettingsContentObserver(this,new Handler(), volumeSeekbar);
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, mSettingsContentObserver );
 
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            Util.hideSystemUI(this);
+        }
     }
 
     @Override
@@ -385,7 +386,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
             ImageButton nextVideoButton = (ImageButton)findViewById(R.id.next_video_thumbnail);
             Drawable thumbnail;
             if (MainActivity.useExternalData) {
-                String thumbnailPath = libPath + File.separator + nextVideo.thumbnail;
+                String thumbnailPath = libAssetPath + File.separator + nextVideo.thumbnail;
                 thumbnail = Drawable.createFromPath(thumbnailPath);
             }
             else {

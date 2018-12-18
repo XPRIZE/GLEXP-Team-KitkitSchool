@@ -86,8 +86,8 @@
                             <ImageView
                                 android:background="#8000"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
+                                android:layout_height="match_parent"
+                                android:scaleType="center"
                                 android:src="@drawable/library_blue_play_icon"/>
 
                         </FrameLayout>
@@ -99,7 +99,7 @@
                             android:textSize="20sp"
                             android:textColor="#fff"
                             android:background="@android:color/transparent"
-                            android:drawableEnd="@drawable/library_cancel_icon"
+                            android:drawableRight="@drawable/library_cancel_icon"
                             android:textAllCaps="false"
                             android:drawablePadding="5dp"/>
 

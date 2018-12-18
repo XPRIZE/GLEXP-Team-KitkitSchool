@@ -11,17 +11,16 @@
             android:id="@+id/video_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="86dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="36dp"
-            android:orientation="vertical"
-            android:weightSum="244">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tutorial_title_textView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
+                android:layout_marginLeft="5dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
                 android:layout_weight="6"
                 android:textSize="27sp" />
 
@@ -36,9 +35,9 @@
                 android:id="@+id/musicvideo_title_textView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="6"
                 android:textSize="27sp" />
 
@@ -53,9 +52,9 @@
                 android:id="@+id/literacy_video_title_textView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="6"
                 android:textSize="27sp" />
 
@@ -67,12 +66,31 @@
                 android:scrollbars="none"></android.support.v7.widget.RecyclerView>
 
             <TextView
+                android:id="@+id/literacy_video_title_textView_2"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="6"
+                android:textSize="27sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_video_2_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="41"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
+            <TextView
                 android:id="@+id/math_video_title_textView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="6"
                 android:textSize="27sp" />
 
@@ -84,12 +102,31 @@
                 android:scrollbars="none"></android.support.v7.widget.RecyclerView>
 
             <TextView
+                android:id="@+id/math_video_title_textView_2"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="6"
+                android:textSize="27sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_video_3_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="41"
+                android:scrollbars="none"
+                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+
+            <TextView
                 android:id="@+id/alphabet_video_title_textView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="6"
                 android:textSize="27sp" />
 

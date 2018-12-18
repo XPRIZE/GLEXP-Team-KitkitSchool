@@ -1,18 +1,15 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Create file /Users/YOURID/Documents/kitkitschool/library_resource_path.txt
+Add text (If your repository root is "/Users/YOURID/new_library")
+/Users/YOURID/new_library/localized
+
+#add git pre-commit (it prevent using uppercase & space filename in Resources)
+cd git_hooks
+run following script
+copyhook.sh
 
 
-
-### How to download video files? ###
-
-Due to the size of Videos, they are not stored in this repository, but in Google Drive. 
-
-Follow the link below
-https://drive.google.com/open?id=0B8f8R7j7hhi5VGFFWER2aTRCS00
-
-and copy files in respective language folder into 
-<project_dir>/app/[swahili or english]/res/raw
 
 
 

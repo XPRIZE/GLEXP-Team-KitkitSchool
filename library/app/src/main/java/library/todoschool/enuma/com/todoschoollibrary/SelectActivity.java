@@ -32,7 +32,7 @@ public class SelectActivity extends KitKitLoggerActivity {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate()");
-        hideSystemUI();
+        Util.hideSystemUI(this);
 
         setContentView(R.layout.activity_select);
 
@@ -46,25 +46,14 @@ public class SelectActivity extends KitKitLoggerActivity {
         });
 
     }
-    private void hideSystemUI() {
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                |View.SYSTEM_UI_FLAG_FULLSCREEN
-                |View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                |View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                |View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                |View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-
         super.onWindowFocusChanged(hasFocus);
 
         if (hasFocus) {
-            hideSystemUI();
+            Util.hideSystemUI(this);
         }
-
-
     }
 
     public void onClickBook(View v) {
