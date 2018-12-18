@@ -3,6 +3,7 @@ package com.enuma.todoschool.xprize_gallery.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -45,7 +46,10 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         FrameLayout layout = new FrameLayout(mActivity);
         layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)((parent.getMeasuredWidth() / mSpanCount - mGap * 2) * mAspectRatio)));
-        layout.setElevation(Util.getPixel(mActivity, 10));
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            layout.setElevation(Util.getPixel(mActivity, 10));
+        }
+
         layout.setBackgroundColor(0x42000000);
 
         ImageView imageView = new ImageView(mActivity);

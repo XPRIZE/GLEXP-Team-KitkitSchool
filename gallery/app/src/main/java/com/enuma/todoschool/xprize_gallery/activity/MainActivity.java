@@ -149,7 +149,6 @@ public class MainActivity extends BaseActivity {
             mLastModified = dcimFolder.lastModified();
             mData.clear();
 
-            addData(dcimFolder);
             if (userFolder != null && userFolder.exists() == true) {
                 mLastModifiedUserFolder = userFolder.lastModified();
                 addData(userFolder);
