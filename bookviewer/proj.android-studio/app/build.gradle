@@ -45,7 +45,7 @@ android {
             manifest.srcFile 'main/AndroidManifest.xml'
             java.srcDirs = ["src"]
             res.srcDirs = ["res"]
-            assets.srcDirs = ['../../Resources']
+            assets.srcDirs = ['../../../mainapp/Resources/bookviewer']
         }
 
         release {
@@ -58,24 +58,31 @@ android {
 
 
 
-        everything {
-            assets.srcDirs       = ['../../Resources', '../../../xprize_books2/en', '../../../xprize_books2/sw']
+        general {
+            assets.srcDirs       = ['../../../mainapp/Resources/bookviewer', '../../../mainapp/Resources/Localized/en-US/Games/Books', '../../../mainapp/Resources/Localized/sw-TZ/Games/Books']
+        }
+
+        noresource {
+            assets.srcDir "assets"
         }
 
         english {
-            assets.srcDirs       = ['../../Resources', '../../../xprize_books2/en']
+            assets.srcDirs       = ['../../../mainapp/Resources/bookviewer', '../../../mainapp/Resources/Localized/en-US/Games/Books']
         }
 
         swahili {
-            assets.srcDirs       = ['../../Resources', '../../../xprize_books2/sw']
+            assets.srcDirs       = ['../../../mainapp/Resources/bookviewer', '../../../mainapp/Resources/Localized/sw-TZ/Games/Books']
         }
 
     }
 
 
     productFlavors {
-        everything {
+        general {
 
+        }
+
+        noresource {
         }
 
         english {
