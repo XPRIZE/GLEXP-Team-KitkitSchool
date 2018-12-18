@@ -1,7 +1,7 @@
 # Kitkit School
 
 Kitkit School (phase 3) consists of 12 apps as following:
-s
+
 1. Launcher
 * A home screen app, from where other apps are launched.
 
