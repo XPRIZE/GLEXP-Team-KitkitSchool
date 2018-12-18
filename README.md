@@ -1,7 +1,7 @@
 # Kitkit School
 
-Kitkit School consists of nine apps as following:
-
+Kitkit School (phase 3) consists of 12 apps as following:
+s
 1. Launcher
 * A home screen app, from where other apps are launched.
 
@@ -23,10 +23,13 @@ Kitkit School consists of nine apps as following:
 7. Drawing
 8. Drum
 9. Marimba
+10. Writing Board
+11. Sea World
+12. Voice Engine (for English only) 
 * Additional tools/toys as rewards
 
 Most of the apps above share code from kitkitshcoollogger
-10. KitkitSchoolLogger
+13. KitkitSchoolLogger
 * not a stand-alone app, but the code is shared among other apps
 
 
@@ -40,40 +43,31 @@ Please note that we've used macOS version 10.11 and 10.12.
 It may work with other OS/Tool versions, but not verified.
 
 
-1. Download Cocos2dx-3.10
-* http://www.cocos2d-x.org/filedown/cocos2d-x-3.10.zip
-* Extract zip file and move the folder to ~/Documents/
 
 
-2. Download Android Studio (2.2.3)
+1. Download Android Studio (2.2.3)
 * https://developer.android.com/studio/index.html
 * Install Android Studio
 
 
-3. Download Android NDK
-* http://dl.google.com/android/ndk/android-ndk-r10d-darwin-x86.bin
+2. Download Android NDK (r14b, except for voice-engine which uses r16b) 
+* http://dl.google.com/android/ndk/android-ndk-r14b-darwin-x86.bin
+* http://dl.google.com/android/ndk/android-ndk-r16b-darwin-x86.bin
 * Extract bin file and move the folder to ~/Documents/
 
 
-4. Download Apache Ant
+3. Download Apache Ant
 * http://mirror.symnds.com/software/Apache//ant/binaries/apache-ant-1.9.8-bin.zip
 * Extract zip file and move the folder to ~/Documents/
 
 
-5. Download Java SE Runtime 1.8
+4. Download Java SE Runtime 1.8
 * http://download.oracle.com/otn-pub/java/jdk/8u112-b16/jdk-8u112-macosx-x64.dmg
 * Install JRE 8u112
 * /usr/libexec/java_home -v 1.8
 
 
-6. Run cocos setup
-* ~/Documents/cocos2d-x-3.10/setup.py
-* add NDK Root /Users/xxxxx/Documents/android-ndk-r10d
-* add SDK Root /Users/xxxxx/Library/Android/sdk
-* add ANT Root /Users/xxxxx/Documents/apache-ant-1.9.8/bin
-
-
-7. Add UTF-8 Settings to bash_profile
+5. Add UTF-8 Settings to bash_profile
 * vi ~/.bash_profile
 * add two lines
 * export LC_ALL=en_US.UTF-8
@@ -81,83 +75,43 @@ It may work with other OS/Tool versions, but not verified.
 
 
 
-# Copy Resources Files #
+# Copy Resources/Engine Files #
 
 Now the environment is setup, but we are not ready to build the apps yet.  
 Due to the large amount of resources, we could not put all the necessary resources into Githug. Instead, they are stored in Box folder.
 
-1. Library
-* target directory is library/app/src/main/assets and library/app/src/main/res
-* copy files from each language pack into the target directory
+1. library.tar.gz
+* used by library
+* target directory is library/localized
+* in the "localized" folder, leave only the language to build, to minimize the build time and the binary size
 
-2. Book Viewer
-* target directory is bookviewer/Resources
-* copy files from each language pack into the target directory
-
-3. Main App
+2. mainapp.tar.gz
+* used by mainapp
 * target directory is mainapp/Resources
-* copy files from each language pack into the target directory
-* also copy pre-built library from cocos2d.tar.gz to mainapp/cocos2d
+* in the "Resources/localized" folder, leave only the language to build, to minimize the build time and the binary size
+* this resource files are also used by bookviewer, so these two projects (mainapp and bookviewer) need to in the same folder, side by side) 
+
+3. cocos2d.tar.gz
+* used by mainapp, bookviewer, seaworld
+* overwrite "mainapp/cocos2d", "bookviewer/cocos2d", "seaworld/cocos2d" folder with the inflated cocos2d folder
+
 
 
 
 # Build APKs #
 
 
-1. Apps built with Android Studio (Launcher, Lock Screen, Library, and other tools)
+Build with Android Studio 
 
-- open the "Build Variants" tab at left-bottom
-- set the 'Build Variant' of 'app' to swahiliDebug or englishDebug, respectively
-- build variant of kitkitlogger will be set automatically (swahiliRelease or englishRelease)
+- don't forget to set the NDK folder
+- set the appropriate 'Build Variant' 
+   - mainapp : generalDebug
+   - launcher, library, bookviewer : swahiliDebug or englishUSDebug (or englishDebug)
+   - others : debug
+- build variant of kitkitlogger will be set automatically (release)
 - from the top menu, choose Build > Build APK
 
-
 The resulting APK will be generated in app/build/outputs/apk/[appname]-[language]-debug.apk
-
-
-2. Apps based on cocos2d-x (Book Viewer, Main App)
-
-For those apps, a command line tool is used to generate APKs.
-
-The command is:
-> cocos compile -p android --android-studio
-
-in each app's directory.
-
-APK will be generated in proj.android-studio/app/build/outputs/apk/[appname]-[language]-debug.apk
-
-
-
-# Language Settings #
-
-Some apps need to change a few lines of the source code or resource files to build a binary for the other language.
-
-
-1. Launcher and Lock Screen
-* choose build variants respectively.
-
-2. Library
-* choose build variants respectively.
-* copy the resources as described above
-
-3. Book Viewer
-* copy the resources as described above
-* change line 7 of Classes/MainScene.h
-    * for English
-    > #define IS_ENGLISH (true)
-
-    * for Swahili
-    > #define IS_ENGLISH (false)
-
-
-4. Main App
-* copy the resources as described above
-* change line 31 of Classes/Managers/LanguageManager.cpp
-    * for English
-    > auto defaultLang = LanguageType::ENGLISH;
-
-    * for Swahili
-    > auto defaultLang = LanguageType::SWAHILI;
 
 
 
