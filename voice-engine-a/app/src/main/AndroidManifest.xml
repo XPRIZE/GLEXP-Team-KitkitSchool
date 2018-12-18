@@ -59,7 +59,7 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
             <intent-filter>
                 <action android:name="com.enuma.voice_engine_a.installer.CALL_BY_KITKIT_SCHOOL" />
