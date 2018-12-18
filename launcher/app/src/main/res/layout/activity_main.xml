@@ -17,10 +17,14 @@
         <TextView
             android:id="@+id/textView_currentUserId"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="30px"
+            android:layout_marginLeft="30px"
+            android:layout_toLeftOf="@+id/launcher_title_button"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
             android:text="@string/user_default_id"
             android:textColor="#FDDB68"
             android:textSize="60px" />
@@ -30,8 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:gravity="center"
             android:background="@android:color/transparent"
+            android:gravity="center"
             android:text="@string/launcher_title"
             android:textColor="#878787"
             android:textSize="70px" />
@@ -101,7 +105,7 @@
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
                     android:scaleType="fitXY"
-                    android:src="@drawable/launcher_kitkitschool_logo_phase02" />
+                    android:src="@drawable/launcher_kitkitschool_logo_phase03" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,10 +183,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
+                    android:alpha="0.7"
                     android:background="@android:color/transparent"
                     android:padding="0px"
                     android:scaleType="fitXY"
-                    android:alpha="0.7"
                     android:src="@drawable/launcher_mode_library_shadow_overlay" />
             </FrameLayout>
 
@@ -234,10 +238,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
+                    android:alpha="0.7"
                     android:background="@android:color/transparent"
                     android:padding="0px"
                     android:scaleType="fitXY"
-                    android:alpha="0.7"
                     android:src="@drawable/launcher_mode_tool_shadow_overlay" />
             </FrameLayout>
 

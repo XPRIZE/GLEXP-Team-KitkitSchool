@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="130px"
+        android:background="#F28F22"
+        android:elevation="8px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <RelativeLayout
+            android:id="@+id/v_back"
+            android:layout_width="180px"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="60px"
+                android:background="@drawable/library_icon_back" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/administration_activity_title"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+        <TextView
+            android:id="@+id/textView_currentUserId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30px"
+            android:text="@string/user_default_id"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:background="#f7f7f7"
+        android:orientation="vertical"
+        android:padding="30px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="90px"
+            android:orientation="horizontal">
+
+            <!-- left side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Review Mode -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickReviewMode">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/review_mode"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="100px"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/off"
+                            android:textColor="@android:color/white"
+                            android:textSize="50px" />
+
+                        <Switch
+                            android:id="@+id/reviewModeSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20px"
+                            android:checked="true"
+                            android:thumb="@drawable/switch_thumb"
+                            android:track="@drawable/switch_track_selector" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20px"
+                            android:gravity="center"
+                            android:text="@string/on"
+                            android:textColor="@android:color/white"
+                            android:textSize="50px" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <!-- Sign Language -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickSignLanguageMode">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/sign_language_mode"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="100px"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/off"
+                            android:textColor="@android:color/white"
+                            android:textSize="50px" />
+
+                        <Switch
+                            android:id="@+id/signLanguageSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20px"
+                            android:checked="true"
+                            android:thumb="@drawable/switch_thumb"
+                            android:track="@drawable/switch_track_selector" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20px"
+                            android:gravity="center"
+                            android:text="@string/on"
+                            android:textColor="@android:color/white"
+                            android:textSize="50px" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <!-- center space -->
+            <Space
+                android:layout_width="30dp"
+                android:layout_height="match_parent" />
+
+            <!-- right side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

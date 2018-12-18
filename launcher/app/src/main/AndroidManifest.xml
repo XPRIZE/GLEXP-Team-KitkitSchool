@@ -51,7 +51,7 @@
         <activity
             android:name=".AboutActivity"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
         <activity
             android:name=".CreditActivity"
             android:screenOrientation="sensorLandscape"
@@ -62,10 +62,19 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="stateHidden"></activity>
         <activity
+            android:name=".UserNameActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
             android:name=".VideoPlayerActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".AdministrationActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
 
         <receiver
             android:name=".LockScreenReceiver"

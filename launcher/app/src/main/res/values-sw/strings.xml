@@ -26,18 +26,36 @@
     <string name="btn_changeLanguage">Change language</string>
     <string name="select_user">Select user</string>
     <string name="unlock_all">Unlock all</string>
-    <string name="add_100_stars">Add 100 stars</string>
-    <string name="add_1000_stars">Add 1000 stars</string>
+    <string name="add_100_stars">Add 100 coins</string>
+    <string name="add_1000_stars">Add 1000 coins</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="review_mode">Review Mode</string>
+    <string name="sign_language_mode">Sign Language Mode</string>
+    <string name="btn_administration">Administration</string>
+    <string name="tablet_number">Tablet number</string>
+    <string name="user_name">Rename user</string>
+    <string name="administration_activity_title">Administration</string>
+    <string name="submit">SUBMIT</string>
+    <string name="cancel2">CANCEL</string>
+    <string name="enter">ENTER</string>
+    <string name="number">number</string>
 
     <string name="drums">Ngoma</string>
     <string name="marimba">Marimba</string>
     <string name="drawing">Mchoro</string>
-    <string name="coloring">Paka rangi</string>
+    <string name="coloring">Paka Rangi</string>
     <string name="camera">Kamera</string>
     <string name="album">Albamu</string>
     <string name="blackboard">Ubao</string>
+    <string name="fish_bowl">Dunia ya\nBahari</string>
+    <string name="writing_board">Ubao wa\nKuandikia</string>
 
-
+    <string name="select_user_no">Select user number</string>
+    <string name="select_tablet_no">Select tablet number</string>
+    <string name="user_no">User No.</string>
+    <string name="name">name</string>
+    <string name="username_activity_title">User name</string>
+    <string name="username_list">[ User name list ]</string>
+    <string name="rename">Rename</string>
 </resources>

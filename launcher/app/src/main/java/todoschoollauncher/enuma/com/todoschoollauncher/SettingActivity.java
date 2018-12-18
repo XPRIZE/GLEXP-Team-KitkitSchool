@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,16 +48,18 @@ import java.util.List;
  */
 
 public class SettingActivity extends KitKitLoggerActivity {
-
     private static final String TAG = "SettingActivity";
     private View mVBack;
     private FtpClient ftpclient = null;
     private Context cntx = null;
+    private TextView mTvTabletNumber;
+    private Switch mLibrarySwitch;
+    private Switch mToolsSwitch;
+    private boolean mbGotoHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        hideStatusbar();
         Util.hideSystemUI(this);
         setContentView(R.layout.activity_setting);
         Util.setScale(this, findViewById(R.id.root_container));
@@ -70,7 +74,6 @@ public class SettingActivity extends KitKitLoggerActivity {
 
         cntx = this.getBaseContext();
         ftpclient = new FtpClient();
-        //listLogFiles();
 
         EditText ftpAddressEditText = (EditText)findViewById(R.id.ftp_address);
         EditText ftpUsernameEditText = (EditText)findViewById(R.id.ftp_username);
@@ -83,46 +86,22 @@ public class SettingActivity extends KitKitLoggerActivity {
         ftpPasswordEditText.setText(prefs.getString("password",""));
         ftpPortEditText.setText(prefs.getString("port",""));
 
-        Switch librarySwitch = (Switch)findViewById(R.id.librarySwitch);
-        librarySwitch.setChecked(prefs.getBoolean("library_on", true));
-        librarySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("library_on", isChecked);
-                editor.commit();
-            }
-        });
+        mLibrarySwitch = (Switch)findViewById(R.id.librarySwitch);
+        mToolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
 
-        Switch toolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
-        toolsSwitch.setChecked(prefs.getBoolean("tools_on", true));
-        toolsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("tools_on", isChecked);
-                editor.commit();
-            }
-        });
+        mTvTabletNumber = (TextView)findViewById(R.id.tv_tablet_number);
 
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            mLibrarySwitch.setSwitchTextAppearance(this, R.style.SwitchTextAppearance);
+            mToolsSwitch.setSwitchTextAppearance(this, R.style.SwitchTextAppearance);
+        }
 
-        SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
-
-
-    }
-
-    private void hideStatusbar() {
-        View decorView = getWindow().getDecorView();
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
+        mbGotoHome = false;
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-//        hideStatusbar();
         if (hasFocus) {
             Util.hideSystemUI(this);
         }
@@ -177,6 +156,10 @@ public class SettingActivity extends KitKitLoggerActivity {
         v.findViewById(R.id.toolsSwitch).performClick();
     }
 
+    public void onClickReviewMode(View v) {
+        v.findViewById(R.id.reviewModeSwitch).performClick();
+    }
+
     public void onClickClearAppdata(View v) {
         try {
             Intent i = new Intent(Intent.ACTION_MAIN);
@@ -193,6 +176,28 @@ public class SettingActivity extends KitKitLoggerActivity {
         Intent i = getPackageManager().getLaunchIntentForPackage("com.android.settings");
         startActivity(i);
     }
+
+    public void onClickPretest(View v) {
+        processSelectUser("Pre-Test");
+    }
+
+    public void onClickPosttest(View v) {
+        processSelectUser("Post-Test");
+    }
+
+    private void gotoTest(String mode) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setComponent(new ComponentName("com.enuma.kitkittest", "org.cocos2dx.cpp.AppActivity"));
+            intent.putExtra("test", mode);
+            startActivity(intent);
+            mbGotoHome = true;
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            mbGotoHome = false;
+        }
+    }
+
 
     private int getExistingNetworkId(String SSID) {
         WifiManager wifiManager = (WifiManager) super.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -223,10 +228,16 @@ public class SettingActivity extends KitKitLoggerActivity {
         logger.tagScreen("SettingActivity");
 
         connectToWifi();
-        refresh();
+        refreshUI();
 
         if (Util.mBlockingView != null) {
             Util.mBlockingView.setOnTouchListener(mBlockViewTouchListener);
+        }
+
+        if (mbGotoHome) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         }
     }
 
@@ -420,44 +431,24 @@ public class SettingActivity extends KitKitLoggerActivity {
         return result;
     }
 
-//    private void listLogFiles() {
-//        Log.d("TXTTest", "list log files");
-//
-//        String documentsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-//        List<String> dirsList = new ArrayList<String>();
-//        File[] dirs = new File(documentsPath).listFiles((FileFilter)new WildcardFileFilter("kitkitschool*"));
-//        for (File dir : dirs) {
-//            //Log.d("TXTTest", dir.toString());
-//
-//            File[] txts = new File(dir.toString()).listFiles((FileFilter)new WildcardFileFilter("*.txt"));
-//            for (File txt : txts) {
-//                Log.d("TXTTest", txt.toString());
-//            }
-//        }
-//    }
-
-    public void onClickPretest(View v) {
-        try {
-            Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
-            i.putExtra("test", "Pre-Test");
-            startActivity(i);
-
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
-        }
+    public void onClickTabletNumber(View v) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SelectNumberDialog dialog = new SelectNumberDialog(this, SelectNumberDialog.MODE.TABLET_NUM, new SelectNumberDialog.Callback() {
+            @Override
+            public void onSelectedNumber(int number) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("TABLET_NUMBER", String.valueOf(number));
+                editor.commit();
+                refreshUI();
+            }
+        });
+        dialog.show();
     }
 
-    public void onClickPosttest(View v) {
-        try {
-            Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.kitkittest");
-            i.putExtra("test", "Post-Test");
-            startActivity(i);
-
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
-        }
+    public void onClickUserName(View v) {
+        Intent i = new Intent(this, UserNameActivity.class);
+        startActivity(i);
     }
-
 
     public static class LanguageDialogFragment extends DialogFragment {
         @Override
@@ -514,23 +505,66 @@ public class SettingActivity extends KitKitLoggerActivity {
     }
 
     public void onClickSelectUser(View v) {
-
-        DialogFragment dialog = new SelectUserDialogFragment();
-        dialog.show(getFragmentManager() ,"SelectUserDialogFragment");
+        processSelectUser(null);
     }
 
-    public void refresh() {
-        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
-        String currentUsername = user.getUserName();
-        TextView textViewUsername = (TextView)findViewById(R.id.textView_currentUsername);
-        if ("user0".equalsIgnoreCase(currentUsername) == false) {
-            textViewUsername.setText(currentUsername);
-        } else {
-            textViewUsername.setText("");
-        }
+    private void processSelectUser(final String testMode) {
+        SelectNumberDialog selectNumberDialog = new SelectNumberDialog(this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
+            @Override
+            public void onSelectedNumber(int number) {
+                KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
+                User user = dbHandler.findUser("user" + number);
+                if (user != null) {
+                    dbHandler.setCurrentUser(user);
+                    refreshUI();
 
+                    if (testMode != null) {
+                        gotoTest(testMode);
+                    }
+                }
+            }
+        });
+
+        selectNumberDialog.show();
+    }
+
+    public void refreshUI() {
+        Util.displayUserName(this, (TextView)findViewById(R.id.textView_currentUsername));
+
+        final User user = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
         TextView textViewNumcoin = (TextView)findViewById(R.id.textView_numCoin);
         textViewNumcoin.setText(String.format("%d",user.getNumStars()));
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String tabletNumber = prefs.getString("TABLET_NUMBER", "");
+
+        if (!tabletNumber.isEmpty()) {
+            SpannableString content = new SpannableString(tabletNumber);
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            mTvTabletNumber.setText(content);
+
+        } else {
+            mTvTabletNumber.setText(tabletNumber);
+
+        }
+
+        mLibrarySwitch.setChecked(user.isOpenLibrary());
+        mLibrarySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setOpenLibrary(isChecked);
+                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
+            }
+        });
+
+        mToolsSwitch.setChecked(user.isOpenTools());
+        mToolsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setOpenTools(isChecked);
+                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
+            }
+        });
     }
 
     public void onClickUnlockAll(View v) {
@@ -551,7 +585,7 @@ public class SettingActivity extends KitKitLoggerActivity {
         User user = dbHandler.getCurrentUser();
         user.setNumStars(user.getNumStars()+100);
         dbHandler.updateUser(user);
-        refresh();
+        refreshUI();
     }
 
     public void onClickAddThousandStars(View v) {
@@ -559,7 +593,7 @@ public class SettingActivity extends KitKitLoggerActivity {
         User user = dbHandler.getCurrentUser();
         user.setNumStars(user.getNumStars()+1000);
         dbHandler.updateUser(user);
-        refresh();
+        refreshUI();
     }
 
     private Rect mTempRect = new Rect();
@@ -588,16 +622,4 @@ public class SettingActivity extends KitKitLoggerActivity {
             return true;
         }
     };
-
-//    public void changeLanguageOthers(String lang) {
-//        Log.d(TAG, "change language all");
-//        String apps[] = {"com.enuma.xprize", "library.todoschool.enuma.com.todoschoollibrary", "com.enuma.todoschoollockscreen" };
-//        for(String app : apps) {
-//            Intent i = getPackageManager()
-//                    .getLaunchIntentForPackage( app );
-//            i.putExtra("changeAppLanguage", lang);
-//            startActivity(i);
-//        }
-//
-//    }
 }

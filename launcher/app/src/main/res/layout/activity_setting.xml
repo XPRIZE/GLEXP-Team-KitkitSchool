@@ -48,8 +48,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="40px"
             android:layout_marginRight="40px"
             android:layout_toLeftOf="@+id/coin_layout_tools"
+            android:layout_toRightOf="@+id/toolbar_title"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:maxLines="1"
             android:text="AAA"
             android:textColor="#ffffff"
             android:textSize="60px" />
@@ -110,16 +115,19 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
+            <!-- left side -->
             <LinearLayout
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_marginTop="90px"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
+                <!-- Go to Android Setting -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
                     android:onClick="onClickSetting">
 
@@ -141,136 +149,37 @@
 
                 </FrameLayout>
 
+                <!-- select user -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
-                    android:onClick="onClickUpload">
+                    android:onClick="onClickSelectUser">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="50px"
                         android:scaleType="center"
-                        android:src="@drawable/icon_document" />
+                        android:src="@drawable/icon_document_2" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/setting_padding"
                         android:gravity="center"
-                        android:text="@string/btn_upload"
+                        android:text="@string/select_user"
                         android:textColor="@android:color/white"
                         android:textSize="60px" />
 
                 </FrameLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:onClick="onClickClearAppdata">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/btn_clear_appdata"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:onClick="onClickPretest">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/btn_pretest"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:onClick="onClickPosttest">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/btn_posttest"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:visibility="gone"
-                    android:onClick="onClickChangeLanguage">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/btn_changeLanguage"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
+                <!-- Library -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
                     android:onClick="onClickLibrary">
 
@@ -328,10 +237,11 @@
 
                 </RelativeLayout>
 
+                <!-- Tools -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
                     android:onClick="onClickTools">
 
@@ -389,109 +299,11 @@
 
                 </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0px"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:background="#f7f7f7"
-                android:orientation="vertical"
-                android:paddingBottom="16px"
-                android:paddingLeft="100px"
-                android:paddingRight="16px">
-
-                <EditText
-                    android:id="@+id/ftp_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_edit_height"
-                    android:layout_marginBottom="16px"
-                    android:hint="hostname"
-                    android:paddingBottom="15px"
-                    android:textSize="60px" />
-
-                <EditText
-                    android:id="@+id/ftp_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_edit_height"
-                    android:layout_marginBottom="16px"
-                    android:hint="username"
-                    android:paddingBottom="15px"
-                    android:textSize="60px" />
-
-                <EditText
-                    android:id="@+id/ftp_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_edit_height"
-                    android:layout_marginBottom="16px"
-                    android:hint="password"
-                    android:inputType="textPassword"
-                    android:paddingBottom="15px"
-                    android:textSize="60px" />
-
-                <EditText
-                    android:id="@+id/ftp_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_edit_height"
-                    android:layout_marginBottom="16px"
-                    android:hint="port"
-                    android:paddingBottom="15px"
-                    android:textSize="60px" />
-
+                <!-- Add 100 starts -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:onClick="onClickSelectUser">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/select_user"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
-                    android:background="@drawable/bg_setting"
-                    android:onClick="onClickUnlockAll">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="50px"
-                        android:scaleType="center"
-                        android:src="@drawable/icon_document" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/setting_padding"
-                        android:gravity="center"
-                        android:text="@string/unlock_all"
-                        android:textColor="@android:color/white"
-                        android:textSize="60px" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
                     android:onClick="onClickAddHundredStars">
 
@@ -513,10 +325,11 @@
 
                 </FrameLayout>
 
+                <!-- Add 1000 starts -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"
-                    android:layout_marginBottom="16px"
+                    android:layout_marginBottom="32px"
                     android:background="@drawable/bg_setting"
                     android:onClick="onClickAddThousandStars">
 
@@ -537,6 +350,255 @@
                         android:textSize="60px" />
 
                 </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickUpload"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_upload"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickClearAppdata"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_clear_appdata"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickChangeLanguage"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_changeLanguage"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- center space -->
+            <Space
+                android:layout_width="30dp"
+                android:layout_height="match_parent" />
+
+            <!-- right side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_marginTop="90px"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Pre-test -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting_2"
+                    android:onClick="onClickPretest">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_pretest"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- Post-test -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting_2"
+                    android:onClick="onClickPosttest">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_posttest"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- User name -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting_2"
+                    android:onClick="onClickUserName">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/user_name"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- Tablet number -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting_2"
+                    android:onClick="onClickTabletNumber">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/tablet_number"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                    <TextView
+                        android:id="@+id/tv_tablet_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/tablet_number"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </RelativeLayout>
+
+                <EditText
+                    android:id="@+id/ftp_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_edit_height"
+                    android:layout_marginBottom="16px"
+                    android:hint="hostname"
+                    android:paddingBottom="15px"
+                    android:textSize="60px"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/ftp_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_edit_height"
+                    android:layout_marginBottom="16px"
+                    android:hint="username"
+                    android:paddingBottom="15px"
+                    android:textSize="60px"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/ftp_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_edit_height"
+                    android:layout_marginBottom="16px"
+                    android:hint="password"
+                    android:inputType="textPassword"
+                    android:paddingBottom="15px"
+                    android:textSize="60px"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/ftp_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_edit_height"
+                    android:layout_marginBottom="16px"
+                    android:hint="port"
+                    android:paddingBottom="15px"
+                    android:textSize="60px"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </LinearLayout>

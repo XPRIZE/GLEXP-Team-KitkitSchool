@@ -58,7 +58,7 @@ public class SelectUserDialogFragment extends DialogFragment implements LoaderMa
                         if (userBundle != null && userBundle.equals("ABOUT")) {
                             ((AboutActivity) getActivity()).onResume();
                         } else {
-                            ((SettingActivity) getActivity()).refresh();
+                            ((SettingActivity) getActivity()).refreshUI();
                         }
                         cursor.close();
                     }

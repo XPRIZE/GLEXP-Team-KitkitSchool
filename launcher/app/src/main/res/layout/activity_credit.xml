@@ -43,17 +43,17 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Creative Lead"
-                    android:textAlignment="viewEnd"
+                    android:text="Executive Producer"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
                     android:text="Sooinn Lee"
                     android:textColor="@color/colorCreditText"
@@ -71,19 +71,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
                     android:text="Programming"
-                    android:textAlignment="viewEnd"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Dr. Gunho Lee\nJaehun (JH) Jung\nSungwoo Kang\nSukkwon Lee\nHyeonGyu Yu\nLoice Andia (Andela Inc.)\nYongSoo Hong\nTaihyun Hwang"
+                    android:text="Gunho Lee (Lead Engineer)\nDongyeon Hwang\nHyeonGyu Yu\nJae Hun Jung\nLoice Andia (Andela Inc.)\nSukkwon Lee\nSungwoo Kang\nTaihyun Hwang\nYongSoo Hong"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
 
@@ -99,19 +99,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Art Design"
-                    android:textAlignment="viewEnd"
+                    android:text="Graphic Arts"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Hansang Jo\nNesia Anindita\nDalrae Kim\nHye Myung Lee"
+                    android:text="Hansang Jo (Art director)\nDalrae Kim\nHye Myung Lee\nNesia Anindita"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
 
@@ -127,19 +127,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Curriculum Design"
-                    android:textAlignment="viewEnd"
+                    android:text="Game Design"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Dr. Hye Kyung Lee\nInkyung Jung\nJung Mi Song"
+                    android:text="Hyung Jin (Raoul) Kim (Lead Game Designer)\nJusun Kim\nSeongwoo Kim\nYeongji Choi"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
 
@@ -155,19 +155,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Kiswahili Content"
-                    android:textAlignment="viewEnd"
+                    android:text="Production"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Lucy Geay\nYeongji Choi"
+                    android:text="Vimonmas (Pam) Vachatimanont (Production Manager)\nMike Jaffe\nDoohaeng Lee\nSangjun Park"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
 
@@ -183,19 +183,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Sound"
-                    android:textAlignment="viewEnd"
+                    android:text="Quality Assurance"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="David Franco"
+                    android:text="Jinna Cha\nMinjin Ko"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -210,17 +210,44 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Video"
-                    android:textAlignment="viewEnd"
+                    android:text="Operations"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
+                    android:layout_weight="1"
+                    android:text="Eugine Chung\nYoutaeg Jeon\nEunpah Kim\nHyunju Kim\nJae Yoon Jung\nTae Young Kim\nJosephine Lai"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="44px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="80px"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20px"
+                    android:layout_weight="1"
+                    android:text="Video Production"
+                    android:gravity="right"
+                    android:textColor="@color/colorCreditText"
+                    android:textSize="28px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
                     android:text="Ryan Massey"
                     android:textColor="@color/colorCreditText"
@@ -237,19 +264,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Production"
-                    android:textAlignment="viewEnd"
+                    android:text="Sound"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Hyung Jin (Raoul) Kim\nPam Vachatimanont\nSeongwoo Kim\nYeongji Choi\nMike Jaffe\nDoohaeng Lee\nSangjun Park"
+                    android:text="David Franco\nDoong Sound, Inc."
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -264,19 +291,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Quality Assurance"
-                    android:textAlignment="viewEnd"
+                    android:text="Curriculum Design"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Jinna Cha\nHyunsoo Seo"
+                    android:text="Hye Kyung Lee\nInkyung Jung\nJung Mi Song\nLucy Geay"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -291,19 +318,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Operations"
-                    android:textAlignment="viewEnd"
+                    android:text="And..."
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Eugine Chung\nYoutaeg Jeon\nJosephine Lai"
+                    android:text="Alexis Daniel\nJae Hun Lee\nSeunghwa Baek\nJiaqiang (David) Zhou\nJangsu Park\nTaekyung Kwon\nHyejung Han\nSeongji Kim\nYoonJeong Ku"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -318,19 +345,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
-                    android:text="Contributor"
-                    android:textAlignment="viewEnd"
+                    android:text="Other participants"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Junggun Lim"
+                    android:text="Blue Cloud, Inc.\nHyoin Kim\nJunggun Lim\nHamza Mrisho\nImmaculate Kyamanywa\nMilliesoft\nHeesub Ahn\nJihyun Kim\nYiseul Choi"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -345,19 +372,19 @@
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="20px"
+                    android:layout_marginRight="20px"
                     android:layout_weight="1"
                     android:text="Cognitive Computing Lab,\nSeoul National University"
-                    android:textAlignment="viewEnd"
+                    android:gravity="right"
                     android:textColor="@color/colorCreditText"
                     android:textSize="28px" />
 
                 <TextView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="20px"
+                    android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Dr. Gahgene Gweon\nBugeun Kim\nJungwook Rhim\nJihyun Rho"
+                    android:text="Prof. Gahgene Gweon\nBugeun Kim\nJihyun Rho\nJungwook Rhim"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -389,15 +416,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="KOICA (Korea International Corporation Agency)"
+                android:text="Korea International Coorporation Agency(KOICA)  CTS Program"
                 android:textColor="@color/colorCreditText"
                 android:textSize="44px" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="260px"
-                android:text="Note: Book and video credits are included at the end of each work"
+                android:layout_marginTop="240px"
+                android:text="Additional:"
+                android:textColor="@color/colorCreditText"
+                android:textSize="56px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Book and video credits are included at the end of each work.\nJuan-Jose Marcos is the author of DN KidLetters font."
                 android:textColor="@color/colorCreditText"
                 android:textSize="44px" />
 
@@ -405,9 +439,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="240px"
-                android:layout_marginTop="130px"
+                android:layout_marginTop="240px"
                 android:gravity="center_horizontal"
-                android:text="Copyright 2018 Enuma, Inc. Licensed under the Apache License, Version 2.0 and the Creative\nCommons Attribution International 4.0 License (the “Licenses”); you may not use this file except\nin compliance with the Licenses. You may obtain a copy of the Licenses at\nhttp://www.apache.org/licenses/LICENSE-2.0 and http://creativecommons.org/licenses/by/4.0/\nUnless required by applicable law or agreed to in writing, software distributed under the Licenses\nis distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,\neither express or implied. See the Licenses for the specific language governing permissions and\nlimitations under the Licenses"
+                android:text="Copyright 2018 Enuma, Inc.\nLicensed under the Apache License, Version 2.0 and the Creative Commons Attribution International 4.0 License (the “Licenses”);\nyou may not use this file except in compliance with the Licenses. You may obtain a copy of the Licenses at\n\nhttp://www.apache.org/licenses/LICENSE-2.0 and http://creativecommons.org/licenses/by/4.0/\n\nUnless required by applicable law or agreed to in writing, software distributed under the Licenses is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licenses for the specific language governing permissions and limitations under the Licenses."
                 android:textColor="@color/colorCreditText"
                 android:textSize="44px" />
         </LinearLayout>
@@ -417,8 +451,8 @@
         android:id="@+id/close_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="44px"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="44px"
         android:layout_marginTop="44px"
         android:background="@android:color/transparent"
         android:onClick="onClickClose"

@@ -28,9 +28,9 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/library_icon_back"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="60px"/>
+                android:layout_marginLeft="60px"
+                android:background="@drawable/library_icon_back" />
 
         </RelativeLayout>
 
@@ -49,10 +49,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textSize="60px"
             android:layout_marginRight="30px"
+            android:text="@string/user_default_id"
             android:textColor="#ffffff"
-            android:text="@string/user_default_id"/>
+            android:textSize="60px" />
 
     </RelativeLayout>
 
@@ -74,83 +74,140 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginTop="90px"
+            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/setting_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16px"
-                android:background="@drawable/xprize_about_button_setting"
-                android:onClick="onClickSetting"
-                android:paddingStart="@dimen/setting_padding"
-                android:paddingBottom="20px"
-                android:text="@string/btn_setting"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="60px" />
+            <!-- left side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/select_user_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16px"
-                android:background="@drawable/xprize_about_button_credits"
-                android:onClick="onClickSetting"
-                android:paddingStart="@dimen/setting_padding"
-                android:paddingBottom="20px"
-                android:text="@string/select_user"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="60px" />
+                <!-- Settings -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickSetting">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16px"
-                android:background="@drawable/xprize_about_button_credits"
-                android:onClick="onClickCredit"
-                android:paddingStart="@dimen/setting_padding"
-                android:paddingBottom="20px"
-                android:text="@string/btn_credit"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="60px" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_setting" />
 
-            <TextView
-                android:id="@+id/version_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="100px"
-                android:textColor="#6b6b6b"
-                android:textSize="50px" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_setting"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
 
+                </FrameLayout>
+
+                <!-- Administration -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickAdministration">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_administration"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- Credit -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickCredit">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_credit"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/version_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30px"
+                    android:textColor="#6b6b6b"
+                    android:textSize="50px" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/xprize_about_image_enuma" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40px"
+                    android:gravity="bottom"
+                    android:text="@string/enuma_info"
+                    android:textColor="#6b6b6b"
+                    android:textSize="40px" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="50px" />
+
+            </LinearLayout>
+
+            <!-- center space -->
             <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_width="30dp"
+                android:layout_height="match_parent" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/xprize_about_image_enuma" />
+            <!-- right side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40px"
-                android:gravity="bottom"
-                android:text="@string/enuma_info"
-                android:textColor="#6b6b6b"
-                android:textSize="40px" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="50px" />
-
+            </LinearLayout>
         </LinearLayout>
 
     </FrameLayout>

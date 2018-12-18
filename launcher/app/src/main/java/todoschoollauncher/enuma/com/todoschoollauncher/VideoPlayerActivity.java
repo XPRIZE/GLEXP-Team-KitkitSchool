@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     private SurfaceView mVideoView;
     private int mCurrentPosition;
     private boolean mbPause;
+    private String mVideoFileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +53,30 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
 
         mVideoView.getHolder().addCallback(this);
 
-        if (getAppLanguage().equals("sw-TZ")) {
-            playVideo("sw_vdo_tut_welcome.m4v");
-        } else {
-            playVideo("en_vdo_tut_welcome.m4v");
+
+        String video = "";
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            video = bundle.getString("video", "");
         }
 
+        if (video.equals("writing_board")) {
+            if (getAppLanguage().equals("sw-TZ")) {
+                mVideoFileName = "tutorial_writingboard_sw.mp4";
+            } else {
+                mVideoFileName = "tutorial_writingboard_en.mp4";
+            }
+
+        } else {
+            if (getAppLanguage().equals("sw-TZ")) {
+                mVideoFileName = "sw_vdo_tut_welcome.m4v";
+
+            } else {
+                mVideoFileName = "en_vdo_tut_welcome.m4v";
+            }
+        }
+
+        playVideo(mVideoFileName);
     }
 
     @Override
@@ -77,13 +97,8 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            if (mbPause == true) {
-                mMediaPlayer.seekTo(mCurrentPosition);
-                mMediaPlayer.start();
-            }
-        } catch (Exception e) {
-
+        if (mbPause == true) {
+            playVideo(mVideoFileName);
         }
     }
 
@@ -118,12 +133,10 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
     }
 
     private void playVideo(String fileName) {
@@ -134,10 +147,17 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
             AssetFileDescriptor fd = getAssets().openFd(fileName);
             mMediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
             mMediaPlayer.prepare();
+
+            if (mbPause) {
+                mMediaPlayer.seekTo(mCurrentPosition);
+            }
+
             mMediaPlayer.start();
 
         } catch (Exception e) {
+            Log.e("myLog", "" + e);
             e.printStackTrace();
+            finish();
         }
     }
 }

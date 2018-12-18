@@ -9,11 +9,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * Created by ingtellect on 1/11/17.
@@ -26,6 +28,7 @@ public class PasswordDialogFragment extends DialogFragment {
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface PasswordDialogListener {
         public void onDialogPositiveClick(DialogFragment dialog, String redirectTo);
+
         public void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -56,45 +59,65 @@ public class PasswordDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        Log.d("frag args", this.getArguments().getString("userobject"));
+        final String redirectToClass = this.getArguments().getString("userobject");
+
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_password, null);
         passwordEditText = (EditText) dialogView.findViewById(R.id.password);
+        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    processEnter(redirectToClass);
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        Log.d("frag args", this.getArguments().getString("userobject"));
-        final String redirectToClass = this.getArguments().getString("userobject");
+        TextView tvCancel = (TextView) dialogView.findViewById(R.id.tv_cancel);
+        TextView tvConfirm = (TextView) dialogView.findViewById(R.id.tv_confirm);
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+        tvConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                processEnter(redirectToClass);
+            }
+        });
 
-        builder.setView(dialogView)
-                .setPositiveButton(redirectToClass, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.d("tag",passwordEditText.getText().toString());
-                        if(passwordEditText.getText().toString().equals("2019")) {
-                            mListener.onDialogPositiveClick(PasswordDialogFragment.this, redirectToClass);
-                        }
-                        else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle(android.R.string.dialog_alert_title)
-                                    .setMessage(R.string.wrong_password)
-                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.dismiss();
-                                        }
-                                    })
-                                    .show();
+        builder.setView(dialogView);
 
-                        }
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(PasswordDialogFragment.this);
-
-                    }
-                });
         // Create the AlertDialog object and return it
         Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
+    }
+
+    private void processEnter(String redirect) {
+        final String password = redirect.compareToIgnoreCase("ADMINISTRATION") == 0 ? "2019" : "2019";
+
+        if (passwordEditText.getText().toString().equals(password)) {
+            mListener.onDialogPositiveClick(PasswordDialogFragment.this, redirect);
+
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(android.R.string.dialog_alert_title)
+                    .setMessage(R.string.wrong_password)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .show();
+
+        }
     }
 }

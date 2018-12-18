@@ -6,7 +6,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +22,11 @@ import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
 
-import org.apmem.tools.layouts.FlowLayout;
-
 /**
  * Created by ingtellect on 1/3/17.
  */
 
 public class ToolsActivity extends KitKitLoggerActivity {
-
-    final String cameraPackageName = "com.android.camera2";
-    final String galleryPackageName = "com.android.gallery3d";
 
     private User currentUser;
     private boolean isAnimating;
@@ -55,50 +49,6 @@ public class ToolsActivity extends KitKitLoggerActivity {
         });
 
         isAnimating = false;
-
-
-//        ImageButton cameraButton = (ImageButton) findViewById(R.id.button_camera);
-//        final PackageManager pm = getApplicationContext().getPackageManager();
-//        ApplicationInfo ai;
-//        try {
-//            ai = pm.getApplicationInfo( cameraPackageName, 0);
-//        } catch (final PackageManager.NameNotFoundException e) {
-//            ai = null;
-//        }
-//        final String cameraAppName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-//        TextView cameraTextView = (TextView) findViewById(R.id.camera_textView);
-//        cameraTextView.setText(cameraAppName);
-//
-//        cameraButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = getPackageManager().getLaunchIntentForPackage(cameraPackageName);
-//                startActivity(i);
-//                KitKitLogger logger = ((LauncherApplication)getApplication()).getLogger();
-//                logger.logEvent("ToolsActivity","start_camera","",0);
-//            }
-//        });
-//
-//
-//        final ImageButton gallaryButton = (ImageButton) findViewById(R.id.button_gallery);
-//        try {
-//            ai = pm.getApplicationInfo( galleryPackageName, 0);
-//        } catch (final PackageManager.NameNotFoundException e) {
-//            ai = null;
-//        }
-//        final String galleryAppName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-//        TextView galleryTextView = (TextView) findViewById(R.id.gallery_textView);
-//        galleryTextView.setText(galleryAppName);
-//
-//        gallaryButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = getPackageManager().getLaunchIntentForPackage(galleryPackageName);
-//                startActivity(i);
-//                KitKitLogger logger = ((LauncherApplication)getApplication()).getLogger();
-//                logger.logEvent("ToolsActivity","start_gallery","",0);
-//            }
-//        });
 
         currentUser = ((LauncherApplication) getApplication()).getCurrentUser();
 
@@ -201,6 +151,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView drawing = (ToolsAppView) findViewById(R.id.app_drawing);
         drawing.setItem("drawing", getString(R.string.drawing), "tools_image_icon_drawing", "tools_image_icon_drawing_disabled", "300");
+        drawing.setUnlocked(true);
+        drawing.setEnable(true);
         drawing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,6 +183,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView coloring = (ToolsAppView) findViewById(R.id.app_coloring);
         coloring.setItem("coloring", getString(R.string.coloring), "tools_image_icon_coloring", "tools_image_icon_coloring_disabled", "500");
+        coloring.setUnlocked(true);
+        coloring.setEnable(true);
 
         coloring.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,6 +231,59 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                     }
 
+                }
+            }
+        });
+
+        ToolsAppView fishBowl = (ToolsAppView) findViewById(R.id.app_fish_bowl);
+        fishBowl.setItem("fish_bowl", getString(R.string.fish_bowl), "tools_image_icon_sea_world", "tools_image_icon_sea_world_disabled", "0");
+        fishBowl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!v.isEnabled()) {
+                    return;
+                }
+                ToolsAppView tv = (ToolsAppView) v;
+                if (tv.isUnlocked()) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.setComponent(new ComponentName("com.enuma.xprize.FB", "org.cocos2dx.cpp.AppActivity"));
+                        startActivity(intent);
+                        KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
+                        logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }
+        });
+
+        ToolsAppView writingBoard = (ToolsAppView) findViewById(R.id.app_writing_board);
+        writingBoard.setItem("writingboard", getString(R.string.writing_board), "tools_image_icon_writing_board", "tools_image_icon_writing_board_disabled", "200");
+        writingBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!v.isEnabled()) {
+                    return;
+                }
+                ToolsAppView tv = (ToolsAppView) v;
+                if (tv.isUnlocked()) {
+                    if (gotoVideoPlayerForWritingBoard() == false) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.setComponent(new ComponentName("com.enuma.writingboard", "com.enuma.writingboard.activity.MainActivity"));
+                            intent.putExtra("LANGUAGE", getAppLanguage());
+                            startActivity(intent);
+                            KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
+                            logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                } else {
+                    unlock(tv);
                 }
             }
         });
@@ -330,66 +337,29 @@ public class ToolsActivity extends KitKitLoggerActivity {
         TextView textViewNumCoin = (TextView) findViewById(R.id.textView_numCoin);
         textViewNumCoin.setText(String.format("%d", currentUser.getNumStars()));
 
-//        ToolsAppView drum = (ToolsAppView) findViewById(R.id.app_drum);
-//        if (currentUser.isUnlockDrum()) {
-//            drum.setUnlocked(true);
-//            drum.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 30) {
-//                drum.setEnable(true);
-//            } else {
-//                drum.setEnable(false);
-//            }
-//        }
-//
-//        ToolsAppView marimba = (ToolsAppView) findViewById(R.id.app_marimba);
-//        if (currentUser.isUnlockMarimba()) {
-//            marimba.setEnable(true);
-//            marimba.setUnlocked(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 100) {
-//                marimba.setEnable(true);
-//            } else {
-//                marimba.setEnable(false);
-//            }
-//        }
-//
-//
-//        ToolsAppView blackboard = (ToolsAppView) findViewById(R.id.app_blackboard);
-//        if (currentUser.isUnlockBlackboard()) {
-//            blackboard.setUnlocked(true);
-//            blackboard.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 200) {
-//                blackboard.setEnable(true);
-//            } else {
-//                blackboard.setEnable(false);
-//            }
-//        }
-
         ToolsAppView drawing = (ToolsAppView) findViewById(R.id.app_drawing);
-        if (currentUser.isUnlockDrawing()) {
-            drawing.setUnlocked(true);
-            drawing.setEnable(true);
-        } else {
-            if (currentUser.getNumStars() >= 300) {
-                drawing.setEnable(true);
-            } else {
-                drawing.setEnable(false);
-            }
-        }
+//        if (currentUser.isUnlockDrawing()) {
+//            drawing.setUnlocked(true);
+//            drawing.setEnable(true);
+//        } else {
+//            if (currentUser.getNumStars() >= 300) {
+//                drawing.setEnable(true);
+//            } else {
+//                drawing.setEnable(false);
+//            }
+//        }
 
         ToolsAppView coloring = (ToolsAppView) findViewById(R.id.app_coloring);
-        if (currentUser.isUnlockColoring()) {
-            coloring.setUnlocked(true);
-            coloring.setEnable(true);
-        } else {
-            if (currentUser.getNumStars() >= 500) {
-                coloring.setEnable(true);
-            } else {
-                coloring.setEnable(false);
-            }
-        }
+//        if (currentUser.isUnlockColoring()) {
+//            coloring.setUnlocked(true);
+//            coloring.setEnable(true);
+//        } else {
+//            if (currentUser.getNumStars() >= 500) {
+//                coloring.setEnable(true);
+//            } else {
+//                coloring.setEnable(false);
+//            }
+//        }
 
         ToolsAppView album = (ToolsAppView) findViewById(R.id.app_album);
         if (drawing.isUnlocked() || coloring.isUnlocked()) {
@@ -398,6 +368,30 @@ public class ToolsActivity extends KitKitLoggerActivity {
         } else {
             album.setUnlocked(false);
             album.setEnable(false);
+        }
+
+        ToolsAppView fishBowl = (ToolsAppView) findViewById(R.id.app_fish_bowl);
+        if (currentUser.isUnlockFishBowl()) {
+            fishBowl.setUnlocked(true);
+            fishBowl.setEnable(true);
+
+        } else {
+            fishBowl.setUnlocked(false);
+            fishBowl.setEnable(false);
+
+        }
+
+        ToolsAppView writingBoard = (ToolsAppView) findViewById(R.id.app_writing_board);
+        if (currentUser.isUnlockWritingBoard()) {
+            writingBoard.setUnlocked(true);
+            writingBoard.setEnable(true);
+
+        } else {
+            if (currentUser.getNumStars() >= 200) {
+                writingBoard.setEnable(true);
+            } else {
+                writingBoard.setEnable(false);
+            }
         }
     }
 
@@ -430,7 +424,6 @@ public class ToolsActivity extends KitKitLoggerActivity {
             coin.setImageResource(R.drawable.daily_coinstatus_coin);
             coin.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             coinLayout.addView(coin);
-            coinLayout.bringToFront();
 
             TranslateAnimation anim = new TranslateAnimation(0, itemLocation[0] - coinLocation[0] + view.getWidth() / 2 - coinImageInToolbar.getWidth() / 2, 0, itemLocation[1] - coinLocation[1] + view.getHeight() / 3);
             anim.setStartTime(AnimationUtils.currentAnimationTimeMillis() + i * 100);
@@ -463,6 +456,9 @@ public class ToolsActivity extends KitKitLoggerActivity {
                             case "blackboard":
                                 currentUser.setUnlockBlackboard(true);
                                 break;
+                            case "writingboard":
+                                currentUser.setUnlockWritingBoard(true);
+                                break;
                             default:
                                 return;
                         }
@@ -488,6 +484,23 @@ public class ToolsActivity extends KitKitLoggerActivity {
             coin.setAnimation(anim);
         }
   }
+
+    private boolean gotoVideoPlayerForWritingBoard() {
+        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
+
+        if (user.isFinishWritingBoardTutorial() == false) {
+            user.setFinishWritingBoardTutorial(true);
+            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
+
+            Intent i = new Intent(ToolsActivity.this, VideoPlayerActivity.class);
+            i.putExtra("video", "writing_board");
+            startActivity(i);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            return true;
+        }
+
+        return false;
+    }
 
     private Rect mTempRect = new Rect();
     private boolean mbPressed = false;

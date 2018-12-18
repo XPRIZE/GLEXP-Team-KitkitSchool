@@ -5,8 +5,8 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,11 +55,11 @@ public class ToolsAppView extends LinearLayout {
         View v = inflate(context, R.layout.item_toolapps, null);
         addView(v);
 
-        imageViewAppIcon = (ImageView)v.findViewById(R.id.imageView_appIcon);
-        imageViewShadow = (ImageView)v.findViewById(R.id.imageView_shadow);
-        imageViewCoin = (ImageView)v.findViewById(R.id.imageView_coin);
-        textViewAppName = (TextView)v.findViewById(R.id.textView_appname);
-        textViewCoin = (TextView)v.findViewById(R.id.textView_coin);
+        imageViewAppIcon = (ImageView) v.findViewById(R.id.imageView_appIcon);
+        imageViewShadow = (ImageView) v.findViewById(R.id.imageView_shadow);
+        imageViewCoin = (ImageView) v.findViewById(R.id.imageView_coin);
+        textViewAppName = (TextView) v.findViewById(R.id.textView_appname);
+        textViewCoin = (TextView) v.findViewById(R.id.textView_coin);
         isUnlocked = false;
 
     }
@@ -69,6 +69,10 @@ public class ToolsAppView extends LinearLayout {
         appNameLocalized = appnameLocalized;
         appIconName = appiconname;
         appIconNameDisabled = appicondisabled;
+
+        if (appNameLocalized.contains("\n")) {
+            textViewAppName.setTextSize(TypedValue.COMPLEX_UNIT_PX, 70);
+        }
 
         textViewAppName.setText(appNameLocalized);
 
@@ -82,34 +86,42 @@ public class ToolsAppView extends LinearLayout {
     public void setEnable(boolean enable) {
 
         if (enable) {
-            imageViewAppIcon.setImageDrawable(getContext().getDrawable(getResources().getIdentifier(appIconName, "drawable", getContext().getPackageName())));
-            imageViewShadow.setImageDrawable(getContext().getDrawable(getResources().getIdentifier("tools_image_icon_shadow", "drawable", getContext().getPackageName())));
-            imageViewCoin.setImageDrawable(getContext().getDrawable(getResources().getIdentifier("tools_image_icon_coin", "drawable", getContext().getPackageName())));
+            imageViewAppIcon.setImageResource(getResources().getIdentifier(appIconName, "drawable", getContext().getPackageName()));
+            imageViewShadow.setImageResource(getResources().getIdentifier("tools_image_icon_shadow", "drawable", getContext().getPackageName()));
+            imageViewCoin.setImageResource(getResources().getIdentifier("tools_image_icon_coin", "drawable", getContext().getPackageName()));
             textViewCoin.setTextColor(ContextCompat.getColor(getContext(), R.color.coinNumberText));
 
             this.setAlpha(1);
-        }
-        else {
-            imageViewAppIcon.setImageDrawable(getContext().getDrawable(getResources().getIdentifier(appIconNameDisabled, "drawable", getContext().getPackageName())));
-            imageViewShadow.setImageDrawable(getContext().getDrawable(getResources().getIdentifier("tools_image_icon_shadow_disabled", "drawable", getContext().getPackageName())));
-            imageViewCoin.setImageDrawable(getContext().getDrawable(getResources().getIdentifier("tools_image_icon_coin_disabled", "drawable", getContext().getPackageName())));
+        } else {
+            imageViewAppIcon.setImageResource(getResources().getIdentifier(appIconNameDisabled, "drawable", getContext().getPackageName()));
+            imageViewShadow.setImageResource(getResources().getIdentifier("tools_image_icon_shadow_disabled", "drawable", getContext().getPackageName()));
+            imageViewCoin.setImageResource(getResources().getIdentifier("tools_image_icon_coin_disabled", "drawable", getContext().getPackageName()));
             textViewCoin.setTextColor(ContextCompat.getColor(getContext(), R.color.coinNumberTextDisabled));
 
             this.setAlpha(0.4f);
         }
+
         setEnabled(enable);
 
     }
 
     public void setUnlocked(boolean unlocked) {
 
-        LinearLayout coinLayout = (LinearLayout)findViewById(R.id.coin_layout);
+        LinearLayout coinLayout = (LinearLayout) findViewById(R.id.coin_layout);
         if (unlocked) {
-            coinLayout.setVisibility(INVISIBLE);
+            if (appNameLocalized.contains("\n")) {
+                coinLayout.setVisibility(GONE);
+                LinearLayout.LayoutParams params = (LayoutParams)textViewAppName.getLayoutParams();
+                params.bottomMargin = 70;
+                textViewAppName.setLayoutParams(params);
 
-        }
-        else {
+            } else {
+                coinLayout.setVisibility(INVISIBLE);
+            }
+
+        } else {
             coinLayout.setVisibility(VISIBLE);
+
         }
         isUnlocked = unlocked;
     }
@@ -118,7 +130,12 @@ public class ToolsAppView extends LinearLayout {
         return isUnlocked;
     }
 
-    public String getAppID() { return appID; }
-    public int getNumCoin() { return numCoin; }
+    public String getAppID() {
+        return appID;
+    }
+
+    public int getNumCoin() {
+        return numCoin;
+    }
 
 }

@@ -1,6 +1,6 @@
 package todoschoollauncher.enuma.com.todoschoollauncher;
 
-import android.app.ActivityManager;
+import android.app.DialogFragment;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -37,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.enuma.kitkitProvider.KitkitDBHandler;
 import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
@@ -59,7 +60,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
-public class MainActivity extends KitKitLoggerActivity {
+public class MainActivity extends KitKitLoggerActivity implements PasswordDialogFragment.PasswordDialogListener {
 
     public static String TAG = "TodoschoolLancher";
     private FtpClient ftpclient = null;
@@ -77,6 +78,7 @@ public class MainActivity extends KitKitLoggerActivity {
 
     private Context cntx = null;
     private Button mTitle;
+    private TextView mTvUserName;
 
     private  PowerConnectionReceiver _batteryinfo = new PowerConnectionReceiver() {
         @Override
@@ -227,41 +229,10 @@ public class MainActivity extends KitKitLoggerActivity {
         Typeface face = Typeface.createFromAsset(getAssets(),
                 "TodoMainCurly.ttf");
         mTitle.setTypeface(face);
-        final Handler handle = new Handler();
+        mTitle.setOnTouchListener(mLongTouchListener);
 
-        mTitle.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                switch (arg1.getAction()) {
-                    case MotionEvent.ACTION_BUTTON_PRESS:
-                    case MotionEvent.ACTION_DOWN:
-                        //Log.d("onTouch", "touch started");
-
-                        handle.postDelayed(run, 5*1000);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_BUTTON_RELEASE:
-                        //Log.d("onTouch", "touch canceled");
-                        handle.removeCallbacks(run);
-
-                    default:
-                        break;
-
-                }
-                return true;
-            }
-
-            Runnable run = new Runnable() {
-                @Override
-                public void run() {
-                    //Log.d("runnable", "start setting activity");
-                    Intent i = new Intent(MainActivity.this, AboutActivity.class);
-                    startActivity(i);
-                }
-            };
-        });
+        mTvUserName = (TextView) findViewById(R.id.textView_currentUserId);
+        mTvUserName.setOnTouchListener(mLongTouchListener);
 
         registerLockscreenReceiver();
 
@@ -281,6 +252,7 @@ public class MainActivity extends KitKitLoggerActivity {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(_wifiInfo, intentFilter);
 
+        setDefaultPreference();
     }
     /** code to post/handler request for permission */
     public static final int OVERLAY_PERMISSION_REQ_CODE = 4545;
@@ -300,54 +272,12 @@ public class MainActivity extends KitKitLoggerActivity {
         KitKitLogger logger = ((LauncherApplication)getApplication()).getLogger();
         logger.tagScreen("MainActivity");
 
-        User currentUser = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
-
-        ImageButton libraryButton = (ImageButton) findViewById(R.id.button_library);
-        ImageButton toolsButton = (ImageButton) findViewById(R.id.button_tool);
-
-        View libraryOverlay = findViewById(R.id.overlay_library);
-        View toolsOverlay = findViewById(R.id.overlay_tools);
-
-        if(currentUser.isFinishTutorial()) {
-            libraryButton.setEnabled(true);
-            libraryOverlay.setVisibility(View.GONE);
-            toolsButton.setEnabled(true);
-            toolsOverlay.setVisibility(View.GONE);
-            toolsOverlay.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-
-        }
-        else {
-            libraryButton.setEnabled(false);
-            libraryOverlay.setVisibility(View.VISIBLE);
-            toolsButton.setEnabled(false);
-            toolsOverlay.setVisibility(View.VISIBLE);
-
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean bOnLibrary = prefs.getBoolean("library_on", true);
-        if (bOnLibrary == false) {
-            libraryButton.setEnabled(false);
-            libraryOverlay.setVisibility(View.VISIBLE);
-        }
-
-        boolean bOnTools = prefs.getBoolean("tools_on", true);
-        if (bOnTools == false) {
-            toolsButton.setEnabled(false);
-            toolsOverlay.setVisibility(View.VISIBLE);
-        }
-
-
-        TextView textViewCoinNum = (TextView)findViewById(R.id.textView_numCoin);
-        textViewCoinNum.setText(String.format("%d",currentUser.getNumStars()));
-
-        displayCurrentUser();
+        refreshUI();
 
         if (Util.mBlockingView != null) {
             Util.mBlockingView.setOnTouchListener(mBlockViewTouchListener);
         }
     }
-
 
     @Override
     protected void onDestroy() {
@@ -391,6 +321,42 @@ public class MainActivity extends KitKitLoggerActivity {
         if (hasFocus) {
             Util.hideSystemUI(this);
         }
+    }
+
+    private void refreshUI() {
+        User currentUser = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
+
+        ImageButton libraryButton = (ImageButton) findViewById(R.id.button_library);
+        ImageButton toolsButton = (ImageButton) findViewById(R.id.button_tool);
+
+        View libraryOverlay = findViewById(R.id.overlay_library);
+        View toolsOverlay = findViewById(R.id.overlay_tools);
+
+        if (currentUser.isOpenLibrary()) {
+            libraryButton.setEnabled(true);
+            libraryOverlay.setVisibility(View.GONE);
+
+        } else {
+            libraryButton.setEnabled(false);
+            libraryOverlay.setVisibility(View.VISIBLE);
+
+        }
+
+
+        if (currentUser.isOpenTools()) {
+            toolsButton.setEnabled(true);
+            toolsOverlay.setVisibility(View.GONE);
+
+        } else {
+            toolsButton.setEnabled(false);
+            toolsOverlay.setVisibility(View.VISIBLE);
+
+        }
+
+        TextView textViewCoinNum = (TextView)findViewById(R.id.textView_numCoin);
+        textViewCoinNum.setText(String.format("%d",currentUser.getNumStars()));
+
+        displayCurrentUser();
     }
 
     private static PackageManager manager;
@@ -537,7 +503,10 @@ public class MainActivity extends KitKitLoggerActivity {
         return -1;
     }
 
+    private final int MSG_SUCCESS = 2;
     private final int MSG_UPLOAD_IMAGE = 100;
+    private final int MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD = 101;
+    private final int MSG_UPLOAD_LOG_IMAGE_SEA_WORLD = 102;
 
     private Handler handler = new Handler() {
 
@@ -547,7 +516,7 @@ public class MainActivity extends KitKitLoggerActivity {
                 // try upload
                 uploadLogs();
             } else if (msg.what == 1) {
-            } else if (msg.what == 2) {
+            } else if (msg.what == MSG_SUCCESS) {
                 //Toast.makeText(MainActivity.this, "Uploaded Successfully!",
                 //        Toast.LENGTH_LONG).show();
                 new Thread(new Runnable() {
@@ -562,7 +531,13 @@ public class MainActivity extends KitKitLoggerActivity {
                 //Toast.makeText(MainActivity.this, "Disconnected Successfully!",
                 //        Toast.LENGTH_LONG).show();
             } else if (msg.what == MSG_UPLOAD_IMAGE) {
-                uploadImages();
+                uploadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath(), "drawing", 20, MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD);
+
+            } else if (msg.what == MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD) {
+                uploadImages(PATH_IMAGE_LOG_WRITING_BOARD, "writingboard", 0, MSG_UPLOAD_LOG_IMAGE_SEA_WORLD);
+
+            } else if (msg.what == MSG_UPLOAD_LOG_IMAGE_SEA_WORLD) {
+                uploadImages(PATH_IMAGE_LOG_SEA_WORLD, "seaworld", 100, MSG_SUCCESS);
 
             } else {
                 //Toast.makeText(MainActivity.this, "Unable to Perform Action! : " + msg.what,
@@ -691,10 +666,17 @@ public class MainActivity extends KitKitLoggerActivity {
                                 log.getName(), "remote/", cntx);
                         if (status == true) {
                             try {
-                                ftpclient.mFTPClient.changeToParentDirectory();
+                                status = ftpclient.mFTPClient.changeToParentDirectory();
+                                if (status == false) {
+                                    break;
+                                }
                             } catch (Exception e) {
                                 Log.e(TAG, "", e);
+                                status = false;
+                                break;
                             }
+                        } else {
+                            break;
                         }
                     }
 
@@ -717,17 +699,18 @@ public class MainActivity extends KitKitLoggerActivity {
 
     public static final String TEMP_ZIP_FOLDER_NAME = "TEMP";
     public static final String UPLOAD_TIME_RECORD_FILE = "upload_time.txt";
+    public static final String PATH_IMAGE_LOG_WRITING_BOARD = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "writingboard" + File.separator + "log_image" + File.separator;
+    public static final String PATH_IMAGE_LOG_SEA_WORLD = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "sea_world" + File.separator + "images" + File.separator;
 
-    private void uploadImages() {
+    private void uploadImages(final String imagePath, final String type, final int maxUploadImageCount, final int nextMsgSuccess) {
         if (imageUploader != null) return;
         imageUploader = new Thread(new Runnable() {
             public void run() {
                 try {
-                    deleteImageZipFiles();
+                    deleteImageZipFiles(imagePath);
 
-                    boolean status = false;
-                    File dcimFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                    String tempZipFolder = dcimFolder.getAbsolutePath() + File.separator + TEMP_ZIP_FOLDER_NAME;
+                    boolean status = true;
+                    String tempZipFolder = imagePath + File.separator + TEMP_ZIP_FOLDER_NAME;
                     File uploadTimeFile = null;
 
                     if (writeFile(getCurrentDisplayTime(), tempZipFolder + File.separator + UPLOAD_TIME_RECORD_FILE) == true) {
@@ -737,46 +720,38 @@ public class MainActivity extends KitKitLoggerActivity {
                         }
                     }
 
-                    ArrayList<File> commonImages = getImageFileList(dcimFolder);
-                    if (commonImages.size() > 0) {
-                        if (uploadTimeFile != null) {
-                            commonImages.add(uploadTimeFile);
-                        }
-
-                        String zipFileName = Build.SERIAL + "_" + "user_common" + ".zip";
-                        if(compressZip(tempZipFolder, zipFileName, commonImages) == true) {
-                            status = uploadFtpImageFile(new File(tempZipFolder + File.separator + zipFileName));
-                        }
-                    }
-
-                    File[] userFolders = getImageFolderList(dcimFolder);
+                    File[] userFolders = getImageFolderList(new File(imagePath));
                     if (userFolders != null && userFolders.length > 0) {
                         for (File userFolder : userFolders) {
-                            ArrayList<File> images = getImageFileList(userFolder);
+                            ArrayList<File> images = getImageFileList(userFolder, maxUploadImageCount);
                             if (images.size() > 0) {
                                 if (uploadTimeFile != null) {
                                     images.add(uploadTimeFile);
                                 }
 
-                                String zipFileName = Build.SERIAL + "_" + userFolder.getName() + ".zip";
+                                String zipFileName = Build.SERIAL + "_" + userFolder.getName() + "_" + type + ".zip";
                                 if (compressZip(tempZipFolder, zipFileName, images) == true) {
                                     status = uploadFtpImageFile(new File(tempZipFolder + File.separator + zipFileName));
+                                    if (status == false) {
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
 
                     if (status == true) {
-                        Log.d(TAG, "uploadImages - Upload success");
-                        handler.sendEmptyMessage(2);
+                        Log.d(TAG, "uploadImages (" + type + ") - Upload success");
+                        imageUploader = null;
+                        handler.sendEmptyMessage(nextMsgSuccess);
                     } else {
-                        Log.d(TAG, "uploadImages - Upload failed");
+                        Log.d(TAG, "uploadImages (" + type + ") - Upload failed");
                         handler.sendEmptyMessage(-1);
                     }
                 }
                 finally {
                     imageUploader = null;
-                    deleteImageZipFiles();
+                    deleteImageZipFiles(imagePath);
                 }
             }
         });
@@ -790,23 +765,17 @@ public class MainActivity extends KitKitLoggerActivity {
 
         if (result == true) {
             try {
-                ftpclient.mFTPClient.changeToParentDirectory();
+                result = ftpclient.mFTPClient.changeToParentDirectory();
             } catch (Exception e) {
                 Log.e(TAG, "", e);
+                result = false;
             }
         }
         return result;
     }
 
     private void displayCurrentUser(){
-        TextView textViewUsername = (TextView)findViewById(R.id.textView_currentUserId);
-        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
-
-        if ("user0".equalsIgnoreCase(user.getUserName()) == false) {
-            textViewUsername.setText(user.getUserName());
-        } else {
-            textViewUsername.setText("");
-        }
+        Util.displayUserName(this, mTvUserName);
     }
 
     public static File[] getImageFolderList(File folder) {
@@ -817,18 +786,9 @@ public class MainActivity extends KitKitLoggerActivity {
                     return false;
                 }
 
-                if (pathname.getName().equalsIgnoreCase("Camera") == true) {
+                if (!pathname.getName().startsWith("user")) {
                     return false;
                 }
-
-                if (pathname.getName().equalsIgnoreCase(TEMP_ZIP_FOLDER_NAME) == true) {
-                    return false;
-                }
-
-                if (pathname.getName().equalsIgnoreCase(".thumbnails")) {
-                    return false;
-                }
-
                 return true;
             }
         });
@@ -837,6 +797,10 @@ public class MainActivity extends KitKitLoggerActivity {
     }
 
     public static  ArrayList<File> getImageFileList(File folder) {
+        return getImageFileList(folder, 0);
+    }
+
+    public static  ArrayList<File> getImageFileList(File folder, int maxUploadImageCount) {
         ArrayList<File> result = new ArrayList<>();
         File[] files = folder.listFiles(new FileFilter() {
             @Override
@@ -862,9 +826,10 @@ public class MainActivity extends KitKitLoggerActivity {
                 }
             });
 
-            final int MAX_UPLOAD_IMAGE_COUNT = 20;
-            if (result.size() > MAX_UPLOAD_IMAGE_COUNT) {
-                result = new ArrayList<>(result.subList(0, MAX_UPLOAD_IMAGE_COUNT));
+            if (maxUploadImageCount > 0) {
+                if (result.size() > maxUploadImageCount) {
+                    result = new ArrayList<>(result.subList(0, maxUploadImageCount));
+                }
             }
 
             for (File file : result) {
@@ -952,8 +917,11 @@ public class MainActivity extends KitKitLoggerActivity {
     }
 
     public static void deleteImageZipFiles() {
-        File dcimFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-        File[] files = new File(dcimFolder.getAbsolutePath() + File.separator + TEMP_ZIP_FOLDER_NAME).listFiles();
+        deleteImageZipFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+    }
+
+    public static void deleteImageZipFiles(String imagePath) {
+        File[] files = new File(imagePath + File.separator + TEMP_ZIP_FOLDER_NAME).listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 if (file.exists() == true) {
@@ -964,19 +932,116 @@ public class MainActivity extends KitKitLoggerActivity {
     }
 
     private boolean gotoVideoPlayer() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("video_play", false) == false) {
-
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("video_play", true);
-            editor.commit();
-
-            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
-            startActivity(i);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            return true;
-        }
+//        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
+//
+//        if (user.isFinishLauncherTutorial() == false) {
+//            user.setFinishLauncherTutorial(true);
+//            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
+//
+//            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
+//            startActivity(i);
+//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//            return true;
+//        }
 
         return false;
     }
+
+    private void setDefaultPreference() {
+        SharedPreferences preference = getSharedPreferences("sharedPref",Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = getSharedPreferences("sharedPref",Context.MODE_MULTI_PROCESS).edit();
+        editor.putBoolean("review_mode_on", preference.getBoolean("review_mode_on", false));
+        editor.putBoolean("sign_language_mode_on", preference.getBoolean("sign_language_mode_on", false));
+        editor.commit();
+    }
+
+    private Runnable mRunnableTitle = new Runnable() {
+        @Override
+        public void run() {
+            DialogFragment dialog = new PasswordDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("userobject", "ABOUT");
+            dialog.setArguments(bundle);
+            dialog.show(getFragmentManager(), "PasswordDialogFragment");
+
+            // for test
+//            Util.copyDBFileToSDCard(MainActivity.this);
+        }
+    };
+
+    private Runnable mRunnableUserName = new Runnable() {
+        @Override
+        public void run() {
+            DialogFragment dialog = new PasswordDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("userobject", "SELECT USER");
+            dialog.setArguments(bundle);
+            dialog.show(getFragmentManager(), "PasswordDialogFragment");
+        }
+    };
+
+    private  View.OnTouchListener mLongTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_BUTTON_PRESS:
+                case MotionEvent.ACTION_DOWN:
+                    if (view == mTitle) {
+                        handler.postDelayed(mRunnableTitle, 2*1000);
+
+                    } else if (view == mTvUserName) {
+                        handler.postDelayed(mRunnableUserName, 2*1000);
+
+                    }
+
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_BUTTON_RELEASE:
+                    if (view == mTitle) {
+                        handler.removeCallbacks(mRunnableTitle);
+
+                    } else if (view == mTvUserName) {
+                        handler.removeCallbacks(mRunnableUserName);
+
+                    }
+                    break;
+
+                default:
+                    break;
+
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String redirectTo) {
+        dialog.dismiss();
+        if (redirectTo.equals("ABOUT")) {
+            Intent i = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(i);
+
+        } else if (redirectTo.equals("SELECT USER")) {
+            SelectNumberDialog selectNumberDialog = new SelectNumberDialog(this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
+                @Override
+                public void onSelectedNumber(int number) {
+                    KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
+                    User user = dbHandler.findUser("user" + number);
+                    if (user != null) {
+                        dbHandler.setCurrentUser(user);
+                        refreshUI();
+                    }
+                }
+            });
+
+            selectNumberDialog.show();
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
+
 }

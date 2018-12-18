@@ -71,7 +71,7 @@ public class LauncherApplication extends Application {
         if (dbHandler.numUser() == 0) {
             //make users in DB
             for (int i = 0; i < 100; i++) {
-                User user = new User("user"+i,0);
+                User user = new User("user"+i,100);
 //                user.setNumStars(i*50);
 //                user.setFinishTutorial(true);
                 dbHandler.addUser(user);

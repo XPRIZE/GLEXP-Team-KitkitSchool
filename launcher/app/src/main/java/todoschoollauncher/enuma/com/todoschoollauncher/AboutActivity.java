@@ -7,11 +7,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.enuma.kitkitProvider.KitkitDBHandler;
 import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
 import com.enuma.kitkitlogger.KitKitLoggerActivity;
@@ -22,14 +22,12 @@ import com.enuma.kitkitlogger.KitKitLoggerActivity;
  */
 
 public class AboutActivity extends KitKitLoggerActivity implements PasswordDialogFragment.PasswordDialogListener {
-
-    private static final String TAG = "AboutActivity";
     private View mVBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Util.hideSystemUI(this);
-//        hideStatusbar();
         setContentView(R.layout.activity_about);
 
         Util.setScale(this, findViewById(R.id.root_container));
@@ -59,44 +57,43 @@ public class AboutActivity extends KitKitLoggerActivity implements PasswordDialo
         }
 
         displayCurrentUser();
-
-//        cntx = this.getBaseContext();
-        //listLogFiles();
-
     }
-
-    private void hideStatusbar() {
-        View decorView = getWindow().getDecorView();
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
-    }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-//        hideStatusbar();
         if (hasFocus) {
             Util.hideSystemUI(this);
         }
     }
 
     public void onClickSetting(View v) {
+        Intent i = new Intent(AboutActivity.this, SettingActivity.class);
+        startActivity(i);
+    }
 
+    public void onClickSelectUser(View v) {
+        SelectNumberDialog selectNumberDialog = new SelectNumberDialog(this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
+            @Override
+            public void onSelectedNumber(int number) {
+                KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
+                User user = dbHandler.findUser("user" + number);
+                if (user != null) {
+                    dbHandler.setCurrentUser(user);
+                    displayCurrentUser();
+                }
+            }
+        });
 
+        selectNumberDialog.show();
+    }
+
+    public void onClickAdministration(View v) {
         DialogFragment dialog = new PasswordDialogFragment();
         Bundle bundle = new Bundle();
-        if (v.getId() == R.id.setting_button) {
-            bundle.putSerializable("userobject", "SETTINGS");
-
-        } else {
-            bundle.putSerializable("userobject", "USERS");
-        }
+        bundle.putSerializable("userobject", "ADMINISTRATION");
         dialog.setArguments(bundle);
         dialog.show(getFragmentManager(), "PasswordDialogFragment");
-
     }
 
     public void onClickCredit(View v) {
@@ -106,19 +103,11 @@ public class AboutActivity extends KitKitLoggerActivity implements PasswordDialo
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String redirectTo) {
-//        Intent i = getPackageManager().getLaunchIntentForPackage("com.android.settings")
-        Log.d("received arg", redirectTo);
-        if (redirectTo.equals("SETTINGS")) {
-            Intent i = new Intent(AboutActivity.this, SettingActivity.class);
+        dialog.dismiss();
+        if (redirectTo.equals("ADMINISTRATION")) {
+            Intent i = new Intent(AboutActivity.this, AdministrationActivity.class);
             startActivity(i);
-        } else {
-            DialogFragment userdialog = new SelectUserDialogFragment();
-            Bundle userbundle = new Bundle();
-            userbundle.putSerializable("user", "ABOUT");
-            userdialog.setArguments(userbundle);
-            userdialog.show(getFragmentManager(), "SelectUserDialogFragment");
         }
-
     }
 
     @Override
@@ -147,18 +136,8 @@ public class AboutActivity extends KitKitLoggerActivity implements PasswordDialo
         }
     }
 
-    private void displayCurrentUser(){
-        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
-        String currentUsername = user.getUserName();
-        TextView textViewUsername = (TextView)findViewById(R.id.textView_currentUserId_about);
-
-        if ("user0".equalsIgnoreCase(currentUsername) == false) {
-            textViewUsername.setText(currentUsername);
-
-        } else {
-            textViewUsername.setText("");
-
-        }
+    private void displayCurrentUser() {
+        Util.displayUserName(this, (TextView) findViewById(R.id.textView_currentUserId_about));
     }
 
     private Rect mTempRect = new Rect();

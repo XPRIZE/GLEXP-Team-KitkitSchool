@@ -7,6 +7,6 @@
     <dimen name="setting_padding">170px</dimen>
     <dimen name="tools_padding">40px</dimen>
     <dimen name="start_margin">11dp</dimen>
-    <dimen name="setting_height">180px</dimen>
+    <dimen name="setting_height">200px</dimen>
     <dimen name="setting_edit_height">135px</dimen>
 </resources>
