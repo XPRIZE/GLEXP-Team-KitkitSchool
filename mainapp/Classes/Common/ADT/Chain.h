@@ -6,7 +6,42 @@
 //  See LICENSE.md for more details.
 //
 
-// NB(xenosoz, 2016): Value sharing mechanism and hooks.
+// NB(xenosoz, 2018): Chain<T> is a variable wrapper w/ value-update notification chains.
+//
+//  ## Basic Usage
+//
+//  Chain<int> x;
+//
+//  x.OnValueUpdate = [](int&) { /* The value is updated here */ };
+//  x.update(5);
+//
+//  x();  // -> 5 (sugar form)
+//  x.value();  // -> 5 (explicit form)
+//
+//
+//  ## Automatic Value Propagation
+//
+//  Chain<int> star, fan0, fan1, fan2;
+//
+//  fan0.follow(star);
+//  fan1.follow(star);
+//  fan2.follow(star);
+//
+//  fan0.OnValueUpdate = [](int&) { /* Do something good here */ };
+//  fan1.OnValueUpdate = [](int&) {};
+//  fan2.OnValueUpdate = [](int&) {};
+//
+//  star.update(42);  // [star, fan0, fan1, fan2].OnValueUpdate are called here.
+//  fan0();  // -> 42 (sugar form)
+//  fan1();  // -> 42
+//  fan2.value();  // -> 42 (explicit form)
+//
+//
+//  ## Update-Chain Manipulation
+//
+//  fan0.unfollow(star);
+//  star.clearRelations();
+//
 
 #ifndef TODOSCHOOL_ADT_CHAIN_H
 #define TODOSCHOOL_ADT_CHAIN_H

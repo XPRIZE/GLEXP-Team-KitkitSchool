@@ -9,7 +9,6 @@
 #ifndef TODOSCHOOL_UTILS_STRINGUTILS_H
 #define TODOSCHOOL_UTILS_STRINGUTILS_H
 
-#include <Common/ADT/Optional.h>
 #include <string>
 
 namespace todoschool {
@@ -29,8 +28,8 @@ std::string toUpper(std::string S);
 std::string toLower(std::string S);
 std::string toURLEncoded(std::string S);
 
-Optional<int> parseInt(std::string S, int Base = 10);
-Optional<int> parseIntWithSuffix(std::string S, std::string Suffix, int Base = 10);
+bool parseInt(int& Value, std::string S, int Base = 10);
+bool parseIntWithSuffix(int& Value, std::string S, std::string Suffix, int Base = 10);
 
 }
 

@@ -28,6 +28,7 @@ public:
     SoundEffect minus() const;
     SoundEffect plus() const;
     SoundEffect times() const;
+    SoundEffect aand() const;
     
     
 };

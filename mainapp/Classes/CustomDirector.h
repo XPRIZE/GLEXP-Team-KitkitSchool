@@ -34,6 +34,13 @@ public:
             _nextScene = (Scene*)_scenesStack.at(c - 1);
         }
     }
+    
+    bool isNextScene(){
+        if (_purgeDirectorInNextLoop) {
+            return true;
+        }
+        return _nextScene == nullptr ? false : true;
+    };
 };
 
 NS_CC_END

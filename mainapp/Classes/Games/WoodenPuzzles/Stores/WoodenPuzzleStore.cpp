@@ -8,7 +8,7 @@
 
 
 #include "WoodenPuzzleStore.h"
-#include "../Utils/WoodenPuzzleDepot.h"
+#include "../Utils/WoodenPuzzleUtil.h"
 
 
 BEGIN_NS_WOODENPUZZLES;
@@ -16,7 +16,7 @@ BEGIN_NS_WOODENPUZZLES;
 void WoodenPuzzleStore::refinePlayCondition(GameBoard* Board, PlayField* Field) const {
     if (!Board || !Field) { return; }
 
-    WoodenPuzzleDepot Depot;
+    WoodenPuzzleUtil Util;
     vector<Node*> FlexibleNodes;
     Size CS = Field->getContentSize();
     
@@ -27,7 +27,7 @@ void WoodenPuzzleStore::refinePlayCondition(GameBoard* Board, PlayField* Field) 
     Rect BoardBB = Board->getBoundingBox();
     
     for (int I = 0; I < 5; ++I) {
-        Depot.refineNodePositions(FlexibleNodes, BoardBB, CS);
+        Util.refineNodePositions(FlexibleNodes, BoardBB, CS);
     }
 }
 

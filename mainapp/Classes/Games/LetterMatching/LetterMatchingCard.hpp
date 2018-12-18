@@ -49,6 +49,7 @@ public:
     bool isLinked, isTouched;
     LetterMatchingCard *linkedTarget;
     Node* _shiningParticleNode;
+    Action* stompAction = nullptr;
     
     float defaultScale;
 

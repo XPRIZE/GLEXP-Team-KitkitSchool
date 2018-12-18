@@ -17,7 +17,7 @@
 #include <Common/Controls/TraceField/LiveModels/TraceIndex.h>
 #include <Common/Controls/TraceField/StyleModels/TraceFieldStyle.h>
 
-#include "../Utils/MainNS.h"
+#include "../Utils/TutorialTraceNS.h"
 
 
 BEGIN_NS_TUTORIALTRACE

@@ -14,8 +14,10 @@
 namespace ImageAnswerItemSpace
 {
     std::string kLetterArray[7] = {"A", "B", "C", "D", "E", "F", "G"};
-    const Size kImageSize = Size(510.f, 394.f);
-    const float kImageAbsPadding = 22.f;
+    const Size kImageSize = Size(522.f, 648.f);
+    const float kImageAbsPaddingHorizontal = 35.f;
+    const float kImageAbsPaddingVertical = 37.f;
+    
 }
 
 using namespace ImageAnswerItemSpace;
@@ -43,51 +45,55 @@ namespace ComprehensionTest
             _id = image;
             
             setContentSize(kImageSize);
+        
+            _normalAnswerSprite = Scale9Sprite::create("ComprehensionTest/MultipleChoices/comprehensivequiz-multiple-choice-normal.png");
+            _normalAnswerSprite->setContentSize(kImageSize);
+            _normalAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            _normalAnswerSprite->setPosition(this->getContentSize() / 2);
+            this->addChild(_normalAnswerSprite);
+            _normalAnswerSprite->setVisible(true);
             
-            _background = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_answers_2.png");
-            _background->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            setContentSize(Size(_background->getContentSize().width + marginX, _background->getContentSize().height + marginY));
-            _background->setPosition(getContentSize() / 2);
-            addChild(_background);
+            _wrongAnswerSprite = Scale9Sprite::create("ComprehensionTest/MultipleChoices/comprehensivequiz-multiple-choice-wrong.png");
+            _wrongAnswerSprite->setContentSize(kImageSize);
+            _wrongAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            _wrongAnswerSprite->setPosition(this->getContentSize() / 2);
+            this->addChild(_wrongAnswerSprite);
+            _wrongAnswerSprite->setVisible(false);
             
-            auto sprite = Sprite::create(folder + "/quiz/" + image);
-            if (!sprite) sprite = Sprite::create(folder + "/page/" + image);
-            if (sprite == nullptr)
+            _rightAnswerSpriteBg = Scale9Sprite::create("ComprehensionTest/MultipleChoices/comprehensivequiz-multiple-choice-picture-correct-bg.png");
+            _rightAnswerSpriteBg->setContentSize(kImageSize);
+            _rightAnswerSpriteBg->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            _rightAnswerSpriteBg->setPosition(this->getContentSize() / 2);
+            this->addChild(_rightAnswerSpriteBg);
+            _rightAnswerSpriteBg->setVisible(false);
+            
+            _answerSprite = Sprite::create(folder + "/quiz/" + image);
+            if (!_answerSprite) _answerSprite = Sprite::create(folder + "/page/" + image);
+            if (_answerSprite == nullptr)
             {
                 NativeAlert::show("Image does not exist.", image, "OK");
                 return false;
             }
-            
-            float widthFactor = (kImageSize.width - kImageAbsPadding) / sprite->getContentSize().width;
-            float heightFactor = (kImageSize.height - kImageAbsPadding) / sprite->getContentSize().height;
+            float widthFactor = (kImageSize.width - kImageAbsPaddingHorizontal*2) / _answerSprite->getContentSize().width;
+            float heightFactor = (kImageSize.height - kImageAbsPaddingVertical*2) / _answerSprite->getContentSize().height;
             auto scaleFactor = MIN(widthFactor, heightFactor);
-            sprite->setScale(scaleFactor);
-            sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            sprite->setPosition(getContentSize() / 2);
-            addChild(sprite);
+            _answerSprite->setScale(scaleFactor);
+            _answerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            _answerSprite->setPosition(this->getContentSize() / 2);
+            this->addChild(_answerSprite);
             
-            _normalAnswerSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_answers_1.png");
-            _normalAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _normalAnswerSprite->setPosition(getContentSize() / 2);
-            addChild(_normalAnswerSprite);
-            _normalAnswerSprite->setVisible(true);
-            
-            _letterLabel = TodoUtil::createLabel("", 60, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B::BLACK);
+            _letterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, Color4B(7, 171, 24, 255));
             _letterLabel->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            _letterLabel->setPosition(35.f, _normalAnswerSprite->getContentSize().height - 15.f);
-            _normalAnswerSprite->addChild(_letterLabel);
+            _letterLabel->setPosition(33, this->getContentSize().height - 10.f);
+            this->addChild(_letterLabel);
             
-            _rightAnswerSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_answer_right_1.png");
+            _rightAnswerSprite = Scale9Sprite::create("ComprehensionTest/MultipleChoices/comprehensivequiz-multiple-choice-picture-correct.png", Rect(0, 0, 180, 180), Rect(126, 131, 14, 9));
+            _rightAnswerSprite->setScale9Enabled(true);
+            _rightAnswerSprite->setContentSize(kImageSize);
             _rightAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _rightAnswerSprite->setPosition(getContentSize() / 2);
-            addChild(_rightAnswerSprite);
+            _rightAnswerSprite->setPosition(this->getContentSize() / 2);
+            this->addChild(_rightAnswerSprite);
             _rightAnswerSprite->setVisible(false);
-            
-            _wrongAnswerSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_answer_wrong.png");
-            _wrongAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            _wrongAnswerSprite->setPosition(getContentSize() / 2);
-            addChild(_wrongAnswerSprite);
-            _wrongAnswerSprite->setVisible(false);
             
             auto *listener = EventListenerTouchOneByOne::create();
             listener->setSwallowTouches(true);
@@ -134,6 +140,8 @@ namespace ComprehensionTest
         void ImageAnswerItem::setNormal()
         {
             currentState = ImageAnswerState::Normal;
+            _answerSprite->setOpacity(255);
+            _letterLabel->setTextColor(Color4B(7,171,24,255));
             _normalAnswerSprite->setVisible(true);
             _rightAnswerSprite->setVisible(false);
             _wrongAnswerSprite->setVisible(false);
@@ -143,6 +151,7 @@ namespace ComprehensionTest
         {
             currentState = ImageAnswerState::Right;
              _normalAnswerSprite->setVisible(false);
+            _rightAnswerSpriteBg->setVisible(true);
             _rightAnswerSprite->setVisible(true);
             _wrongAnswerSprite->setVisible(false);
         }
@@ -151,6 +160,8 @@ namespace ComprehensionTest
         {
             GameSoundManager::getInstance()->playEffectSound("ComprehensionTest/MultipleChoices/sounds/card_miss.m4a");
             currentState = ImageAnswerState::Wrong;
+            _answerSprite->setOpacity(255 * 0.2f);
+            _letterLabel->setTextColor(Color4B(148,148,148,255));
             _normalAnswerSprite->setVisible(false);
             _rightAnswerSprite->setVisible(false);
             _wrongAnswerSprite->setVisible(true);

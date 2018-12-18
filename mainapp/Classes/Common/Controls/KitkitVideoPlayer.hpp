@@ -22,6 +22,12 @@ class KitkitVideoPlayer : public VideoPlayer
 {
 public:
     CREATE_FUNC(KitkitVideoPlayer);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    virtual void play(){
+        VideoPlayer::play();
+        JniHelper::callStaticVoidMethod("org/cocos2dx/cpp/AppActivity", "playVideoPlayer", _videoPlayerIndex);
+    };
+#endif
 };
 
 

@@ -8,7 +8,7 @@
 
 
 #include "StarFallScene.h"
-#include "../Models/Worksheet.h"
+#include "../Models/StarFallWorksheet.h"
 #include "../Utils/StarFallDepot.h"
 #include "Managers/StrictLogManager.h"
 
@@ -366,7 +366,7 @@ void StarFallScene::refreshActiveTextForSanity() {
     string workPath = [this] {
         stringstream SS;
         SS << "/" << "StarFall";
-        SS << "/" << "level-" << LevelID;
+        SS << "/" << "level-" << LevelID << "-0";
         SS << "/" << "work-" << HitCount();
         return SS.str();
     }();

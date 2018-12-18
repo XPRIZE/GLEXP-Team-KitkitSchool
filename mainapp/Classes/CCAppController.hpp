@@ -39,16 +39,16 @@ public:
     bool startGame(std::string gameName, int level, std::string param="", bool checkOnly = false);
     void startFreeChoiceGame(std::string gameName, int level);
     void startCurriculumGame(std::string levelID, int day, int gameIndex);
-    void startBookScene(std::string bookFolder, bool replaceParent = false);
+    void startBookScene(std::string bookFolder, bool replaceParent = false, bool checkCompleteCondition = true);
+    void startBookWithQuizScene(std::string bookFolder); // book-with-comprehension
 
-
-    void startComprehensionScene(std::string bookFolder, int set, bool replaceParent = false);
+    void startComprehensionScene(std::string bookFolder, int set, bool replaceParent = false,  bool checkCompleteCondition = true);
 	void startVideoScene(std::string filename, bool replaceParent = false);
     
     void startQuiz(std::string classroom, int studentNumber, std::string courseKind);
    // void startEggQuiz(char category, int categoryLevel, bool isPreTest, std::function<void(bool)> callback);
     
-    void handleGameQuit();
+    void handleGameQuit(bool bImmediately = false);
     void handleGameComplete(int result);
     
     bool isDebug();

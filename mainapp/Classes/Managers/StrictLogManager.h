@@ -58,7 +58,7 @@ public:
 
     // NB(xenosoz, 2017): Daily/FreeChoice game
     //   [ ] Quit의 경우 스테이지까지 남으면 좋음
-    void game_Begin(const std::string& gameName, int gameLevel);
+    void game_Begin(const std::string& gameName, int gameLevel, const std::string& param);
     void game_End_Quit(const std::string& gameName, int gameLevel, double duration);
     void game_End_Complete(const std::string& gameName, int gameLevel, double duration, int result);
     void game_Peek_Answer(const std::string& gameName,
@@ -74,6 +74,10 @@ public:
     void book_End_Quit(const std::string& bookName, double duration);
     void book_End_Complete(const std::string& bookName, double duration, int result);
     
+    void BookWithQuiz_Begin(const std::string& bookName);
+    void BookWithQuiz_End_Quit(const std::string& bookName);
+    void BookWithQuiz_End_Complete(const std::string& bookName, int result);
+    
     void comprehension_Begin(const std::string& bookName, int problemSet);
     void comprehension_End_Quit(const std::string& bookName, int problemSet, double duration);
     void comprehension_End_Complete(const std::string& bookName, int problemSet, double duration, int result);
@@ -87,6 +91,9 @@ public:
 
     // NB(xenosoz, 2017): Stars
     void starStat_UpdateStarsInKitKitSchool(int oldStars, int newStars);
+
+    void gameTutorialVideo_Begin();
+    void gameTutorialVideo_End();
     
     
     // NB(xenosoz, 2017): Touch Events

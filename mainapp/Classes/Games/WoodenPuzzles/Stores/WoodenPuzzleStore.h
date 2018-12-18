@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../ChildNodes/GameBoard.h"
+#include "../ChildNodes/WoodenPuzzlesGameBoard.h"
 #include "../ChildNodes/PlayField.h"
 #include "../Utils/WoodenPuzzleNS.h"
 

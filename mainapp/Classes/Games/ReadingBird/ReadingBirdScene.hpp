@@ -82,6 +82,7 @@ namespace ReadingBird {
         
     private:
         int mLevelID;
+        int mWorkSheetID;
         int mCurrentProblemID;
         vector<struct Data> mData;
         map<string, string> mSpeech;
@@ -106,7 +107,7 @@ namespace ReadingBird {
         bool mIsBeforePronunciation;
         bool mIsSilent;
         int mTriggerVolume;
-        void readLevelData();
+        void readLevelData(int *curWorksheet);
         void readSpeechData();
         Vector<SpriteFrame*> getAnimationInFile(const char *format, int startNumber, int endNumber);
         void setCharacter1Sprite(SpriteFrame* frame);

@@ -481,8 +481,8 @@ std::string FeedingTimeLayer::GenArmatureFile()
 
 std::string FeedingTimeLayer::MakeWorkPath() {
     stringstream ss;
-    ss << "FeedingTime";
-    ss << "/" << "level-" << stageLevel;
+    ss << "/" << "FeedingTime";
+    ss << "/" << "level-" << stageLevel << "-0";
     ss << "/" << "work-" << currentProblemIndex;
     return ss.str();
 }

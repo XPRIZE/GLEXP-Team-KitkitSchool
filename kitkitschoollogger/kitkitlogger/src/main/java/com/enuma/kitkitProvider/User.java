@@ -6,6 +6,8 @@ package com.enuma.kitkitProvider;
 
 
 public class User {
+    public static boolean DEFAULT_OPEN_LIBRARY = true;
+    public static boolean DEFAULT_OPEN_TOOLS = true;
 
     private int _id;
     private String _username;
@@ -17,6 +19,12 @@ public class User {
     private boolean _unlockColoring;
     private boolean _unlockBlackboard;
     private boolean _finishLauncherTutorial;
+    private String _displayName;
+    private boolean _openLibrary;
+    private boolean _openTools;
+    private boolean _unlockFishBowl;
+    private boolean _unlockWritingBoard;
+    private boolean _finishWritingBoardTutorial;
 
     public User() {
         this._id = 0;
@@ -29,6 +37,12 @@ public class User {
         this._unlockColoring = false;
         this._unlockBlackboard = false;
         this._finishLauncherTutorial = false;
+        this._displayName = "";
+        this._openLibrary = DEFAULT_OPEN_LIBRARY;
+        this._openTools = DEFAULT_OPEN_TOOLS;
+        this._unlockFishBowl = false;
+        this._unlockWritingBoard = false;
+        this._finishWritingBoardTutorial = false;
     }
 
     public User(int id, String username, int stars) {
@@ -42,6 +56,12 @@ public class User {
         this._unlockColoring = false;
         this._unlockBlackboard = false;
         this._finishLauncherTutorial = false;
+        this._displayName = "";
+        this._openLibrary = DEFAULT_OPEN_LIBRARY;
+        this._openTools = DEFAULT_OPEN_TOOLS;
+        this._unlockFishBowl = false;
+        this._unlockWritingBoard = false;
+        this._finishWritingBoardTutorial = false;
     }
 
     public User(String productname, int stars) {
@@ -54,6 +74,12 @@ public class User {
         this._unlockColoring = false;
         this._unlockBlackboard = false;
         this._finishLauncherTutorial = false;
+        this._displayName = "";
+        this._openLibrary = DEFAULT_OPEN_LIBRARY;
+        this._openTools = DEFAULT_OPEN_TOOLS;
+        this._unlockFishBowl = false;
+        this._unlockWritingBoard = false;
+        this._finishWritingBoardTutorial = false;
     }
 
     public void setID(int id) {
@@ -108,4 +134,41 @@ public class User {
     public void setFinishLauncherTutorial(boolean unlock) { this._finishLauncherTutorial = unlock; }
 
     public boolean isFinishLauncherTutorial() {return this._finishLauncherTutorial;}
+
+    public void setDisplayName(String name) {
+        _displayName = name;
+    }
+
+    public String getDisplayName() {
+        return _displayName;
+    }
+
+    public void setOpenLibrary(boolean open) {
+        _openLibrary = open;
+    }
+
+    public boolean isOpenLibrary() {
+        return _openLibrary;
+    }
+
+    public void setOpenTools(boolean open) {
+        _openTools = open;
+    }
+
+    public boolean isOpenTools() {
+        return _openTools;
+    }
+
+    public void setUnlockFishBowl(boolean unlock) { this._unlockFishBowl = unlock; }
+
+    public boolean isUnlockFishBowl() {return this._unlockFishBowl;}
+
+    public void setUnlockWritingBoard(boolean unlock) { this._unlockWritingBoard = unlock; }
+
+    public boolean isUnlockWritingBoard() {return this._unlockWritingBoard;}
+
+    public void setFinishWritingBoardTutorial(boolean unlock) { this._finishWritingBoardTutorial = unlock; }
+
+    public boolean isFinishWritingBoardTutorial() {return this._finishWritingBoardTutorial;}
+
 }

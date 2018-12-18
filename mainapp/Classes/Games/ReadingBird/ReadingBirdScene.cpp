@@ -237,7 +237,7 @@ void ReadingBirdScene::onEnter()
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "onSetupSpeechRecognition");
 #endif
-    readLevelData();
+    readLevelData(&mWorkSheetID);
     readSpeechData();
 
     mCurrentProblemID = 0;
@@ -270,7 +270,7 @@ void ReadingBirdScene::setLevel(int levelID)
     CCLOG("mLevelID : %d", mLevelID);
 }
 
-void ReadingBirdScene::readLevelData()
+void ReadingBirdScene::readLevelData(int *curWorksheet)
 {
     string p;
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
@@ -290,7 +290,7 @@ void ReadingBirdScene::readLevelData()
     auto data = TodoUtil::readTSV(s);
 
     // data[6][2] : Worksheet or WorksheetAll
-    bool bWorkSheetAll = data[6][2] == "WorksheetAll" ? true : false;
+    bool bWorkSheetAll = UserManager::getInstance()->isWorksheetTestMode();
     int maxWorkSheet = 0;
 
     for (vector<string> row : data)
@@ -323,11 +323,11 @@ void ReadingBirdScene::readLevelData()
 
     if (bWorkSheetAll == false)
     {
-        int curWorksheet = RandomHelper::random_int(1, maxWorkSheet);
-        
+        *curWorksheet = RandomHelper::random_int(1, maxWorkSheet);
+        CCLOG("curWorksheet = %d", *curWorksheet);
         for (int i = mData.size() - 1; i >= 0; --i)
         {
-            if (mData.at(i).mWorksheet != curWorksheet)
+            if (mData.at(i).mWorksheet != *curWorksheet)
             {
                 mData.erase(mData.begin() + i);
             }
@@ -483,7 +483,13 @@ void ReadingBirdScene::changeMainState(MAIN_STATE state)
             string key = mData[mCurrentProblemID - 1].mSound;
             TodoUtil::replace(key, ".m4a", "");
             TodoUtil::replace(key, ".wav", "");
-            string phone = mSpeech[key];
+
+            auto it = mSpeech.find(key);
+            string phone = "";
+            if (it != mSpeech.end()) {
+                phone = mSpeech[key];
+            }
+
             JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "onStartListening", TRIGGER_VOLUME, SILENT_VOLUME, phone);
             JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "onPauseListeningAndRecognition");
 #endif
@@ -504,7 +510,7 @@ void ReadingBirdScene::changeMainState(MAIN_STATE state)
                     auto locale = languageManager->convertLocaleTypeToCode(languageManager->getCurrentLocaleType());
 
                     JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "onPauseListeningAndRecognition");
-                    JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "playAudio", "Localized/" + locale + "/" + ROOT_RESOURCE_PATH + "/effect/readaloud.m4a");
+                    JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "playAudio", "localized/" + locale + "/" + ROOT_RESOURCE_PATH + "/effect/readaloud.m4a");
                 });
 #else
                 this->changeCharacter1State(CHARACTER1_STATE::look, [&](){
@@ -581,7 +587,7 @@ void ReadingBirdScene::changeMainState(MAIN_STATE state)
                 auto languageManager = LanguageManager::getInstance();
                 auto locale = languageManager->convertLocaleTypeToCode(languageManager->getCurrentLocaleType());
                 
-                JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "playAudio", "Localized/" + locale + "/" + ROOT_RESOURCE_PATH + "/sound/" + mData[mCurrentProblemID - 1].mSound);
+                JniHelper::callStaticVoidMethod(JNI_CLASS_NAME, "playAudio", "localized/" + locale + "/" + ROOT_RESOURCE_PATH + "/sound/" + mData[mCurrentProblemID - 1].mSound);
             }
 #else
             GameSoundManager::getInstance()->playEffectSound(ROOT_RESOURCE_PATH + "/sound/" + mData[mCurrentProblemID - 1].mSound);
@@ -968,8 +974,8 @@ void ReadingBirdScene::onStopRecordVolume(float f)
 string ReadingBirdScene::makeWorkPath() const
 {
     stringstream ss;
-    ss << "ReadingBird";
-    ss << "/" << "level-" << mLevelID;
+    ss << "/" << "ReadingBird";
+    ss << "/" << "level-" << mLevelID << "-" << mWorkSheetID;
     ss << "/" << "work-" << mCurrentProblemID;
     
     return ss.str();

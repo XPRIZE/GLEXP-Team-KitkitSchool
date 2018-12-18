@@ -18,6 +18,7 @@
 
 #include "Managers/UserManager.hpp"
 #include "Managers/LanguageManager.hpp"
+#include "Managers/StrictLogManager.h"
 
 #include "CCAppController.hpp"
 
@@ -69,6 +70,8 @@ bool TutorialVideoScene::init()
         _skipBtn = skip;
         
     }
+
+    StrictLogManager::shared()->gameTutorialVideo_Begin();
     return true;
 }
 
@@ -98,6 +101,7 @@ void TutorialVideoScene::onEnterTransitionDidFinish()
     v->onCompleted = [this]() {
 
         Director::getInstance()->replaceScene(TransitionFade::create(0.5, TodoLoadingScene::createScene(this->_creator)));
+        StrictLogManager::shared()->gameTutorialVideo_End();
         
     };
     

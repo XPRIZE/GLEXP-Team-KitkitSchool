@@ -7,8 +7,8 @@
 
 #pragma once
 #include "ThirtyPuzzleHeader.h"
-#include "ProblemBank.hpp"
-#include "Piece.hpp"
+#include "ThirtyPuzzleProblemBank.hpp"
+#include "ThirtyPuzzlePiece.hpp"
 
 #include "Common/Controls/ProgressIndicator.hpp"
 

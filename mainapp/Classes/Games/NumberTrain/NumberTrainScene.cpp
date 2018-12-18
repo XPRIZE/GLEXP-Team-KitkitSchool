@@ -619,7 +619,7 @@ void NumberTrainScene::writeActionLog()
     auto workPath = [this] {
         stringstream ss;
         ss << "/" << "PatternTrain";
-        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "level-" << _currentLevel << "-0";
         ss << "/" << "work-" << _currentProblemIndex;
         return ss.str();
     }();

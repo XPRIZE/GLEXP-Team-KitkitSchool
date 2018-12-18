@@ -12,7 +12,7 @@
 #include "Utils/TodoUtil.h"
 
 #include "CustomDirector.h"
-
+#include "CoopScene.hpp"
 #include "GameSelectScene.hpp"
 
 #include "GradeSelector.hpp"
@@ -109,7 +109,7 @@ void GameSelectScene::addDebugGameButton(Node *parent, std::string gameName, Vec
     
     bool noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
     if (noIcon) {
-        iconFilename = "icons/main_gameicon_frame_shadow.png";
+        iconFilename = "icons/gameicon_frame_shadow.png";
     }
     
     auto btn = ui::Button::create(iconFilename);
@@ -119,13 +119,14 @@ void GameSelectScene::addDebugGameButton(Node *parent, std::string gameName, Vec
     if (noIcon) {
         btn->setTitleFontSize(30);
         btn->setTitleText(gameName);
-        
     }
 
     btn->addTouchEventListener([gameName, this](Ref *pSender, ui::Widget::TouchEventType eEventType) {
         if (_transitionBegins) {
             return;
         }
+        if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
+        
         auto btn = (ui::Button*)pSender;
         auto cover = btn->getChildByName("gameIconCover");
         switch (eEventType) {
@@ -201,9 +202,16 @@ void GameSelectScene::addAllDebugGameButtons(char category, Vector<ui::Button*>&
         addDebugGameButton(_rootNode, "MangoShop", iconVector);
         addDebugGameButton(_rootNode, "MissingNumber", iconVector);
 
+        addDebugGameButton(_rootNode, "QuickFacts", iconVector);
+        addDebugGameButton(_rootNode, "MultiplicationBoard", iconVector);
+        addDebugGameButton(_rootNode, "WordWindow", iconVector);
+        addDebugGameButton(_rootNode, "PlaceValue", iconVector);
+        addDebugGameButton(_rootNode, "MathKicker", iconVector);
+
     } else if (category=='L') {
         addDebugGameButton(_rootNode, "EggQuizLiteracy", iconVector);
         addDebugGameButton(_rootNode, "Book", iconVector);
+        addDebugGameButton(_rootNode, "BookWithQuiz", iconVector);
         addDebugGameButton(_rootNode, "AlphabetPuzzle", iconVector);
         addDebugGameButton(_rootNode, "WordMachine", iconVector);
         addDebugGameButton(_rootNode, "LetterTrace", iconVector);
@@ -224,6 +232,13 @@ void GameSelectScene::addAllDebugGameButtons(char category, Vector<ui::Button*>&
         addDebugGameButton(_rootNode, "WhatIsThis", iconVector);
         addDebugGameButton(_rootNode, "ReadingBird", iconVector);
         addDebugGameButton(_rootNode, "LineMatching", iconVector);
+        
+        addDebugGameButton(_rootNode, "SentenceBridge", iconVector);
+        addDebugGameButton(_rootNode, "WordMatrix", iconVector);
+        addDebugGameButton(_rootNode, "WordKicker", iconVector);
+        addDebugGameButton(_rootNode, "Labeling", iconVector);
+        
+        addDebugGameButton(_rootNode, "LRComprehension", iconVector);
     }
     
     
@@ -263,12 +278,31 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
             iconFilename = videoIcon;
         }
         
+    } else if (gameName == "Book" || gameName == "BookWithQuiz") {
+        auto splits = TodoUtil::split(gameParameter, '_');
+        string bookIcon = "";
+        if (splits.size() > 1) {
+            if (gameName == "Book") {
+                bookIcon = "icons/book_icon_" + splits[1] + ".png";
+            } else {
+                bookIcon = "icons/bookquiz_icon_" + splits[1] + ".png";
+            }
+        }
+        
+        if (FileUtils::getInstance()->isFileExist(bookIcon)) {
+            iconFilename = bookIcon;
+        }
+        
+    } else if (cur->categoryLevel == CoopScene::LEVEL_SPECIAL_COURSE) {
+        if (gameName == "EggQuizMath" || gameName == "EggQuizLiteracy" || gameName == "EggQuiz_MiddleTest") {
+            iconFilename = "icons/game_icon_sc-test.png";
+        }
     }
 
     
     bool noIcon = !FileUtils::getInstance()->isFileExist(iconFilename);
     if (noIcon) {
-        iconFilename = "icons/main_gameicon_frame_shadow.png";
+        iconFilename = "icons/gameicon_frame_shadow.png";
     }
     auto btn = ui::Button::create(iconFilename);
     
@@ -283,14 +317,15 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     bool dayCleared = UserManager::getInstance()->isDayCleared(levelID, day);
     bool gameCleared = UserManager::getInstance()->isGameCleared(levelID, day, gameIndex);
     bool isAvailable = dayCleared || !gameCleared;
+
     
-    
-    if (isAvailable) {
+    if (isAvailable || _bird->getCategoryLevel() == CoopScene::LEVEL_SPECIAL_COURSE) {
         btn->addTouchEventListener([levelID, day, gameIndex, this](Ref *pSender, ui::Widget::TouchEventType eEventType) {
             if (_transitionBegins) {
                 return;
             }
             if (!_backButton->isTouchEnabled()) return;
+            if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
             
             auto btn = (ui::Button*)pSender;
             auto cover = btn->getChildByName("gameIconCover");
@@ -326,6 +361,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     if (gameInfo.gameName=="EggQuizLiteracy" || gameInfo.gameName=="EggQuizMath") {
         btnFrame = Sprite::create("icons/game_icon_frame_EggQuiz.png");
     }
+    btnFrame->setName("buttonFrame");
     btnFrame->setPosition(btn->getContentSize()/2.f);
     btn->addChild(btnFrame);
 
@@ -339,7 +375,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     btn->addChild(cover);
     
     
-    if (gameInfo.gameName!="EggQuizLiteracy" && gameInfo.gameName!="EggQuizMath" && gameInfo.gameName!="Book" && gameInfo.gameName!="Comprehension" && gameInfo.gameName!="Video") {
+    if (gameInfo.gameName!="EggQuizLiteracy" && gameInfo.gameName!="EggQuizMath" && gameInfo.gameName!="Book" && gameInfo.gameName!="Comprehension" && gameInfo.gameName!="Video" && gameInfo.gameName!="BookWithQuiz") {
         
         Sprite* levelBG = Sprite::create("icons/game_level_circle.png");
         levelBG->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
@@ -355,6 +391,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
         }
         levelNumber->setPosition(levelBG->getContentSize()/2.f);
         levelBG->addChild(levelNumber);
+        levelBG->setName("gameLevel");
         levelBG->setVisible(!gameCleared);
         
         {
@@ -369,12 +406,20 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
     }
     
 
-    
-    Sprite* complete = Sprite::create("icons/game_icon_frame_completed.png");
-    complete->setPosition(btn->getContentSize()/2.f);
-    complete->setName("gameCompleteCover");
-    complete->setVisible(gameCleared);
-    btn->addChild(complete);
+    if (_bird->getCategoryLevel() == CoopScene::LEVEL_SPECIAL_COURSE) {
+        Sprite* complete = Sprite::create("icons/game_icon_frame_block.png");
+        complete->setPosition(btn->getContentSize()/2.f);
+        complete->setName("gameBlockCover");
+        complete->setVisible(gameCleared);
+        btn->addChild(complete);
+
+    } else {
+        Sprite* complete = Sprite::create("icons/game_icon_frame_completed.png");
+        complete->setPosition(btn->getContentSize()/2.f);
+        complete->setName("gameCompleteCover");
+        complete->setVisible(gameCleared);
+        btn->addChild(complete);
+    }
     
     Sprite* coin = Sprite::create("icons/game_icon_frame_completed_coin.png");
     coin->setPosition(btn->getContentSize()/2.f);
@@ -400,6 +445,7 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
         addGameButton(_rootNode, levelID, day, i, gameIcons);
     }
     layoutGameButton(_rootNode, gameIcons);
+    refreshGameButtonForSpecialCourse();
     
 
     if (UserManager::getInstance()->isDebugMode()) {
@@ -414,6 +460,7 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
         sk1->setTitleFontSize(50);
         sk1->setPosition(Vec2(designSize.width*0.75, 300));
         _debugView->addChild(sk1);
+
         sk1->addClickEventListener([dayCur, levelID, day, this](Ref*) {
             if (dayCur) {
                 for (int i=0; i<dayCur->numGames; i++) {
@@ -423,8 +470,17 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
                     }
                 }
                 if (dayCur->isEggQuiz && !dayCur->isMiniQuiz) {
-                    UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                    if (UserManager::getInstance()->getPretestProgressType(levelID) != PretestProgressType::finish) {
+                        UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                    }
                 }
+                
+                if (_bird->getCategoryLevel() == CoopScene::LEVEL_SPECIAL_COURSE) {
+                    int currentGameIndex = UserManager::getInstance()->getSpecialCourseCurrentProgress(_levelID, _day);
+                    
+                    UserManager::getInstance()->setSpecialCourseCurrentProgress(_levelID, _day, currentGameIndex + 1);
+                }
+                
                 addDayGameButtons(levelID, day, gameIcons);
                 
                 checkDayClear();
@@ -444,9 +500,15 @@ void GameSelectScene::addDayGameButtons(std::string levelID, int day, Vector<ui:
 
                 }
                 if (dayCur->isEggQuiz && !dayCur->isMiniQuiz) {
-                    UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                    if (UserManager::getInstance()->getPretestProgressType(levelID) != PretestProgressType::finish) {
+                        UserManager::getInstance()->setPretestProgressType(levelID, PretestProgressType::pass);
+                    }
                 }
 
+                if (_bird->getCategoryLevel() == CoopScene::LEVEL_SPECIAL_COURSE) {
+                    UserManager::getInstance()->setSpecialCourseCurrentProgress(_levelID, _day, dayCur->numGames);
+                }
+                
                 addDayGameButtons(levelID, day, gameIcons);
                 
                 checkDayClear();
@@ -476,6 +538,52 @@ void GameSelectScene::layoutGameButton(Node *parent, Vector<ui::Button*>& iconVe
     }
 }
 
+void GameSelectScene::refreshGameButtonForSpecialCourse() {
+    if (_bird->getCategoryLevel() != CoopScene::LEVEL_SPECIAL_COURSE) {
+        return;
+    }
+    
+    int currentGameIndex = UserManager::getInstance()->getSpecialCourseCurrentProgress(_levelID, _day);
+
+    auto numIcon = gameIcons.size();
+    
+    if (__firstEnter) {
+        if (numIcon <= currentGameIndex) {
+            currentGameIndex = 0;
+            UserManager::getInstance()->setSpecialCourseCurrentProgress(_levelID, _day, currentGameIndex);
+        }
+    }
+    
+    for (int i = 0; i < numIcon; i++) {
+        auto btn = gameIcons.at(i);
+        auto gameLevel = btn->getChildByName("buttonFrame")->getChildByName("gameLevel");
+        
+        if (i < currentGameIndex) {
+            btn->getChildByName("gameBlockCover")->setVisible(false);
+            btn->getChildByName("gameCoinCover")->setVisible(true);
+            if (gameLevel != nullptr) {
+                gameLevel->setVisible(false);
+            }
+            btn->addTouchEventListener(nullptr);
+            
+        } else if (i == currentGameIndex) {
+            btn->getChildByName("gameBlockCover")->setVisible(false);
+            btn->getChildByName("gameCoinCover")->setVisible(false);
+            if (gameLevel != nullptr) {
+                gameLevel->setVisible(true);
+            }
+
+        } else {
+            btn->getChildByName("gameBlockCover")->setVisible(true);
+            btn->getChildByName("gameCoinCover")->setVisible(false);
+            if (gameLevel != nullptr) {
+                gameLevel->setVisible(false);
+            }
+            btn->addTouchEventListener(nullptr);
+        }
+    }
+}
+
 bool GameSelectScene::init()
 {
     
@@ -496,6 +604,7 @@ bool GameSelectScene::init()
     visibleSize = Director::getInstance()->getVisibleSize();
     Size winSize = Director::getInstance()->getWinSize();
 
+    __firstEnter = true;
     
     _debugView = nullptr;
     
@@ -934,7 +1043,13 @@ void GameSelectScene::checkDayClear()
     bool birdActionFlag = (pretestProgressType != PretestProgressType::pass && pretestProgressType != PretestProgressType::fail) ? true : false;
     if (!birdActionFlag) _bird->setStatus(Bird::BirdStatus::EGG);
     
-    if (!UserManager::getInstance()->isDayCleared(levelID, day)) {
+    bool isDayClearSpecialCourse = false;
+    if (cur->categoryLevel == CoopScene::LEVEL_SPECIAL_COURSE) {
+        if (UserManager::getInstance()->getSpecialCourseCurrentProgress(levelID, day) >= dayCurr->numGames) {
+            isDayClearSpecialCourse = true;
+        }
+    }
+    if (!UserManager::getInstance()->isDayCleared(levelID, day) || isDayClearSpecialCourse) {
         int numClearedGame = 0;
         
         for (int i=0; i<dayCurr->numGames; i++) {
@@ -942,12 +1057,12 @@ void GameSelectScene::checkDayClear()
         }
         
         if (dayCurr->numGames == numClearedGame) {
-            
+            auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+            UserManager::getInstance()->setFishPresentEnable(CurriculumManager::getInstance()->makeLevelID(lang, _bird->getCategory(), CoopScene::LEVEL_FISH_PRESENT), true);
+
             _backButton->setTouchEnabled(false);
             
             GameSoundManager::getInstance()->stopBGM();
-            
-            UserManager::getInstance()->setDayCleared(levelID, day);
             
             int reward = dayCurr->numGames;
             if (dayCurr->isEggQuiz) reward = 10;
@@ -955,8 +1070,30 @@ void GameSelectScene::checkDayClear()
             
             if (UserManager::getInstance()->getPretestProgressType(levelID) == PretestProgressType::pass) {
                 if (cur->categoryLevel == 1) reward = 100;
-                if (cur->categoryLevel == 2) reward = 200;
+                else if (cur->categoryLevel == 2) reward = 200;
+                else if (cur->categoryLevel <= 4) reward = 200;
             }
+            
+            bool isSpecialCourseClear = false;
+            if (isDayClearSpecialCourse) {
+                if (cur->numDays == dayCurr->dayOrder && !UserManager::getInstance()->isLevelCleared(levelID)) {
+                    isSpecialCourseClear = true;
+                }
+                
+                if (isSpecialCourseClear) {
+                    reward = 200;
+                } else {
+                    if (UserManager::getInstance()->isDayCleared(levelID, day)) {
+                        reward = 10;
+                        
+                    } else {
+                        reward = 20;
+                        
+                    }
+                }
+            }
+
+            UserManager::getInstance()->setDayCleared(levelID, day);
             
             auto stars = UserManager::getInstance()->getStars();
             UserManager::getInstance()->updateStars(stars+reward);
@@ -975,7 +1112,7 @@ void GameSelectScene::checkDayClear()
                 CallFunc::create([](){ SoundEffect::birdJumpEffect().play();}),
                 EaseOut::create(MoveBy::create(0.3, Vec2(0, 30)), 2.0),
                 EaseIn::create(MoveBy::create(0.3, Vec2(0, -30)), 2.0),
-                CallFunc::create([this, birdActionFlag, reward, dayCurr](){
+                CallFunc::create([this, birdActionFlag, reward, dayCurr, isDayClearSpecialCourse, isSpecialCourseClear](){
                     if (birdActionFlag) _bird->runTouchAnimation();
                     SoundEffect::birdJumpEffect().play();
                 
@@ -986,7 +1123,13 @@ void GameSelectScene::checkDayClear()
                         icon->getChildByName("gameCoinCover")->setVisible(false);
                     }
                 
-                _coinTab->addCoin(reward, birdParent->convertToWorldSpace(birdPos), dayCurr->isEggQuiz?false:true);
+                    if (isDayClearSpecialCourse) {
+                        _coinTab->addCoinForSpecialCourse(dayCurr->numGames, reward, birdParent->convertToWorldSpace(birdPos), isSpecialCourseClear);
+                        
+                    } else {
+                        _coinTab->addCoin(reward, birdParent->convertToWorldSpace(birdPos), dayCurr->isEggQuiz?false:true);
+                        
+                    }
                 
                 }), nullptr
             );
@@ -1026,10 +1169,10 @@ void GameSelectScene::checkDayClear()
                 
                 UserManager::getInstance()->setCurrentDay(levelID, 1);
                 UserManager::getInstance()->setPlayingDay(1);
+                _backButton->setTouchEnabled(false);
                 
                 runAction(Sequence::create(DelayTime::create(1.f),
                     CallFunc::create([this](){
-                        _backButton->setTouchEnabled(true);
                         ((CustomDirector*)Director::getInstance())->popSceneWithTransition<TransitionFade>(0.5);
                     }),
                 nullptr));

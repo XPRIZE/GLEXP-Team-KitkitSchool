@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
-#include "../Models/Problem.h"
+#include "../Utils/DigitalQuizNS.h"
+#include "../Models/DigitalQuizProblem.h"
 
 
 BEGIN_NS_DIGITALQUIZ

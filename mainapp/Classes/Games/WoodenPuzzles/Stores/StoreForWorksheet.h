@@ -12,7 +12,7 @@
 #include "WoodenPuzzleStore.h"
 #include "../PieceNodes/WoodPiece.h"
 #include "../Utils/WoodenPuzzleNS.h"
-#include "../Models/Worksheet.h"
+#include "../Models/WoodenPuzzlesWorksheet.h"
 
 
 BEGIN_NS_WOODENPUZZLES
@@ -33,9 +33,11 @@ public:
     vector<string> motifs() const override;
     WoodPiece* createWoodPieceWithMotif(const string& Motif) const override;
     void refinePlayCondition(GameBoard* Board, PlayField* Field) const override;
-    
+
+    string Mode;
+
 public:
-    StoreForWorksheet(Worksheet WS);
+    StoreForWorksheet(const string& Mode, Worksheet WS);
     
 private:
     void appendSlotsToBoard(GameBoard* Board) const;

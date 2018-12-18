@@ -227,8 +227,7 @@ bool TodoBook::readFile(string prefix, string filename)
     imagePrefix = prefix+pagePrefix;
     
     readData(bookdata);
-    
-    pages.back().lastPage = true;
+    if(pages.size() > 0) pages.back().lastPage = true;
     
     string creditPath = prefix + "credit.txt";
     string creditData = cocos2d::FileUtils::getInstance()->getStringFromFile(creditPath);

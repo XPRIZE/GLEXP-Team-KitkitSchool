@@ -9,7 +9,7 @@
 
 #include "WordTrace.h"
 #include "Core/WordTraceScene.h"
-#include "Models/LevelData.h"
+#include "Models/WordTraceLevelData.h"
 #include <Managers/LanguageManager.hpp>
 
 
@@ -50,13 +50,16 @@ void WordTrace::setOnFail(std::function<void()> F) {
 
 cocos2d::Scene* WordTrace::createScene() {
     using namespace todoschool::wordtrace;
+
+    size_t SheetID;
     
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID);
+    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID, &SheetID);
     
     auto It = WordTraceScene::create();
     It->TheWorksheet.update(Sheet);
     It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
 

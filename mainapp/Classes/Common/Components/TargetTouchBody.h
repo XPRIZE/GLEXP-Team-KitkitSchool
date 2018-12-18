@@ -11,7 +11,6 @@
 
 #include "cocos2d.h"
 #include "Common/ADT/Chain.h"
-#include "Common/ADT/Optional.h"
 #include "Common/ADT/FunctionVector.h"
 #include <string>
 
@@ -47,7 +46,7 @@ private:
     void handleTouchDidEnd(Touch* T, Event* E);
     void handleTouchDidCancel(Touch* T, Event* E);
 
-    Optional<Vec3> containsPointInContentRectWithCamera(const Vec2& P, const Camera* C) const;
+    bool containsPointInContentRectWithCamera(Vec3& Ret, const Vec2& P, const Camera* C) const;
     bool clippedOutByAncestors(Point P);
 };
 

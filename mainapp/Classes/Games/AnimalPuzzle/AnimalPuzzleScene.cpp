@@ -7,8 +7,6 @@
 
 
 #include "AnimalPuzzleScene.hpp"
-#include <Common/Basic/CommentStream.h>
-#include <Common/Basic/CustomFacet.h>
 #include "Common/Basic/SoundEffect.h"
 
 #include <string>
@@ -64,14 +62,16 @@ namespace AnimalPuzzleSceneSpace {
 using namespace AnimalPuzzleSceneSpace;
 
 
-Scene* AnimalPuzzleScene::createScene(int levelID)
+Scene* AnimalPuzzleScene::createScene(string levelID)
 {
+    auto level = TodoUtil::stoi(levelID);
+    
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     
     // 'layer' is an autorelease object
     auto layer = AnimalPuzzleScene::create();
-    layer->setLevel(levelID);
+    layer->setLevel(TodoUtil::stoi(levelID));
     
     // add layer as a child to scene
     scene->addChild(layer);
@@ -143,6 +143,8 @@ bool AnimalPuzzleScene::init()
         });
         
     }
+
+    loadDurationsheet();
     
     return true;
 }
@@ -220,11 +222,12 @@ void AnimalPuzzleScene::onPuzzleComplete()
     label->setPosition(labelPos);
     addChild(label);
     
-    float voiceDelay = (e.text.length()>15) ? 3.5 : 2.5;
+    //float voiceDelay = (e.text.length()>15) ? 3.5 : 2.5;
+    float voiceDelay = getDuration(e.soundFilename);
 
     if (_currentPuzzleIndex>=_puzzles.size()) {
         auto seq = Sequence::create(DelayTime::create(1.0),
-                                    CallFunc::create([this, e](){ playSound(e.text); }),
+                                    CallFunc::create([this, e](){ playSound(e.soundFilename); }),
                                     nullptr);
         this->runAction(seq);
         
@@ -234,7 +237,7 @@ void AnimalPuzzleScene::onPuzzleComplete()
         });
     } else {
         auto seq = Sequence::create(DelayTime::create(1.0),
-                                    CallFunc::create([this, e](){ playSound(e.text); }),
+                                    CallFunc::create([this, e](){ playSound(e.soundFilename); }),
                                     DelayTime::create(voiceDelay+1.0),
                                     CallFunc::create([this, label](){ label->removeFromParent(); showPuzzle(_currentPuzzleIndex); }),
                                     nullptr);
@@ -262,7 +265,8 @@ void AnimalPuzzleScene::createPuzzle(int index)
     auto folder = resourcePath + info.folderName;
     
 
-    float startDelay = (info.text.length()>15) ? 2.0 : 1.2;
+    //float startDelay = (info.text.length()>15) ? 2.0 : 1.2;
+    float startDelay = getDuration(info.soundFilename);
     
 
     
@@ -363,7 +367,7 @@ void AnimalPuzzleScene::createPuzzle(int index)
             string workPath = [this] {
                 stringstream SS;
                 SS << "/" << "AnimalPuzzle";
-                SS << "/" << "level-" << _currentLevel;
+                SS << "/" << "level-" << _currentLevel << "-0";
                 SS << "/" << "work-" << _currentPuzzleIndex;
                 return SS.str();
             }();
@@ -401,7 +405,7 @@ void AnimalPuzzleScene::createPuzzle(int index)
             string workPath = [this] {
                 stringstream SS;
                 SS << "/" << "AnimalPuzzle";
-                SS << "/" << "level-" << _currentLevel;
+                SS << "/" << "level-" << _currentLevel << "-0";
                 SS << "/" << "work-" << _currentPuzzleIndex;
                 return SS.str();
             }();
@@ -415,50 +419,44 @@ void AnimalPuzzleScene::createPuzzle(int index)
         
     }
     
-    playSound(info.text);
+    playSound(info.soundFilename);
     
 }
 
 void AnimalPuzzleScene::loadData(int level)
 {
-    string P = LanguageManager::getInstance()->findLocalizedResource("Games/" + resourcePath + "AnimalPuzzle_Levels.tsv");
+    string P = "Games/" + resourcePath + "AnimalPuzzle_Levels.tsv";
     string S = FileUtils::getInstance()->getStringFromFile(P);
-    
-    todoschool::CommentStream IS(S);
+
+    auto data = TodoUtil::readTSV(S);
+   
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     
-    auto Facet = [&] {
-        auto It = new todoschool::CustomFacet(IS.getloc());
-        
-        // NB(xenosoz, 2016): U+0020 'SPACE' is not a whitespace anymore.
-        It->clearSpaceFlagsFor(" ");
-        return It;
-    }();
-    
 
-    auto Loc = locale(IS.getloc(), Facet);
-    IS.imbue(Loc);
-    
-    
     string LanguageTag;
     size_t levelID;
     size_t puzzleID;
-    size_t pieceNum;
+    int pieceNum;
     
     _puzzles.clear();
     
     AnimalPuzzleLevelStruct e;
 
+ 
 
-    //const string engTag = "en-US";
-    
-    while (IS >> LanguageTag >> levelID >> puzzleID >> e.text )
-    {
+    int rowIndex = 0;
+    while (rowIndex < data.size()) {
+        auto row = data[rowIndex++];
+        LanguageTag = row[0];
+        levelID = TodoUtil::stoi(row[1]);
+        puzzleID = TodoUtil::stoi(row[2]);
+        e.text = row[3];
         
-        
-        
-        if (!(IS >> e.folderName >> e.backgroundFilename >> pieceNum >> e.maskFilename)) return;
-        
+        e.folderName = row[4];
+        e.backgroundFilename = row[5];
+        pieceNum = TodoUtil::stoi(row[6]);
+        e.maskFilename = row[7];
+        e.soundFilename = row[8];
         
         e.pieceFaceVector.clear();
         e.pieceDepthVector.clear();
@@ -466,14 +464,18 @@ void AnimalPuzzleScene::loadData(int level)
         e.piecePosVector.clear();
         
         for (int i=0; i<pieceNum; i++) {
-        
+            auto row = data[rowIndex++];
             int pieceID;
             string face, depth, shadow;
             float x, y;
             
-            if (!(IS >> pieceID >> face >> x >> y >> depth >> shadow)) {
-                CCLOGERROR("Unexpected input stream error in %s", __PRETTY_FUNCTION__);
-            }
+            pieceID = TodoUtil::stoi(row[0]);
+            face = row[1];
+            x = TodoUtil::stod(row[2]);
+            y = TodoUtil::stod(row[3]);
+            depth = row[4];
+            shadow = row[5];
+            
             
             e.pieceFaceVector.push_back(face);
             if (depth=="x") depth = face+"depth";
@@ -487,30 +489,42 @@ void AnimalPuzzleScene::loadData(int level)
         if (levelID==level) {
             _puzzles.push_back(e);
         }
+        
     }
-    
-    
-    
-    
 }
 
 
 void AnimalPuzzleScene::playSound(string name)
 {
-    string lower;
-    
-    
-    
-    for (int i=0; i<name.length(); i++) {
-        char c = name[i];
-        if (c>='A' && c<='Z') c = c+'a'-'A';
-        lower += c;
-    }
-    
-    string path = LanguageManager::getInstance()->findLocalizedResource("Games/AnimalPuzzle/Sound/"+lower+".m4a");
+    string path = "Games/AnimalPuzzle/Sound/"+name;
     
     GameSoundManager::getInstance()->playEffectSound(path);
 }
+
+void AnimalPuzzleScene::loadDurationsheet() {
+
+    if (_duration.size() != 0) return;
+    std::string rawString = cocos2d::FileUtils::getInstance()->getStringFromFile("AnimalPuzzle/Sound/Durations.tsv");
+    auto data = TodoUtil::readTSV(rawString);
+
+    for (auto row : data) {
+        if (TodoUtil::trim(row[0]).size() <= 0) continue;
+        if (row.size()==1) continue;
+        auto row1Vec = TodoUtil::split(row[1], ':');
+        TodoUtil::replaceAll(row1Vec[2], ".", "");
+        auto rowDuration = (float)TodoUtil::stoi(row1Vec[2])/100;
+        _duration[row[0]] = rowDuration;
+    }
+}
+
+float AnimalPuzzleScene::getDuration(string name) {
+
+    if (_duration.count(name))
+        return _duration[name];
+
+    return 2.5;
+}
+
 
 ////////////////////
 

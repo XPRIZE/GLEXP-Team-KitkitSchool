@@ -216,6 +216,10 @@ std::vector<std::vector<std::string>> TodoUtil::readTSV(std::string& filedata)
         {
             break;
         }
+        if(line.length()==0) continue;
+        if(line[0]=='#') continue;
+
+
         //CCLOG("csv line: %s", line.c_str());
         std::vector<std::string> columns;
         std::istringstream iss2(line);
@@ -249,6 +253,20 @@ std::string TodoUtil::removeSpaces(std::string input) {
 std::string TodoUtil::returnStringOrNullString(std::string& str)
 {
     return str.empty() ? "NULL" : str;
+}
+
+bool TodoUtil::startsWith(const std::string& s, const std::string& prefix)
+{
+    return s.find(prefix) == 0;
+}
+
+bool TodoUtil::endsWith(const std::string& s, const std::string& suffix)
+{
+    return s.rfind(suffix) == (s.size()-suffix.size());
+}
+
+bool TodoUtil::contains(const std::string& s, const std::string& findStr) {
+    return s.find(findStr) != std::string::npos;
 }
 
 void TodoUtil::replaceAll(std::string& str, const std::string& from, const std::string& to)
@@ -320,6 +338,27 @@ Label* TodoUtil::createLabelMultilineToFit(const std::string &text, float maxFon
         return label;
                                             
     }
+    
+    return label;
+}
+
+Label* TodoUtil::createLabelMultilineToFitWidth(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment/* = TextHAlignment::LEFT*/, TextVAlignment vAlignment/* = TextVAlignment::CENTER*/)
+{
+    Label* label;
+    boxSize.width *= 0.95;
+    label = Label::createWithTTF(text, fontName, maxFontSize, Size(boxSize.width, 0), hAlignment, vAlignment);
+    label->setTextColor(color);
+    if (boxSize.height<1) return label;
+    if (label->getContentSize().height <= maxFontSize*2) return label;
+    else {
+        maxFontSize *= 0.8;
+        label = Label::createWithTTF(text, fontName, maxFontSize, Size(boxSize.width, 0), hAlignment, vAlignment);
+        label->setTextColor(color);
+    }
+    
+    label->setLineHeight(maxFontSize*1.1);
+    label->setPosition(0, maxFontSize*0.4);
+    label->setName("multiline");
     
     return label;
 }

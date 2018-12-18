@@ -15,7 +15,7 @@
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Utils/Random.h"
-#include "Utils/CardSlotBuilder.h"
+#include "Utils/NMCardSlotBuilder.h"
 #include "Utils/TodoUtil.h"
 #include <Managers/LanguageManager.hpp>
 #include <Managers/StrictLogManager.h>
@@ -142,7 +142,7 @@ void NumberMatchingScene::onEnter()
     
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto data = LevelData::defaultData();
-    auto sheet = data.randomSheetFor(lang, _currentLevelID);
+    auto sheet = data.randomSheetFor(lang, _currentLevelID, &_currentSheetID);
     
     _currentWorksheet = sheet;
     _currentProblemID = sheet.beginProblemID();
@@ -263,7 +263,7 @@ void NumberMatchingScene::initCardList()
     
     vector<Point> selected;
     auto appendSelected = [&](size_t count, Rect localRect) {
-        auto points = CardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
+        auto points = NMCardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
         auto it = sample(points, count);
         selected.insert(selected.end(),
                         make_move_iterator(it.begin()),
@@ -415,7 +415,7 @@ void NumberMatchingScene::bindingEvents(NumberMatchingCard* card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "NumberMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentSheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -437,7 +437,7 @@ void NumberMatchingScene::bindingEvents(NumberMatchingCard* card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "NumberMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentSheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -631,7 +631,7 @@ Node* NumberMatchingScene::createShiningParticle()
     
     ParticleSystemQuad* _particleEffect = nullptr;
     
-    _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/shining_particle_blur.plist");
+    _particleEffect = ParticleSystemQuad::create("Common/Effects/Particle/shining_particle_blur.plist");
     _particleEffect->setName("particle1");
     _particleEffect->setScale(1.8f);
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -639,7 +639,7 @@ Node* NumberMatchingScene::createShiningParticle()
     _particleEffect->stopSystem();
     _shiningParticleNode->addChild(_particleEffect);
     
-    _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/shining_particle_circle.plist");
+    _particleEffect = ParticleSystemQuad::create("Common/Effects/Particle/shining_particle_circle.plist");
     _particleEffect->setName("particle2");
     _particleEffect->setScale(1.8f);
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -647,7 +647,7 @@ Node* NumberMatchingScene::createShiningParticle()
     _particleEffect->stopSystem();
     _shiningParticleNode->addChild(_particleEffect);
     
-    _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/shining_particle_star.plist");
+    _particleEffect = ParticleSystemQuad::create("Common/Effects/Particle/shining_particle_star.plist");
     _particleEffect->setName("particle3");
     _particleEffect->setScale(1.8f);
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -661,7 +661,7 @@ Node* NumberMatchingScene::createShiningParticle()
 
 void NumberMatchingScene::addStarParticle(Node* targetNode)
 {
-    ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/star_particle.plist");
+    ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("common/effects/particle/star_particle.plist");
     _particleEffect->setScale(6.0f);
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _particleEffect->setPosition(targetNode->getPosition());
@@ -673,7 +673,7 @@ void NumberMatchingScene::addStarParticle(Node* targetNode)
 Point NumberMatchingScene::safePointForBoundary(Point point)
 {
     // NB(xenosoz, 2017): Move point inside of the safe boundary (regarding the polar coordinates)
-    Rect boardRect = Rect(Point(0.f, 0.f), _gameNode->getContentSize());
+    Rect boardRect = Rect(Point(0.f, 0.f), _gameNode->getContentSize() * 0.95f);
     Size cardSize = NumberMatchingCard::defaultSize();
     
     float alpha = .2f;
@@ -739,6 +739,11 @@ void NumberMatchingScene::stompByNode(Node* node)
         auto nextPos = nodePos + (dir * d_1 * 1.7f);
         nextPos = this->safePointForBoundary(nextPos);
         
-        card->runAction(EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f));
+        if (card->stompAction != nullptr)
+        {
+            card->stopAction(card->stompAction);
+        }
+        card->stompAction = EaseQuarticActionOut::create(MoveTo::create(.5f, nextPos));
+        card->runAction(card->stompAction);
     }
 }

@@ -8,7 +8,7 @@
 
 
 #include "SoundToImageStage.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/DigitalQuizMainDepot.h"
 #include "../ChildNodes/LargeImageButton.h"
 
 

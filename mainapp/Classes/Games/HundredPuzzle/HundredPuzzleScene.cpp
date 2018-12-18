@@ -208,7 +208,7 @@ void HundredPuzzleScene::createPieces()
             
             stringstream ss;
             ss << "/" << "HundredPuzzle";
-            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "level-" << _currentLevel << "-0";
             ss << "/" << "work-" << pieceId;
             return ss.str();
         }();

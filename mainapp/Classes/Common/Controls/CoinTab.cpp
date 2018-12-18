@@ -13,6 +13,8 @@
 
 int CoinTab::_numCoin;
 
+#define TAG_COIN_IMAGE  1000
+
 bool CoinTab::init()
 {
     
@@ -37,6 +39,7 @@ bool CoinTab::init()
     
     auto coin = Sprite::create("Common/Controls/Coin/daily_coinstatus_coin.png");
     coin->setPosition(Vec2(0, size.height/2));
+    coin->setTag(TAG_COIN_IMAGE);
     this->addChild(coin);
     
     _coinLabel = nullptr;
@@ -188,4 +191,131 @@ void CoinTab::addCoin(int numCoin, cocos2d::Vec2 fromPosWorld, bool modeGameSele
         }
     }
     
+}
+
+void CoinTab::addCoinForSpecialCourse(int gameCount, int numCoin, Vec2 fromPosWorld, bool isCourseClear) {
+    if (numCoin<=0) return;
+    
+    if (isCourseClear) {
+        addCoin(numCoin, fromPosWorld, false);
+        
+    } else {
+        SoundEffect::startInEffect().preload();
+        SoundEffect::starOutEffect().play();
+        
+        float inoutTime = MIN(2.5 / gameCount, 0.5);
+        float delayTime = MIN(1.0 / gameCount, 0.2);
+        auto parent = this->getParent();
+        
+        auto createCoin = [this, parent, inoutTime](float posX, int numCoin, float delayTime) {
+            Node *coin = Node::create();
+            coin->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            parent->addChild(coin);
+            coin->setPosition(Vec2(posX, 150));
+            
+            Sprite *coinSprite = Sprite::createWithSpriteFrame(_frames.front());
+            auto coinSize = coinSprite->getContentSize();
+            coin->setContentSize(coinSize);
+            coinSprite->setPosition(coinSize/2);
+            coin->addChild(coinSprite);
+
+            auto animation = Animation::createWithSpriteFrames(_frames, 1.0/24.0, 1);
+            auto animate = Animate::create(animation);
+            
+            coinSprite->runAction(RepeatForever::create(animate));
+            
+            auto toPos = Vec2(this->getPositionX()-this->getContentSize().width, this->getPositionY());
+            auto inSpawn = Spawn::create(EaseOut::create(MoveTo::create(inoutTime, toPos), 2.0),
+                                         EaseOut::create(ScaleTo::create(inoutTime, 0.0), 2.0), nullptr);
+            coin->runAction(Sequence::create(DelayTime::create(delayTime),
+                                             inSpawn,
+                                             CallFunc::create([coin, numCoin, this](){
+                SoundEffect::startInEffect().play();
+                this->addCoinLabel(numCoin);
+                coin->removeFromParent();
+            }),
+                                             nullptr));
+        };
+        
+        int slotCoin[gameCount];
+        int totalCoinCount = 0;
+        for (int i = 0; i < gameCount; i++) {
+            slotCoin[i] = 2 + random(0, 3);
+            totalCoinCount += slotCoin[i];
+        }
+        
+        const int numCoinPerCoinImage = numCoin / totalCoinCount;
+        
+        float step = parent->getContentSize().width / (gameCount + 1);
+        for (int i = 0; i < gameCount; i++) {
+            createCoin(step * (i + 1), numCoinPerCoinImage, delayTime * i + 1.3);
+            
+            for (int j = 1; j < slotCoin[i]; j++) {
+                // whether last coin image
+                int addCoinNum = (i == gameCount - 1 && j == slotCoin[i] - 1) ? numCoin - (numCoinPerCoinImage * (totalCoinCount - 1)) : numCoinPerCoinImage;
+                runAction(Sequence::create(DelayTime::create(delayTime * i + 1.3 + 0.05 * j),
+                                           CallFunc::create([i, step, addCoinNum, createCoin](){
+                        createCoin(step * (i + 1), addCoinNum, 0);
+                }),
+                                           nullptr));
+            }
+        }
+    } 
+}
+
+void CoinTab::removeCoin(int numCoin, Vec2 toPosWorld, std::function<void()> callback) {
+    auto parent = this->getParent();
+    auto fromPos = _coinLabel->convertToWorldSpace(_coinLabel->getContentSize() / 2 + Size(0, -50));
+    auto spriteLabelCoin = this->getChildByTag(TAG_COIN_IMAGE);
+    
+    if (spriteLabelCoin) {
+        fromPos = spriteLabelCoin->convertToWorldSpace(spriteLabelCoin->getContentSize() / 2);
+    }
+    
+    float inoutTime = 0.5f;
+    float delayTime = 0.1f;
+
+    for (int i=0; i<numCoin; i++) {
+        Node *coin = Node::create();
+        coin->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        parent->addChild(coin, 100);
+        coin->setPosition(fromPos);
+        
+        Sprite *coinSprite = Sprite::createWithSpriteFrame(_frames.front());
+        auto coinSize = coinSprite->getContentSize();
+        coin->setContentSize(coinSize);
+        coinSprite->setPosition(coinSize/2);
+        coinSprite->setScale(0.5f);
+        if (spriteLabelCoin) {
+            float scale = spriteLabelCoin->getContentSize().width / coinSprite->getContentSize().width;
+            coinSprite->setScale(scale);
+        }
+        coin->addChild(coinSprite);
+
+        auto animation = Animation::createWithSpriteFrames(_frames, 1.0/24.0, 1);
+        auto animate = Animate::create(animation);
+        
+        coinSprite->runAction(RepeatForever::create(animate));
+        
+        auto toPos = Vec2(toPosWorld);
+        auto inSpawn = Spawn::create(EaseOut::create(MoveTo::create(inoutTime, toPos), 2.0),
+                                     nullptr);
+        this->addCoinLabel(-1);
+        coin->runAction(Sequence::create(DelayTime::create(delayTime*i + 0.1),
+                                         DelayTime::create(0.8),
+                                         inSpawn,
+                                         CallFunc::create([coin, callback, numCoin, i, this](){
+            SoundEffect::startInEffect().play();
+            coin->removeFromParent();
+            
+            if (callback != nullptr && i == numCoin - 1) {
+                this->runAction(Sequence::create(DelayTime::create(1.0f),
+                                                 CallFunc::create([callback](){
+                    callback();
+                }), nullptr));
+            }
+        }),
+                                         nullptr));
+        
+    }
 }

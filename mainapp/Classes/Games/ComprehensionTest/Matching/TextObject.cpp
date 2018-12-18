@@ -15,7 +15,7 @@ namespace ComprehensionTest
     {
         const Size txtSize = Size(600, 300);
 //        const Size txtSize = Size(510, 374);
-        const string fontName = "fonts/TodoSchoolV2.ttf";
+        const string fontName = FONT_ANDIKA_REGULAR;
         
         TextObject::TextObject():
         _dotDirection(DotDirection::Right)

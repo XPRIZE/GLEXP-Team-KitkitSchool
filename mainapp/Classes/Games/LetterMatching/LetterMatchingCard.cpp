@@ -107,9 +107,9 @@ void LetterMatchingCard::createShiningParticle()
         _shiningParticleNode->addChild(particleEffect);
     };
     
-    createParticleEffect("particle1", "NumberMatching/Particle/shining_particle_blur.plist");
-    createParticleEffect("particle2", "NumberMatching/Particle/shining_particle_circle.plist");
-    createParticleEffect("particle3", "NumberMatching/Particle/shining_particle_star.plist");
+    createParticleEffect("particle1", "Common/Effects/Particle/shining_particle_blur.plist");
+    createParticleEffect("particle2", "Common/Effects/Particle/shining_particle_circle.plist");
+    createParticleEffect("particle3", "Common/Effects/Particle/shining_particle_star.plist");
     
     _shiningParticleNode->setPosition(this->getContentSize()/2);
     addChild(_shiningParticleNode);

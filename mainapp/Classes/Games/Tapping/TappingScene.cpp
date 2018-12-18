@@ -275,7 +275,7 @@ void TappingScene::placeBalloon(int tapCount, Rect placeArea, bool isBubble, flo
         string workPath = [balloon, this] {
             stringstream ss;
             ss << "/" << "Tapping";
-            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "level-" << _currentLevel << "-0";
             ss << "/" << "work-" << balloon->_balloonId;
             return ss.str();
         }();
@@ -325,7 +325,7 @@ void TappingScene::balloonFlown(TappingBalloon *balloon, bool touched)
         {
             image->setPosition(p);
             
-            ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/star_particle.plist");
+            ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("common/effects/particle/star_particle.plist");
             _particleEffect->setScale(6.0f);
             _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             _particleEffect->setPosition(p);

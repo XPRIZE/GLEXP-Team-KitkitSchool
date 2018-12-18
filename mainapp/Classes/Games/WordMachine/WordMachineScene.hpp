@@ -13,8 +13,8 @@
 
 #include "cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
-#include "Models/LevelData.hpp"
-#include "Models/Worksheet.hpp"
+#include "Models/WordMachineLevelData.hpp"
+#include "Models/WordMachineWorksheet.hpp"
 #include "LetterWheel.hpp"
 #include <Common/Basic/CreateFunc.h>
 #include "Common/Controls/ProgressIndicator.hpp"
@@ -48,6 +48,7 @@ private:
     Node* _rightCard;
     
     unsigned int _levelID;
+    int _worksheetID;
     todoschool::wordmachine::Worksheet _worksheet;
     unsigned int _currentProblemID;
     todoschool::wordmachine::Problem _currentProblem;    

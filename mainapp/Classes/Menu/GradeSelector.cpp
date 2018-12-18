@@ -15,6 +15,7 @@
 #include "Common/Basic/NodeScopeGuard.h"
 #include <Utils/TodoUtil.h>
 #include <cocos/ui/UIButton.h>
+#include "Managers/UserManager.hpp"
 
 #include "CCAppController.hpp"
 
@@ -84,7 +85,7 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
     backButton->setPosition(Vec2(25, _winSize.height-25));
     scene->addChild(backButton);
     
-    auto label = Label::createWithTTF("Choose a level to play",
+    auto label = Label::createWithTTF("Choose a level to play (" + gameName_ + ")",
                                    defaultFont, defaultFontSize);
     
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
@@ -104,7 +105,29 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
     scene->addChild(node);
     node->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     node->setPosition(_winSize.width*0.05,_winSize.height-400);
-    
+
+
+    {
+        bool isWorksheetTest = UserManager::getInstance()->isWorksheetTestMode();
+
+        ui::Button* worksheetTestButton = ui::Button::create();
+        auto txt = isWorksheetTest ? "worksheet all: on" : "worksheet all: off";
+        worksheetTestButton->setTitleText(txt);
+        worksheetTestButton->setTitleFontSize(50);
+
+        worksheetTestButton->setPosition(Vec2(_winSize.width-300, _winSize.height-300));
+        worksheetTestButton->addTouchEventListener([worksheetTestButton, this](Ref*,ui::Widget::TouchEventType e) {
+            if (e == ui::Widget::TouchEventType::ENDED) {
+                bool isWorksheetTest = UserManager::getInstance()->isWorksheetTestMode();
+                auto txt = !isWorksheetTest ? "worksheet all: on" : "worksheet all: off";
+                worksheetTestButton->setTitleText(txt);
+                UserManager::getInstance()->setWorksheetTestMode(!isWorksheetTest);
+            }
+        }  );
+        scene->addChild(worksheetTestButton);
+    }
+
+
     float posX = 0.f, posY = 0.f;
     float width = 0.f, height = 0.f;
     
@@ -112,14 +135,23 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
     int columnCount = 0;
 
     string gameName = gameName_;
-
+    
+    int specialTestCount=0;
+    int fishQuizCount=0;
+ 
     for (auto it : _choicesStr) {
 
         bool newLine = false;
 
         auto itVec = TodoUtil::split(it, '_');
         
-        if (itVec.size()>1) {
+        if (itVec[0] == "specialtest") {
+            if (specialTestCount%10==0) newLine = true;
+            specialTestCount++;
+        } else if (itVec[0] == "fishtest") {
+            if (fishQuizCount%10==0) newLine = true;
+            fishQuizCount++;
+        } else if (itVec.size()>1) {
             auto currentLevel = TodoUtil::stoi(itVec[1]);
             CCLOG("currentLevel: %d", currentLevel);
             CCLOG("levelCount: %d", levelCount);
@@ -144,7 +176,6 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
             posX = 0.f;
             posY -= buttonSize.height * 2;
             if (-posY > height) height = -posY;
-
         }
         
         button->setPosition(Vec2(posX, posY));
@@ -156,7 +187,7 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
                         int val = TodoUtil::stoi(string(editBox->getText()));
                         
                         if (val != INT_MIN) {
-                            UserDefault::getInstance()->setIntegerForKey("TRIGGER_VOLUME", val);
+                            UserDefault::getInstance()->setIntegerForKey("TRIGGER_VOL", val);
                         }
                     }
                 }

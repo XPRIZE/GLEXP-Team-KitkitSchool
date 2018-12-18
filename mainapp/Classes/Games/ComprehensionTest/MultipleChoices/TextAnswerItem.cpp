@@ -43,6 +43,9 @@ namespace ComprehensionTest
 {
     namespace MultipleChoices
     {
+        const float kRevisedX = 10.f;
+        const float kRevisedY = 10.f;
+        
         TextAnswerItem::TextAnswerItem():
         currentState(TextAnswerState::Normal)
         {
@@ -63,13 +66,6 @@ namespace ComprehensionTest
             
             setContentSize(bLongText ? kLongContentSize : kDeaultContentSize);
             
-//            LayerColor* lc1 = LayerColor::create(Color4B(100, 100, 100, 255));
-//            lc1->setContentSize(getContentSize());
-//            lc1->ignoreAnchorPointForPosition(false);
-//            lc1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-//            lc1->setPosition(Vec2::ZERO);
-//            addChild(lc1);
-            
             _normalAnswerSprite = Sprite::create(bLongText ? kLongNormalAnswerSpritePath : kNormalAnswerSpritePath);
             _normalAnswerSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
             _normalAnswerSprite->setPosition(0.f, getContentSize().height / 2);
@@ -88,34 +84,34 @@ namespace ComprehensionTest
             _wrongAnswerSprite->setVisible(false);
             addChild(_wrongAnswerSprite);
             
-            _normalLetterLabel = TodoUtil::createLabel("", 70, Size::ZERO,  "fonts/TodoSchoolV2.ttf", kNormalLetterColor);
+            _normalLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, kNormalLetterColor);
             _normalLetterLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _normalLetterLabel->setPosition(50.f, getContentSize().height / 2);
+            _normalLetterLabel->setPosition(50.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_normalLetterLabel);
             
-            _wrongLetterLabel = TodoUtil::createLabel("", 70, Size::ZERO,  "fonts/TodoSchoolV2.ttf", kWrongLetterColor);
+            _wrongLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, kWrongLetterColor);
             _wrongLetterLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _wrongLetterLabel->setPosition(50.f, getContentSize().height / 2);
+            _wrongLetterLabel->setPosition(50.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_wrongLetterLabel);
             
-            _normalAnswerLabel = TodoUtil::createLabel(text, 50, Size::ZERO,  "fonts/TodoSchoolV2.ttf", kNormalAnswerColor);
+            _normalAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_normalAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kNormalAnswerColor);
             _normalAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _normalAnswerLabel->setPosition(150.f, getContentSize().height / 2);
+            _normalAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_normalAnswerLabel);
 
-            _rightAnswerLabel = TodoUtil::createLabel(text, 50, Size::ZERO,  "fonts/TodoSchoolV2.ttf", kRightAnswerColor);
+            _rightAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_rightAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kRightAnswerColor);
             _rightAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _rightAnswerLabel->setPosition(150.f, getContentSize().height / 2);
+            _rightAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_rightAnswerLabel);
             
-            _wrongAnswerLabel = TodoUtil::createLabel(text, 50, Size::ZERO,  "fonts/TodoSchoolV2.ttf", kWrongAnswerColor);
+            _wrongAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_wrongAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kWrongAnswerColor);
             _wrongAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _wrongAnswerLabel->setPosition(150.f, getContentSize().height / 2);
+            _wrongAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_wrongAnswerLabel);
             
             _checkSprite = Sprite::create(kCheckSpritePath);
             _checkSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-            _checkSprite->setPosition(50.f, getContentSize().height / 2);
+            _checkSprite->setPosition(50.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
             addChild(_checkSprite);
             
             setState(TextAnswerState::Normal);

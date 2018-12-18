@@ -15,19 +15,19 @@ using namespace std;
 
 namespace todoschool {
 
-Optional<Json::Value> jsonFromFile(const string& Filename) {
-    Optional<Json::Value> Ret = Json::Value();
+bool jsonFromFile(const string& Filename, Json::Value& RetValue) {
+    RetValue = Json::Value();
 
     // XXX: What if getStringFromFile fails?
     string JsonStr = FileUtils::getInstance()->getStringFromFile(Filename);
 
     Json::Reader JsonReader;
-    if (!JsonReader.parse(JsonStr, Ret.value())) {
+    if (!JsonReader.parse(JsonStr, RetValue)) {
         CCLOGERROR("JSON reader parse error: %s", Filename.c_str());
-        Ret.reset();
+        return false;
     }
 
-    return Ret;
+    return true;
 }
 
 }  // namespace todoschool

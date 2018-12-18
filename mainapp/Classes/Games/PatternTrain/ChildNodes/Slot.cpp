@@ -7,7 +7,7 @@
 //
 
 #include "Slot.hpp"
-#include "Box.hpp"
+#include "PatternTrainBox.hpp"
 
 BEGIN_NS_PATTERNTRAIN;
 

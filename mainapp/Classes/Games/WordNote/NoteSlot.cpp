@@ -6,7 +6,7 @@
 //
 
 #include "NoteSlot.hpp"
-#include "Piece.hpp"
+#include "WordNotePiece.hpp"
 
 BEGIN_NS_WORDNOTE;
 

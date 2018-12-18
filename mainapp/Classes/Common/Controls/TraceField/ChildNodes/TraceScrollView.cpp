@@ -16,7 +16,8 @@ BEGIN_NS_TRACEFIELD
 
 bool TraceScrollView::init() {
     if (!Super::init()) { return false; }
-
+    
+    HasScrollCache = false;
     clearInternals();
 
     return true;
@@ -33,7 +34,8 @@ void TraceScrollView::clearInternals() {
     ScrollClock = 0.f;
     
     TheTraceString.OnValueUpdate = [this](TraceString&) {
-        TheScrollCache.reset();
+        TheScrollCache = 0;
+        HasScrollCache = false;
     };
     
     ClippingEnabled.OnValueUpdate = [this](bool&) {
@@ -55,7 +57,7 @@ void TraceScrollView::update(float DeltaSeconds) {
     Super::update(DeltaSeconds);
 
     size_t GI = PassedIndex().GlyphIndex;
-    if (!TheScrollCache || *TheScrollCache != GI) {
+    if (!HasScrollCache || TheScrollCache != GI) {
         // NB(xenosoz, 2016): Dirty. Set a new goal here.
         if (TheStyle().ScrollLetterByLetter) {
             scrollTheGlyphToRegion();
@@ -66,7 +68,8 @@ void TraceScrollView::update(float DeltaSeconds) {
         }
         
         // NB(xenosoz, 2016): Set it clean.
-        TheScrollCache.reset(GI);
+        TheScrollCache = GI;
+        HasScrollCache = true;
     }
 
     const float ScrollTimeLimit = .3f;

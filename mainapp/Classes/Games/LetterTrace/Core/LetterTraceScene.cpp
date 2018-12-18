@@ -7,13 +7,14 @@
 //
 
 #include "LetterTraceScene.h"
-#include "../Utils/MainDepot.h"
-#include <Games/LetterTrace/Common/BonusVideoPlayer/BonusVideoPlayer.h>
+#include "Managers/LanguageManager.hpp"
+#include "../Utils/LetterTraceMainDepot.h"
+#include "Common/Controls/BonusVideoPlayer.h"
 #include "Common/Components/TargetDragBody.h"
 #include <Managers/StrictLogManager.h>
+#include "Common/Controls/SignLanguageVideoPlayer.hpp"
 
 #include "CCAppController.hpp"
-
 
 BEGIN_NS_LETTERTRACE
 
@@ -23,7 +24,8 @@ using namespace std;
 
 
 
-namespace {
+namespace
+{
     bool showDebugLines() {
         // NB(xenosoz, 2016): It's dangerous to go alone! Take this.
         return false;
@@ -221,7 +223,7 @@ void LetterTraceScene::refreshChildNodes() {
             // NB(xenosoz, 2018): TraceWorkIndex is dynamic. That's why I made this as a function.
             stringstream SS;
             SS << "/" << "LetterTrace";
-            SS << "/" << "level-" << LevelID;
+            SS << "/" << "level-" << LevelID << "-" << SheetID;
             SS << "/" << "work-" << TraceWorkIndex();
             return SS.str();
         };
@@ -332,6 +334,30 @@ void LetterTraceScene::refreshChildNodes() {
     }());
 }
 
+string LetterTraceScene::getVideoFile(string letter)
+{
+    auto filename = StringUtils::format("asl_%c_hand", std::tolower(letter.c_str()[0]));
+    auto path = StringUtils::format("Videos/%s.mp4", filename.c_str());
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    path = filename;
+#endif
+    return path;
+}
+
+void LetterTraceScene::drawSignLanguageVideo()
+{
+    if (LevelID != 1 && LevelID != 2)
+        return;
+
+    if (LanguageManager::getInstance()->isSignLanguageMode() == false)
+        return;
+    
+    this->runAction(Sequence::create(DelayTime::create(0.5f), CallFunc::create([this](){
+        //SHOW_SL_VIDEO_IF_ENABLED("common/temp_video_short.mp4");
+        SHOW_SL_VIDEO_IF_ENABLED(getVideoFile(TheTraceWork().TraceText.c_str()));
+    }), nullptr));
+}
+
 void LetterTraceScene::prepareFirstWork() {
     TraceWorkMaxIndex.update(TheWorksheet().endProblemID() - 1);
     TraceWorkIndex.update(TheWorksheet().beginProblemID());
@@ -388,11 +414,9 @@ void LetterTraceScene::beginTheWork() {
     }
     
     TheTraceField->setOpacity(0);
-    TheTraceField->runAction(Sequence::create(FadeIn::create(Delay),
-                                           CallFunc::create([this](){
+    TheTraceField->runAction(Sequence::create(FadeIn::create(Delay), CallFunc::create([this](){
         MainDepot().soundForLetter(TheTraceWork().TraceText).play();
-    }),
-                                              nullptr));
+    }), nullptr));
     
 //    scheduleOnce([this](float) {
 //        MainDepot().soundForLetter(TheTraceWork().TraceText).play();
@@ -470,6 +494,8 @@ void LetterTraceScene::handleTheTraceWorkValueUpdate(Problem&) {
     TheBonusNode->VideoFilePath.update(VideoFilePath);
     TheBonusNode->TraceText.update(W.TraceText);
     TheBonusNode->FullText.update(W.FullText);
+
+    drawSignLanguageVideo();
 }
 
 void LetterTraceScene::handleNextTraceWorkValueUpdate(Problem&) {
@@ -486,6 +512,9 @@ void LetterTraceScene::handleTraceWorkDidEnd() {
 
     // NB(xenosoz, 2016): I found some cases where bonus video doesn't exist in level data.
     handleBonusWorkDidEnd();
+    
+    // HyeonGyu(2018.05): For Sign-Language Build
+    //removeSignLanguageVideo();
 }
 
 void LetterTraceScene::handleBonusWorkDidEnd() {

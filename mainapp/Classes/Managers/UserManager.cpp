@@ -13,6 +13,8 @@
 #include "cocos2d.h"
 #include "Utils/TodoUtil.h"
 
+#include "Menu/CoopScene.hpp"
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include <jni.h>
 #include "platform/android/jni/JniHelper.h"
@@ -56,6 +58,7 @@ void UserManager::init()
     _gameTestingMode = false;
     
 #endif
+    _worksheetTestMode = false;
     _allowReset = false;
     _userName = "";
     
@@ -79,38 +82,64 @@ void UserManager::clearStatus()
 
 void UserManager::resetStatus()
 {
-
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    JniHelper::callStaticVoidMethod("org/cocos2dx/cpp/AppActivity", "deleteAllUserDefault");
+#else
     for (auto l : CurriculumManager::getInstance()->levels) {
         auto levelID = l.first;
         UserDefault::getInstance()->setBoolForKey(getLevelOpenKey(levelID).c_str(), false);
-
+        
         for (auto d : l.second.days) {
             UserDefault::getInstance()->setBoolForKey(getDayClearedKey(levelID, d.dayOrder).c_str(), false);
-
+            
             for (int i=0; i<d.games.size(); i++) {
                 UserDefault::getInstance()->setBoolForKey(getGameClearedKey(levelID, d.dayOrder, i).c_str(), false);
             }
+            
+            if (l.second.categoryLevel == CoopScene::LEVEL_SPECIAL_COURSE) {
+                UserDefault::getInstance()->setIntegerForKey(getSpecialCourseCurrentProgressKey(levelID, d.dayOrder).c_str(), 0);
+            }
         }
-
-
+        
+        if (l.second.categoryLevel == CoopScene::LEVEL_FISH_PRESENT) {
+            UserDefault::getInstance()->setIntegerForKey(getFishPresentCurrentProgressLevelKey(levelID).c_str(), 0);
+            for (int i = 0; i < CoopScene::LEVEL_COUNT_REGULAR_EGG; ++i) {
+                UserDefault::getInstance()->setIntegerForKey(getFishPresentCurrentProgressIndexKey(levelID, i).c_str(), 0);
+            }
+            UserDefault::getInstance()->setBoolForKey(getFishPresentEnableKey(levelID).c_str(), true);
+        }
+        
         string key = getCurrentDayKey(levelID);
         UserDefault::getInstance()->setIntegerForKey(key.c_str(), 0);
         
         setPretestProgressType(levelID, PretestProgressType::required);
     }
-
+    setGuideCoopStatus(guideCoopType::visitFirst);
+    setGuideDayStatus(guideDayType::touchFirst);
     UserDefault::getInstance()->setBoolForKey(getFinishTutorialKey().c_str(), false);
-
+    UserDefault::getInstance()->setBoolForKey(getSpecialCourseLightOnKey('L').c_str(), false);
+    UserDefault::getInstance()->setBoolForKey(getSpecialCourseLightOnKey('M').c_str(), false);
+    UserDefault::getInstance()->setBoolForKey(getFishPresentLightOnKey('L').c_str(), false);
+    UserDefault::getInstance()->setBoolForKey(getFishPresentLightOnKey('M').c_str(), false);
+    UserDefault::getInstance()->setBoolForKey(getWelcomeVideoPlayedKey().c_str(), false);
+    
+#endif
     _currentDay = 0;
     setCurrentLevelID("");
-
-
     UserDefault::getInstance()->flush();
 
     _levelOpenedMap.clear();
     _dayClearedMap.clear();
     _gameClearedMap.clear();
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    JniHelper::callStaticVoidMethod("org/cocos2dx/cpp/AppActivity", "setUnlockFishBowl", false);
+#endif
+}
 
+string UserManager::getWelcomeVideoPlayedKey()
+{
+    return _userName + "_welcomeVideoPlayed";
 }
 
 string UserManager::getCurrentLevelIDKey()
@@ -205,6 +234,9 @@ void UserManager::setLevelOpen(string levelID, bool isOpen)
 bool UserManager::isLevelCleared(string levelID)
 {
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
+    if (cur->days.size() == 0) {
+        return false;
+    }
     //int num = 0;
 
     auto lastDayCur = cur->days.back();
@@ -225,21 +257,39 @@ bool UserManager::isLevelCleared(string levelID)
 
 PretestProgressType UserManager::getPretestProgressType(string levelID) {
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
-    if (cur->categoryLevel == 1
-        || cur->categoryLevel == 2) {
-        return (PretestProgressType)UserDefault::getInstance()->getIntegerForKey(("pretest_progress_"+levelID).c_str(), (int)PretestProgressType::required);
+
+    if (cur->categoryLevel >= 3 && cur->categoryLevel <= 4) {
+        return (PretestProgressType)UserDefault::getInstance()->getIntegerForKey((_userName+"pretest_progress_"+levelID).c_str(), (int)PretestProgressType::required);
+
     } else {
         return PretestProgressType::finish;
+
     }
 }
 
 void UserManager::setPretestProgressType(string levelID, PretestProgressType type) {
     auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
-    if (cur->categoryLevel == 1
-        || cur->categoryLevel == 2) {
-        UserDefault::getInstance()->setIntegerForKey(("pretest_progress_"+levelID).c_str(), (int)type);
+    if (cur->categoryLevel > 0 && cur->categoryLevel <= 4) {
+        UserDefault::getInstance()->setIntegerForKey((_userName+"pretest_progress_"+levelID).c_str(), (int)type);
     }
     return;
+}
+
+guideCoopType UserManager::getGuideCoopStatus() {
+    return (guideCoopType)UserDefault::getInstance()->getIntegerForKey((_userName+"guide_coop_flag").c_str(), (int)guideCoopType::visitFirst);
+}
+
+void UserManager::setGuideCoopStatus(guideCoopType type) {
+    UserDefault::getInstance()->setIntegerForKey((_userName+"guide_coop_flag").c_str(), (int)type);
+
+}
+
+guideDayType UserManager::getGuideDayStatus() {
+    return (guideDayType)UserDefault::getInstance()->getIntegerForKey((_userName+"guide_day_flag").c_str(), (int)guideDayType::touchFirst);
+}
+
+void UserManager::setGuideDayStatus(guideDayType type) {
+    UserDefault::getInstance()->setIntegerForKey((_userName+"guide_day_flag").c_str(), (int)type);
 }
 
 string UserManager::getDayClearedKey(string levelID, int day)
@@ -354,8 +404,90 @@ void UserManager::setGameCleared(string levelID, int day, int gameIndex, bool is
     UserDefault::getInstance()->flush();
 }
 
+string UserManager::getSpecialCourseCurrentProgressKey(string levelID, int day) {
+    return _userName + "_SCCurrentProgress_"+levelID+"_"+TodoUtil::itos(day);
+}
 
+void UserManager::setSpecialCourseCurrentProgress(string levelID, int day, int gameIndex) {
+    UserDefault::getInstance()->setIntegerForKey(getSpecialCourseCurrentProgressKey(levelID, day).c_str(), gameIndex);
+    UserDefault::getInstance()->flush();
+}
 
+int UserManager::getSpecialCourseCurrentProgress(string levelID, int day) {
+    return UserDefault::getInstance()->getIntegerForKey(getSpecialCourseCurrentProgressKey(levelID, day).c_str());
+}
+
+string UserManager::getSpecialCourseLightOnKey(char course) {
+    return _userName + "_SCLight_" + course;
+}
+
+void UserManager::setSpecialCourseLightOn(char course) {
+    UserDefault::getInstance()->setBoolForKey(getSpecialCourseLightOnKey(course).c_str(), true);
+    UserDefault::getInstance()->flush();
+}
+
+bool UserManager::getSpecialCourseLightOn(char course) {
+    return UserDefault::getInstance()->getBoolForKey(getSpecialCourseLightOnKey(course).c_str());
+}
+
+string UserManager::getFishPresentCurrentProgressLevelKey(string levelID) {
+    return _userName + "_FPCurrentProgressLevel_" + levelID;
+}
+
+void UserManager::setFishPresentCurrentProgressLevel(string levelID, int levelIndex) {
+    if (_gameTestingMode) {
+        return;
+    }
+    UserDefault::getInstance()->setIntegerForKey(getFishPresentCurrentProgressLevelKey(levelID).c_str(), levelIndex);
+    UserDefault::getInstance()->flush();
+}
+
+int UserManager::getFishPresentCurrentProgressLevel(string levelID) {
+    return UserDefault::getInstance()->getIntegerForKey(getFishPresentCurrentProgressLevelKey(levelID).c_str());
+}
+
+string UserManager::getFishPresentCurrentProgressIndexKey(string levelID, int levelIndex) {
+    return _userName + "_FPCurrentProgressIndex_" + levelID + "_" + TodoUtil::itos(levelIndex);
+}
+
+void UserManager::setFishPresentCurrentProgressIndex(string levelID, int levelIndex, int index) {
+    if (_gameTestingMode) {
+        return;
+    }
+
+    UserDefault::getInstance()->setIntegerForKey(getFishPresentCurrentProgressIndexKey(levelID, levelIndex).c_str(), index);
+    UserDefault::getInstance()->flush();
+}
+
+string UserManager::getFishPresentLightOnKey(char course) {
+    return _userName + "_FPLight_" + course;
+}
+
+void UserManager::setFishPresentLightOn(char course) {
+    UserDefault::getInstance()->setBoolForKey(getFishPresentLightOnKey(course).c_str(), true);
+    UserDefault::getInstance()->flush();
+}
+
+bool UserManager::getFishPresentLightOn(char course) {
+    return UserDefault::getInstance()->getBoolForKey(getFishPresentLightOnKey(course).c_str());
+}
+
+int UserManager::getFishPresentCurrentProgressIndex(string levelID, int levelIndex) {
+    return UserDefault::getInstance()->getIntegerForKey(getFishPresentCurrentProgressIndexKey(levelID, levelIndex).c_str());
+}
+
+string UserManager::getFishPresentEnableKey(string levelID) {
+    return _userName + "_FPEnable_" + levelID;
+}
+
+void UserManager::setFishPresentEnable(string levelID, bool isEnable) {
+    UserDefault::getInstance()->setBoolForKey(getFishPresentEnableKey(levelID).c_str(), isEnable);
+    UserDefault::getInstance()->flush();
+}
+
+bool UserManager::isFishPresentEnable(string levelID) {
+    return UserDefault::getInstance()->getBoolForKey(getFishPresentEnableKey(levelID).c_str(), true);
+}
 
 /*
 void UserManager::setCurrentUser(std::string classId, std::string studentId, std::string courseId)
@@ -575,7 +707,6 @@ bool UserManager::hasPlayedMenuTutorial()
     auto ret = UserDefault::getInstance()->getBoolForKey(getFinishTutorialKey().c_str(), false);
     return ret;
 }
-
 
 void UserManager::sendAppToBack()
 {

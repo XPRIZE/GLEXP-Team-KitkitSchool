@@ -86,18 +86,20 @@ private:
         int _day;
         bool _isCrown;
         bool _isQuiz;
-       
+        bool _isSpecialCourse;
         bool _isAvailable;
+        bool _isFirstSetup;
         
         Label *_label;
         Sprite *_body;
+        Sprite *_topGlow;
         Sprite *_backGlow;
 //        Sprite *_labelGlow;
         Sprite *_cover;
         
-        
-        
-        
+        Vector<SpriteFrame*> _spriteFrameForSC;
+        Vector<SpriteFrame*> _spriteFrameTopGlowForGC;
+        void loadSpriteFrameForSC(bool isCrown); 
     };
     
     
@@ -137,6 +139,7 @@ private:
     int _currentDay;
     bool _doneClearedDay;
     int _maxAvailableDay;
+    bool _isSpecialCourse;
     
     
     

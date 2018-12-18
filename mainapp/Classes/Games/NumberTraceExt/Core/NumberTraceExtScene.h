@@ -10,8 +10,8 @@
 #pragma once
 
 
-#include "../Utils/MainNS.h"
-#include "../Models/Problem.h"
+#include "../Utils/NumberTraceExtNS.h"
+#include "../Models/NumberTraceExtProblem.h"
 
 #include <Common/Controls/TraceField/TraceField.h>
 #include <functional>

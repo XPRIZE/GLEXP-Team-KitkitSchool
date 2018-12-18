@@ -8,11 +8,15 @@
 
 #include "TextAndTextLayer.hpp"
 #include "TextAnswerItem.hpp"
+#include "Utils/TodoUtil.h"
 
 namespace ComprehensionTest
 {
     namespace MultipleChoices
     {
+        const int kAnswerCount = 4;
+        const float kGapBetweenEachItem = 16.f;
+        
         bool TextAndTextLayer::init()
         {
             if (!Node::init()) return false;
@@ -24,33 +28,32 @@ namespace ComprehensionTest
         
         void TextAndTextLayer::setAnswers(std::vector<std::string> answerTexts)
         {
-            Size totalSize;
+            random_shuffle(answerTexts.begin(), answerTexts.end());
+            
             auto answersRootNode = Node::create();
             
             if (answerTexts.size() > 0)
             {
                 auto item = TextAnswerItem::create();
                 item->initText(answerTexts[0]);
-                totalSize = Size(item->getContentSize().width, item->getContentSize().height * 4);
+                Size totalSize = Size(item->getContentSize().width, item->getContentSize().height * kAnswerCount) + Size(0.f, kGapBetweenEachItem * (kAnswerCount - 1));
                 answersRootNode->setContentSize(totalSize);
+                CCLOG("total : %f, %f", totalSize.width, totalSize.height);
             }
             
-            CCLOG("total : %f, %f", totalSize.width, totalSize.height);
+            float posX = 0.f;
+            float posY = answersRootNode->getContentSize().height;
             
             for (int i = 0; i < answerTexts.size(); i++)
             {
                 TextAnswerItem* item = TextAnswerItem::create();
                 item->initText(answerTexts[i]);
                 item->setLetterByIndex(i);
-                
-                float posX = 0;
-                float posY = answersRootNode->getContentSize().height - item->getContentSize().height * i;
-                
-                CCLOG("(%f, %f)", posX, posY);
-                
                 item->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
                 item->setPosition(posX, posY);
                 answersRootNode->addChild(item);
+                
+                posY -= item->getContentSize().height + kGapBetweenEachItem;
                 
                 item->onCheckTarget = [this, item]() {
                     if(item->currentState == TextAnswerState::Right || item->currentState == TextAnswerState::Wrong)
@@ -71,16 +74,11 @@ namespace ComprehensionTest
                 };
             }
             
-            //            LayerColor* lc1 = LayerColor::create(Color4B(100, 100, 100, 255));
-            //            lc1->setContentSize(answersRootNode->getContentSize());
-            //            lc1->ignoreAnchorPointForPosition(false);
-            //            lc1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            //            lc1->setPosition(answersRootNode->getContentSize() / 2);
-            //            answersRootNode->addChild(lc1);
-            
             answersRootNode->setPosition(getContentSize().width / 2, getContentSize().height / 2 - 100.f);
             answersRootNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             addChild(answersRootNode);
+            
+            //DRAW_DEBUG_AREA(answersRootNode);
         }
         
     }

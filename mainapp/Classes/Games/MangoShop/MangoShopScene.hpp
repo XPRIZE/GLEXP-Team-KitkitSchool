@@ -10,13 +10,13 @@
 
 #include "cocos2d.h"
 #include <string>
-#include "Box.hpp"
+#include "MangoShopBox.hpp"
 #include "Mango.hpp"
 #include "MangoSlot.hpp"
-#include "NumberCard.hpp"
+#include "MangoShopNumberCard.hpp"
 #include "Tray.hpp"
 #include "BlankSlot.hpp"
-#include "Problem.hpp"
+#include "MangoShopProblem.hpp"
 #include "Common/Controls/ProgressIndicator.hpp"
 
 USING_NS_CC;
@@ -42,7 +42,7 @@ namespace MangoShop
         BlankSlot* candidateBlankSlot;
         
         Node* _gameNode;
-        void initData();
+        void initData(int *workSheetNo);
         void initUI();
         NumberCard *_pickedNumberCard;
         NumberCard *_dummyNumberCard;
@@ -70,6 +70,7 @@ namespace MangoShop
 
         vector<Problem*> _problems;
         int _currentLevel;
+        int _currentSheetNo;
         int _currentProblemIndex;
         ProgressIndicator *_progressBar;
         

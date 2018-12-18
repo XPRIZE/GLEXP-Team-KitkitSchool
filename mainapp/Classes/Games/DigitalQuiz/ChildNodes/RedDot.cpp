@@ -8,7 +8,7 @@
 
 
 #include "RedDot.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/DigitalQuizMainDepot.h"
 
 
 BEGIN_NS_DIGITALQUIZ

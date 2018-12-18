@@ -190,7 +190,7 @@ int DoubleDigit_ProblemBank::getNumber(string rawNumber) {
         return random<int>(TodoUtil::stoi(numbers[0]), TodoUtil::stoi(numbers[1]));
     } else if (find(begin(rawNumber), end(rawNumber), ',') != end(rawNumber)) {
         auto numbers = TodoUtil::split(rawNumber, ',');
-        return TodoUtil::stoi(numbers.at(random<int>(0, numbers.size()-1)));
+        return TodoUtil::stoi(numbers.at(random<int>(0, (int)numbers.size()-1)));
     } else {
         return TodoUtil::stoi(rawNumber);
     }
@@ -209,15 +209,33 @@ bool DoubleDigit_ProblemBank::checkRegrouping(int number1, char op, int resultCa
     }
 }
 
+
+bool DoubleDigit_ProblemBank::checkResultValid(string resultRange, int resultCandidate) {
+    bool rs = false;
+    if (resultRange.find(",") != string::npos) {
+        auto resultRangeV = TodoUtil::split(resultRange, ',');
+        for (auto it : resultRangeV) {
+            if (TodoUtil::itos(resultCandidate) == TodoUtil::trim(it)) rs = true;
+        }
+    } else if (resultRange.find("-") != string::npos) {
+        auto resultRangeV = TodoUtil::split(resultRange, '-');
+        if (resultCandidate >= TodoUtil::stoi(resultRangeV.at(0)) && resultCandidate <= TodoUtil::stoi(resultRangeV.at(1))) rs = true;
+    } else {
+        if (resultRange == TodoUtil::itos(resultCandidate)) rs = true;
+    }
+    
+    return rs;
+    
+}
+
+
 DoubleDigitValidProblem DoubleDigit_ProblemBank::getValidProblem(DoubleDigitLevelStruct &rawProblem) {
     DoubleDigitValidProblem rt;
     vector<char> ops;
     if (rawProblem.addition) ops.push_back('+');
     if (rawProblem.subtraction) ops.push_back('-');
-    int i=0;
     while(1) {
         
-        bool valid = true;
         int number1 = getNumber(rawProblem.number1);
         int number2 = getNumber(rawProblem.number2);
         random_shuffle(ops.begin(), ops.end(), [](int n) { return rand() % n; });
@@ -227,36 +245,22 @@ DoubleDigitValidProblem DoubleDigit_ProblemBank::getValidProblem(DoubleDigitLeve
         if (op == '+') resultCandidate = number1 + number2;
         else resultCandidate = number1 - number2;
         
-        if (rawProblem.resultRange != "" ) {
-            auto resultRanges = TodoUtil::split(rawProblem.resultRange, '-');
-            if (resultCandidate < TodoUtil::stoi(resultRanges.at(0)) || resultCandidate > TodoUtil::stoi(resultRanges.at(1))) valid = false;
-        }
+        if (!checkResultValid(rawProblem.resultRange, resultCandidate)) continue;
         
         if (rawProblem.regrouping != "") {
             if (rawProblem.regrouping == "YES") {
-                if (!checkRegrouping(number1, op, resultCandidate)) valid = false;
+                if (!checkRegrouping(number1, op, resultCandidate)) continue;
             } else if (rawProblem.regrouping == "NO") {
-                if (checkRegrouping(number1, op, resultCandidate)) valid = false;
+                if (checkRegrouping(number1, op, resultCandidate)) continue;
             }
         }
         
-        if (valid) {
-            if (find(_answers.begin(), _answers.end(), resultCandidate) == _answers.end()) {
-                _answers.push_back(resultCandidate);
-                rt.number1 = number1;
-                rt.number2 = number2;
-                rt.op = op;
-                rt.answer = resultCandidate;
-                
-                CCLOG("answer:%d", resultCandidate);
-                //CCLOG("success:%d", i);
-                return rt;
-            }
-        }
-        
-        if (++i==1000) return rt;
+        rt.number1 = number1;
+        rt.number2 = number2;
+        rt.op = op;
+        rt.answer = resultCandidate;
+        return rt;
     }
-    return rt;
 }
 
 vector<int> DoubleDigit_ProblemBank::getCandidateLevelIDs() {
@@ -282,6 +286,23 @@ Json::Value DoubleDigit_ProblemBank::generateParameters(int level)
     for (int i=0; i<problemData.problemCount; i++) {
 
         auto row = getValidProblem(problemData);
+        
+        bool isDuplicated = false;
+        
+        for (auto it : problems) {
+            auto lhs = it["lhs"].asInt();
+            auto rhs = it["rhs"].asInt();
+            auto answer = it["answer"].asInt();
+            
+            if (lhs == row.number1 && rhs == row.number2 && answer == row.answer) {
+                isDuplicated = true;
+                break;
+            }
+        }
+        if (isDuplicated) {
+            i--;
+            continue;
+        }
 
         Json::Value problem(Json::objectValue);
         problem["lhs"] = row.number1;

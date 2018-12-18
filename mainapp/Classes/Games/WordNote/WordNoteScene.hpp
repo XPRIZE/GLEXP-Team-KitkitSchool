@@ -7,10 +7,10 @@
 
 #pragma once
 #include "WordNoteHeader.h"
-#include "Piece.hpp"
+#include "WordNotePiece.hpp"
 #include "PlateSlot.hpp"
 #include "NoteSlot.hpp"
-#include "ProblemBank.hpp"
+#include "WordNoteProblemBank.hpp"
 #include "Common/Controls/ProgressIndicator.hpp"
 
 BEGIN_NS_WORDNOTE;
@@ -61,7 +61,7 @@ private:
         SOUND_ONLY
     };
         
-    int _currentLevel, _currentProblemIndex, _totalProblemCount, _zIndex, _fadeInCount;
+    int _currentLevel, _currentSheetNo,  _currentProblemIndex, _totalProblemCount, _zIndex, _fadeInCount;
     Node *_gameNode, *_problemNode, *_plate;
     Size _winSize, _gameSize;
     float _gameScale;

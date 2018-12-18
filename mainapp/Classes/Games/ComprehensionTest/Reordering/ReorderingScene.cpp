@@ -34,7 +34,7 @@ namespace ReorderingSceneSpace
     const float kImageMinDistance = 300.f;
     const float kTextMinDistance = 100.f;
     
-    const string kLetterFont = "fonts/TodoSchoolV2.ttf";
+    const string kLetterFont = FONT_ANDIKA_REGULAR;
     const float kLetterCorrectionX = -80.f;
     const Color4B kLetterColor = Color4B(56, 56, 56, 255);
     
@@ -749,7 +749,7 @@ namespace ComprehensionTest
         string ReorderingScene::makeWorkPath()
         {
             stringstream ss;
-            ss << "ComprehensionTest";
+            ss << "/" << "ComprehensionTest";
             ss << "/" << _comprehensionScene->getBookName();
             ss << "/" << "reordering";
             ss << "-" << _comprehensionScene->getCurrentProblem();

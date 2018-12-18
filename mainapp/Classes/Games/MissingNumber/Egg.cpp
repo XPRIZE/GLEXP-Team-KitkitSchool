@@ -394,7 +394,7 @@ namespace MissingNumber
             mShiningParticleNode->addChild(particleEffect);
         };
         
-        createParticleEffect("particle1", "NumberMatching/Particle/star_particle.plist");
+        createParticleEffect("particle1", "common/effects/particle/star_particle.plist");
         
         mShiningParticleNode->setPosition(mEggRoot->getContentSize() / 2);
         mEggRoot->addChild(mShiningParticleNode);

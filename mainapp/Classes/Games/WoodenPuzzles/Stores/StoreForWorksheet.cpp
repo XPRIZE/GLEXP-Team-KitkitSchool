@@ -11,6 +11,7 @@
 #include "../ChildNodes/WoodSlot.h"
 #include "../PieceNodes/WoodPiece.h"
 #include "../Utils/WoodenPuzzleDepot.h"
+#include "../Utils/WoodenPuzzleUtil.h"
 #include "Utils/StringUtils.h"
 
 
@@ -21,27 +22,27 @@ namespace {
         return WS.GameID;
     }
 
-    string contentSkin(const Worksheet& WS) {
-        return WoodenPuzzleDepot().assetPrefix() + "/" + gameID(WS) + "/" + WS.BackgroundFilename;
+    string contentSkin(const string& Mode, const Worksheet& WS) {
+        return WoodenPuzzleDepot(Mode).assetPrefix() + "/" + gameID(WS) + "/" + WS.BackgroundFilename;
     }
     
-    string prependPrefix(const Worksheet& WS, const string& S) {
-        return WoodenPuzzleDepot().assetPrefix() + "/" + gameID(WS) + "/" + S;
+    string prependPrefix(const string& Mode, const Worksheet& WS, const string& S) {
+        return WoodenPuzzleDepot(Mode).assetPrefix() + "/" + gameID(WS) + "/" + S;
     }
     
-    SoundEffect soundForCardinalNumber(int N) {
-        return WoodenPuzzleDepot().soundForCardinalNumber(N);
+    SoundEffect soundForCardinalNumber(const string& Mode, int N) {
+        return WoodenPuzzleDepot(Mode).soundForCardinalNumber(N);
     }
     
-    SoundEffect soundForLetter(const string& L) {
-        return WoodenPuzzleDepot().soundForLetter(L);
+    SoundEffect soundForLetter(const string& Mode, const string& L) {
+        return WoodenPuzzleDepot(Mode).soundForLetter(L);
     }
     
-    string slotIDForMotif(const Worksheet& WS, const string& Motif) {
+    string slotIDForMotif(const string& Mode, const Worksheet& WS, const string& Motif) {
         return gameID(WS) + "/" + toLower(Motif);  // XXX
     }
 
-    string pieceIDForMotif(const Worksheet& WS, const string& Motif) {
+    string pieceIDForMotif(const string& Mode, const Worksheet& WS, const string& Motif) {
         return gameID(WS) + "/" + toLower(Motif);
     }
 }  // unnamed namespace
@@ -50,7 +51,7 @@ namespace {
 vector<string> StoreForWorksheet::slotIDs() const {
     vector<string> IDs;
     for (auto M : motifs())
-        IDs.push_back(slotIDForMotif(TheWorksheet, M));
+        IDs.push_back(slotIDForMotif(Mode, TheWorksheet, M));
     
     return IDs;
 }
@@ -58,26 +59,26 @@ vector<string> StoreForWorksheet::slotIDs() const {
 vector<string> StoreForWorksheet::pieceIDs() const {
     vector<string> IDs;
     for (auto M : motifs())
-        IDs.push_back(pieceIDForMotif(TheWorksheet, M));
+        IDs.push_back(pieceIDForMotif(Mode, TheWorksheet, M));
     
     return IDs;
 }
 
 GameBoard* StoreForWorksheet::createGameBoard() const {
     auto Board = GameBoard::create();
-    Board->ContentSkinPath.update(contentSkin(TheWorksheet));
+    Board->ContentSkinPath.update(contentSkin(Mode, TheWorksheet));
     
     appendSlotsToBoard(Board);
     return Board;
 }
 
 PlayField* StoreForWorksheet::createEmptyPlayField() const {
-    auto Field = PlayField::create();
+    auto Field = PlayField::create(Mode);
     return Field;
 }
 
 PlayField* StoreForWorksheet::createFullPlayField() const {
-    auto Field = PlayField::create();
+    auto Field = PlayField::create(Mode);
     
     appendPiecesToField(Field);
     return Field;
@@ -98,21 +99,22 @@ WoodPiece* StoreForWorksheet::createWoodPieceWithMotif(const string& Motif) cons
     auto Problem = TheWorksheet.problemByMotif(Motif);
     auto It = WoodPiece::create();
     
-    It->PieceID.update(pieceIDForMotif(TheWorksheet, Motif));
-    It->FaceSkin.update(prependPrefix(TheWorksheet, Problem.FaceSkin));
-    It->DepthSkin.update(prependPrefix(TheWorksheet, Problem.DepthSkin));
-    It->ShadowSkin.update(prependPrefix(TheWorksheet, Problem.ShadowSkin));
+    It->PieceID.update(pieceIDForMotif(Mode, TheWorksheet, Motif));
+    It->FaceSkin.update(prependPrefix(Mode, TheWorksheet, Problem.FaceSkin));
+    It->DepthSkin.update(prependPrefix(Mode, TheWorksheet, Problem.DepthSkin));
+    It->ShadowSkin.update(prependPrefix(Mode, TheWorksheet, Problem.ShadowSkin));
 
     It->PieceNameSound = [&] {
-        return (soundForLetter(Motif) ||
-                soundForCardinalNumber(woodenpuzzles::stoi(Motif)));  // XXX
+        return (soundForLetter(Mode, Motif) ||
+                soundForCardinalNumber(Mode, woodenpuzzles::stoi(Motif)));  // XXX
         
     }();
     return It;
 }
 
-StoreForWorksheet::StoreForWorksheet(Worksheet WS)
-: TheWorksheet(WS)
+StoreForWorksheet::StoreForWorksheet(const string& Mode, Worksheet WS)
+: Mode(Mode)
+, TheWorksheet(WS)
 {
 }
 
@@ -124,17 +126,18 @@ void StoreForWorksheet::appendSlotsToBoard(GameBoard* Board) const
     
     for (size_t I = TheWorksheet.beginProblemID(), E = TheWorksheet.endProblemID(); I < E; ++I) {
         auto Problem = TheWorksheet.problemByID(I);
-        string SlotID = slotIDForMotif(TheWorksheet, Problem.Motif);
+        string SlotID = slotIDForMotif(Mode, TheWorksheet, Problem.Motif);
 
         auto It = WoodSlot::create();
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         It->setPosition(Problem.Position);
 
+        It->Mode.update(Mode);
         It->SlotID.update(SlotID);
-        It->FaceSkin.update(prependPrefix(TheWorksheet, Problem.FaceSkin));
-        It->DepthSkin.update(prependPrefix(TheWorksheet, Problem.DepthSkin));
-        It->ShadowSkin.update(prependPrefix(TheWorksheet, Problem.ShadowSkin));
-        It->SlotSkin.update(prependPrefix(TheWorksheet, Problem.SlotSkin));
+        It->FaceSkin.update(prependPrefix(Mode, TheWorksheet, Problem.FaceSkin));
+        It->DepthSkin.update(prependPrefix(Mode, TheWorksheet, Problem.DepthSkin));
+        It->ShadowSkin.update(prependPrefix(Mode, TheWorksheet, Problem.ShadowSkin));
+        It->SlotSkin.update(prependPrefix(Mode, TheWorksheet, Problem.SlotSkin));
         Board->appendWoodSlot(It);
     }
 }
@@ -144,14 +147,14 @@ void StoreForWorksheet::appendPiecesToField(PlayField* Field) const {
     
     Size CS = Field->getContentSize();
     
-    WoodenPuzzleDepot Depot;
+    WoodenPuzzleUtil Util;
     for (auto M : motifs()) {
         auto It = createWoodPieceWithMotif(M);
         Size S = It->getContentSize();
         Rect R(S / 2.f, CS - S);
         
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        It->setPosition(Depot.wallBiasedRandomPoint(R));
+        It->setPosition(Util.wallBiasedRandomPoint(R));
         Field->appendWoodPiece(It);
     }
 }

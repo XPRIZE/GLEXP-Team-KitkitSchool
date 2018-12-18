@@ -30,14 +30,17 @@ bool GameSoundManager::init(void)
     m_FilePath = "";
     m_currentBGM = "";
     
+    setBGMSoundVolume(1.f);
+    setEffectSoundVolume(1.f);
+    
     return true;
 }
 
-void GameSoundManager::playBGM(std::string name)
+void GameSoundManager::playBGM(std::string name, bool isLoop)
 {
     if (m_currentBGM == name) return;
     m_currentBGM = name;
-    SimpleAudioEngine::getInstance()->playBackgroundMusic(name.c_str());
+    SimpleAudioEngine::getInstance()->playBackgroundMusic(name.c_str(), isLoop);
 }
 
 void GameSoundManager::stopBGM()
@@ -57,6 +60,31 @@ void GameSoundManager::resumeBGM()
 }
 
 
+float GameSoundManager::getBGMSoundVolume()
+{
+    return SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+}
+void GameSoundManager::setBGMSoundVolume(float volume)
+{
+    return SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(volume);
+}
+
+void GameSoundManager::fadeOutBGM( float duration )
+{
+    Director::getInstance()->getScheduler()->schedule([&](float dt){
+        float volume = SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+        volume -= dt;
+        if(volume <= 0)
+        {
+            Director::getInstance()->getScheduler()->unschedule("fadeScheduler", this);
+            SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+            SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(1);
+            return;
+        }
+        SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(volume);
+
+    }, this, duration/100.f, false, "fadeScheduler"); // target(this) is required
+}
 
 
 
@@ -173,7 +201,7 @@ void GameSoundManager::playEffectSoundForAutoStart(std::string filename) {
     preloadEffect(filename);
     Director::getInstance()->getScheduler()->schedule([this, filename](float dt){
         playEffectSound(filename);
-    }, this, 0, 0, 0.3f, false, filename);
+    }, this, 0, 0, 0.1f, false, filename);
 }
 
 void GameSoundManager::playEffectSoundVoiceOnly(std::string name) {

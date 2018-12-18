@@ -720,7 +720,7 @@ void EquationMakerScene::onTouchesMoved(const std::vector<Touch*>& touches,
                         auto workPath = [&] {
                             stringstream ss;
                             ss << "/" << "EquationMaker";
-                            ss << "/" << "level-" << m_CurrentLevel;
+                            ss << "/" << "level-" << m_CurrentLevel << "-0";
                             ss << "/" << "work-" << m_CurrentStage;
                             return ss.str();
                         }();
@@ -789,7 +789,7 @@ void EquationMakerScene::onTouchesEnded(const std::vector<Touch*>& touches,
             auto workPath = [&] {
                 stringstream ss;
                 ss << "/" << "EquationMaker";
-                ss << "/" << "level-" << m_CurrentLevel;
+                ss << "/" << "level-" << m_CurrentLevel << "-0";
                 ss << "/" << "work-" << m_CurrentStage;
                 return ss.str();
             }();

@@ -13,8 +13,8 @@
 
 
 #include "MainScene.hpp"
+#include "CoopScene.hpp"
 #include "CoopScene2.hpp"
-
 
 
 #include "GradeSelector.hpp"
@@ -24,20 +24,19 @@
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Controls/PopupBase.hpp"
 #include "Common/Controls/TouchEventLogger.h"
-
+#include "Common/Controls/CoinTab.hpp"
 
 #include "Managers/LanguageManager.hpp"
 #include "Managers/CurriculumManager.hpp"
 #include "Managers/UserManager.hpp"
 #include "Managers/GameSoundManager.h"
 #include "Managers/StrictLogManager.h"
-
-
+#include "Managers/CacheManager.hpp"
 
 #include "Common/Effects/FireworksEffect.hpp"
 
 #include "3rdParty/CCNativeAlert.h"
-
+#include "CustomDirector.h"
 
 namespace MainSceneSpace {
     const Size designSize = Size(2560,1800);
@@ -56,17 +55,13 @@ namespace MainSceneSpace {
     
     const string fontName = "fonts/TodoMainCurly.ttf";
     
+    bool isDemo = true;
 };
 
 using namespace MainSceneSpace;
 
 
 static bool __firstEnter = true;
-
-
-
-
-
 
 Scene* MainScene::createScene()
 {
@@ -80,6 +75,7 @@ Scene* MainScene::createScene()
     
     // 'layer' is an autorelease object
     auto layer = MainScene::create();
+    layer->setTag(MENU_SCENE_ID);
     
     // add layer as a child to scene
     scene->addChild(layer);
@@ -102,6 +98,7 @@ bool MainScene::init()
     }
     
     manageCache();
+    
     //std::string s = Director::getInstance()->getTextureCache()->getCachedTextureInfo();
     //CCLOG("Cached texture info : %s",s.c_str());
     
@@ -213,15 +210,18 @@ bool MainScene::init()
     coop1->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     coop1->setPosition(coop1Pos);
     coop1->addClickEventListener([this](Ref*) {
+        if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
+        
         if (_transitionBegins) {
             return;
         }
         
         if (_debugCommand=="lrllrlrr") {
+            this->_debugCoopNo=1;
             this->confirmDebug();
             return;
         }
-
+        
         _transitionBegins = true;
         StrictLogManager::shared()->curriculumChoice_TouchCoop();
         zoomCoop(_coop1Node);
@@ -233,14 +233,18 @@ bool MainScene::init()
     coop2->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     coop2->setPosition(coop2Pos);
     coop2->addClickEventListener([this](Ref*) {
+        if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
+        
         if (_transitionBegins) {
             return;
         }
         
         if (_debugCommand=="lrllrlrr") {
+            this->_debugCoopNo=2;
             this->confirmDebug();
             return;
         }
+        if (UserManager::getInstance()->getGuideCoopStatus() != guideCoopType::finish) UserManager::getInstance()->setGuideCoopStatus(guideCoopType::recognizeCoop);
         
         _transitionBegins = true;
         StrictLogManager::shared()->curriculumChoice_TouchCoop();
@@ -255,10 +259,7 @@ bool MainScene::init()
     grass->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     grass->setPosition(Vec2(0,0));
     _groundNode->addChild(grass);
-    
-    
 
-    
     _rootScale = 1.f;
     if (visibleSize.width > designSize.width) {
         _rootScale = (visibleSize.width/designSize.width);
@@ -308,8 +309,16 @@ bool MainScene::init()
     _leavesRight->setPosition(Vec2(frameSize.width, frameSize.height-382));
     _frameNode->addChild(_leavesRight);
     
+    auto coopWorldPos = _groundNode->convertToWorldSpace(coop2->getPosition());
+    auto coopRootPos = _rootNode->convertToNodeSpace(coopWorldPos);
     
-
+    auto highlight = Sprite::create("MainScene/coop_highlight_02.png");
+    highlight->setAnchorPoint(Vec2(0.6, 0.54));
+    highlight->setPosition(coopRootPos);
+    highlight->setOpacity(0);
+    highlight->setScale(1.1);
+    _rootNode->addChild(highlight);
+    _highlight = highlight;
  
     {
         //quitPos = Vec2(frameSize.width - 30, frameSize.height-30);
@@ -324,12 +333,14 @@ bool MainScene::init()
         auto keyListener = EventListenerKeyboard::create();
         keyListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event) {
             if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE) {
+                if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
                 UserManager::getInstance()->sendAppToBack();
                 
             }
         };
         _quitButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyListener, _quitButton);
         _quitButton->addClickEventListener([this](Ref*){
+            if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
             StrictLogManager::shared()->curriculumChoice_End();
             UserManager::getInstance()->sendAppToBack();
         });
@@ -342,153 +353,174 @@ bool MainScene::init()
     SoundEffect::coopClickEffect().preload();
     
 
-    
+//    if (isDemo) {
+    {
+        
+        _coinTab = CoinTab::create();
+        _coinTab->setPosition(visibleSize - Size(50, 50));
+        _coinTab->setVisible(false);
+        addChild(_coinTab);
+        {
+            _reviewModeLabel = TodoUtil::createLabel("This is a demo version: please use the features below to access all of Kitkit School’s content. Select “Add Coins” to access the tools section.", 50, Size(1300, 300), "fonts/Andika-R.ttf", Color4B(116, 198, 225, 255));
+            _reviewModeLabel->setPosition(Vec2(visibleSize.width/2, visibleSize.height-150));
+            this->addChild(_reviewModeLabel);
+            
+            _signLanguageModeLabel = TodoUtil::createLabel("Sign Language Mode is on", 50, Size::ZERO, "fonts/Andika-R.ttf", Color4B(116, 198, 225, 255));
+            _signLanguageModeLabel->setPosition(Vec2(visibleSize.width/2, 150));
+            this->addChild(_signLanguageModeLabel);
+        }
+        
+        
+        {
+            _resetBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
+            auto l = TodoUtil::createLabel("Reset", 50, Size::ZERO, "fonts/Andika-R.ttf", Color4B(116, 198, 225, 255));
+            l->setPosition(_resetBtn->getContentSize()/2 + Size(0, 10));
+            _resetBtn->addChild(l);
 
-    
+            _resetBtn->setPosition(Vec2(visibleSize.width/2-400, visibleSize.height-400));
+            _resetBtn->addTouchEventListener([this, l](Ref*,ui::Widget::TouchEventType e) {
+                if (_resetBtn->isHighlighted()) {
+                    l->setPosition(_resetBtn->getContentSize()/2 + Size(0, 5));
+                } else {
+                    l->setPosition(_resetBtn->getContentSize()/2 + Size(0, 10));
+                }
+                if (e == ui::Widget::TouchEventType::ENDED) {
+                    UserManager::getInstance()->resetStatus();
+                    UserManager::getInstance()->updateStars(0);
+                    _coinTab->updateCoinLabel();
+                    NativeAlert::show("User Progress Reset!", "", "OK");
+                    __firstEnter = true;
+                    std::function<Scene*(void)> creator = []() {
+                        auto scene = MainScene::createScene();
+                        scene->setName("MainScene");
+                        return scene;
+                    };
+                    Director::getInstance()->replaceScene(TransitionFade::create(1.f, TodoLoadingScene::createScene(creator)));
+                    
+                }
+                
+            }  );
+            this->addChild(_resetBtn);
+        }
+        
+        {
+            _addCoinsBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
+            auto l = TodoUtil::createLabel("Add Coins", 50, Size::ZERO, "fonts/Andika-R.ttf", Color4B(116, 198, 225, 255));
+            l->setPosition(_addCoinsBtn->getContentSize()/2 + Size(0, 10));
+            _addCoinsBtn->addChild(l);
+            
+            _addCoinsBtn->setPosition(Vec2(visibleSize.width/2, visibleSize.height-400));
+            _addCoinsBtn->addTouchEventListener([this, l](Ref*,ui::Widget::TouchEventType e) {
+                if (_addCoinsBtn->isHighlighted()) {
+                    l->setPosition(_addCoinsBtn->getContentSize()/2 + Size(0, 5));
+                } else {
+                    l->setPosition(_addCoinsBtn->getContentSize()/2 + Size(0, 10));
+                }
+                if (e == ui::Widget::TouchEventType::ENDED) {
+                    _coinTab->updateCoinLabel();
+                    
+                    auto coin = UserManager::getInstance()->getStars();
+                    UserManager::getInstance()->updateStars(coin+100);
+                    
+                    _coinTab->setVisible(true);
+                    _coinTab->addCoin(100, _addCoinsBtn->getPosition(), true);
+                }
+                
+            }  );
+            this->addChild(_addCoinsBtn);
+        }
+        
+        {
+            _openAllBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
+            auto l = TodoUtil::createLabel("Unlock All", 50, Size::ZERO, "fonts/Andika-R.ttf", Color4B(116, 198, 225, 255));
+            l->setPosition(_openAllBtn->getContentSize()/2 + Size(0, 10));
+            _openAllBtn->addChild(l);
+            _openAllBtn->setPosition(Vec2(visibleSize.width/2+400, visibleSize.height-400));
+            _openAllBtn->addTouchEventListener([this, l](Ref*,ui::Widget::TouchEventType e) {
+                
+                if (_openAllBtn->isHighlighted()) {
+                    l->setPosition(_openAllBtn->getContentSize()/2 + Size(0, 5));
+                } else {
+                    l->setPosition(_openAllBtn->getContentSize()/2 + Size(0, 10));
+                }
+                if (e == ui::Widget::TouchEventType::ENDED) {
+                    auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+                    
+                    for (auto it : CurriculumManager::getInstance()->levels) {
+                        LevelCurriculum cur = it.second;
+                        
+                        /*
+                        if (cur.lang!=lang) continue;
+                        auto openLevel = 3;
+                        if (cur.category=='M') {
+                            if (cur.categoryLevel<=0) openLevel = 3;
+                            else if (cur.categoryLevel<=2) openLevel = 9;
+                            else openLevel = 10;
+                        } else {
+                            if (cur.categoryLevel<=0) openLevel = 3;
+                            else if (cur.categoryLevel<=1) openLevel = 5;
+                            else if (cur.categoryLevel<=2) openLevel = 13;
+                            else openLevel = 17;
+                        }
+                        
+                        UserManager::getInstance()->setLevelOpen(cur.levelID);
+                        openLevel = MIN(openLevel, cur.days.size());
+                        for (int i=1; i<=openLevel; i++) {
+                            UserManager::getInstance()->setDayCleared(cur.levelID, i);
+                        }
+                        */
+                        
+                        UserManager::getInstance()->setLevelOpen(cur.levelID);
+                        UserManager::getInstance()->setPretestProgressType(cur.levelID, PretestProgressType::finish);
+                        for (int i=0; i<cur.numDays; i++) {
+                            UserManager::getInstance()->setDayCleared(cur.levelID, i);
+                        }
+                    }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+                    JniHelper::callStaticVoidMethod("org/cocos2dx/cpp/AppActivity", "setUnlockFishBowl", true);
+#endif
+                    NativeAlert::show("Cirriculum unlocked!", "", "OK");
+                    __firstEnter = true;
+
+                    UserManager::getInstance()->setGuideCoopStatus(guideCoopType::finish);
+                    UserManager::getInstance()->setGuideDayStatus(guideDayType::finish);
+                    std::function<Scene*(void)> creator = []() {
+                        auto scene = MainScene::createScene();
+                        scene->setName("MainScene");
+                        return scene;
+                    };
+                    Director::getInstance()->replaceScene(TransitionFade::create(1.f, TodoLoadingScene::createScene(creator)));
+                }
+            }  );
+            this->addChild(_openAllBtn);
+        }
+        
+    }
     
     return true;
 }
 
 void MainScene::manageCache() {
-    
-    vector<string> fileList = {
-        "MainScene/DailyScene/daily_bg_large.png",
-        "MainScene/DailyScene/daily_birdshadow.png",
-        "MainScene/DailyScene/daily_bluebutton_active.png",
-        "MainScene/DailyScene/daily_bluebutton_effect_glow.png",
-        "MainScene/DailyScene/daily_bluebutton_normal.png",
-        "MainScene/DailyScene/daily_coinstatus_bg.png",
-        "MainScene/DailyScene/daily_freechoice_circleicon_available.png",
-        "MainScene/DailyScene/daily_freechoice_circleicon_new.png",
-        "MainScene/DailyScene/daily_freechoice_circleicon_new_effect_1.png",
-        "MainScene/DailyScene/daily_freechoice_circleicon_new_effect_2.png",
-        "MainScene/DailyScene/daily_freechoice_circleicon_unavailable.png",
-        "MainScene/DailyScene/daily_freechoice_close_active.png",
-        "MainScene/DailyScene/daily_freechoice_close_normal.png",
-        "MainScene/DailyScene/daily_freechoice_popup_icon_done.png",
-        "MainScene/DailyScene/daily_freechoice_popup_level_active_glow.png",
-        "MainScene/DailyScene/daily_freechoice_popup_level_done.png",
-        "MainScene/DailyScene/daily_freechoice_popup_level_normal.png",
-        "MainScene/DailyScene/daily_freechoice_popup_level_unavailable.png",
-        "MainScene/DailyScene/daily_freechoice_popup_panel.png",
-        //"MainScene/DailyScene/daily_freechoice_popup_shade_bg.png",
-        "MainScene/DailyScene/daily_freechoice_popup_window.png",
-        "MainScene/DailyScene/daily_panel_literacy.png",
-        "MainScene/DailyScene/daily_panel_math.png",
-        "MainScene/DailyScene/daily_panel_prek.png",
-        "MainScene/DailyScene/daily_treetop_right.png",
-        "MainScene/DailyScene/daily_treetrunk.png",
-        "MainScene/DailyScene/freechoice_icon_disabled.png",
-        "MainScene/DailyScene/freechoice_icon_new.png",
-        "MainScene/DailyScene/freechoice_icon_new_bg.png",
-        "MainScene/DailyScene/freechoice_icon_new_effect.png",
-        "MainScene/DailyScene/freechoice_icon_normal.png",
-        "MainScene/DailyScene/freechoice_icon_normal_bg.png",
-        "MainScene/DailyScene/freechoice_popup_bg.png",
-        "MainScene/DailyScene/freechoice_popup_button_close.png",
-        "MainScene/DailyScene/freechoice_popup_button_open.png"
-        /*"BirdAnimation/coop_egg_english_1.png",
-        "BirdAnimation/coop_egg_english_2.png",
-        "BirdAnimation/coop_egg_english_3.png",
-        "BirdAnimation/coop_egg_english_4.png",
-        "BirdAnimation/coop_egg_english_5.png",
-        "BirdAnimation/coop_egg_english_6.png",
-        "BirdAnimation/coop_egg_english_7.png",
-        "BirdAnimation/coop_egg_english_8.png",
-        "BirdAnimation/coop_egg_math_1.png",
-        "BirdAnimation/coop_egg_math_2.png",
-        "BirdAnimation/coop_egg_math_3.png",
-        "BirdAnimation/coop_egg_math_4.png",
-        "BirdAnimation/coop_egg_math_5.png",
-        "BirdAnimation/coop_egg_math_6.png",
-        "BirdAnimation/coop_egg_math_7.png",
-        "BirdAnimation/coop_egg_math_8.png",
-        "BirdAnimation/egg_crack.png",
-        
-        "MainScene/FreeChoiceThumbnail/freechoice_game_AbcBook.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_AlphabetPuzzle.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_AnimalPuzzle.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_BirdPhonics.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_Book.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_BubblePop.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_Comprehension.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_Counting.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_DoubleDigit.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_EquationMaker.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_FeedingTime.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_FindTheMatch.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_FishTank.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_HundredPuzzle.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterMatching.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterTrace.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_LetterTracingCard.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_LineMatching.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_MangoShop.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_MissingNumber.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_MovingInsects.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_MultiTrace.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberMatching.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberPuzzle.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTracing.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTracingExt.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_NumberTrain.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_PatternTrain.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_ReadingBird.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_SentenceMaker.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_ShapeMatching.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_ShowAndTell.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_SoundTrain.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_Spelling.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_StarFall.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_Tapping.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_ThirtyPuzzle.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_TutorialTrace.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_WhatIsThis.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_WordMachine.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_WordNote.png",
-        "MainScene/FreeChoiceThumbnail/freechoice_game_WordTracing.png"*/
-    };
-    /*
-    vector<string> directoryList = {
-        "MainScene",
-        "CoopScene",
-        "MainScene/DailyScene",
-        "BirdAnimation",
-        "MainScene/FreeChoiceThumbnail"
-    };
-    
-    for (auto it : directoryList) {
-        for (auto f : FileUtils::getInstance()->listFiles(it)) {
-            if (f.find("jpg") == string::npos && f.find(".png") == string::npos) continue;
-            fileList.push_back(f);
-        }
-    }
-    */
-    
     for (auto it : CurriculumManager::getInstance()->levels) {
         LevelCurriculum cur = it.second;
         if (!UserManager::getInstance()->isLevelOpen(cur.levelID)) continue;
         auto bird = Bird::create(cur.category, cur.categoryLevel, cur.levelID);
         bird->loadAnimation();
     }
-    
-    for (auto it : fileList) {
-        if (!FileUtils::getInstance()->isFileExist(it)) continue;
-        Director::getInstance()->getTextureCache()->addImage(it);
-        CCLOG("add cache: %s", it.c_str());
-    }
-    
 }
 
 void MainScene::onEnter()
 {
     Layer::onEnter();
-    
     visibleSize = Director::getInstance()->getVisibleSize();
 
     _debugCommand = "";
     
     stopAllActions();
+    _coop1Node->stopAllActions();
+    _coop1Node->runAction(RotateTo::create(0, 0));
+    _coop2Node->stopAllActions();
+    _coop2Node->runAction(RotateTo::create(0, 0));
     setScale(1.0);
     setPosition(Vec2::ZERO);
     
@@ -507,13 +539,7 @@ void MainScene::onEnter()
     _coop2Node->setScale(1);
     
    // _groundNode->reorderChild(_coopNode, coopBackZ);
-    
- 
-
-
-    
-    
-    GameSoundManager::getInstance()->stopBGM();
+    UserManager::getInstance()->setGuideCoopStatus(guideCoopType::finish);
     
     if (__firstEnter)    {
         StrictLogManager::shared()->curriculumChoice_Begin();
@@ -527,7 +553,7 @@ void MainScene::onEnter()
         const float appearDelay = 2.2;
         
         //auto eng = LanguageManager::getInstance()->isEnglish();
-        auto logoPath = LanguageManager::getInstance()->findLocalizedResource("System/logo_phase02.png");
+        auto logoPath = LanguageManager::getInstance()->findLocalizedResource("System/logo_phase03.png");
         auto logo = Sprite::create(logoPath);
         logo->setPosition(designSize/2);
         _rootNode->addChild(logo);
@@ -551,14 +577,22 @@ void MainScene::onEnter()
                                                 EaseIn::create( MoveTo::create(1.0, Vec2(0, 0)), 2.0),
                                                 nullptr));
         
-        _coop1Node->runAction(Sequence::create(DelayTime::create(2.0),
-                                              EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
-                                              EaseIn::create(MoveBy::create(0.12, Vec2(0, -50)), 2.0),
-                                              nullptr));
         _coop2Node->runAction(Sequence::create(DelayTime::create(2.2),
                                                EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
                                                EaseIn::create(MoveBy::create(0.12, Vec2(0, -50)), 2.0),
                                                nullptr));
+        
+        _coop2Node->runAction(Sequence::create(DelayTime::create(2.0),
+            EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
+            EaseIn::create(MoveBy::create(0.12, Vec2(0, -50)), 2.0),
+            CallFunc::create([this](){
+                if (UserManager::getInstance()->getGuideCoopStatus() == guideCoopType::visitFirst) {
+                    _highlight->runAction(FadeTo::create(1.f,255*0.8));
+                    shakeCoop(_coop2Node);
+                    setDisableTouchEventForCoopGuide(true);
+                }
+            }),
+        nullptr));
         
         _quitButton->runAction(Sequence::create(DelayTime::create(1.94),
                                                 EaseOut::create(MoveBy::create(0.12, Vec2(0, 50)), 2.0),
@@ -575,6 +609,9 @@ void MainScene::onEnter()
         _leavesRight->runAction(Sequence::create(
                                                  DelayTime::create(2.5),
                                                  EaseOut::create(MoveTo::create(0.2, Vec2(frameSize.width, frameSize.height-382)), 2.0),
+                                                 CallFunc::create([this](){
+            CacheManager::getInstance()->loadCoopCache();
+        }),
                                                  nullptr));
         
         
@@ -589,12 +626,51 @@ void MainScene::onEnter()
         GameSoundManager::getInstance()->playEffectSoundForAutoStart("Common/Sounds/Effect/LogoFall.m4a");
 
     } else {
+        
+        if (UserManager::getInstance()->getGuideCoopStatus() == guideCoopType::recognizeCoop) {
+            
+            runAction(Sequence::create(
+                DelayTime::create(2),
+                CallFunc::create([this](){ setDisableTouchEventForCoopGuide(false); shakeCoop(_coop2Node, 100); _highlight->runAction(FadeOut::create(0.8)); }),
+                DelayTime::create(0.8),
+                CallFunc::create([this](){ shakeCoop(_coop1Node, 100); }),
+            nullptr));
+
+            UserManager::getInstance()->setGuideCoopStatus(guideCoopType::finish);
+        }
 
         GameSoundManager::getInstance()->playBGM("Common/Music/BGM1_TitleScreen_intro.m4a");
         
     }
-
 }
+
+void MainScene::shakeCoop(Node *coop, int times) {
+    auto shakeRepeat = Repeat::create(Sequence::create(
+        DelayTime::create(1),
+        Repeat::create(Sequence::create(
+        RotateTo::create(0.05, -3),
+        RotateTo::create(0.1, 6),
+        RotateTo::create(0.05, -3),
+        nullptr), 3),
+        nullptr
+    ),times);
+    coop->runAction(shakeRepeat);
+}
+
+void MainScene::setDisableTouchEventForCoopGuide(bool disable) {
+    if (disable) {
+        _quitButton->setBright(false);
+        _quitButton->setTouchEnabled(false);
+        _coop1Node->setBright(false);
+        _coop1Node->setTouchEnabled(false);
+    } else {
+        _quitButton->setBright(true);
+        _quitButton->setTouchEnabled(true);
+        _coop1Node->setBright(true);
+        _coop1Node->setTouchEnabled(true);
+    }
+}
+
 
 void MainScene::onExitTransitionDidStart()
 {
@@ -605,6 +681,7 @@ void MainScene::onExitTransitionDidStart()
 
 void MainScene::zoomCoop(Node *coop)
 {
+/*
     CoopScene2::CoopType type = CoopScene2::CoopType::CT_MATH;
     
     if (coop==_coop1Node) type = CoopScene2::CoopType::CT_MATH;
@@ -626,6 +703,29 @@ void MainScene::zoomCoop(Node *coop)
     auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(scene));
     fadeScene->setName("(TransitionFade CoopScene2)");
     Director::getInstance()->pushScene(fadeScene);
+/*/
+    CoopScene::CoopType type = CoopScene::CoopType::CT_MATH;
+    
+    if (coop==_coop1Node) type = CoopScene::CoopType::CT_MATH;
+    if (coop==_coop2Node) type = CoopScene::CoopType::CT_LITERACY;
+    
+    auto scene = CoopScene::createScene(type);
+    scene->setName("CoopScene");
+    
+    
+    auto p1 = _groundNode->convertToWorldSpace(coop->getPosition());
+    auto p2 = _rootNode->convertToWorldSpace(designSize/2);
+    auto diff = p1 - p2;
+    
+    auto coopSpawn = Spawn::create(MoveBy::create(0.5, -(diff*5.0)), ScaleBy::create(0.5, 5), NULL);
+    this->runAction(coopSpawn);
+    
+    SoundEffect::coopClickEffect().play();
+    
+    auto fadeScene = TransitionFade::create(0.8, TouchEventLogger::wrapScene(scene));
+    fadeScene->setName("(TransitionFade CoopScene)");
+    Director::getInstance()->pushScene(fadeScene);
+//*/
 }
 
 
@@ -669,7 +769,10 @@ void MainScene::confirmDebug()
             if (textedit->getString()=="2019") {
                 popup->dismiss(false);
                 UserManager::getInstance()->setDebugMode(true);
-                this->zoomCoop(this->_coop1Node);
+                if (this->_debugCoopNo==1)
+                    this->zoomCoop(this->_coop1Node);
+                else
+                    this->zoomCoop(this->_coop2Node);
 
                 
             } else {
@@ -686,4 +789,34 @@ void MainScene::confirmDebug()
     
     popup->show(this, true);
     
+}
+
+void MainScene::resume() {
+    CCLOG("MainScene : resume");
+    isDemo = UserDefault::getInstance()->getBoolForKey("review_mode_on", true);
+    
+    GameSoundManager::getInstance()->stopBGM();
+    
+    if (isDemo) {
+        _resetBtn->setVisible(true);
+        _openAllBtn->setVisible(true);
+        _addCoinsBtn->setVisible(true);
+        _reviewModeLabel->setVisible(true);
+        
+    } else {
+        _resetBtn->setVisible(false);
+        _openAllBtn->setVisible(false);
+        _addCoinsBtn->setVisible(false);
+        _reviewModeLabel->setVisible(false);
+        
+    }
+    
+    _signLanguageModeLabel->setVisible(LanguageManager::getInstance()->isSignLanguageMode());
+
+    _coinTab->updateCoinLabel();
+    if (UserManager::getInstance()->getStars() > 0) {
+        _coinTab->setVisible(true);
+    } else {
+        _coinTab->setVisible(false);
+    }
 }

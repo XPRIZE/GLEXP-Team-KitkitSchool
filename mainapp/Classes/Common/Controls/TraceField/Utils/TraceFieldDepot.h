@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../ArchiveModels/TraceKnotList.h"
-#include "MainNS.h"
+#include "TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD

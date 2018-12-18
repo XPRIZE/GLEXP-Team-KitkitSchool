@@ -11,8 +11,10 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
+using namespace cocos2d::ui;
 
 namespace ComprehensionTest
 {
@@ -45,10 +47,11 @@ namespace ComprehensionTest
         private:
             std::string _id;
             Label* _letterLabel;
-            Sprite* _background;
-            Sprite* _normalAnswerSprite;
-            Sprite* _rightAnswerSprite;
-            Sprite* _wrongAnswerSprite;
+            Sprite* _answerSprite;
+            Scale9Sprite* _normalAnswerSprite;
+            Scale9Sprite* _rightAnswerSpriteBg;
+            Scale9Sprite* _rightAnswerSprite;
+            Scale9Sprite* _wrongAnswerSprite;
         };
     }
 }

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/MovingInsectsNS.h"
 #include "MainWork.h"
 
 BEGIN_NS_MOVINGINSECTS

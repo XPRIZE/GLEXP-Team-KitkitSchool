@@ -27,7 +27,7 @@ public:
     void playGuideVoice(float dt);
     
     std::function<void()> onOpenLevel;
-    
+    std::function<void(Vec2)> onRemoveCoin;
 
 private:
 

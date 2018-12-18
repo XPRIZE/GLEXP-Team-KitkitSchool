@@ -406,8 +406,8 @@ std::vector<int> WhatIsThisLayer::getLevels() {
 
 std::string WhatIsThisLayer::makeWorkPath() {
     stringstream ss;
-    ss << "WhatIsThis";
-    ss << "/" << "level-" << stageLevel;
+    ss << "/" << "WhatIsThis";
+    ss << "/" << "level-" << stageLevel << "-0";
     ss << "/" << "work-" << currentProblemIndex;
     return ss.str();
 }

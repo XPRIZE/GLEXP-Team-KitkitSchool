@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/DigitalQuizNS.h"
 #include "Common/Basic/BigLabel.h"
 
 

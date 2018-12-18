@@ -12,7 +12,7 @@
 #include <Common/Controls/ProgressIndicator.hpp>
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "NumberCard.hpp"
+#include "MissingNumberNumberCard.hpp"
 #include "Egg.hpp"
 USING_NS_CC;
 
@@ -44,6 +44,7 @@ namespace MissingNumber {
         
     private:
         int mLevelID;
+        int mWorkSheetID;
         int mCurrentProblemID;
         vector<struct Data> mData;
         vector<Egg*> mEggs;

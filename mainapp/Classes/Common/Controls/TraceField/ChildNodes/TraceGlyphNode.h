@@ -13,7 +13,7 @@
 #include "../LiveModels/TraceIndex.h"
 #include "../StyleModels/TraceFieldStyle.h"
 #include "../StyleModels/TraceGlyphDrawInfo.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -22,7 +22,8 @@ class TraceGlyphNode: public TodoSchoolDrawNode {
     typedef DrawNode Super;
 
     // NB(xenosoz, 2016): Nullable. Nullptr always means we're dirty.
-    Optional<TraceGlyphDrawInfo> TheDrawCache;
+    bool HasDrawCache;
+    TraceGlyphDrawInfo TheDrawCache;
     TraceIndex BeginIndex;
     TraceIndex EndIndex;
 

@@ -53,7 +53,7 @@ void WoodSlot::fillSlot() {
         TheDummyPiece->setVisible(true);
     }
     
-    WoodenPuzzleDepot().soundForCardHit().play();
+    WoodenPuzzleDepot(Mode()).soundForCardHit().play();
 }
 
 void WoodSlot::pullPieceIllusion(Point PositionInWorldSpace) {
@@ -72,13 +72,14 @@ void WoodSlot::pullPieceIllusion(Point PositionInWorldSpace) {
     Actions.pushBack(MoveTo::create(durationForDummyMove(), CS / 2.f));
     Actions.pushBack(CallFunc::create([this] {
         TheDummyPiece->switchTo2D();
-        WoodenPuzzleDepot().soundForCardHit().play();
+        WoodenPuzzleDepot(Mode()).soundForCardHit().play();
     }));
 
     TheDummyPiece->runAction(Sequence::create(Actions));
 }
 
 void WoodSlot::clearInternals() {
+    Mode.OnValueUpdate =
     SlotID.OnValueUpdate =
     FaceSkin.OnValueUpdate =
     DepthSkin.OnValueUpdate =

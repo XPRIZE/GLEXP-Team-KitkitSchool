@@ -8,7 +8,7 @@
 
 
 #include "BallSlot.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/SpellingMainDepot.h"
 
 
 BEGIN_NS_SPELLING

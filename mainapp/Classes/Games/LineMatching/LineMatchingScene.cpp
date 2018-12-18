@@ -1312,7 +1312,7 @@ void LineMatchingScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *even
             string workPath = [&] {
                 stringstream SS;
                 SS << "/" << "LineMatching";
-                SS << "/" << "level-" << m_getIndex;
+                SS << "/" << "level-" << m_getIndex << "-0";
                 SS << "/" << "work-" << _currentProblemIndex;
                 return SS.str();
             }();

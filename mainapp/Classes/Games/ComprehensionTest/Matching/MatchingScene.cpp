@@ -415,7 +415,7 @@ namespace ComprehensionTest
         
         string MatchingScene::makeWorkPath() {
             stringstream ss;
-            ss << "ComprehensionTest";
+            ss << "/" << "ComprehensionTest";
             ss << "/" << _comprehensionScene->getBookName();
             ss << "/" << "matching";
             ss << "-" << _comprehensionScene->getCurrentProblem();

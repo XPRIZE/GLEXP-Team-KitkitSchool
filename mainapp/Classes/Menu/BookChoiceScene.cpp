@@ -12,7 +12,6 @@
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <functional>
 
-#include "Games/Books/TodoBook.hpp"
 #include "CCAppController.hpp"
 #include "Utils/TodoUtil.h"
 #include "Common/Controls/PopupBase.hpp"
@@ -35,6 +34,24 @@ Scene* BookChoiceScene::createScene()
     return scene;
 }
 
+Scene* BookChoiceScene::createSceneForBookWithQuiz()
+{
+    // 'scene' is an autorelease object
+    auto scene = Scene::create();
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    scene->setContentSize(visibleSize);
+    
+    // 'layer' is an autorelease object
+    auto layer = BookChoiceScene::create();
+    layer->forBookWithQuizScene = true;
+    
+    // add layer as a child to scene
+    scene->addChild(layer);
+    
+    // return the scene
+    return scene;
+}
+
 bool BookChoiceScene::init()
 {
     // 1. super init first
@@ -43,17 +60,26 @@ bool BookChoiceScene::init()
         return false;
     }
     
+    return true;
+}
+
+void BookChoiceScene::onEnter()
+{
+    Layer::onEnter();
+    
+    removeAllChildren();
+    
     Size winSize = Director::getInstance()->getWinSize();
     
     auto chooser = PopupBase::create(this, winSize);
     
     auto innerView = Node::create();
-
-    
     
     float y = -80;
     
     auto list = FileUtils::getInstance()->listFiles("Books/BookData");
+    
+    stable_sort(list.begin(), list.end());
     
     for (auto folder : list) {
         string bookPath = folder + "bookinfo.csv";
@@ -68,8 +94,14 @@ bool BookChoiceScene::init()
             
             button->addClickEventListener([this, book, button, chooser](Ref*) {
                 chooser->dismiss(true);
-                CCAppController::sharedAppController()->startBookScene(book+"/", true);
-                
+                if (forBookWithQuizScene)
+                {
+                    CCAppController::sharedAppController()->startBookWithQuizScene(book);
+                }
+                else
+                {
+                    CCAppController::sharedAppController()->startBookScene(book, true);
+                }
             });
             
         }
@@ -92,70 +124,4 @@ bool BookChoiceScene::init()
     backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     backButton->setPosition(Vec2(25, winSize.height-25));
     addChild(backButton);
-    
-    return true;
 }
-
-/*
-bool BookChoiceScene::init()
-{
-    
-    // 1. super init first
-    if ( !Layer::init() )
-    {
-        return false;
-    }
-    
-    auto lang = LanguageManager::getInstance()->getCurrentLanguage();
-    auto books = BookManager::getInstance()->getBookVector(lang);
-    
-    const Size bookButtonSize = Size(228*2, 141*2);
-    auto numBooks = books.size();
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    float x = bookButtonSize.width;
-    float y = bookButtonSize.height;
- 
-    function<void(BookInfo*)> addBookButton = [&](BookInfo *info) {
-        TodoBook book;
-        book.readFile(info->bookPath);
-        
-        auto image = Sprite::create(info->bookImagePath+book.titleImageFilename);
-        auto imageSize = image->getContentSize();
-        auto viewSize = bookButtonSize;
-        auto scale = MIN(viewSize.width/imageSize.width, viewSize.height/imageSize.height);
-        image->setScale(scale);
-        image->setPosition(viewSize/2);
-        
-   
-        auto listener = EventListenerTouchOneByOne::create();
-        listener->setSwallowTouches(true);
-        listener->onTouchBegan = [](Touch* T, Event* E) { return true; };
-        listener->onTouchEnded = [info, book](Touch* T, Event* E) {
-            CCAppController::sharedAppController()->startBookScene(info->bookTitle, book.bookOrientation, book.bookType, true);
-        };
-        
-        image->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, image);
- 
-//        auto btn = ui::Widget::create();
-//        btn->setContentSize(viewSize);
-//        btn->addClickEventListener([info](Ref *pSender) {
-//                    });
-//        
-//        image->addChild(btn);
-        
-        image->setPosition(x, y);
-        
-        x+= bookButtonSize.width*1.5;
-        if (x+bookButtonSize.width*1.4>visibleSize.width) y += bookButtonSize.height*1.5;
-        
-        addChild(image);
-    };
- 
-    for (int i=0; i<numBooks; i++) {
-        auto info = books.at(i);
-        addBookButton(info);
-    }
-
-    return true;
-}
-*/

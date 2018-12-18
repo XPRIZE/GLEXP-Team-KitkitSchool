@@ -48,6 +48,8 @@ private:
     vector<DoubleDigitLevelStruct> loadData(int level);
     int _maxLevel = 0;
     DoubleDigitValidProblem getValidProblem(DoubleDigitLevelStruct &rawProblem);
+    bool checkResultValid(string resultRange, int resultCandidate);
+
     int getNumber(string rawNumber);
     bool checkRegrouping(int number1, char op, int resultCandidate);
     vector<int> _answers;

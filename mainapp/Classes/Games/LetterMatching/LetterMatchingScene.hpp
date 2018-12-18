@@ -15,8 +15,8 @@
 #include "cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
 
-#include "Models/LevelData.hpp"
-#include "Models/Worksheet.hpp"
+#include "Models/LetterMatchingLevelData.hpp"
+#include "Models/LetterMatchingWorksheet.hpp"
 #include "Common/Controls/ProgressIndicator.hpp"
 
 
@@ -41,6 +41,7 @@ private:
     float _upScaleFactor;
 
     int _currentLevelID;
+    int _currentSheetID;
     todoschool::lettermatching::Worksheet _currentWorksheet;
     int _currentProblemID;
     todoschool::lettermatching::Problem _currentProblem;

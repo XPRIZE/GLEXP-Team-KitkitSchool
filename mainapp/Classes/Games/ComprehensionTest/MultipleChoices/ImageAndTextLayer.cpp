@@ -12,8 +12,8 @@
 
 namespace ImageAndTextLayerSpace
 {
-    const float kRevisedX = -100.f;
-    const float kRevisedY = -200.f;
+    const float kRevisedX = -210.f;
+    const float kRevisedY = -360.f;
 }
 
 using namespace ImageAndTextLayerSpace;
@@ -22,6 +22,10 @@ namespace ComprehensionTest
 {
     namespace MultipleChoices
     {
+        const int kAnswerCount = 4;
+        const float kGapBetweenEachItem = 18.f;
+        const float kPadding = 38.f;
+        
         bool ImageAndTextLayer::init()
         {
             if (!Node::init()) return false;
@@ -33,55 +37,55 @@ namespace ComprehensionTest
         
         void ImageAndTextLayer::setQuestionImage(std::string folder, std::string imageFile)
         {
-            auto backgroundSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img.png");
-            backgroundSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-            backgroundSprite->setPosition(getContentSize().width / 2 + kRevisedX, getContentSize().height / 2 + kRevisedY);
-            backgroundSprite->setScale(0.8f);
-            addChild(backgroundSprite);
+            _backgroundSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img.png");
+            _backgroundSprite->setContentSize(Size(852, 876));
+            _backgroundSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+            _backgroundSprite->setPosition(getContentSize().width / 2 + kRevisedX, getContentSize().height / 2 + kRevisedY);
+            addChild(_backgroundSprite);
             
             auto questionSprite = Sprite::create(folder + "/quiz/" + imageFile);
             if (!questionSprite) questionSprite = Sprite::create(folder + "/page/" + imageFile);
             if (questionSprite == nullptr) { NativeAlert::show("Image does not exist.", imageFile, "OK"); return; }
             
             questionSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            questionSprite->setPosition(backgroundSprite->getContentSize() / 2);
-            backgroundSprite->addChild(questionSprite);
+            questionSprite->setPosition(_backgroundSprite->getContentSize() / 2);
+            float minScale = MIN((_backgroundSprite->getContentSize().width - kPadding * 2) / questionSprite->getContentSize().width, (_backgroundSprite->getContentSize().height - kPadding * 2) / questionSprite->getContentSize().height);
+            questionSprite->setScale(minScale);
+            _backgroundSprite->addChild(questionSprite);
             
-            auto frameSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img_border.png");
-            frameSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            frameSprite->setPosition(backgroundSprite->getContentSize() / 2);
-            backgroundSprite->addChild(frameSprite);
+//            auto frameSprite = Sprite::create("ComprehensionTest/MultipleChoices/comprehention_multiplechoice_img_border.png");
+//            frameSprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+//            frameSprite->setPosition(_backgroundSprite->getContentSize() / 2);
+//            _backgroundSprite->addChild(frameSprite);
         }
         
         void ImageAndTextLayer::setAnswers(std::vector<std::string> answerTexts)
         {
-            Size totalSize;
+            random_shuffle(answerTexts.begin(), answerTexts.end());
+            
             auto answersRootNode = Node::create();
             
             if (answerTexts.size() > 0)
             {
                 auto item = TextAnswerItem::create();
                 item->initText(answerTexts[0]);
-                totalSize = Size(item->getContentSize().width, item->getContentSize().height * 4);
+                Size totalSize = Size(item->getContentSize().width, item->getContentSize().height * kAnswerCount) + Size(0.f, kGapBetweenEachItem * (kAnswerCount - 1));
                 answersRootNode->setContentSize(totalSize);
             }
             
-            CCLOG("total : %f, %f", totalSize.width, totalSize.height);
+            float posX = 0.f;
+            float posY = answersRootNode->getContentSize().height;
             
             for (int i = 0; i < answerTexts.size(); i++)
             {
                 TextAnswerItem* item = TextAnswerItem::create();
                 item->initText(answerTexts[i], false);
-                item->setLetterByIndex(i);
-                
-                float posX = 0;
-                float posY = answersRootNode->getContentSize().height - item->getContentSize().height * i;
-                
-                CCLOG("(%f, %f)", posX, posY);
-                
+                item->setLetterByIndex(i);                
                 item->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
                 item->setPosition(posX, posY);
                 answersRootNode->addChild(item);
+                
+                posY -= item->getContentSize().height + kGapBetweenEachItem;
                 
                 item->onCheckTarget = [this, item]() {
                     if(item->currentState == TextAnswerState::Right || item->currentState == TextAnswerState::Wrong)
@@ -109,7 +113,7 @@ namespace ComprehensionTest
             //            lc1->setPosition(answersRootNode->getContentSize() / 2);
             //            answersRootNode->addChild(lc1);
             
-            answersRootNode->setPosition(getContentSize().width / 2 - 90.f, getContentSize().height / 2 - 100.f);
+            answersRootNode->setPosition(getContentSize().width / 2 - 150.f, _backgroundSprite->getPosition().y);
             answersRootNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
             addChild(answersRootNode);
         }

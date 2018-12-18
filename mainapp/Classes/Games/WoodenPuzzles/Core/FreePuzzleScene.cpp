@@ -29,8 +29,8 @@ namespace {
     int localZOrderForGameBoard() { return -10; }
     int localZOrderForPlayField() { return 0; }
 
-    string contentSkin() {
-        return WoodenPuzzleDepot().assetPrefix() + "/Background/wp_background.jpg";
+    string contentSkin(const string& mode) {
+        return WoodenPuzzleDepot(mode).assetPrefix() + "/Background/wp_background.jpg";
     }
     
     bool pieceShouldPutInSlot(WoodPiece* Piece, WoodSlot* Slot) {
@@ -60,8 +60,10 @@ FreePuzzleScene::FreePuzzleScene()
 {
 }
 
-bool FreePuzzleScene::init() {
+bool FreePuzzleScene::init(const string& Mode) {
     if (!Super::init()) { return false; }
+    
+    this->Mode = Mode;
     
     clearInternals();
     refreshChildNodes();
@@ -76,13 +78,15 @@ void FreePuzzleScene::grabPuzzleStore(WoodenPuzzleStore* Store) {
 
 
 void FreePuzzleScene::clearInternals() {
-    WoodenPuzzleDepot().preloadSoundEffects();
+    WoodenPuzzleDepot(Mode).preloadSoundEffects();
 }
 
 void FreePuzzleScene::refreshChildNodes() {
     removeAllChildren();
     
-    WoodenPuzzleDepot Depot;
+    if (Mode.empty()) { return; }
+    
+    WoodenPuzzleDepot Depot(Mode);
     Size WindowSize = Depot.windowSize();
     Size GameSize = Depot.gameSize();
     
@@ -92,7 +96,7 @@ void FreePuzzleScene::refreshChildNodes() {
         BN->setContentSize(WindowSize);
         
         if (true) {
-            auto It = Sprite::create(contentSkin());
+            auto It = Sprite::create(contentSkin(Mode));
             Size SpriteSize = It->getContentSize();
             float Scale = Depot.scaleToCoverWindow(SpriteSize);
             
@@ -146,6 +150,7 @@ void FreePuzzleScene::refreshChildNodes() {
 
     ThePlayField = ([&] {
         auto It = Store.createFullPlayField();
+        It->Mode = Mode;
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         It->setPosition(GameSize / 2.f);
         
@@ -180,7 +185,7 @@ void FreePuzzleScene::refreshChildNodes() {
         if (ThePlayField) {
             for (auto Item : ThePlayField->WoodPieces) {
                 WoodPiece* P = Item.second;
-                auto S = WoodPieceShadow::create();
+                auto S = WoodPieceShadow::create(Mode);
 
                 S->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
                 S->setPosition(P->getPosition());
@@ -239,12 +244,12 @@ void FreePuzzleScene::attachGameLogicToWoodPiece(WoodPiece* Piece) {
             // NB(xenosoz, 2018): Log for future analysis (#1/2)
             string workPath = [this] {
                 stringstream SS;
-                SS << "/" << "WoodenPuzzles";
-                SS << "/" << "level-" << LevelID;
+                SS << "/" << Mode;
+                SS << "/" << "level-" << LevelID << "-" << WorkSheetID;
                 SS << "/" << "work-" << 0;
                 return SS.str();
             }();
-            StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+            StrictLogManager::shared()->game_Peek_Answer(Mode, workPath,
                                                          Piece->PieceID(), Slot->SlotID());
         }
     };
@@ -253,12 +258,12 @@ void FreePuzzleScene::attachGameLogicToWoodPiece(WoodPiece* Piece) {
         // NB(xenosoz, 2018): Log for future analysis (#2/2)
         string workPath = [this] {
             stringstream SS;
-            SS << "/" << "WoodenPuzzles";
-            SS << "/" << "level-" << LevelID;
+            SS << "/" << Mode;
+            SS << "/" << "level-" << LevelID << "-" << WorkSheetID;
             SS << "/" << "work-" << 0;
             return SS.str();
         }();
-        StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+        StrictLogManager::shared()->game_Peek_Answer(Mode, workPath,
                                                      Piece->PieceID(), "None");
     };
 }

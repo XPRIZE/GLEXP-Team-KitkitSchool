@@ -7,7 +7,7 @@
 //
 
 #include "NumberTraceScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/NumberTraceMainDepot.h"
 #include "Managers/StrictLogManager.h"
 
 #include "CCAppController.hpp"
@@ -148,7 +148,7 @@ void NumberTraceScene::refreshChildNodes() {
             // NB(xenosoz, 2018): TheProblemID is dynamic. That's why I made this as a function.
             stringstream SS;
             SS << "/" << "NumberTrace";
-            SS << "/" << "level-" << LevelID;
+            SS << "/" << "level-" << LevelID << "-" << SheetID;
             SS << "/" << "work-" << TheProblemID();
             return SS.str();
         };

@@ -2,11 +2,14 @@ package com.enuma.kitkitProvider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -23,6 +26,8 @@ public class KitkitProvider extends ContentProvider {
     private static final String USER_TABLE = "users";
     private static final String CURRENT_USER_TABLE = "current_user";
     private static final String SNTP_RESULT_TABLE = "sntp_result";
+    private static final String PREFERENCE = "preference";
+    private static final String FISHES_TABLE = "fishes";
 
     public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/" + USER_TABLE);
@@ -33,11 +38,18 @@ public class KitkitProvider extends ContentProvider {
     public static final Uri SNTP_RESULT_URI =
             Uri.parse("content://"+ AUTHORITY + "/" + SNTP_RESULT_TABLE);
 
+    public static final Uri PREFERENCE_URI=
+            Uri.parse("content://" + AUTHORITY + "/" + PREFERENCE);
+
+    public static final Uri FISHES_URI =
+            Uri.parse("content://" + AUTHORITY + "/" + FISHES_TABLE);
 
     public static final int USER = 1;
     public static final int USER_ID = 2;
     public static final int CURRENT_USER = 3;
     public static final int SNTP_RESULT = 4;
+    public static final int PREFERENCE_INFO = 5;
+    public static final int FISHES = 6;
 
     private static final UriMatcher sURIMatcher =
             new UriMatcher(UriMatcher.NO_MATCH);
@@ -49,6 +61,8 @@ public class KitkitProvider extends ContentProvider {
 
         sURIMatcher.addURI(AUTHORITY, CURRENT_USER_TABLE, CURRENT_USER);
         sURIMatcher.addURI(AUTHORITY, SNTP_RESULT_TABLE, SNTP_RESULT);
+        sURIMatcher.addURI(AUTHORITY, PREFERENCE, PREFERENCE_INFO);
+        sURIMatcher.addURI(AUTHORITY, FISHES_TABLE, FISHES);
     }
 
     private KitkitDBHandler myDB;
@@ -80,6 +94,15 @@ public class KitkitProvider extends ContentProvider {
                 break;
             case SNTP_RESULT:
                 queryBuilder.setTables(KitkitDBHandler.TABLE_SNTP_RESULT);
+                break;
+            case PREFERENCE_INFO:
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                String tabletNumber = prefs.getString("TABLET_NUMBER", "");
+                MatrixCursor cursor = new MatrixCursor(new String[]{"TABLET_NUMBER"});
+                cursor.addRow(new String[]{String.valueOf(tabletNumber)});
+                return cursor;
+            case FISHES:
+                queryBuilder.setTables(KitkitDBHandler.TABLE_FISHES);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI");
@@ -121,6 +144,10 @@ public class KitkitProvider extends ContentProvider {
                 id = sqlDB.insert(KitkitDBHandler.TABLE_SNTP_RESULT,
                         null, values);
                 break;
+            case FISHES:
+                id = sqlDB.insert(KitkitDBHandler.TABLE_FISHES,
+                        null, values);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: "
                         + uri);
@@ -157,6 +184,11 @@ public class KitkitProvider extends ContentProvider {
                     break;
                 case SNTP_RESULT:
                     rowsDeleted = sqlDB.delete(KitkitDBHandler.TABLE_SNTP_RESULT,
+                            selection,
+                            selectionArgs);
+                    break;
+                case FISHES:
+                    rowsDeleted = sqlDB.delete(KitkitDBHandler.TABLE_FISHES,
                             selection,
                             selectionArgs);
                     break;
@@ -213,6 +245,10 @@ public class KitkitProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " +
                         uri);
+            case FISHES:
+                rowsUpdated =
+                        sqlDB.update(KitkitDBHandler.TABLE_FISHES, values, selection, selectionArgs);
+                break;
         }
         getContext().getContentResolver().notifyChange(uri,
                 null);

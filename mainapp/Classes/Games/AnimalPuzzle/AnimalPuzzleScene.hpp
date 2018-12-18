@@ -29,10 +29,9 @@ class AnimalPiece;
 class AnimalPuzzleScene : public Layer
 {
 public:
-    static Scene* createScene(int levelID);
+    static Scene* createScene(string levelID);
     virtual bool init() override;
     CREATE_FUNC(AnimalPuzzleScene);
-
 
     virtual void onEnter() override;
     virtual void onEnterTransitionDidFinish() override;
@@ -49,7 +48,8 @@ public:
     
 private:
 
-
+    void loadDurationsheet();
+    float getDuration(string name);
     
     
 private:
@@ -68,13 +68,11 @@ private:
     int _currentPuzzleIndex;
 
     ProgressIndicator *_progressBar;
-    
-    
-    
+
     vector<AnimalPuzzleLevelStruct> _puzzles;
 
-    
 
+    std::map<std::string,float> _duration;
     
     
 
@@ -86,6 +84,7 @@ struct AnimalPuzzleLevelStruct {
     string backgroundFilename;
     string folderName;
     string maskFilename;
+    string soundFilename;
     vector<string> pieceFaceVector;
     vector<string> pieceDepthVector;
     vector<string> pieceShadowVector;

@@ -9,7 +9,7 @@
 
 #include "FindTheMatch.h"
 #include "Core/FindTheMatchScene.h"
-#include "Models/LevelData.h"
+#include "Models/FindTheMatchLevelData.h"
 #include <numeric>
 
 using todoschool::findthematch::LevelData;
@@ -46,12 +46,13 @@ void FindTheMatch::setOnFail(std::function<void()> F) {
 
 cocos2d::Scene* FindTheMatch::createScene() {
     using namespace todoschool::findthematch;
-    
-    auto Sheet = LevelData::defaultData().randomSheetFor(LevelID);
+    int SheetID;
+    auto Sheet = LevelData::defaultData().randomSheetFor(LevelID, &SheetID);
     auto It = FindTheMatchScene::createScene();
     
     It->TheSheet.update(Sheet);
     It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

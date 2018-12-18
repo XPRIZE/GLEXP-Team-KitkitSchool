@@ -20,6 +20,7 @@
 #include "CCAppController.hpp"
 
 #include "Utils/TodoUtil.h"
+#include "Games/Video/GameVideoScene.hpp"
 
 #include <map>
 
@@ -76,10 +77,21 @@ LevelCurriculum* CurriculumManager::findCurriculum(string levelID)
 
 void CurriculumManager::loadData()
 {
-    string P = LanguageManager::getInstance()->findLocalizedResource("CurriculumData.tsv");
+    /*
+    string resourceName = LanguageManager::getInstance()->isSignLanguageMode() ? "curriculumdata_sl.tsv":"curriculumdata.tsv";
+    string P = LanguageManager::getInstance()->findLocalizedResource(resourceName);
     string S = FileUtils::getInstance()->getStringFromFile(P);
+    */
     
-    todoschool::CommentStream IS(S);
+    string dataSheet = "curriculumdata.tsv";
+    string dataSheetSL = "curriculumdata_sl.tsv";
+    string resourceName = LanguageManager::getInstance()->isSignLanguageMode() ? dataSheetSL : dataSheet;
+    string resourcePath = LanguageManager::getInstance()->findLocalizedResource(resourceName);
+    if (FileUtils::getInstance()->isFileExist(resourcePath) == false)
+        resourcePath = LanguageManager::getInstance()->findLocalizedResource(dataSheet);
+    string s = FileUtils::getInstance()->getStringFromFile(resourcePath);
+    
+    todoschool::CommentStream IS(s);
     
     auto Facet = [&] {
         auto It = new todoschool::CustomFacet(IS.getloc());
@@ -98,6 +110,8 @@ void CurriculumManager::loadData()
 
 
     vector<string> wrongGameNames;
+    vector<string> wrongVideos;
+    vector<string> wrongBooks;
     map<string, int> occurrenceMap;
     
     
@@ -115,15 +129,7 @@ void CurriculumManager::loadData()
         
         game.gameName = gameName;
        
-		int gameLevelInt = 0;
-        if (gameName=="LetterTracingCard") {
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
-            gameLevelInt = LetterTracingCardUtility::getLevelByLetter(gameLevel, LanguageManager::getInstance()->isEnglish());
-#endif //WINRT
-            
-        } else {
-            gameLevelInt = TodoUtil::stoi(gameLevel);
-        }
+		int gameLevelInt = TodoUtil::stoi(gameLevel);
         
         game.gameLevel = gameLevelInt;
         game.gameParameter = gameParam;
@@ -139,14 +145,28 @@ void CurriculumManager::loadData()
         
   
         if (UserManager::getInstance()->isDebugMode()) {
+            if(gameName == "Book"){
+                    string bookPath = "Books/BookData/"+ gameParam + "/bookinfo.csv";
+                    if ( !FileUtils::getInstance()->isFileExist(bookPath)) {
+                        if (find(wrongBooks.begin(), wrongBooks.end(), gameParam)==wrongBooks.end())
+                            wrongBooks.push_back((gameParam));
+                    }
             
-            if (!CCAppController::sharedAppController()->gameExists(game.gameName)) {
-                if (find(wrongGameNames.begin(), wrongGameNames.end(), game.gameName)==wrongGameNames.end())
-                    wrongGameNames.push_back(game.gameName);
-                //string err = "Wrong game name : "+ game.gameName;
-                //CCLOGERROR("%s", err.c_str());
+            } else if (gameName == "Video") {
+                if( !GameVideoScene::videoExists(gameParam)) {
+                    
+                    if (find(wrongVideos.begin(), wrongVideos.end(), gameParam)==wrongVideos.end())
+                        wrongVideos.push_back((gameParam));
+                }
+            } else {
+        
+                if (!CCAppController::sharedAppController()->gameExists(game.gameName)) {
+                    if (find(wrongGameNames.begin(), wrongGameNames.end(), game.gameName)==wrongGameNames.end())
+                        wrongGameNames.push_back((game.gameName));
+                    //string err = "Wrong game name : "+ game.gameName;
+                    //CCLOGERROR("%s", err.c_str());
+                }
             }
-            
         }
         
         
@@ -223,12 +243,30 @@ void CurriculumManager::loadData()
     }
     
     
-    if (UserManager::getInstance()->isDebugMode() && (wrongGameNames.size()>0)) {
+    if (UserManager::getInstance()->isDebugMode()) {
         string files;
-        for (auto file : wrongGameNames) {
-            files += file + "\n";
+        if (wrongGameNames.size()>0) {
+            files += "Wrong Game Name\n";
+            for (auto file : wrongGameNames) {
+                files += file + "\n";
+            }
         }
-        MessageBox("Wrong Game Name in the curriculum", files.c_str() );
+        
+        if (wrongBooks.size()>0) {
+            files += "Wrong Book Name\n";
+            for (auto file : wrongBooks) {
+                files += file + "\n";
+            }
+        }
+        
+        if (wrongVideos.size()>0) {
+            files += "Wrong video Name\n";
+            for (auto file : wrongVideos) {
+                files += file + "\n";
+            }
+        }
+        if (files.size() > 0)
+            MessageBox("Wrong curriculum Data", files.c_str() );
 
     }
     

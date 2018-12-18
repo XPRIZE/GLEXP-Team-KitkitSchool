@@ -18,7 +18,7 @@
 #include "PatternTrainProblemBank.hpp"
 #include "ChildNodes/Locomotive.hpp"
 #include "ChildNodes/FreightCar.hpp"
-#include "ChildNodes/Box.hpp"
+#include "ChildNodes/PatternTrainBox.hpp"
 #include "ChildNodes/Slot.hpp"
 
 BEGIN_NS_PATTERNTRAIN;
@@ -637,7 +637,7 @@ void PatternTrainScene::checkAnswer() {
     auto workPath = [this] {
         stringstream ss;
         ss << "/" << "PatternTrain";
-        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "level-" << _currentLevel << "-0";
         ss << "/" << "work-" << _currentProblemIndex;
         return ss.str();
     }();

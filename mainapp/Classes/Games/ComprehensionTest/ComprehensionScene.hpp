@@ -28,6 +28,7 @@ class ComprehensionScene : public Layer
     
 public:
     static Scene* createScene(string bookFolder, int set);
+    static Scene* createScene(string bookFolder, int set, bool checkCompleteCondition);
     static int getNumSet(string bookFolder);
     
     virtual bool init() override;
@@ -36,12 +37,15 @@ public:
     virtual void onEnterTransitionDidFinish() override;
     
     vector<ComprehensionProblem> problemSet;
-    map<ComprehensionProblemKey, vector<ComprehensionProblem>> problemSetMap;
     
     void onStart();
     void onSolve();
     void showBookChooser();
     void showSetChooser();
+    
+    static bool getSolveAll() { return _isSolveAll; }
+    
+    void setCheckCompleteCondition(bool checkCompleteCondition);
     
     void setBookData(string bookFolder, int set);
     std::string getBookFolder() { return _bookFolder; }
@@ -51,6 +55,8 @@ public:
     void drawQuestionTitle(string titleText, Node* parentNode, float addLeftPadding = 0.f);
 
 private:
+    bool _checkCompleteCondition = true;
+    
     Node *_pageNode;
     NodeGrid *_pageGrid;
     int _currentPageGridZ;
@@ -62,6 +68,7 @@ private:
     //int _bookNo;
     //string _languageTag;
     
+    static bool _isSolveAll;
     int _currentProblem;
     ProgressIndicator *_progressBar;
     EventListenerTouchOneByOne *_blocker;

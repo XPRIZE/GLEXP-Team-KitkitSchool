@@ -492,7 +492,7 @@ void STDownCard::Fail(const bool & hit, const std::function<void()>& cbf)
 		actions.pushBack(CallFunc::create([] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/SFX_Wood_Incorrect.m4a"); }));
 
 		if (!_soundFile.empty())
-			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/" + _soundFile); }));
+			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSoundVoiceOnly("WhatIsThis/Sounds/" + _soundFile); }));
 		actions.pushBack(DelayTime::create(MAX(WAIT_TIME, _soundDuration)));
 
 		Node* targetNode = nullptr;

@@ -10,7 +10,6 @@
 #define ENUMAXPRIZE_COUNTFIELD_CIRCLEANDSTRAIGHT_H
 
 #include <Common/ADT/Chain.h>
-#include <Common/ADT/Optional.h>
 #include <cocos/cocos2d.h>
 #include <array>
 
@@ -43,7 +42,8 @@ public:
     Chain<float> TargetRotation;
     
     // NB(xenosoz, 2016): Time limit to the movement.
-    Optional<float> EngineTimeLimit;
+    bool HasEngineTimeLimit;
+    float TheEngineTimeLimit;
 
     Chain<float> Scale;
 

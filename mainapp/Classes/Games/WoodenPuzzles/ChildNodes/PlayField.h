@@ -11,6 +11,7 @@
 
 #include "../PieceNodes/WoodPiece.h"
 #include "../Utils/WoodenPuzzleNS.h"
+#include <Common/Basic/CreateFunc.h>
 
 
 BEGIN_NS_WOODENPUZZLES;
@@ -24,8 +25,9 @@ public:
 
 public:
     CREATE_FUNC(PlayField);
-    bool init() override;
+    bool init(const string& Mode);
     
+    string Mode;    
     void appendWoodPiece(WoodPiece* Piece);
     void removeWoodPiece(WoodPiece* Piece);
     

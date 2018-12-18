@@ -80,25 +80,23 @@ string toURLEncoded(string S) {
     return Ret;
 }
 
-Optional<int> parseInt(string S, int Base) {
-    Optional<int> Ret;
-
+bool parseInt(int& Value, string S, int Base) {
     char* Pos = const_cast<char*>(S.c_str());
     int It = (int)std::strtol(S.c_str(), &Pos, Base);
 
     if (static_cast<size_t>(Pos - S.c_str()) != S.size()) {
         // NB(xenosoz, 2016): S have invalid literal for base `Base'.
-        return Ret;
+        return false;
     }
 
-    Ret.reset(It);
-    return Ret;
+    Value = It;
+    return true;
 }
 
-Optional<int> parseIntWithSuffix(string S, string Suffix, int Base) {
+bool parseIntWithSuffix(int& Value, string S, string Suffix, int Base) {
     auto SuffixBegin = find_end(S.begin(), S.end(), Suffix.begin(), Suffix.end());
 
-    return parseInt(string(S.begin(), SuffixBegin), Base);
+    return parseInt(Value, string(S.begin(), SuffixBegin), Base);
 }
 
 }  // namespace todoschool

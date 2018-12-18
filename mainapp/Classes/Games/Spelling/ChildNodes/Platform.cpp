@@ -9,7 +9,7 @@
 
 #include "Platform.h"
 #include "../BallNodes/AnswerBall.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/SpellingMainDepot.h"
 
 
 BEGIN_NS_SPELLING

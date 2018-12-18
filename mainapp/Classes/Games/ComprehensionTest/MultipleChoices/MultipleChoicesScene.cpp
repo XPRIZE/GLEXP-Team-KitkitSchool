@@ -19,7 +19,7 @@
 namespace MultipleChoicesSceneSpace
 {
 //    const bool bDebug = false;
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = FONT_ANDIKA_BOLD;
 }
 
 using namespace MultipleChoicesSceneSpace;
@@ -62,28 +62,16 @@ namespace ComprehensionTest
             initData();
             determineItemType();
             
-            string directionContent = LanguageManager::getInstance()->isEnglish() ? "Select the correct answer." : "Chagua jibu sahihi.";
-            
-            if (_questionText.find("Choose:") != std::string::npos)
+            switch (_currentType)
             {
-                directionContent = "Select the picture to match the text";
-                TodoUtil::replaceAll(_questionText, "Choose:", "");
-                _questionText = TodoUtil::trim(_questionText);
-                _questionTextFontSize = 80.f;
-            }
-            else
-            {
-                _questionTextFontSize = _questionText.length() > 20 ? 65.f : 165.f;
-            }
-            
-            _comprehensionScene->drawQuestionTitle(directionContent, _gameNode);
-            
-            createFixedResources();
-            
-            switch (_currentType) {
                 case QuestionType::TextQuestionTextAnswer:
                 {
-                    auto layer= TextAndTextLayer::create();
+                    _questionLabelFontSize = _questionText.length() > 20 ? 65.f : 80.f;
+                    _questionLabelPosition = Vec2(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 600.f);
+                    _layerPosition = Vec2(0.f, -194.f);
+                    
+                    auto layer = TextAndTextLayer::create();
+                    layer->setPosition(_layerPosition);
                     layer->parentScene = this;
                     layer->setAnswers(_answers);
                     _gameNode->addChild(layer);
@@ -91,7 +79,12 @@ namespace ComprehensionTest
                 }
                 case QuestionType::TextQuestionImageAnswer:
                 {
-                    auto layer= TextAndImageLayer::create();
+                    _questionLabelFontSize = _questionText.length() > 20 ? 65.f : 80.f;
+                    _questionLabelPosition = Vec2(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 600.f);
+                    _layerPosition = Vec2(0.f, -145.f);
+                    
+                    auto layer = TextAndImageLayer::create();
+                    layer->setPosition(_layerPosition);
                     layer->parentScene = this;
                     layer->setAnswers(_comprehensionScene->getBookFolder(), _answers);
                     _gameNode->addChild(layer);
@@ -99,7 +92,12 @@ namespace ComprehensionTest
                 }
                 case QuestionType::ImageQuestionTextAnswer:
                 {
-                    auto layer= ImageAndTextLayer::create();
+                    _questionLabelFontSize = _questionText.length() > 20 ? 65.f : 80.f;
+                    _questionLabelPosition = Vec2(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 600.f);
+                    _layerPosition = _questionText.length() > 0 ? Vec2::ZERO : Vec2(0.f, 200.f);
+                    
+                    auto layer = ImageAndTextLayer::create();
+                    layer->setPosition(_layerPosition);
                     layer->parentScene = this;
                     layer->setQuestionImage(_comprehensionScene->getBookFolder(), _questionImageFile);
                     layer->setAnswers(_answers);
@@ -108,7 +106,10 @@ namespace ComprehensionTest
                 }
                 case QuestionType::ImageQuestionImageAnswer:
                 {
-                    auto layer= ImageAndImageLayer::create();
+                    _questionLabelFontSize = _questionText.length() > 20 ? 65.f : 80.f;
+                    _questionLabelPosition = Vec2(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 600.f);
+                    
+                    auto layer = ImageAndImageLayer::create();
                     layer->parentScene = this;
                     layer->setQuestionImage(_comprehensionScene->getBookFolder(), _questionImageFile);
                     layer->setAnswers(_comprehensionScene->getBookFolder(), _answers);
@@ -118,13 +119,27 @@ namespace ComprehensionTest
                 default:
                     break;
             }
+            
+            string directionContent = LanguageManager::getInstance()->isEnglish() ? "Select the correct answer." : "Chagua jibu sahihi.";
+            
+            if (_questionText.find("Choose:") != std::string::npos)
+            {
+                directionContent = "Select the picture to match the text";
+                TodoUtil::replaceAll(_questionText, "Choose:", "");
+                _questionText = TodoUtil::trim(_questionText);
+            }
+            
+            _comprehensionScene->drawQuestionTitle(directionContent, _gameNode);
+            
+            createFixedResources();
         }
         
         void MultipleChoicesScene::determineItemType()
         {
             if (_questionImageFile == "")
             {
-                if (_answers.size()<=0) {
+                if (_answers.size()<=0)
+                {
                     NativeAlert::show("Error in MulpleChoice data", "answers empty", "OK");
                     return;
                 }
@@ -132,7 +147,8 @@ namespace ComprehensionTest
             }
             else
             {
-                if (_answers.size()<=0) {
+                if (_answers.size()<=0)
+                {
                     NativeAlert::show("Error in MulpleChoice data", "answers empty", "OK");
                     return;
                 }
@@ -157,12 +173,6 @@ namespace ComprehensionTest
                 }
             }
             
-//            if (rawData.size()<=4) {
-//
-//                NativeAlert::show("Wrong data in Comp - MultipleChoice", "missing data column", "OK");
-//                return;
-//            }
-            
             string rawAnswers;
             string rawSolution;
             
@@ -176,10 +186,13 @@ namespace ComprehensionTest
             else
             {
                 auto isImage = (rawData[1].find(".png") != std::string::npos) || (rawData[1].find(".jpg") != std::string::npos);
-                if (isImage) {
+                if (isImage)
+                {
                     _questionText = "";
                     _questionImageFile = rawData[1];
-                } else {
+                }
+                else
+                {
                     _questionText = rawData[1];
                     _questionImageFile = "";
                 }
@@ -201,18 +214,13 @@ namespace ComprehensionTest
         
         void MultipleChoicesScene::createFixedResources()
         {
-            
             Size labelSize = Size(1800, 500);
-//            auto questionLabel = TodoUtil::createLabelMultiline(_questionText, _questionTextFontSize, labelSize, "fonts/Aileron-Regular.otf", Color4B(56, 56, 56, 255));
-            
-            
-            auto questionLabel = createMultiLine(_questionText, _questionTextFontSize, labelSize, Color4B(56, 56, 56, 255));
-//            questionLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-//            questionLabel->setPosition(300.f, _gameNode->getContentSize().height - 600.f);
+            auto questionLabel = createMultiLine(_questionText, _questionLabelFontSize, labelSize, Color4B(77, 77, 77, 255));
             questionLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            //questionLabel->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 450.f);
-            questionLabel->setPosition(_gameNode->getContentSize().width / 2, _gameNode->getContentSize().height - 520.f);
+            questionLabel->setPosition(_questionLabelPosition);
             _gameNode->addChild(questionLabel);
+
+            //DRAW_DEBUG_AREA(questionLabel);
         }
         
         bool MultipleChoicesScene::isSolved()
@@ -223,7 +231,11 @@ namespace ComprehensionTest
         void MultipleChoicesScene::onSolve()
         {
             if (_comprehensionScene)
-                _comprehensionScene->onSolve();
+            {
+                DELAYED_CALLFUNC(0.5f, {
+                    _comprehensionScene->onSolve();
+                });
+            }
         }
         
         bool MultipleChoicesScene::isCorrect(std::string answer)
@@ -274,13 +286,11 @@ namespace ComprehensionTest
             
             int trial = 5;
             
-            
-            do {
-                
+            do
+            {
                 page = Node::create();
                 page->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
                 Node *innerPage = Node::create();
-                
                 
                 Point pos = Point::ZERO;
                 Size pageSize = Size::ZERO;
@@ -292,12 +302,13 @@ namespace ComprehensionTest
                 auto lineSpacing = fontSize*0.25;
                 auto wordSpacing = fontSize*0.25;
                 
-                for (auto word : words) {
-                    
+                for (auto word : words)
+                {
                     auto slot = createWord(word, fontSize, fontColor);
                     auto slotSize = slot->getContentSize();
                     slot->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-                    if (pageWidth>0 && pos.x + slotSize.width > pageWidth) {
+                    if (pageWidth > 0 && pos.x + slotSize.width > pageWidth)
+                    {
                         pos.x = 0;
                         pos.y -= wordHeight + lineSpacing;
                     }
@@ -312,11 +323,7 @@ namespace ComprehensionTest
                     pos.x += wordSpacing + slotSize.width;
                     
                     innerPage->addChild(slot);
-                    
-                    
-                    
                 }
-                
                 
                 pageSize.height *= -1.0;
                 pageSize.height += pageTopMargin;
@@ -326,19 +333,15 @@ namespace ComprehensionTest
                 
                 page->addChild(innerPage);
                 
-                
                 complete = pageSize.height <= dim.height;
-                if (!complete) {
+                if (!complete)
+                {
                     auto scale = sqrt(dim.height / pageSize.height)* 0.9;
                     fontSize *= scale;
                 }
                 
                 trial--;
-                
-                
-                
-            } while (!complete && trial>0);
-            
+            } while (!complete && trial > 0);
             
             return page;
         }
@@ -351,18 +354,20 @@ namespace ComprehensionTest
             Node *node = Node::create();
             Size wordSize = Size(0, wordHeight);
             
-            while (word.length()>0) {
+            while (word.length()>0)
+            {
                 if (word[0]=='_')
                 {
-                    
                     int underlineLength;
                     
                     size_t last = word.find_first_not_of("_");
-                    if (last==string::npos) {
+                    if (last==string::npos)
+                    {
                         underlineLength = word.length();
                         word = "";
-                        
-                    } else {
+                    }
+                    else
+                    {
                         underlineLength = last;
                         word = word.substr(last, word.length()-last);
                     }
@@ -384,16 +389,18 @@ namespace ComprehensionTest
                 }
                 
                 
-                if (word.length()>0) {
-                    
+                if (word.length() > 0)
+                {
                     string currentSyl;
                     
                     size_t nextUnder = word.find_first_of("_");
-                    if (nextUnder!=string::npos) {
+                    if (nextUnder!=string::npos)
+                    {
                         currentSyl = word.substr(0, nextUnder);
                         word = word.substr(nextUnder, word.length()-nextUnder);
-                        
-                    } else {
+                    }
+                    else
+                    {
                         currentSyl = word;
                         word = "";
                     }
@@ -402,20 +409,16 @@ namespace ComprehensionTest
                     label->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
                     auto labelSize = label->getContentSize();
                     
-                    
                     label->setPosition(Vec2(wordSize.width, 0));
                     
                     wordSize.width += labelSize.width;
                     node->addChild(label);
                 }
-                
-                
             }
             
             node->setContentSize(wordSize);
             
             return node;
-            
         }
         
         std::string MultipleChoicesScene::lineWrappnig(std::string inputString)
@@ -444,9 +447,10 @@ namespace ComprehensionTest
             return inputString;
         }
         
-        std::string MultipleChoicesScene::makeWorkPath() const {
+        std::string MultipleChoicesScene::makeWorkPath() const
+        {
             stringstream ss;
-            ss << "ComprehensionTest";
+            ss << "/" << "ComprehensionTest";
             ss << "/" << _comprehensionScene->getBookName();
             ss << "/" << "multiplechoice";
             ss << "-" << _comprehensionScene->getCurrentProblem();

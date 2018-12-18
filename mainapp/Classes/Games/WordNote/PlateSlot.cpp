@@ -5,7 +5,7 @@
 //  Created by JungJaehun on 21/02/2018.
 //
 
-#include "Piece.hpp"
+#include "WordNotePiece.hpp"
 #include "PlateSlot.hpp"
 
 BEGIN_NS_WORDNOTE;

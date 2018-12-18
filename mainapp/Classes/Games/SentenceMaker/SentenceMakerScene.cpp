@@ -251,7 +251,7 @@ void SentenceMakerScene::onSolve()
     
     auto delayTime = getSentenceDuration(_problemData->soundPath);
     auto seq = Sequence::create(DelayTime::create(kSentenceDelayTime),
-                                CallFunc::create([this](){ GameSoundManager::getInstance()->playEffectSound(kSoundPrefixPath + _problemData->soundPath); }),
+                                CallFunc::create([this](){ GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath); }),
                                 DelayTime::create(kSentenceDelayTime + delayTime),
                                 CallFunc::create([this](){ onSolvePostProcess(); }),
                                 nullptr);
@@ -403,10 +403,15 @@ void SentenceMakerScene::drawBottomItems()
 {
     const float _kGapBetweenBottomItems = 20.f;
     _bottomItemVector.clear();
+    vector<string> longWords;
     for (auto each : _problemData->wordSet)
     {
-        if (each->bBlank)
-            _bottomItemVector.push_back(each->value);
+        if ((int)each->value.size() > 25) {
+            longWords.push_back(each->value);
+            continue;
+        }
+        if (each->bBlank) _bottomItemVector.push_back(each->value);
+
     }
     for (auto each : _problemData->wrongWordSet)
     {
@@ -414,8 +419,12 @@ void SentenceMakerScene::drawBottomItems()
     }
     random_shuffle(_bottomItemVector.begin(), _bottomItemVector.end());
     
+    for (auto it : longWords) {
+        _bottomItemVector.push_back(it);
+    }
+    
     _bottomAreaLayer = LayerColor::create(Color4B(100, 100, 100, bDebug ? 255 : 0));
-    _bottomAreaLayer->setContentSize(Size(1600, 400));
+    _bottomAreaLayer->setContentSize(Size(longWords.size()?1800:1600, 400));
     _bottomAreaLayer->setIgnoreAnchorPointForPosition(false);
     _bottomAreaLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _bottomAreaLayer->setPosition(getContentSize().width / 2 + 50.f, getContentSize().height / 2 + kBottomAreaLayerCorrectionY);
@@ -466,7 +475,7 @@ void SentenceMakerScene::playWordSound(string word)
     {
         auto effectName = LanguageManager::getInstance()->soundPathForWordFile(wordSoundName);
         auto seq = Sequence::create(DelayTime::create(delayTime),
-                                    CallFunc::create([this, effectName, wordSoundName](){ GameSoundManager::getInstance()->playEffectSound(effectName); }),
+                                    CallFunc::create([this, effectName, wordSoundName](){ GameSoundManager::getInstance()->playEffectSoundForAutoStart(effectName); }),
                                     nullptr);
         
         this->runAction(seq);
@@ -528,43 +537,56 @@ WordItem* SentenceMakerScene::createWordItem(string word)
     item->onCheckTargetEnded = [this, item](Touch* touch){
         
         bool setTarget = false;
+        
+        string userAnswer = item->_word;
+        string correctAnswer = "";
+        
         for (auto blank : _blanks) {
             
             auto P = blank->getParent();
             auto pos = P->convertToNodeSpace(touch->getLocation());
             
-            if (blank->getBoundingBox().containsPoint(pos) && blank->_word == item->_word) {
-                setTarget = true;
-                if (blank->_pair) {
-                    blank->_pair->returnToOrigin();
-                    blank->_pair->_pair = nullptr;
-                    repositionBlankLine(blank->_index, blank->getContentSize().width, item->getContentSize().width);
-                    blank->setBodyWidth(item->getContentSize().width);
-                }
-                blank->_pair = item;
-                item->_pair = blank;
-                auto newPos = item->getParent()->convertToNodeSpace(blank->getParent()->convertToWorldSpace(blank->getPosition()));
+            if (blank->getBoundingBox().containsPoint(pos)) {
                 
-                blank->setBodyWidth(item->getContentSize().width);
-                item->setPosition(newPos.x-item->getContentSize().width/2, newPos.y+item->getContentSize().height/2);
-                item->setSnapped(true);
-
-                GameSoundManager::getInstance()->playEffectSound(kSnapEffectSound);
+                if (blank->_word == item->_word) {
+                    setTarget = true;
+                    if (blank->_pair) {
+                        blank->_pair->returnToOrigin();
+                        blank->_pair->_pair = nullptr;
+                        repositionBlankLine(blank->_index, blank->getContentSize().width, item->getContentSize().width);
+                        blank->setBodyWidth(item->getContentSize().width);
+                    }
+                    blank->_pair = item;
+                    item->_pair = blank;
+                    auto newPos = item->getParent()->convertToNodeSpace(blank->getParent()->convertToWorldSpace(blank->getPosition()));
+                    
+                    blank->setBodyWidth(item->getContentSize().width);
+                    item->setPosition(newPos.x-item->getContentSize().width/2, newPos.y+item->getContentSize().height/2);
+                    item->setSnapped(true);
+                    
+                    GameSoundManager::getInstance()->playEffectSound(kSnapEffectSound);
+                } else if (blank->_pair) {
+                    
+                } else {
+                    repositionBlankLine(blank->_index, blank->getContentSize().width, blank->_defaultWidth);
+                    blank->setBodyWidth(blank->_defaultWidth);
+                }
+                    
+                correctAnswer = blank->_word;
+                
             }  else if (!blank->_pair && blank->_stretched) {
                 repositionBlankLine(blank->_index, blank->getContentSize().width, blank->_defaultWidth);
                 blank->setBodyWidth(blank->_defaultWidth);
             }
             
         };
-        if (!setTarget) item->returnToOrigin();
-
         
-        // NB(xenosoz, 2018): 사용자 행동을 나중에 분석할 수 있도록 로그를 남깁니다.
-        /*
+        if (!setTarget) item->returnToOrigin();
+        
         auto workPath = [this] {
             stringstream ss;
             ss << "/" << "SentenceMaker";
-            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "level-" << _currentLevel << "-0";
             ss << "/" << "work-" << _currentProblem;
             return ss.str();
         }();
@@ -574,13 +596,13 @@ WordItem* SentenceMakerScene::createWordItem(string word)
             ss << "'" << s << "'";
             return ss.str();
         };
+                
+        StrictLogManager::shared()->game_Peek_Answer("SentenceMaker"
+                                                     , workPath
+                                                     , wrapStr(userAnswer)
+                                                     , correctAnswer!=""?wrapStr(correctAnswer):"None");
         
-        StrictLogManager::shared()->game_Peek_Answer("SentenceMaker", workPath,
-                                                     wrapStr(item->_word),
-                                                     (newSlot ? wrapStr(newSlot->_word) : "None"));
-        
-        
-
+        /*
         // 들어갈 수 있으면 끼워넣습니다. (슬롯이 비어있고, newSlot의 word 값과 block의 word 값이 같을 경우)
         if (newSlot && newSlot->_pair == nullptr && newSlot->_word == item->_word) {
             // TODO: 위의 if 조건절 변화로 이 부분 동작하고 있지 않음, 처리해야 함
@@ -621,7 +643,7 @@ Node* SentenceMakerScene::createSoundButton()
     soundButton->setPosition(Vec2(130.f, _sketchbookPage->getContentSize().height - 180.f));
     soundButton->addTouchEventListener([this](Ref*,Widget::TouchEventType e) {
         if (e == Widget::TouchEventType::ENDED) {
-            GameSoundManager::getInstance()->playEffectSound(kSoundPrefixPath + _problemData->soundPath);
+            GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath);
         }
     });
     return soundButton;

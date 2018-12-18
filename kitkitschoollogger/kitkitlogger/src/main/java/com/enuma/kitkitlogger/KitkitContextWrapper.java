@@ -33,8 +33,15 @@ public class KitkitContextWrapper extends ContextWrapper {
             context = context.createConfigurationContext(configuration);
 
         } else {
-            configuration.setLocale(newLocale);
-            context = context.createConfigurationContext(configuration);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                configuration.setLocale(newLocale);
+                context = context.createConfigurationContext(configuration);
+            } else {
+                configuration.locale = newLocale;
+                res.updateConfiguration(configuration, null);
+            }
+
+
         }
 
         return new KitkitContextWrapper(context);

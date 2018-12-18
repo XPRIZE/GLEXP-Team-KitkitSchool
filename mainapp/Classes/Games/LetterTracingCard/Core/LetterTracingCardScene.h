@@ -10,10 +10,10 @@
 #pragma once
 
 
-#include "../Utils/MainNS.h"
-#include "../Utils/MainDepot.h"
-#include "../Models/Problem.h"
-#include "../ChildNodes/Card.h"
+#include "../Utils/LetterTracingCardNS.h"
+#include "../Utils/LetterTracingCardMainDepot.h"
+#include "../Models/LetterTracingCardProblem.h"
+#include "../ChildNodes/LetterTracingCardCard.h"
 #include <Common/Controls/TraceField/TraceField.h>
 #include <functional>
 

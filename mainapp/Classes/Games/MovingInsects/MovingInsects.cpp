@@ -8,8 +8,8 @@
 
 
 #include "MovingInsects.h"
-#include "Core/MainScene.h"
-#include "Models/LevelData.h"
+#include "Core/MovingInsectsScene.h"
+#include "Models/MovingInsectsLevelData.h"
 
 using todoschool::movinginsects::LevelData;
 
@@ -52,12 +52,15 @@ void MovingInsects::setOnFail(std::function<void()> F) {
 
 cocos2d::Scene* MovingInsects::createScene() {
     using namespace todoschool::movinginsects;
+
+    size_t SheetID;
     
-    auto Sheet = LevelData::defaultData().levelByID(LevelID).randomSheet();
-    auto It = MainScene::createScene(LevelID);
+    auto Sheet = LevelData::defaultData().levelByID(LevelID).randomSheet(&SheetID);
+    auto It = MovingInsectsScene::createScene(LevelID);
 
     It->TheSheet.update(Sheet);
     It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
 

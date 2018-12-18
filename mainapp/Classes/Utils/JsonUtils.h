@@ -10,7 +10,6 @@
 #define TODOSCHOOL_UTILS_JSONUTILS_H
 
 
-#include <Common/ADT/Optional.h>
 #include <string>
 
 namespace Json {
@@ -19,9 +18,7 @@ namespace Json {
 
 namespace todoschool {
 
-
-    
-Optional<Json::Value> jsonFromFile(const std::string& Filename);
+bool jsonFromFile(const std::string& Filename, Json::Value& RetValue);
 
 }  // namespace todoschool
 

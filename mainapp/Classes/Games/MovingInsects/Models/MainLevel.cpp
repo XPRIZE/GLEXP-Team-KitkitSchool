@@ -15,8 +15,9 @@ MainSheet& MainLevel::sheetByID(size_t SheetID) {
     return Sheets.at(SheetID);
 }
 
-MainSheet& MainLevel::randomSheet() {
-    return sheetByID(random(Sheets.begin_index() + 1, Sheets.end_index()) - 1);
+MainSheet& MainLevel::randomSheet(size_t *SheetID) {
+    *SheetID = random(Sheets.begin_index(), Sheets.end_index()-1);
+    return sheetByID(*SheetID);
 }
 
 istream& operator>>(istream& IS, MainLevel& Level) {

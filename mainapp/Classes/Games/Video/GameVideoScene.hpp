@@ -17,6 +17,8 @@
 #include <functional>
 #include <string>
 
+#include "Common/Controls/Subtitle.hpp"
+
 
 class GameVideoScene: public cocos2d::Node {
 public:
@@ -29,6 +31,7 @@ private:
     
     Node *_videoNode;
     cocos2d::Sprite *_frame;
+    Subtitle* _subtitle;
     
     
 public:

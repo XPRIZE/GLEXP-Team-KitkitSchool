@@ -197,11 +197,12 @@ void StrictLogManager::dailyGameChoice_ChooseDailyGame(const std::string& levelI
     logJson(it);
 }
 
-void StrictLogManager::game_Begin(const std::string& gameName, int gameLevel) {
+void StrictLogManager::game_Begin(const std::string& gameName, int gameLevel, const std::string& param) {
     Json::Value it = basicLog("game_Begin");
 
     it["0.gameName"] = gameName;
     it["1.gameLevel"] = gameLevel;
+    it["2.param"] = param;
     
     // NB(xenosoz, 2017): Please consider reviving code fragment below (from the original place)
     //vl["class"] = UserManager::getInstance()->getClassId();
@@ -244,6 +245,7 @@ void StrictLogManager::game_Peek_Answer(const std::string& gameName,
     logJson(it);
 }
 
+// video
 void StrictLogManager::video_Begin(const std::string& videoName) {
     Json::Value it = basicLog("video_Begin");
     
@@ -268,6 +270,7 @@ void StrictLogManager::video_End_Complete(const std::string& videoName, double d
     logJson(it);
 }
 
+// book
 void StrictLogManager::book_Begin(const std::string& bookName) {
     Json::Value it = basicLog("book_Begin");
     
@@ -292,6 +295,30 @@ void StrictLogManager::book_End_Complete(const std::string& bookName, double dur
     logJson(it);
 }
 
+// book-with-comprehension
+void StrictLogManager::BookWithQuiz_Begin(const std::string& bookName) {
+    Json::Value it = basicLog("BookWithQuiz_Begin");
+    
+    it["0.bookName"] = bookName;
+    logJson(it);
+}
+
+void StrictLogManager::BookWithQuiz_End_Quit(const std::string& bookName) {
+    Json::Value it = basicLog("BookWithQuiz_End_Quit");
+    
+    it["0.bookName"] = bookName;
+    logJson(it);
+}
+
+void StrictLogManager::BookWithQuiz_End_Complete(const std::string& bookName, int result) {
+    Json::Value it = basicLog("BookWithQuiz_End_Complete");
+    
+    it["0.bookName"] = bookName;
+    it["1.result"] = result;
+    logJson(it);
+}
+
+// comprehension
 void StrictLogManager::comprehension_Begin(const std::string& bookName, int problemSet) {
     Json::Value it = basicLog("comprehension_Begin");
     
@@ -353,6 +380,19 @@ void StrictLogManager::starStat_UpdateStarsInKitKitSchool(int oldStars, int newS
     
     it["0.oldStars"] = oldStars;
     it["1.newStars"] = newStars;
+    logJson(it);
+}
+
+void StrictLogManager::gameTutorialVideo_Begin() {
+    Json::Value it = basicLog("gameTutorialVideo_Begin");
+
+    logJson(it);
+}
+
+
+void StrictLogManager::gameTutorialVideo_End() {
+    Json::Value it = basicLog("gameTutorialVideo_End");
+
     logJson(it);
 }
 

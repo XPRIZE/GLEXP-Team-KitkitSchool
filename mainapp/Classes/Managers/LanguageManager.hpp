@@ -15,7 +15,16 @@
 #include "Common/Basic/SoundEffect.h"
 
 
-
+// NB(xenosoz, 2018): I'm confused... Let me summarize the concepts:
+//   LocaleType: enum values
+//   LocaleCode: "en-US", "sw-TZ", ...
+//
+//   _currentLocale looks like the only internal variable for locale (in LocaleType).
+//
+//   LanguageCode = LocaleCode[0:2]
+//   LanguageTag = LocaleCode[:]
+//   LocaleCode = LocaleCode[:]
+//
 
 class LanguageManager {
     
@@ -56,6 +65,7 @@ public:
     bool isSwahili() { return getCurrentLanguageCode()=="sw"; }
     
     std::vector<std::string> getLocalizationMapKeys();
+    bool isSignLanguageMode();
     
 private:
     LocaleType _currentLocale;

@@ -10,7 +10,7 @@
 #include "NumberPuzzle.h"
 #include "Core/FreePuzzleScene.h"
 #include "Core/OrderedPuzzleScene.h"
-#include "Models/LevelData.h"
+#include "Models/WoodenPuzzlesLevelData.h"
 #include "Stores/StoreForWorksheet.h"
 
 using todoschool::woodenpuzzles::LevelData;
@@ -59,8 +59,10 @@ void NumberPuzzle::setOnFail(std::function<void()> F) {
 cocos2d::Scene* NumberPuzzle::createScene() {
     using namespace todoschool::woodenpuzzles;
 
+    int WorkSheetID;
+
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto WS = LevelData::numberPuzzleData().randomSheetFor(Lang, LevelID);
+    auto WS = LevelData::numberPuzzleData().randomSheetFor(Lang, LevelID, &WorkSheetID);
     
     
     // NB(xenosoz, 2016): Shuffle or not?
@@ -74,14 +76,16 @@ cocos2d::Scene* NumberPuzzle::createScene() {
             break;
     }
     
-    
+
+    string Mode = "NumberPuzzle";
     switch (WS.ThePuzzleType)
     {
         case Worksheet::PuzzleType::Ordered: /* Fall through */
         case Worksheet::PuzzleType::RandomOrdered: {
-            auto It = OrderedPuzzleScene::create();
+            auto It = OrderedPuzzleScene::create(Mode);
+            It->grabPuzzleStore(new StoreForWorksheet(Mode, WS));
             It->LevelID = LevelID;
-            It->grabPuzzleStore(new StoreForWorksheet(WS));
+            It->WorkSheetID = WorkSheetID;
             It->OnSuccess = OnSuccess;
             It->OnFail = OnFail;
             
@@ -92,9 +96,10 @@ cocos2d::Scene* NumberPuzzle::createScene() {
             // NB(xenosoz, 2016): Fall through: A new life goes on for the default case
             
         case Worksheet::PuzzleType::Free: {
-            auto It = FreePuzzleScene::create();
+            auto It = FreePuzzleScene::create(Mode);
             It->LevelID = LevelID;
-            It->grabPuzzleStore(new StoreForWorksheet(WS));
+            It->WorkSheetID = WorkSheetID;
+            It->grabPuzzleStore(new StoreForWorksheet(Mode, WS));
             It->OnSuccess = OnSuccess;
             It->OnFail = OnFail;
             

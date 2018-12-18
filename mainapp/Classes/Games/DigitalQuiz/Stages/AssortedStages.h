@@ -15,7 +15,7 @@
 #include "DotsToNumberStage.h"
 #include "TextToNumberStage.h"
 #include "FunStage.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/DigitalQuizNS.h"
 
 
 BEGIN_NS_DIGITALQUIZ

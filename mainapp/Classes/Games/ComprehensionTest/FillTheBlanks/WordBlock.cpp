@@ -11,14 +11,10 @@
 #include "FillTheBlanksScene.hpp"
 #include "Common/Controls/DottedRect.hpp"
 
-namespace WordBlockNamespace {
-
-    const string fontName = "fonts/TodoSchoolV2.ttf";
+namespace WordBlockNamespace
+{
+    const string fontName = FONT_ANDIKA_REGULAR;
     const float fontSize = 60.f;
-    
-
-    
-
 }
 
 using namespace WordBlockNamespace;

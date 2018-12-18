@@ -23,6 +23,7 @@ class WoodSlot: public Node {
     DummyPiece* TheDummyPiece;
     
 public:
+    Chain<string> Mode;
     Chain<string> SlotID;
     Chain<string> FaceSkin;
     Chain<string> DepthSkin;

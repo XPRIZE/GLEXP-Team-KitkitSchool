@@ -8,7 +8,7 @@
 
 
 #include "FunStage.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/DigitalQuizMainDepot.h"
 #include "../ChildNodes/AnswerTextButton.h"
 
 

@@ -18,7 +18,6 @@
     }
 
 #include <Common/ADT/Chain.h>
-#include <Common/ADT/Optional.h>
 #include <Common/ADT/TaggedFunction.h>
 #include <Common/ADT/FunctionVector.h>
 #include "Common/Basic/AARect.h"

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/DigitalQuizNS.h"
 
 
 BEGIN_NS_DIGITALQUIZ

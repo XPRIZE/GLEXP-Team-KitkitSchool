@@ -51,6 +51,7 @@ public:
     bool isLinked, isTouched;
     NumberMatchingCard *linkedTarget;
     Node* _shiningParticleNode;
+    Action* stompAction = nullptr;
     
     float defaultScale;
     

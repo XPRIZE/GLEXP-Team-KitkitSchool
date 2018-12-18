@@ -112,18 +112,23 @@ void GameVideoPlayer::onExitTransitionDidStart()
 
 void GameVideoPlayer::playVideo(string filename)
 {
+    
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    string uri = getResourceUri(filename);
-
-    if (uri != "") {
-
-        _player->setURL(uri);
-        _player->play();
-
-    } else {
-        handleVideoComplete();
+    if (FileUtils::getInstance()->getDefaultResourceRootPath().find("sdcard") == string::npos) {
+        string uri = getResourceUri(filename);
+        
+        if (uri != "") {
+            
+            _player->setURL(uri);
+            _player->play();
+            
+        } else {
+            handleVideoComplete();
+        }
+        return;
     }
-#else
+#endif
+    
     if (FileUtils::getInstance()->isFileExist(filename)) {
         _player->setFileName(filename);
         _player->play();
@@ -131,8 +136,7 @@ void GameVideoPlayer::playVideo(string filename)
     } else {
         handleVideoComplete();
     }
-    
-#endif
+
 }
 
 void GameVideoPlayer::handleVideoComplete()

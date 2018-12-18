@@ -7,7 +7,7 @@
 //
 
 #include "CompTraceScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/ComprehensionTestMainDepot.h"
 #include "Common/Components/TargetDragBody.h"
 #include "Common/Basic/NodeScopeGuard.h"
 #include "Managers/LanguageManager.hpp"
@@ -353,7 +353,7 @@ void CompTraceScene::writePlayLog() {
 
 std::string CompTraceScene::makeWorkPath() {
     stringstream ss;
-    ss << "ComprehensionTest";
+    ss << "/" << "ComprehensionTest";
     ss << "/" << _comprehensionScene->getBookName();
     ss << "/" << "comptrace";
     ss << "-" << _comprehensionScene->getCurrentProblem();

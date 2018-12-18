@@ -230,7 +230,7 @@ void SoundTrainScene::checkAnswer() {
     auto workPath = [this] {
         stringstream ss;
         ss << "/" << "SoundTrain";
-        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "level-" << _currentLevel << "-0";
         ss << "/" << "work-" << _currentProblemIndex;
         return ss.str();
     }();

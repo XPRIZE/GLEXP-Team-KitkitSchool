@@ -88,26 +88,34 @@ public class Recognizer {
     }
 
     public boolean startListening(String searchName, String wavFilePath, int triggerVolume, int silentVolume) {
+        boolean result = false;
         if (null != this.recognizerThread) {
-            return false;
+            return result;
         } else {
-            Log.i(String.format("Start recognition \"%s\"", new Object[]{searchName}));
-            this.decoder.setSearch(searchName);
-            this.recognizerThread = new RecordThread();
-            this.recognizerThread.start();
-            this.mPCMFilePath = wavFilePath;
-            this.mTriggerVolume = triggerVolume;
-            this.mSilentVolume = silentVolume;
-            this.mbCheckVolume = true;
-            this.mbStop = false;
-            this.mbPause = false;
-            File file = new File(this.mPCMFilePath);
-            if (file.exists() == true) {
-                file.delete();
-            }
+            try {
+                Log.i(String.format("Start recognition \"%s\"", new Object[]{searchName}));
+                this.decoder.setSearch(searchName);
+                this.recognizerThread = new RecordThread();
+                this.recognizerThread.start();
+                this.mPCMFilePath = wavFilePath;
+                this.mTriggerVolume = triggerVolume;
+                this.mSilentVolume = silentVolume;
+                this.mbCheckVolume = true;
+                this.mbStop = false;
+                this.mbPause = false;
+                File file = new File(this.mPCMFilePath);
+                if (file.exists() == true) {
+                    file.delete();
+                }
 
-            return true;
+                result =  true;
+            } catch (Exception e) {
+                Log.e("myLog", "" + e);
+                result = false;
+            }
         }
+
+        return result;
     }
 
     public boolean startRecognize() {

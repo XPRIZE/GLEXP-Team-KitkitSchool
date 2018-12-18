@@ -10,7 +10,7 @@
 #pragma once
 
 #include <Common/Controls/TraceField/LiveModels/TraceStroke.h>
-#include "../Utils/MainNS.h"
+#include "../Utils/TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD

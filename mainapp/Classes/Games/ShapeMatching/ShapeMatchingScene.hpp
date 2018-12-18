@@ -11,9 +11,9 @@
 
 
 #include "ShapeMatchingCard.hpp"
-#include "Models/LevelData.hpp"
-#include "Models/Worksheet.hpp"
-#include "Models/Problem.hpp"
+#include "Models/ShapeMatchingLevelData.hpp"
+#include "Models/ShapeMatchingWorksheet.hpp"
+#include "Models/ShapeMatchingProblem.hpp"
 
 #include "cocos2d.h"
 #include "cocostudio/CocoStudio.h"
@@ -35,17 +35,11 @@ namespace ShapeMatching {
     extern const char* SOLVE_EFFECT_SOUND;
     extern const string CARD_MATCHING_EFFECT_SOUND;
     extern const string STAR_EFFECT_SOUND;
-    extern string swTZ_of_enUS(const string& enUS);
-    extern string localizeString(const string& enUS);
-    extern string localizedSound(const string& enUS);
-
 }
 
 class ShapeMatchingScene : public Layer
 {
 public:
-    //static Scene* createScene(int levelID);
-    
     CREATE_FUNC(ShapeMatchingScene);
     static Scene* createScene(int levelID);
 
@@ -70,7 +64,9 @@ private:
     std::map<std::string,float> loadDurationsheet();
     std::map<std::string,float> _duration;
 
+    ShapeMatching::LevelData _levelData;
     int _currentLevelID;
+    int _currentWorksheetID;
     ShapeMatching::Worksheet _currentWorksheet;
     int _currentProblemID;
     ShapeMatching::Problem _currentProblem;
@@ -89,19 +85,9 @@ private:
     //Node* _shiningParticleArray[2];
     //    cocos2d::ui::Button* _nextButton;
     
-    std::array<std::string, 7> _basic2D;
-    std::array<std::string, 5> _advanced2D;
-    std::array<std::string, 4> _basic3D;
-    std::array<std::string, 3> _advanced3D;
     std::array<std::string, 2> _colors;
     std::array<std::string, 3> _sizes;
     std::array<int, 4> _rotation;
-    std::vector<std::string> _advanced;
-    std::map<std::string, std::string> _attribute;
-    std::multimap<std::string, std::string> attr2D;
-    std::multimap<std::string, std::string> attr3D;
-    std::vector<std::string> attr2DKeys;
-    std::vector<std::string> attr3DKeys;
     std::vector<std::string> _shapeCandidates;
     
     

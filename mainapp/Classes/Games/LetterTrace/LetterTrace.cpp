@@ -9,7 +9,7 @@
 
 #include "LetterTrace.h"
 #include "Core/LetterTraceScene.h"
-#include "Models/LevelData.h"
+#include "Models/LetterTraceLevelData.h"
 #include <Managers/LanguageManager.hpp>
 #include <numeric>
 
@@ -51,11 +51,14 @@ void LetterTrace::setOnFail(std::function<void()> F) {
 cocos2d::Scene* LetterTrace::createScene() {
     using namespace todoschool::lettertrace;
 
+    int SheetID;
+
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID);
+    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID, &SheetID);
 
     auto It = LetterTraceScene::create();
     It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->TheWorksheet.update(Sheet);
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;

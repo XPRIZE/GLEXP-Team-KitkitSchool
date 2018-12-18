@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "ProblemData.hpp"
+#include "CompTestFTBProblemData.hpp"
 #include "../ComprehensionScene.hpp"
 #include "WordBlock.hpp"
 

@@ -1,6 +1,7 @@
 package com.enuma.kitkitlogger;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -23,7 +25,7 @@ import java.util.Locale;
  * Created by ingtellect on 8/9/17.
  */
 
-public class KitKitLoggerActivity extends AppCompatActivity {
+public class KitKitLoggerActivity extends Activity {
     private static final String TAG = "KitKitLoggerActivity";
     protected String appLanguage;
 
@@ -53,6 +55,12 @@ public class KitKitLoggerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         isStoragePermissionGranted();
 
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+        }
     }
 
     @Override

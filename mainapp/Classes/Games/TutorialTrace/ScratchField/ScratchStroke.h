@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/TutorialTraceNS.h"
 #include <Common/Controls/TraceField/LiveModels/TraceString.h>
 #include <Common/Controls/TraceField/LiveModels/TraceIndex.h>
 

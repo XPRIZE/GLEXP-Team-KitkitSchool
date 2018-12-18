@@ -28,13 +28,6 @@ public:
     float scaleToCoverWindow(Size SubjectSize) const;
     float scaleToBeContainedInWindow(Size SubjectSize) const;
     
-    Point wallBiasedRandomPoint(const Rect& Region) const;
-    float costOfNodePositions(const vector<Node*>& FlexibleNodes,
-                              Rect BoardBB) const;
-    void refineNodePositions(const vector<Node*>& FlexibleNodes,
-                             Rect BoardBB,
-                             Size RegionSize) const;
-
     // NB(xenosoz, 2016): I'm trying new style. Preload on creation.
     SoundEffect soundForCardinalNumber(int N) const;
     SoundEffect soundForLetter(const string& L) const;
@@ -47,8 +40,12 @@ public:
     int actionTagForPieceCreation() const;
     int actionTagForPullPiece() const;
 
+public:
+    WoodenPuzzleDepot(const string& mode);
+    
 private:
     vector<SoundEffect> soundEffectsToPreload() const;
+    string mode;
 };
 
 

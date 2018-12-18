@@ -36,10 +36,16 @@ public:
     virtual ~GameSoundManager(){};
     
 public:
-    void playBGM(std::string name);
+    void playBGM(std::string name, bool isLoop=false);
     void stopBGM();
     void pauseBGM();
     void resumeBGM();
+
+    float getBGMSoundVolume();
+    void setBGMSoundVolume(float volume);
+
+    void fadeOutBGM( float duration );
+
 
     unsigned int playChildVoice(int num);
     unsigned int playChildVoiceWithType(int num, eChildVoice vType = K_CHILD_VOIDE_NONE);

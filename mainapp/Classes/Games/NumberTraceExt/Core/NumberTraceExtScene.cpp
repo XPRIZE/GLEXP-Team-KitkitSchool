@@ -7,13 +7,15 @@
 //
 
 #include "NumberTraceExtScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/NumberTraceExtMainDepot.h"
 #include "Common/Components/TargetDragBody.h"
 
 #include "CCAppController.hpp"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
 #include "Managers/StrictLogManager.h"
+
+#include "Common/Controls/SignLanguageVideoPlayer.hpp"
 
 BEGIN_NS_NUMBERTRACEEXT
 
@@ -485,7 +487,7 @@ void NumberTraceExtScene::initUI()
             // NB(xenosoz, 2018): _currentProblemIndex is dynamic. That's why I made this as a function.
             stringstream SS;
             SS << "/" << "NumberTraceExt";
-            SS << "/" << "level-" << _currentLevel;
+            SS << "/" << "level-" << _currentLevel << "-0";
             SS << "/" << "work-" << _currentProblemIndex;
             return SS.str();
         };
@@ -510,12 +512,24 @@ void NumberTraceExtScene::handleSuccess()
     if (_currentProblemIndex < 9)
     {
         MainDepot().soundForTraceEnd().play();
-        runAction(Sequence::create(DelayTime::create(0.9f), CallFunc::create([this]() {
-            _currentProblemIndex++;
-            initProblem();
-            playCurrentNumberSound();
-        }), nullptr));
         
+        if (LanguageManager::getInstance()->isSignLanguageMode())
+        {
+            SHOW_SL_VIDEO_WITH_CALLBACK_IF_ENABLED("common/temp_video_short.mp4", {
+                _currentProblemIndex++;
+                initProblem();
+                playCurrentNumberSound();
+            });
+        }
+        else
+        {
+            runAction(Sequence::create(DelayTime::create(0.9f), CallFunc::create([this]() {
+                _currentProblemIndex++;
+                initProblem();
+                playCurrentNumberSound();
+            }), nullptr));
+
+        }
     }
     else
     {
@@ -530,7 +544,6 @@ void NumberTraceExtScene::handleSuccess()
         });
     }
 }
-
 
 void NumberTraceExtScene::handleFail()
 {

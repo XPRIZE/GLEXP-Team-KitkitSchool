@@ -7,7 +7,7 @@
 //
 
 #include "WordTraceScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/WordTraceMainDepot.h"
 #include "Common/Components/TargetDragBody.h"
 #include <Managers/StrictLogManager.h>
 
@@ -234,22 +234,23 @@ void WordTraceScene::refreshChildNodes() {
             return Style;
         }());
 
-        string workPath = [this] {
+        auto makeWorkPath = [this] {
+
             // NB(xenosoz, 2018): Log for future analysis (#2/2)
             stringstream SS;
             SS << "/" << "WordTrace";
-            SS << "/" << "level-" << LevelID;
+            SS << "/" << "level-" << LevelID << "-" << SheetID;
             SS << "/" << "work-" << ProgressIndex();
             return SS.str();
-        }();
+        };
         
-        It->OnEndEditing = [this, workPath](TraceField*) {
-            StrictLogManager::shared()->game_Peek_Answer("WordTrace", workPath, "work-middle", "work-end");
+        It->OnEndEditing = [this, makeWorkPath](TraceField*) {
+            StrictLogManager::shared()->game_Peek_Answer("WordTrace", makeWorkPath(), "work-middle", "work-end");
         };
 
-        It->OnTraceWorkDidEnd = [this, workPath](TraceField*) {
+        It->OnTraceWorkDidEnd = [this, makeWorkPath](TraceField*) {
             auto Guard = NodeScopeGuard(this);
-            StrictLogManager::shared()->game_Peek_Answer("WordTrace", workPath, "work-end", "work-end");
+            StrictLogManager::shared()->game_Peek_Answer("WordTrace", makeWorkPath(), "work-end", "work-end");
             
             handleTraceWorkDidFinish();
         };

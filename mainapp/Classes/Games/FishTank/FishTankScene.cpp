@@ -1394,7 +1394,7 @@ void FishTankScene::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
                     auto workPath = [this] {
                         stringstream ss;
                         ss << "/" << "FishTank";
-                        ss << "/" << "level-" << m_currentLevel;
+                        ss << "/" << "level-" << m_currentLevel << "-0";
                         ss << "/" << "work-" << m_currentStage;
                         return ss.str();
                     }();
@@ -1476,7 +1476,7 @@ void FishTankScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "FishTank";
-                ss << "/" << "level-" << m_currentLevel;
+                ss << "/" << "level-" << m_currentLevel << "-0";
                 ss << "/" << "work-" << m_currentStage;
                 return ss.str();
             }();

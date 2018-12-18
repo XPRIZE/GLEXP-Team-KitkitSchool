@@ -8,8 +8,8 @@
 
 
 #include "TutorialTrace.h"
-#include "Core/MainScene.h"
-#include "Models/LevelData.h"
+#include "Core/TutorialTraceScene.h"
+#include "Models/TutorialTraceLevelData.h"
 #include <Managers/LanguageManager.hpp>
 #include <numeric>
 
@@ -60,7 +60,7 @@ cocos2d::Scene* TutorialTrace::createScene() {
         }
     }();
     
-    auto It = MainScene::create();
+    auto It = TutorialTraceScene::create();
     It->TheSheet.update(Sheet);
     It->LevelID = LevelID;
     It->OnSuccess = OnSuccess;

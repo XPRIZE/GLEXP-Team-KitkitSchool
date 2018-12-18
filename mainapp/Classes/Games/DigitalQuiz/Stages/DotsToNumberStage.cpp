@@ -8,7 +8,7 @@
 
 
 #include "DotsToNumberStage.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/DigitalQuizMainDepot.h"
 #include "../ChildNodes/AnswerTextButton.h"
 #include "../ChildNodes/RedDot.h"
 

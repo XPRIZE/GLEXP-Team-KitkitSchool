@@ -14,6 +14,33 @@
 #include "cocos2d.h"
 USING_NS_CC;
 
+#define FONT_ANDIKA_REGULAR     "fonts/Andika-R.ttf"
+#define FONT_ANDIKA_BOLD        "fonts/AndikaNewBasic-B.ttf"
+
+#define DELAYED_CALLFUNC_TARGET(TARGET, TIME, FUNCTION_CONTENT)\
+TARGET->runAction(Sequence::create(DelayTime::create(TIME),CallFunc::create([this](){FUNCTION_CONTENT;}), nullptr))
+
+#define DELAYED_CALLFUNC(TIME, FUNCTION_CONTENT)\
+this->runAction(Sequence::create(DelayTime::create(TIME),CallFunc::create([this](){FUNCTION_CONTENT;}), nullptr))
+
+#define DELAYED_CALLFUNC_1(TIME, PARAM1, FUNCTION_CONTENT)\
+this->runAction(Sequence::create(DelayTime::create(TIME),CallFunc::create([PARAM1](){FUNCTION_CONTENT;}), nullptr))
+
+#define DELAYED_CALLFUNC_2(TIME, PARAM1, PARAM2, FUNCTION_CONTENT)\
+this->runAction(Sequence::create(DelayTime::create(TIME),CallFunc::create([PARAM1, PARAM2](){FUNCTION_CONTENT;}), nullptr))
+
+#define DELAYED_CALLFUNC_3(TIME, PARAM1, PARAM2, PARAM3, FUNCTION_CONTENT)\
+this->runAction(Sequence::create(DelayTime::create(TIME),CallFunc::create([PARAM1, PARAM2, PARAM3](){FUNCTION_CONTENT;}), nullptr))
+
+#define DRAW_DEBUG_AREA(TARGET)\
+{\
+auto lc = LayerColor::create(Color4B(random(0, 255), random(0, 255), random(0, 255), 128));\
+lc->setIgnoreAnchorPointForPosition(false);\
+lc->setContentSize(TARGET->getContentSize());\
+lc->setAnchorPoint(Vec2::ANCHOR_MIDDLE);\
+lc->setPosition(TARGET->getContentSize()/2);\
+TARGET->addChild(lc);\
+}
 
 class TodoUtil {
 
@@ -38,6 +65,9 @@ public:
     static std::string removeSpaces(std::string input);
     
     static std::string returnStringOrNullString(std::string& str);
+	static bool startsWith(const std::string& s, const std::string& prefix);
+    static bool endsWith(const std::string& s, const std::string& suffix);
+	static bool contains(const std::string& s, const std::string& findStr);
     
     static void replaceAll(std::string& str, const std::string& from, const std::string& to);
     static bool replace(std::string& str, const std::string& from, const std::string& to);
@@ -48,8 +78,9 @@ public:
     static cocos2d::Label* createLabelMultiline(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment = TextHAlignment::LEFT, TextVAlignment vAlignment = TextVAlignment::CENTER);
     
     static cocos2d::Label* createLabelMultilineToFit(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment = TextHAlignment::LEFT, TextVAlignment vAlignment = TextVAlignment::CENTER);
+
+    static cocos2d::Label* createLabelMultilineToFitWidth(const std::string &text, float maxFontSize, cocos2d::Size boxSize, const std::string &fontName, const cocos2d::Color4B &color, TextHAlignment hAlignment = TextHAlignment::LEFT, TextVAlignment vAlignment = TextVAlignment::CENTER);
     
-  
 };
 
 

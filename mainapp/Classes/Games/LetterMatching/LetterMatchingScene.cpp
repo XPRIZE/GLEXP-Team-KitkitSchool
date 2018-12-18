@@ -8,7 +8,7 @@
 
 #include "SimpleAudioEngine.h"
 #include "LetterMatchingScene.hpp"
-#include "Models/LevelData.hpp"
+#include "Models/LetterMatchingLevelData.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
 #include "ButtonUtility.hpp"
@@ -16,10 +16,11 @@
 #include "Common/Controls/CompletePopup.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <Common/Basic/SoundEffect.h>
-#include <Games/NumberMatching/Utils/CardSlotBuilder.h>
+#include "Utils/LMCardSlotBuilder.h"
 #include "Utils/TodoUtil.h"
 #include <Managers/LanguageManager.hpp>
 #include <Managers/StrictLogManager.h>
+#include <Managers/UserManager.hpp>
 
 #include "CCAppController.hpp"
 
@@ -142,7 +143,7 @@ void LetterMatchingScene::onEnter()
     
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto data = LevelData::defaultData();
-    auto sheet = data.randomSheetFor(lang, _currentLevelID);
+    auto sheet = data.randomSheetFor(lang, _currentLevelID, &_currentSheetID);
 
     _currentWorksheet = sheet;
     _currentProblemID = sheet.beginProblemID();
@@ -230,7 +231,7 @@ void LetterMatchingScene::initCardList()
 
     vector<Point> selected;
     auto appendSelected = [&](size_t count, Rect localRect) {
-        auto points = CardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
+        auto points = LMCardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
         selected.insert(selected.end(),
                         make_move_iterator(points.begin()),
                         make_move_iterator(points.end()));
@@ -366,6 +367,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
             
             card->runAction(Sequence::create(DelayTime::create(0.3f),CallFunc::create([=](){
                 card->matchSound.play();
+
                 this->addStarParticle(card);
                 
                 card->setPosition(Vec2::ONE * 9999.0f);
@@ -382,7 +384,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "LetterMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentSheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -404,7 +406,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "LetterMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentSheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -436,7 +438,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
 
 void LetterMatchingScene::addStarParticle(Node* targetNode)
 {
-    ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("NumberMatching/Particle/star_particle.plist");
+    ParticleSystemQuad* _particleEffect = ParticleSystemQuad::create("common/effects/particle/star_particle.plist");
     _particleEffect->setScale(6.0f);
     _particleEffect->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _particleEffect->setPosition(targetNode->getPosition());
@@ -513,6 +515,11 @@ void LetterMatchingScene::stompByNode(Node* node)
         auto nextPos = nodePos + (dir * d_1 * 1.7f);
         nextPos = this->safePointForBoundary(nextPos);
         
-        card->runAction(EaseOut::create(MoveTo::create(.5f, nextPos), 1.5f));
+        if (card->stompAction != nullptr)
+        {
+            card->stopAction(card->stompAction);
+        }
+        card->stompAction = EaseQuarticActionOut::create(MoveTo::create(.5f, nextPos));
+        card->runAction(card->stompAction);
     }
 }

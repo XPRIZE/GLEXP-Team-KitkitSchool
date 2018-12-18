@@ -494,11 +494,17 @@ void FTCellNode::SetData(const Side & side, const FeedingTimeCellData & data)
 		else
 		{
 			float scale = 1.f;
+            float ADJUST_SCALE = 0.65f;
+            auto visibleSize = Director::getInstance()->getVisibleSize();
+            if (visibleSize.width / visibleSize.height < 1.34f) {
+                scale = 0.95f;
+                ADJUST_SCALE = 0.55f;
+            }
 
 			if (_stringSpriteRect.find(_relation) != _stringSpriteRect.end())
-				scale = 0.65f;
+				scale = ADJUST_SCALE;
 			else if (_count > 999)
-				scale = 0.65f;
+				scale = ADJUST_SCALE;
 
 			float totalWidth = 0.f;
 			std::vector<Node*> nodes;

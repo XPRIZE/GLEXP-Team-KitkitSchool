@@ -487,7 +487,7 @@ void DoubleDigitScene::handleAnswerEntered(std::string &answer)
     auto workPath = [this] {
         stringstream ss;
         ss << "/" << "DoubleDigit";
-        ss << "/" << "level-" << currentLevel;
+        ss << "/" << "level-" << currentLevel << "-0";
         ss << "/" << "work-" << numSolved;
         return ss.str();
     }();

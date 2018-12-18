@@ -13,6 +13,9 @@ namespace ComprehensionTest
 {
     namespace MultipleChoices
     {
+        const int kAnswerCount = 4;
+        const float kGapBetweenEachItem = 20.f;
+        
         bool TextAndImageLayer::init()
         {
             if (!Node::init()) return false;
@@ -24,31 +27,31 @@ namespace ComprehensionTest
         
         void TextAndImageLayer::setAnswers(std::string folder, std::vector<std::string> imageFiles)
         {
-            Size totalSize;
+            random_shuffle(imageFiles.begin(), imageFiles.end());
+            
             auto answersRootNode = Node::create();
             
             if (imageFiles.size() > 0)
             {
                 auto item = ImageAnswerItem::create();
                 item->initImage(folder, imageFiles[0]);
-                totalSize = Size(item->getContentSize().width * 4, item->getContentSize().height);
+                Size totalSize = Size(item->getContentSize().width * kAnswerCount, item->getContentSize().height) + Size(kGapBetweenEachItem * (kAnswerCount - 1), 0.f);
                 answersRootNode->setContentSize(totalSize);
             }
             
-            CCLOG("total : %f, %f", totalSize.width, totalSize.height);
-            
+            float posX = 0.f;
+
             for (int i = 0; i < imageFiles.size(); i++)
             {
                 ImageAnswerItem* item = ImageAnswerItem::create();
                 bool bInit = item->initImage(folder, imageFiles[i]);
                 if (bInit) item->setLetterByIndex(i);
                 
-                float posX = item->getContentSize().width * i;
-                float posY = item->getContentSize().height / 2;
-                
                 item->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-                item->setPosition(posX, posY);
+                item->setPosition(posX, item->getContentSize().height / 2);
                 answersRootNode->addChild(item);
+                
+                posX += item->getContentSize().width + kGapBetweenEachItem;
                 
                 item->onCheckTarget = [this, item]() {
                     if(item->currentState == ImageAnswerState::Right || item->currentState == ImageAnswerState::Wrong)

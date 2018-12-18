@@ -33,6 +33,7 @@ namespace ComprehensionTest
             MultipleChoicesScene* parentScene;
             
         private:
+            Sprite* _backgroundSprite;
         };
     }
 }

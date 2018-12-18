@@ -58,8 +58,9 @@ namespace ComprehensionTest
             ComprehensionScene* _comprehensionScene;
             QuestionType _currentType;
             
+            Vec2 _layerPosition;
             std::string _questionText;
-            float _questionTextFontSize;
+            float _questionLabelFontSize;
             std::string _questionImageFile;
             std::vector<std::string> _answers;
             std::vector<std::string> _solutions;
@@ -69,6 +70,9 @@ namespace ComprehensionTest
             Node* createMultiLine(string text, float fontSize, Size dim, Color4B fontColor);
             Node* createWord(string word, float fontSize, Color4B fontColor);
             std::string lineWrappnig(std::string original);
+            
+            Node* questionLabel;
+            Vec2 _questionLabelPosition;
             
             std::string makeWorkPath() const;
         };

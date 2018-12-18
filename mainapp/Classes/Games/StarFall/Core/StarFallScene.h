@@ -11,7 +11,7 @@
 
 #include "../Utils/StarFallNS.h"
 #include "../Models/Symbol.h"
-#include "../Models/Worksheet.h"
+#include "../Models/StarFallWorksheet.h"
 #include "../ChildNodes/KeyboardNode.h"
 #include "../ChildNodes/ActiveTextNode.h"
 #include "../ChildNodes/RocketNode.h"

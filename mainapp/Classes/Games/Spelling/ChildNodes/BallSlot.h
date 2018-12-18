@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../BallNodes/CorrectBall.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/SpellingNS.h"
 
 
 BEGIN_NS_SPELLING

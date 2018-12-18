@@ -33,7 +33,7 @@ namespace FillTheBlanksSpace
     
     const string kPrefixPath = "ComprehensionTest/FillTheBlanks/";
     //const string kPrefixCommonImagePath = "ComprehensionTest/Image/";
-    const string fontName = "fonts/TodoSchoolV2.ttf";
+    const string fontName = FONT_ANDIKA_REGULAR;
     
     const char* kPickEffectSound = "Common/Sounds/Effect/SFX_Wood_SlideOut.m4a";
     const char* kSnapEffectSound = "Common/Sounds/Effect/SFX_Wood_Correct.m4a";
@@ -513,7 +513,7 @@ namespace ComprehensionTest
         string FillTheBlanksScene::makeWorkPath()
         {
             stringstream ss;
-            ss << "ComprehensionTest";
+            ss << "/" << "ComprehensionTest";
             ss << "/" << _comprehensionScene->getBookName();
             ss << "/" << "filltheblanks";
             ss << "-" << _comprehensionScene->getCurrentProblem();

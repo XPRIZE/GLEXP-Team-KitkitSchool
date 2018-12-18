@@ -28,6 +28,7 @@ public:
     virtual bool init() override;
     virtual void onExit() override;
     virtual void update(float delta) override;
+    void highlightWordButton(ui::Button *btn, bool highlight);
     void startReading();
     void stopReading();
     
@@ -55,7 +56,8 @@ protected:
     bool isLastPage() { return _page->lastPage; }
     bool isCreditPage() { return _page->creditPage; }
     bool isTitlePage() { return _isTitle; }
-    
+
+    void playWordSound(ui::Button *button, string path, float length);
     Node* createTextViewOneLine(Size size, float fontSize);
     Node* createTextViewMultiLine(Size size, float fontSize);
     
@@ -90,6 +92,7 @@ protected:
     TDBookLayout _bookLayout;
     bool _withAudio;
     float _timePage, _timeSentence;
+    bool _isReading;
     
     bool _pauseReading;
     float _pauseLength;

@@ -30,8 +30,8 @@ namespace {
     float delayForRefillPiece() { return .4f; }
     float delayForPieceCreation() { return .4f; }
     
-    string contentSkin() {
-        return WoodenPuzzleDepot().assetPrefix() + "/Background/wp_background.jpg";
+    string contentSkin(const string& Mode) {
+        return WoodenPuzzleDepot(Mode).assetPrefix() + "/Background/wp_background.jpg";
     }
     
     bool pieceShouldPutInSlot(WoodPiece* Piece, WoodSlot* Slot) {
@@ -61,8 +61,10 @@ OrderedPuzzleScene::OrderedPuzzleScene()
 {
 }
 
-bool OrderedPuzzleScene::init() {
+bool OrderedPuzzleScene::init(const string& Mode) {
     if (!Super::init()) { return false; }
+    
+    this->Mode = Mode;
     
     clearInternals();
     refreshChildNodes();
@@ -77,13 +79,17 @@ void OrderedPuzzleScene::grabPuzzleStore(WoodenPuzzleStore* Store) {
 
 
 void OrderedPuzzleScene::clearInternals() {
-    WoodenPuzzleDepot().preloadSoundEffects();
+    if (!Mode.empty()) {
+        WoodenPuzzleDepot(Mode).preloadSoundEffects();
+    }
 }
 
 void OrderedPuzzleScene::refreshChildNodes() {
     removeAllChildren();
-    
-    WoodenPuzzleDepot Depot;
+
+    if (Mode.empty()) { return; }
+
+    WoodenPuzzleDepot Depot(Mode);
     Size WindowSize = Depot.windowSize();
     Size GameSize = Depot.gameSize();
     
@@ -93,7 +99,7 @@ void OrderedPuzzleScene::refreshChildNodes() {
         BN->setContentSize(WindowSize);
         
         if (true) {
-            auto It = Sprite::create(contentSkin());
+            auto It = Sprite::create(contentSkin(Mode));
             Size SpriteSize = It->getContentSize();
             float Scale = Depot.scaleToCoverWindow(SpriteSize);
             
@@ -152,6 +158,7 @@ void OrderedPuzzleScene::refreshChildNodes() {
     TheDeckBase = ([&] {
         auto It = DeckBase::create();
         auto ItCS = It->getContentSize();
+        It->Mode.update(Mode);
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
         It->setPosition(Point(GameSize.width - 100.f, GameSize.height / 2.f));
         
@@ -163,6 +170,7 @@ void OrderedPuzzleScene::refreshChildNodes() {
 
     ThePlayField = ([&] {
         auto It = Store.createEmptyPlayField();
+        It->Mode = Mode;
         It->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         It->setPosition(GameSize / 2.f);
         
@@ -187,7 +195,7 @@ void OrderedPuzzleScene::refreshChildNodes() {
         if (ThePlayField) {
             for (auto Item : ThePlayField->WoodPieces) {
                 WoodPiece* P = Item.second;
-                auto S = WoodPieceShadow::create();
+                auto S = WoodPieceShadow::create(Mode);
                 
                 S->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
                 S->setPosition(P->getPosition());
@@ -222,12 +230,12 @@ void OrderedPuzzleScene::fillWoodPiecesToMaxCount(PlayField* Field) {
         Vector<FiniteTimeAction*> Actions;
         Actions.pushBack(DelayTime::create(delayForPieceCreation()));
         Actions.pushBack(Show::create());
-        Actions.pushBack(CallFunc::create([] {
-            WoodenPuzzleDepot().soundForCardBirth().play();
+        Actions.pushBack(CallFunc::create([this] {
+            WoodenPuzzleDepot(Mode).soundForCardBirth().play();
         }));
 
         auto Action = Sequence::create(Actions);
-        Action->setTag(WoodenPuzzleDepot().actionTagForPieceCreation());
+        Action->setTag(WoodenPuzzleDepot(Mode).actionTagForPieceCreation());
         P->stopActionByTag(Action->getTag());
         P->runAction(Action);
 
@@ -291,12 +299,12 @@ void OrderedPuzzleScene::attachGameLogicToWoodPiece(WoodPiece* Piece) {
             // NB(xenosoz, 2018): Log for future analysis (#1/2)
             string workPath = [this] {
                 stringstream SS;
-                SS << "/" << "WoodenPuzzles";
-                SS << "/" << "level-" << LevelID;
+                SS << "/" << Mode ;
+                SS << "/" << "level-" << LevelID << "-" << WorkSheetID;
                 SS << "/" << "work-" << 0;
                 return SS.str();
             }();
-            StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+            StrictLogManager::shared()->game_Peek_Answer(Mode, workPath,
                                                          Piece->PieceID(), Slot->SlotID());
         }
     };
@@ -305,17 +313,17 @@ void OrderedPuzzleScene::attachGameLogicToWoodPiece(WoodPiece* Piece) {
         if (!TheDeckBase) { return; }
 
         TheDeckBase->pullPiecesToHomePosition();
-        WoodenPuzzleDepot().soundForCardMiss().play();
+        WoodenPuzzleDepot(Mode).soundForCardMiss().play();
         
         // NB(xenosoz, 2018): Log for future analysis (#2/2)
         string workPath = [this] {
             stringstream SS;
-            SS << "/" << "WoodenPuzzles";
-            SS << "/" << "level-" << LevelID;
+            SS << "/" << Mode;
+            SS << "/" << "level-" << LevelID << "-" << WorkSheetID;
             SS << "/" << "work-" << 0;
             return SS.str();
         }();
-        StrictLogManager::shared()->game_Peek_Answer("WoodenPuzzles", workPath,
+        StrictLogManager::shared()->game_Peek_Answer(Mode, workPath,
                                                      Piece->PieceID(), "None");
 
     };

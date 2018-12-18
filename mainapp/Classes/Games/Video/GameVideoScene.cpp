@@ -78,6 +78,8 @@ bool GameVideoScene::init() {
 //        });
         
     }
+    
+
     return true;
 }
 
@@ -97,6 +99,13 @@ void GameVideoScene::onEnterTransitionDidFinish()
     
     auto path = getVideoFile(_filename);
     v->playVideo(path);
+
+    _subtitle = Subtitle::create();
+    _subtitle->setFileName(path.substr(0, path.find_last_of("."))+".srt");
+    _subtitle->setPosition(Director::getInstance()->getWinSize().width/2, 100);
+    addChild(_subtitle);
+    _subtitle->start();
+
     StrictLogManager::shared()->game_Peek_Answer("Video", _filename, "video-middle", "video-end");
 
     v->onCompleted = [this]() {
@@ -148,12 +157,32 @@ bool GameVideoScene::videoExists(std::string filename)
 
 std::string GameVideoScene::getVideoFile(std::string filename)
 {
-    auto path = "Videos/"+filename+".mp4";
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    path = filename;
+    string path = "";
+    
+    auto currentLocale = LanguageManager::getInstance()->getCurrentLocaleCode();
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    
+    path = FileUtils::getInstance()->getWritablePath() + "KitkitSchool";
+    
+    if (FileUtils::getInstance()->isFileExist(path+"/library_resource_path.txt")) {
+        path = FileUtils::getInstance()->getStringFromFile(path+"/library_resource_path.txt");
+        path.erase(std::remove(path.begin(),path.end(),'\n'),path.end());
+        path = path + "/" + currentLocale + "/res/raw/" + filename + ".mp4";
+    }
+    
 #endif
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    string devicePath = "/sdcard/Library";
+    if (FileUtils::getInstance()->isFileExist(devicePath + "/cache.txt")) {
+        path = devicePath;
+        path = path + "/" + currentLocale + "/res/raw/" + filename + ".mp4";
+    } else {
+        path = filename;
+    }
 
+#endif
     return path;
 }
 

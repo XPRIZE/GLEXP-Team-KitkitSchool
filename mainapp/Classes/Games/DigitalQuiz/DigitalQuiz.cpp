@@ -8,8 +8,8 @@
 
 
 #include "DigitalQuiz.h"
-#include "Core/MainScene.h"
-#include "Models/LevelData.h"
+#include "Core/DigitalQuizScene.h"
+#include "Models/DigitalQuizLevelData.h"
 #include "Models/SavedState.h"
 #include <Managers/LanguageManager.hpp>
 #include <numeric>
@@ -44,7 +44,7 @@ cocos2d::Scene* DigitalQuiz::createScene() {
                              TheStudentNumber,
                              CourseKindString);
 
-    auto It = MainScene::create();
+    auto It = DigitalQuizScene::create();
 
     It->TheWorksheet.update(Sheet);
     It->TheStudentName.update(StudentName);

@@ -10,6 +10,7 @@
 #include "ShapeMatchingScene.hpp"
 #include "ShapeMatchingCard.hpp"
 #include "Managers/GameSoundManager.h"
+#include "Managers/LanguageManager.hpp"
 //#include "Managers/LocalizationManager.hpp"
 //#include "Managers/TodoFontManager.hpp"
 #include "Utils/TodoUtil.h"
@@ -44,7 +45,10 @@ bool ShapeMatchingCard::init()
 
 
 
-void ShapeMatchingCard::setImage(int level, int type, int number, const std::string& cardImageName, int rotation, float scale)
+void ShapeMatchingCard::setImage(int level, int type, int number,
+                                 const std::string& cardImageName,
+                                 const std::string& localizedName,
+                                 int rotation, float scale)
 {
     auto spriteName = std::string("ShapeMatching/Images/") + cardImageName;
     std::string bgImageName = "ShapeMatching/Images/matching_shape_cardbg.png";
@@ -94,9 +98,7 @@ void ShapeMatchingCard::setImage(int level, int type, int number, const std::str
             
             shape = Sprite::create(StringUtils::format("ShapeMatching/Images/matchinggame_numbers_type1_%d.png",number) );
             
-            string attrText = localizeString(key);
-//            string attrText = "";
-            
+            string attrText = LanguageManager::getInstance()->getLocalizedString(key);
             
             auto label = TodoUtil::createLabel(attrText, 70, Size(contentSize.width- 10, 100), fontName, fontColor, TextHAlignment::CENTER);
             label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
@@ -107,12 +109,10 @@ void ShapeMatchingCard::setImage(int level, int type, int number, const std::str
         }
         // only label
         else {
-            localizedText = localizeString(cardImageName);
+            string localizedText = localizedName;
             TodoUtil::replaceAll(localizedText, "_", " ");
-            //localizedText = LocalizedString(localizedText);
             TodoUtil::replaceAll(localizedText, " ", "\n");
             
-            // shape = TodoUtil::createLabel(localizedText, 90, Size(contentSize.width-40, 300), fontName, fontColor, TextHAlignment::CENTER);
             shape = TodoUtil::createLabel(localizedText, 90, Size::ZERO, fontName, fontColor, TextHAlignment::CENTER);
             shape->setName("shape");
         }
@@ -199,9 +199,9 @@ void ShapeMatchingCard::createShiningParticle()
         _shiningParticleNode->addChild(particleEffect);
     };
     
-    createParticleEffect("particle1", "ShapeMatching/Particle/shining_particle_blur.plist");
-    createParticleEffect("particle2", "ShapeMatching/Particle/shining_particle_circle.plist");
-    createParticleEffect("particle3", "ShapeMatching/Particle/shining_particle_star.plist");
+    createParticleEffect("particle1", "Common/Effects/Particle/shining_particle_blur.plist");
+    createParticleEffect("particle2", "Common/Effects/Particle/shining_particle_circle.plist");
+    createParticleEffect("particle3", "Common/Effects/Particle/shining_particle_star.plist");
     
     _shiningParticleNode->setPosition(this->getContentSize()/2);
     addChild(_shiningParticleNode);

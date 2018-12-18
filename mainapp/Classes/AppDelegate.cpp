@@ -1,10 +1,15 @@
+
 #include "AppDelegate.h"
 #include "SplashScene.hpp"
 #include "Managers/LogManager.hpp"
 #include "Managers/UserManager.hpp"
+#include "Managers/CacheManager.hpp"
 #include "Common/Controls/TouchEventLogger.h"
-
+#include "Games/LRComprehension/LRComprehensionScene.hpp"
+#include "Menu/MainScene.hpp"
+#include "Menu/WelcomeVideoScene.hpp"
 #include "CCAppController.hpp"
+
 // #define USE_AUDIO_ENGINE 1
 #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -27,6 +32,7 @@ static cocos2d::Size designResolutionSize = cocos2d::Size(2560, 1800);
 static cocos2d::Size desktopSize = cocos2d::Size(2560, 1800)/2; // pixel-c
 //static cocos2d::Size desktopSize = cocos2d::Size(1920, 1080)/2; // 16:9
 
+Scene* findMainScene();
 
 AppDelegate::AppDelegate()
 {
@@ -102,7 +108,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     string devicePath = "/sdcard/KitkitSchool/";
-    if (FileUtils::getInstance()->isFileExist(devicePath + "resourceSync.py")) {
+    if (FileUtils::getInstance()->isFileExist(devicePath + "cache.txt")) {
         FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
     }
     
@@ -114,6 +120,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     //FileUtils::getInstance()->addSearchPath("Games");
     
     CCAppController::sharedAppController();
+    
+    // shortcut
+    //{ CCAppController::sharedAppController()->startGame("EggQuizLiteracy", 0, "PostTest_N"); return true; }
     
     auto scene = SplashScene::createScene();
     scene->setName("SplashScene");
@@ -135,6 +144,20 @@ bool AppDelegate::applicationDidFinishLaunching() {
      LogManager::getInstance()->logEvent("volumeTest", "abcdefghijklmnopqrstuvwxyz");
      }
      */
+    
+    
+    
+    CacheManager::getInstance()->loadBirdCache([this](){
+        if (UserDefault::getInstance()->getBoolForKey(UserManager::getInstance()->getWelcomeVideoPlayedKey().c_str(), false)) {
+            CCLOG("monts : gotoMainScene");
+            Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(MainScene::createScene()));
+            
+        } else {
+            CCLOG("monts : gotoVideoPlayer");
+            Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(WelcomeVideoScene::createScene()));
+
+        }
+    });
     return true;
 }
 
@@ -175,4 +198,39 @@ void AppDelegate::applicationWillEnterForeground() {
         Director::getInstance()->replaceScene(scene);
         
     }
+    
+    Scene * mainScene = findMainScene();
+    if (mainScene != nullptr) {
+        mainScene->resume();
+    }
+}
+
+Scene* findMainScene()
+{
+    Scene* result = nullptr;
+    const int MAIN_SCENE_ID = 250;
+    auto director = Director::getInstance();
+    Scene* scene = nullptr;
+    if (director != nullptr)
+    {
+        scene = director->getRunningScene();
+        if (scene != nullptr)
+        {
+            result = (Scene*)(scene->getChildByTag(MAIN_SCENE_ID));
+            if (result == nullptr)
+            {
+                Vector<Node *> children = scene->getChildren();
+                for (Node * child : children)
+                {
+                    result = (Scene*)(child->getChildByTag(MAIN_SCENE_ID));
+                    if (result != nullptr)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    return result;
 }

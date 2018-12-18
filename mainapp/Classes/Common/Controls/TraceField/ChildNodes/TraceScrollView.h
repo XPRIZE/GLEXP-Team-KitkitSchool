@@ -12,7 +12,7 @@
 #include "../LiveModels/TraceString.h"
 #include "../LiveModels/TraceIndex.h"
 #include "../StyleModels/TraceFieldStyle.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -21,7 +21,8 @@ class TraceScrollView: public ScrollView {
     typedef ScrollView Super;
 
 public:
-    Optional<size_t> TheScrollCache;
+    bool HasScrollCache;
+    size_t TheScrollCache;
     Point ScrollStartPosition;
     Point ScrollStopPosition;
     float ScrollClock;

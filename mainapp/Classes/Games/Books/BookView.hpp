@@ -27,7 +27,8 @@ class BookView : public Node
 {
 public:
     static BookView* create(const Size &size, std::string &bookPath);
-    virtual bool init(const Size &size, std::string &bookPath);
+    static BookView* create(const Size &size, std::string &bookPath, bool checkCompleteCondition);
+    virtual bool init(const Size &size, std::string &bookPath, bool checkCompleteCondition);
     virtual void onExit() override;
     void onEnter() override;
     
@@ -45,21 +46,22 @@ public:
     void showPageButton();
     void hidePageButton();
     
+    static bool getReadAll() { return _isReadAll; }
     static void setLibraryMode(bool libraryMode) { _libraryMode = libraryMode; }
     static void setBookLanguage(std::string lang) { _languageCode = lang; }
     
     void popBookScene();
-    void setSoundButton(bool isSelect, ui::ImageView * imageButton, Label * textLabel);
-    void showSoundButton();
-    void hideSoundButton();
+//    void setSoundButton(bool isSelect, ui::ImageView * imageButton, Label * textLabel);
+//    void showSoundButton();
+//    void hideSoundButton();
+    
     bool getSoundSetting();
     void setSoundSetting(bool enable);
     static string getCurrentBook();
     static void setCurrentBook(string book);
 
 protected:
-    
-
+    bool _checkCompleteCondition = false;
     
     //Label *_pageLabel;
     
@@ -78,17 +80,19 @@ protected:
     Vec2 _prevButtonPos, _nextButtonPos;
     bool _buttonEnabled;
 
-    Sprite * _soundView;
-    ui::ImageView * _soundOnButton;
-    ui::ImageView * _soundOffButton;
-    Label * _soundOnLabel;
-    Label * _soundOffLabel;
+    ui::Button *_soundBtn;
+//    Sprite * _soundView;
+//    ui::ImageView * _soundOnButton;
+//    ui::ImageView * _soundOffButton;
+//    Label * _soundOnLabel;
+//    Label * _soundOffLabel;
 
     TodoBook *_book;
     int _currentPage;
 
     bool _finishReading;
     
+    static bool _isReadAll;
     static bool _libraryMode;
     static std::string _languageCode;
     

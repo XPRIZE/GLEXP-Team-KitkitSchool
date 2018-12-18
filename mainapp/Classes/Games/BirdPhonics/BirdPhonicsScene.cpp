@@ -17,6 +17,7 @@
 #include "Common/Basic/SoundEffect.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/StrictLogManager.h"
+#include "Managers/UserManager.hpp"
 #include "Utils/TodoUtil.h"
 
 
@@ -535,7 +536,7 @@ void BirdPhonicsScene::onStart()
     auto data = TodoUtil::readTSV(s);
     
     // data[0][2] : Worksheet or WorksheetAll
-    bool bWorkSheetAll = data[0][2] == "WorksheetAll" ? true : false;
+    bool bWorkSheetAll = UserManager::getInstance()->isWorksheetTestMode();
     
     int maxWorkSheet = 0;
     for (vector<string> row : data)
@@ -701,7 +702,7 @@ void BirdPhonicsScene::createBread()
     string workPath = [this] {
         stringstream ss;
         ss << "/" << "BirdPhonics";
-        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "level-" << _currentLevel << "-" << _problems[_currentProblemIndex].workSheet;
         ss << "/" << "work-" << _currentProblemIndex;
         return ss.str();
     }();

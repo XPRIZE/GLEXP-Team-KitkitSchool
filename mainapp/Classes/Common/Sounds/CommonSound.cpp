@@ -33,19 +33,13 @@ SoundEffect CommonSound::soundForPhonic(const std::string& Phonic) const
 
 
 SoundEffect CommonSound::soundForLetterName(const std::string& Letter) const {
-    
-    auto L = todoschool::toLower(Letter);
-    auto f = cocos2d::StringUtils::format("LetterVoice/%s.m4a", L.c_str());
-    
+
+    auto f = cocos2d::StringUtils::format("LetterVoice/%s.m4a", Letter.c_str());
+
     if (FileUtils::getInstance()->isFileExist(f)) {
         return SoundEffect(f);
     }
-    
-    if (LanguageManager::getInstance()->isEnglish()) {
-        f = cocos2d::StringUtils::format("LetterVoice/eng_%s.m4a", L.c_str());
-        return SoundEffect(f);
-    }
-    
+
     return SoundEffect();
     
 }
@@ -64,7 +58,7 @@ SoundEffect CommonSound::soundForWord(const std::string& Word) const {
 
 
 SoundEffect CommonSound::cardinalNumber(int N) const {
-    if (0 <= N && N <= 100) {
+    if (0 <= N) {
         return SoundEffect(cocos2d::StringUtils::format("NumberVoice/D_%d.m4a", N));
     }
     return SoundEffect::emptyEffect();
@@ -84,5 +78,9 @@ SoundEffect CommonSound::plus() const {
 
 SoundEffect CommonSound::times() const {
     return SoundEffect("NumberVoice/Times.m4a");
+}
+
+SoundEffect CommonSound::aand() const {
+    return SoundEffect("NumberVoice/And.m4a");
 }
 

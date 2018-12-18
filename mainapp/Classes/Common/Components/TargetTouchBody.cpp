@@ -70,9 +70,10 @@ bool TargetTouchBody::handleTouchDidBegin(Touch* T, Event* E) {
     
     bool Hit = false;
     
+    Vec3 V;
     Point TouchPoint = T->getLocation();
     auto VC = Camera::getVisitingCamera();
-    if (containsPointInContentRectWithCamera(TouchPoint, VC)) {
+    if (containsPointInContentRectWithCamera(V, TouchPoint, VC)) {
         if (!clippedOutByAncestors(TouchPoint)) {
             CachedHitCamera = VC;
             Hit = true;
@@ -97,10 +98,11 @@ bool TargetTouchBody::handleTouchDidBegin(Touch* T, Event* E) {
 void TargetTouchBody::handleTouchDidMove(Touch* T, Event* E) {
     auto Owner = getOwner();
     if (!Owner) { return; }
-    
+
+    Vec3 V;
     Point TouchPoint = T->getLocation();
 
-    Highlighted.update(!!containsPointInContentRectWithCamera(TouchPoint, CachedHitCamera));
+    Highlighted.update(containsPointInContentRectWithCamera(V, TouchPoint, CachedHitCamera));
 
     if (OnTouchDidMove) {
         auto Guard = NodeScopeGuard(Owner);
@@ -134,11 +136,11 @@ void TargetTouchBody::handleTouchDidCancel(Touch* T, Event* E) {
     }
 }
 
-Optional<Vec3>
-TargetTouchBody::containsPointInContentRectWithCamera(const Vec2& P, const Camera* C) const
+bool
+TargetTouchBody::containsPointInContentRectWithCamera(Vec3& Ret, const Vec2& P, const Camera* C) const
 {
     auto Owner = getOwner();
-    if (!Owner) { return Optional<Vec3>(); }
+    if (!Owner) { return false; }
     
     Rect R(Point::ZERO, Owner->getContentSize());
     Vec3 RetHitPoint;
@@ -147,7 +149,12 @@ TargetTouchBody::containsPointInContentRectWithCamera(const Vec2& P, const Camer
                                    Owner->getWorldToNodeTransform(), R,
                                    &RetHitPoint);
     
-    return (Hit ? Optional<Vec3>(RetHitPoint) : Optional<Vec3>());
+    if (Hit) {
+        Ret = RetHitPoint;
+        return true;
+    }
+    
+    return false;
 }
 
 bool TargetTouchBody::clippedOutByAncestors(Point P) {

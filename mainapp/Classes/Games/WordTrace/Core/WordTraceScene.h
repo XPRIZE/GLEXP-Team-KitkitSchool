@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "../ChildNodes/BonusNode.h"
-#include "../ChildNodes/TrailerNode.h"
-#include "../Utils/MainNS.h"
-#include "../Models/Problem.h"
-#include "../Models/Worksheet.h"
+#include "../ChildNodes/WordTraceBonusNode.h"
+#include "../ChildNodes/WordTraceTrailerNode.h"
+#include "../Utils/WordTraceNS.h"
+#include "../Models/WordTraceProblem.h"
+#include "../Models/WordTraceWorksheet.h"
 
 #include <Common/Controls/TraceField/TraceField.h>
 #include <functional>
@@ -58,6 +58,7 @@ public:
     vector<int> ProblemIDsToGo;
     
     int LevelID;
+    size_t SheetID;
     function<void()> OnSuccess;
     function<void()> OnFail;
     

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD

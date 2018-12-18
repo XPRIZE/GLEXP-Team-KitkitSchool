@@ -21,14 +21,15 @@ namespace todoschool {
 namespace countfield {
 
 CircleAndStraight::CircleAndStraight(float Speed, float AngularSpeed)
-    : Speed(Speed), AngularSpeed(AngularSpeed)
+    : Speed(Speed), AngularSpeed(AngularSpeed), HasEngineTimeLimit(false)
 {
     clear();
 }
     
 void CircleAndStraight::clear() {
     EngineUptime = 0.f;
-    EngineTimeLimit.reset();
+    TheEngineTimeLimit = 0.f;
+    HasEngineTimeLimit = false;
     Scale.update(1.f);
 }
 
@@ -62,7 +63,7 @@ void CircleAndStraight::update(float DeltaSeconds) {
         }
     }
     
-    if (EngineTimeLimit && EngineUptime > EngineTimeLimit.value()) {
+    if (HasEngineTimeLimit && EngineUptime > TheEngineTimeLimit) {
         // NB(xenosoz, 2016): Time's up. Jump to target and finish this.
         updateToTargetPosition(DeltaSeconds);
         updateToTargetAngle(DeltaSeconds);

@@ -101,7 +101,7 @@ bool CountingScene::init()
         auto workPath = [this] {
             stringstream ss;
             ss << "/" << "Counting";
-            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "level-" << _currentLevel << "-" << _currentSheetID;
             ss << "/" << "work-" << _currentProblemID;
             return ss.str();
         }();
@@ -159,7 +159,7 @@ void CountingScene::onEnter()
 
     auto data = LevelData::defaultData();
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto sheet = data.randomSheetFor(lang, _currentLevel);
+    auto sheet = data.randomSheetFor(lang, _currentLevel, &_currentSheetID);
 
     _progressBar->setMax((int)sheet.size());
     _currentWorksheet = sheet;

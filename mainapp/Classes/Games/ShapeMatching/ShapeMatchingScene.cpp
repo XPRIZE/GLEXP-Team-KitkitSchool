@@ -14,7 +14,7 @@
 //#include "Common/Controls/CompletePopup.hpp"
 //#include "Common/Controls/TodoSchoolBackButton.hpp"
 //#include "Utils/Random.h"
-#include "Utils/CardSlotBuilder.hpp"
+#include "Utils/SMCardSlotBuilder.hpp"
 #include "Utils/Random.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/StrictLogManager.h"
@@ -43,66 +43,14 @@ namespace ShapeMatching
     const char* SOLVE_EFFECT_SOUND = "Common/Sounds/Effect/UI_Star_Collected.m4a";
     const string CARD_MATCHING_EFFECT_SOUND = "ShapeMatching/Sound/Train_Slotin.m4a";
     const string STAR_EFFECT_SOUND = "ShapeMatching/Sound/Quiz_Correct.m4a";
-    
-    //    string nextButtonTitle() {
-    //        if (LanguageManager::getInstance()->isSwahili()) { return "Inayofuata"; }
-    //        return "Next";
-    //    }
-    
-    string swTZ_of_enUS(const string& enUS)
+
+    string soundPathForShape(const string& shapeName)
     {
-        // XXX(xenosoz, 2017): We're running out of time for Bagamoyo testing
-        if (enUS == "circle") { return "duara"; }
-        if (enUS == "square") { return "mraba"; }
-        if (enUS == "triangle") { return "pembe_tatu"; }
-        if (enUS == "rectangle") { return "mstatili"; }
-        if (enUS == "star") { return "nyota"; }
-        if (enUS == "rhombus") { return "rombasi"; }
-        if (enUS == "diamond") { return "almasi"; }
-        if (enUS == "oval") { return "mviringo"; }
-        if (enUS == "hexagon") { return "pembe_sita"; }
-        if (enUS == "pentagon") { return "pembe_tano"; }
-        if (enUS == "trapezoid") { return "trapeza"; }
-        if (enUS == "parallelogram") { return "msambamba"; }
-        if (enUS == "octagon") { return "pembe_nane"; }
-        if (enUS == "cone") { return "pia"; }
-        if (enUS == "sphere") { return "nyanja"; }
-        if (enUS == "cylinder") { return "mcheduara"; }
-        if (enUS == "cube") { return "mche_mraba"; }
-        if (enUS == "rectangular_prism") { return "mche_mstatili"; }
-        if (enUS == "triangular_prism") { return "mche_pembe_tatu"; }
-        if (enUS == "pyramid") { return "piramidi"; }
-        if (enUS == "face") { return "uso"; }
-        if (enUS == "faces") { return "nyuso"; }
-        if (enUS == "side") { return "upande"; }
-        if (enUS == "sides") { return "pande"; }
-        if (enUS == "large") { return "kubwa"; }
-        if (enUS == "medium") { return "wastani"; }
-        if (enUS == "small") { return "dogo"; }
-        return "";
+        stringstream ss;
+        ss << "ShapeMatching/Sound/" << shapeName << ".m4a";
+        return ss.str();
     }
     
-    string localizeString(const string& enUS)
-    {
-        // NB(xenosoz, 2017): en_US string -> current language string.
-        auto ret = enUS;
-        if (LanguageManager::getInstance()->isSwahili()) ret = swTZ_of_enUS(enUS);
-        return ret;
-        
-    }
-    
-    string localizedSound(const string& enUS)
-    {
-        // NB(xenosoz, 2017): en_US string -> current language sound.
-        
-        auto shapeName = enUS;
-        if (LanguageManager::getInstance()->isSwahili()) {
-            shapeName = swTZ_of_enUS(enUS);
-        }
-        
-        return "ShapeMatching/Sound/"+shapeName+".m4a";
-        
-    }
 }
 
 //Scene* ShapeMatchingScene::createScene(int levelID)
@@ -270,91 +218,20 @@ void ShapeMatchingScene::prepareNewGameWithLevel()
 {
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto data = LevelData::defaultData();
-    auto sheet = data.randomSheetFor(lang, _currentLevelID);
+    auto sheet = data.randomSheetFor(lang, _currentLevelID, &_currentWorksheetID);
 
     _duration = loadDurationsheet();
 
+    _levelData = data;
     _currentWorksheet = sheet;
     _currentProblemID = sheet.beginProblemID();
     _progressBar->setMax((int)sheet.size());
-    
-    _basic2D = {"circle", "square", "triangle", "rectangle", "star", "rhombus", "oval"};
-    _advanced2D = {"hexagon", "pentagon", "trapezoid", "parallelogram", "octagon"};
-    
-    _basic3D = {"cone", "sphere", "cylinder", "cube"};
-    _advanced3D = {"rectangular_prism", "triangular_prism", "pyramid"};
     
     _colors = {"1", "2"};
     
     _sizes = {"large", "medium", "small"};
     
     _rotation = {0,30,45,90};
-    
-    std::merge(_advanced2D.begin(), _advanced2D.end(), _advanced3D.begin(), _advanced3D.end(), std::back_inserter(_advanced));
-    
-    _attribute["circle"] = "0 Side";
-    _attribute["square"] = "4 Sides";
-    _attribute["triangle"] = "3 Sides";
-    _attribute["rectangle"] = "4 Sides";
-    _attribute["star"] = "10 Sides";
-    _attribute["rhombus"] = "4 Sides";
-    _attribute["oval"] = "0 Sides";
-    _attribute["hexagon"] = "6 Sides";
-    _attribute["pentagon"] = "5 Sides";
-    _attribute["trapezoid"] = "4 Sides";
-    _attribute["parallelogram"] = "4 Sides";
-    _attribute["octagon"] = "8 Sides";
-    
-    _attribute["cone"] = "1 Face";
-    _attribute["sphere"] = "0 Faces";
-    _attribute["cylinder"] = "2 Faces";
-    _attribute["cube"] = "6 Faces";
-    _attribute["rectangular_prism"] = "6 Faces";
-    _attribute["triangular_prism"] = "5 Faces";
-    _attribute["pyramid"] = "5 Faces";
-    
-    attr2D.insert(pair<std::string, std::string>("0 Sides", "circle"));
-    attr2D.insert(pair<std::string, std::string>("4 Sides", "square"));
-    attr2D.insert(pair<std::string, std::string>("3 Sides", "triangle"));
-    attr2D.insert(pair<std::string, std::string>("4 Sides", "rectangle"));
-    attr2D.insert(pair<std::string, std::string>("10 Sides", "star"));
-    attr2D.insert(pair<std::string, std::string>("4 Sides", "rhombus"));
-    attr2D.insert(pair<std::string, std::string>("0 Sides", "oval"));
-    attr2D.insert(pair<std::string, std::string>("6 Sides", "hexagon"));
-    attr2D.insert(pair<std::string, std::string>("5 Sides", "pentagon"));
-    attr2D.insert(pair<std::string, std::string>("4 Sides", "trapezoid"));
-    attr2D.insert(pair<std::string, std::string>("4 Sides", "parallelogram"));
-    attr2D.insert(pair<std::string, std::string>("8 Sides", "octagon"));
-    
-    for(auto it = attr2D.begin(); it != attr2D.end(); it++) {
-        if (std::find( attr2DKeys.begin(), attr2DKeys.end(), it->first) == attr2DKeys.end()) {
-            attr2DKeys.push_back(it->first);
-            //            auto its = attr2D.equal_range(it->first);
-            //            for (auto itr = its.first; itr!=its.second; itr++) {
-            //                CCLOG("%s ",itr->second.c_str());
-            //            }
-        }
-    }
-    
-    attr3D.insert(pair<std::string, std::string>("1 Face", "cone"));
-    attr3D.insert(pair<std::string, std::string>("0 Faces", "sphere"));
-    attr3D.insert(pair<std::string, std::string>("2 Faces", "cylinder"));
-    attr3D.insert(pair<std::string, std::string>("6 Faces", "cube"));
-    attr3D.insert(pair<std::string, std::string>("6 Faces", "rectangular_prism"));
-    attr3D.insert(pair<std::string, std::string>("5 Faces", "triangular_prism"));
-    attr3D.insert(pair<std::string, std::string>("5 Faces", "pyramid"));
-    
-    for(auto it = attr3D.begin(); it != attr3D.end(); it++) {
-        if (std::find( attr3DKeys.begin(), attr3DKeys.end(), it->first) == attr3DKeys.end()) {
-            attr3DKeys.push_back(it->first);
-            //            auto its = attr3D.equal_range(it->first);
-            //            for (auto itr = its.first; itr!=its.second; itr++) {
-            //                CCLOG("%s ",itr->second.c_str());
-            //            }
-        }
-    }
-    
-    
     
 }
 
@@ -477,7 +354,7 @@ void ShapeMatchingScene::initCardList()
     
     vector<Point> selected;
     auto appendSelected = [&](size_t count, Rect localRect) {
-        auto points = shapematching::CardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
+        auto points = shapematching::SMCardSlotBuilder().pointsInBoundary(count, localRect, cardSize);
         auto it = todoschool::sample(points, count);
         selected.insert(selected.end(),
                         make_move_iterator(it.begin()),
@@ -491,69 +368,14 @@ void ShapeMatchingScene::initCardList()
     
     _shapeCandidates.clear();
     
-    if (pieceInfo.shape == "Basic_2D") {
-        todoschool::Random::shared().shuffle(_basic2D);
-        for (auto it = _basic2D.begin(); it != _basic2D.end(); it++) {
-            _shapeCandidates.push_back(*it);
-        }
+    for (const auto& group_item : _levelData.groups[pieceInfo.shape]) {
+        string group_key_i = group_item.first;
+        const vector<string>& shape_keys = group_item.second;
         
-    }
-    else if(pieceInfo.shape == "Basic_3D") {
-        todoschool::Random::shared().shuffle(_basic3D);
-        for (auto it = _basic3D.begin(); it != _basic3D.end(); it++) {
-            _shapeCandidates.push_back(*it);
+        if (shape_keys.size()) {
+            string selection = todoschool::Random::shared().sample(shape_keys, 1)[0];
+            _shapeCandidates.push_back(selection);
         }
-        
-    }
-    else if(pieceInfo.shape == "Advanced") {
-        todoschool::Random::shared().shuffle(_advanced);
-        for (auto it = _advanced.begin(); it != _advanced.end(); it++) {
-            _shapeCandidates.push_back(*it);
-        }
-        
-    }
-    else if(pieceInfo.shape == "Advanced_2D") {
-        todoschool::Random::shared().shuffle(_advanced2D);
-        for (auto it = _advanced2D.begin(); it != _advanced2D.end(); it++) {
-            _shapeCandidates.push_back(*it);
-        }
-        
-    }
-    else if(pieceInfo.shape == "Advanced_3D") {
-        todoschool::Random::shared().shuffle(_advanced3D);
-        for (auto it = _advanced3D.begin(); it != _advanced3D.end(); it++) {
-            _shapeCandidates.push_back(*it);
-        }
-    }
-    
-    if(_currentLevelID == 11) {
-        _shapeCandidates.clear();
-        todoschool::Random::shared().shuffle(attr2DKeys);
-        std::vector<std::string> shape_candidate_candidate;
-        for (auto it = attr2DKeys.begin(); it != attr2DKeys.end(); it++) {
-            shape_candidate_candidate.clear();
-            auto its = attr2D.equal_range(*it);
-            for (auto itr = its.first; itr!=its.second; itr++) {
-                shape_candidate_candidate.push_back(itr->second.c_str());
-            }
-            todoschool::Random::shared().shuffle(shape_candidate_candidate);
-            _shapeCandidates.push_back(shape_candidate_candidate[0]);
-        }
-    }
-    else if(_currentLevelID == 12) {
-        _shapeCandidates.clear();
-        todoschool::Random::shared().shuffle(attr3DKeys);
-        std::vector<std::string> shape_candidate_candidate;
-        for (auto it = attr3DKeys.begin(); it != attr3DKeys.end(); it++) {
-            shape_candidate_candidate.clear();
-            auto its = attr3D.equal_range(*it);
-            for (auto itr = its.first; itr!=its.second; itr++) {
-                shape_candidate_candidate.push_back(itr->second.c_str());
-            }
-            todoschool::Random::shared().shuffle(shape_candidate_candidate);
-            _shapeCandidates.push_back(shape_candidate_candidate[0]);
-        }
-        
     }
     
     for (int i = 0; i < _currentLevelMaxCardCount; i++)
@@ -575,10 +397,13 @@ void ShapeMatchingScene::initCardList()
                                         _currentProblemID, i, 2,
                                         filenameB, rotationB, scaleB, pieceInfo.matchSound == "YES", pieceInfo.matchSound != "YES");
         
-        
+
+        string lang = LanguageManager::getInstance()->getCurrentLocaleCode();
         string shapeString = _shapeCandidates[i];
-        cardA->matchSound = localizedSound(shapeString);
-        cardB->matchSound = localizedSound(shapeString);
+        shapeString = _levelData.shapes[shapeString].languages[lang];
+
+        cardA->matchSound = soundPathForShape(shapeString);
+        cardB->matchSound = soundPathForShape(shapeString);
         
         //        SoundEffect sound;
         //        sound = sound || SoundEffect(pieceInfo.matchSound);
@@ -612,10 +437,17 @@ void ShapeMatchingScene::initCardList()
 
 ShapeMatchingCard* ShapeMatchingScene::createMatchingCard(int zOrder, Point pos,
                                                           int level, int id, int type,
-                                                          const std::string& cardImageName, int rotation, float scale, bool hasTouchSound, bool hasMatchingSound)
+                                                          const std::string& cardImageName,
+                                                          int rotation, float scale,
+                                                          bool hasTouchSound, bool hasMatchingSound)
 {
+    string lang = LanguageManager::getInstance()->getCurrentLocaleCode();
+    string localizedName = _levelData.shapes[cardImageName].languages[lang];
+    
     ShapeMatchingCard* card = ShapeMatchingCard::create();
-    card->setImage(level, type, id, cardImageName, rotation, scale);
+    card->setImage(level, type, id,
+                   cardImageName, localizedName,
+                   rotation, scale);
     card->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     
     card->setPosition(pos);
@@ -826,7 +658,7 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "ShapeMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentWorksheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -848,7 +680,7 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             auto workPath = [this] {
                 stringstream ss;
                 ss << "/" << "ShapeMatching";
-                ss << "/" << "level-" << _currentLevelID;
+                ss << "/" << "level-" << _currentLevelID << "-" << _currentWorksheetID;
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
@@ -1001,64 +833,14 @@ cocos2d::ValueMap ShapeMatchingScene::pickCards(ShapeMatching::Piece pieceInfo, 
     
     std::string filenameA = "";
     std::string filenameB = "";
-    
     std::string shape = "";
-    
-    //    if (pieceInfo.shape == "Basic_2D") {
-    ////        Random::shared().shuffle(_basic2D);
-    //        shape = _basic2D[i];
-    //    }
-    //    else if(pieceInfo.shape == "Basic_3D") {
-    ////        Random::shared().shuffle(_basic3D);
-    //        shape = _basic3D[i];
-    //    }
-    //    else if(pieceInfo.shape == "Advanced") {
-    ////        Random::shared().shuffle(_advanced);
-    //        shape = _advanced[i];
-    //    }
-    //    else if(pieceInfo.shape == "Advanced_2D") {
-    ////        Random::shared().shuffle(_advanced2D);
-    //        shape = _advanced2D[i];
-    //    }
-    //    else if(pieceInfo.shape == "Advanced_3D") {
-    ////        Random::shared().shuffle(_advanced3D);
-    //        shape = _advanced3D[i];
-    //    }
-    
+
     shape = _shapeCandidates[i];
-    
-    //    std::string attr;
-    //    std::vector<std::string> shape_candidate;
-    //
-    //    if(_currentLevelID == 11) {
-    //        attr = attr2DKeys[i];
-    //
-    //        auto its = attr2D.equal_range(attr);
-    //        for (auto itr = its.first; itr!=its.second; itr++) {
-    //            shape_candidate.push_back(itr->second.c_str());
-    //        }
-    //        Random::shared().shuffle(shape_candidate);
-    //        shape = shape_candidate[0];
-    //
-    //
-    //    }
-    //    else if(_currentLevelID == 12) {
-    //        attr = attr3DKeys[i];
-    //
-    //        auto its = attr3D.equal_range(attr);
-    //        for (auto itr = its.first; itr!=its.second; itr++) {
-    //            shape_candidate.push_back(itr->second.c_str());
-    //        }
-    //        Random::shared().shuffle(shape_candidate);
-    //        shape = shape_candidate[0];
-    //    }
-    
-    
+
     std::string typeA = pieceInfo.typeA;
-    
     std::string colorA = "";
     
-    if (pieceInfo.shape == "Advanced" && std::find(std::begin(_advanced3D), std::end(_advanced3D), shape) != std::end(_advanced3D)) {
+    if (pieceInfo.shape == "Advanced" && _levelData.shapes[shape].groups["Advanced_3D"].size() > 0) {
         colorA = "N/A";
     }
     else if (pieceInfo.colorA == "Random") {
@@ -1072,7 +854,7 @@ cocos2d::ValueMap ShapeMatchingScene::pickCards(ShapeMatching::Piece pieceInfo, 
     std::string sizeA = "";
     
     
-    if(pieceInfo.shape == "Advanced" && std::find(std::begin(_advanced3D), std::end(_advanced3D), shape) != std::end(_advanced3D)) {
+    if (pieceInfo.shape == "Advanced" && _levelData.shapes[shape].groups["Advanced_3D"].size() > 0) {
         sizeA = "N/A";
     }
     else if(pieceInfo.sizeA == "Random") {
@@ -1099,7 +881,7 @@ cocos2d::ValueMap ShapeMatchingScene::pickCards(ShapeMatching::Piece pieceInfo, 
     std::string typeB = pieceInfo.typeB;
     std::string colorB = "";
     
-    if (pieceInfo.shape == "Advanced" && std::find(std::begin(_advanced3D), std::end(_advanced3D), shape) != std::end(_advanced3D)) {
+    if (pieceInfo.shape == "Advanced" && _levelData.shapes[shape].groups["Advanced_3D"].size() > 0) {
         colorB = "N/A";
     }
     else if (pieceInfo.colorB == "Random") {
@@ -1117,7 +899,7 @@ cocos2d::ValueMap ShapeMatchingScene::pickCards(ShapeMatching::Piece pieceInfo, 
     
     std::string sizeB = "";
     
-    if(pieceInfo.shape == "Advanced" && std::find(std::begin(_advanced3D), std::end(_advanced3D), shape) != std::end(_advanced3D)) {
+    if(pieceInfo.shape == "Advanced" && _levelData.shapes[shape].groups["Advanced_3D"].size() > 0) {
         sizeB = "N/A";
     }
     else if (pieceInfo.sizeB == "Random") {
@@ -1212,7 +994,21 @@ std::string ShapeMatchingScene::generateCardImageFilename(std::string shape, std
         return filename;
     }
     else if(type == "Attribute") {
-        return _attribute[shape];
+        stringstream ss;
+        
+        for (auto item : _levelData.shapes[shape].attributes) {
+            string key = item.first;
+            string value = item.second;
+            
+            CCLOG(">> %s, %s", key.c_str(), value.c_str());
+
+            if (value != "None") {
+                // NB(xenosoz, 2018): I'm expecting a row like "3 Sides" here.
+                ss << value << " " << key;
+            }
+        }
+        
+        return ss.str();
     }
     
     filename += imgPrefix;

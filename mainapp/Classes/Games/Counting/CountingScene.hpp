@@ -13,9 +13,9 @@
 #include "ui/CocosGUI.h"
 #include "ChildNodes/AnswerPadMulti.hpp"
 #include "ChildNodes/CountingObject.hpp"
-#include "Models/LevelData.hpp"
-#include "Models/Worksheet.hpp"
-#include "Models/Problem.hpp"
+#include "Models/CountingLevelData.hpp"
+#include "Models/CountingWorksheet.hpp"
+#include "Models/CountingProblem.hpp"
 #include <vector>
 #include "Common/Controls/ProgressIndicator.hpp"
 
@@ -59,6 +59,7 @@ private:
     
     
     int _currentLevel;
+    int _currentSheetID;
     int _currentProblemID;
     todoschool::counting::Worksheet _currentWorksheet;
     todoschool::counting::Problem _currentProblem;

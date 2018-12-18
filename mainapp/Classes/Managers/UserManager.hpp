@@ -25,6 +25,19 @@ enum class PretestProgressType {
     finish
 };
 
+enum class guideCoopType {
+    visitFirst,
+    recognizeCoop,
+    finish
+};
+
+enum class guideDayType {
+    touchFirst,
+    recognizeDay,
+    finish
+};
+
+
 class UserManager {
     
     
@@ -38,6 +51,10 @@ public:
     
     bool isGameTestingMode() { return _gameTestingMode; }
     void setGameTestingMode(bool isTesting) { _gameTestingMode = isTesting; }
+
+    bool isWorksheetTestMode() { return _worksheetTestMode & _debugMode; ; }
+    void setWorksheetTestMode(bool isTesting) { _worksheetTestMode = isTesting; }
+
     
     bool isResetAllowed() { return _allowReset; }
     
@@ -49,6 +66,7 @@ public:
 
     void flushData();
     
+    string getWelcomeVideoPlayedKey();
     string getCurrentLevelIDKey();
     string getCurrentLevelID();
     void setCurrentLevelID(string levelID);
@@ -68,6 +86,12 @@ public:
     PretestProgressType getPretestProgressType(string levelID);
     void setPretestProgressType(string levelID, PretestProgressType type);
     
+    guideCoopType getGuideCoopStatus();
+    void setGuideCoopStatus(guideCoopType type);
+
+    guideDayType getGuideDayStatus();
+    void setGuideDayStatus(guideDayType type);
+    
     string getDayClearedKey(string levelID, int day);
     bool isDayCleared(string levelID, int day);
     void setDayCleared(string levelID, int day, bool isCleared = true);
@@ -85,6 +109,30 @@ public:
     bool isGameCleared(string levelID, int day, int gameIndex);
     void setGameCleared(string levelID, int day, int gameIndex, bool isCleared = true);
     
+    string getSpecialCourseCurrentProgressKey(string levelID, int day);
+    void setSpecialCourseCurrentProgress(string levelID, int day, int gameIndex);
+    int getSpecialCourseCurrentProgress(string levelID, int day);
+    
+    string getSpecialCourseLightOnKey(char course);
+    void setSpecialCourseLightOn(char course);
+    bool getSpecialCourseLightOn(char course);
+    
+    string getFishPresentCurrentProgressLevelKey(string levelID);
+    void setFishPresentCurrentProgressLevel(string levelID, int levelIndex);
+    int getFishPresentCurrentProgressLevel(string levelID);
+
+    string getFishPresentLightOnKey(char course);
+    void setFishPresentLightOn(char course);
+    bool getFishPresentLightOn(char course);
+
+    string getFishPresentCurrentProgressIndexKey(string levelID, int levelIndex);
+    void setFishPresentCurrentProgressIndex(string levelID, int levelIndex, int index);
+    int getFishPresentCurrentProgressIndex(string levelID, int levelIndex);
+
+    string getFishPresentEnableKey(string levelID);
+    void setFishPresentEnable(string levelID, bool isEnable);
+    bool isFishPresentEnable(string levelID);
+
     //string getProgressDataKey();
     //Json::Value getProgressData();
     //void setProgressData(Json::Value json);
@@ -99,7 +147,6 @@ public:
     void finishTutorial();
     bool hasPlayedMenuTutorial();
     
-    
 private:
     
     string _currentLevelID;
@@ -112,6 +159,7 @@ private:
     bool _debugMode;
     bool _gameTestingMode;
     bool _allowReset;
+    bool _worksheetTestMode;
     
     string _userName;
     

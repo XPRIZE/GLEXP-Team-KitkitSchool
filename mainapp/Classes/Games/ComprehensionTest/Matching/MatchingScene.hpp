@@ -13,7 +13,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "../ComprehensionScene.hpp"
-#include "ProblemData.hpp"
+#include "CompTestMatchingProblemData.hpp"
 
 USING_NS_CC;
 using namespace cocos2d::ui;

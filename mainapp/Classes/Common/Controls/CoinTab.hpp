@@ -26,9 +26,10 @@ public:
     
     
     void addCoin(int numCoin, Vec2 fromPosWorld, bool modeGameSelect = false);
-    
-    
+    void addCoinForSpecialCourse(int gameCount, int numCoin, Vec2 fromPosWorld, bool isCourseClear);
 
+    void removeCoin(int numCoin, Vec2 toPosWorld, std::function<void()> callback = nullptr);
+    
     static int _numCoin;
     Label *_coinLabel;
     

@@ -7,7 +7,7 @@
 //
 
 #include "LetterTracingCardScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/LetterTracingCardMainDepot.h"
 
 #include <Managers/LanguageManager.hpp>
 #include <Managers/StrictLogManager.h>
@@ -231,7 +231,7 @@ void LetterTracingCardScene::initProblem()
             // NB(xenosoz, 2018): _currentProblemIndex is dynamic. That's why I made this as a function.
             stringstream SS;
             SS << "/" << "LetterTracingCard";
-            SS << "/" << "level-" << _currentLevel;
+            SS << "/" << "level-" << _currentLevel << "-0";
             SS << "/" << "work-" << _currentProblemIndex;
             return SS.str();
         };

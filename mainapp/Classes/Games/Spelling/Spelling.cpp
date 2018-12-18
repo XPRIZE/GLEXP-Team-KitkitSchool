@@ -8,8 +8,8 @@
 
 
 #include "Spelling.h"
-#include "Core/MainScene.h"
-#include "Models/LevelData.h"
+#include "Core/SpellingScene.h"
+#include "Models/SpellingLevelData.h"
 #include <Managers/LanguageManager.hpp>
 #include <numeric>
 
@@ -47,12 +47,15 @@ void Spelling::setOnFail(std::function<void ()> F) {
 
 cocos2d::Scene* Spelling::createScene() {
     using namespace todoschool::spelling;
+    int SheetID;
     
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID);
-    auto It = MainScene::create();
+    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID, &SheetID);
+    auto It = SpellingScene::create();
     
     It->TheSheet.update(Sheet);
+    It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../Utils/MainNS.h"
+#include "../Utils/MovingInsectsNS.h"
 #include "MainSheet.h"
 
 BEGIN_NS_MOVINGINSECTS
@@ -20,7 +20,7 @@ class MainLevel {
 
 public:
     MainSheet& sheetByID(size_t SheetID);
-    MainSheet& randomSheet();
+    MainSheet& randomSheet(size_t *SheetID);
     
 public:
     friend istream& operator>>(istream& IS, MainLevel& Level);

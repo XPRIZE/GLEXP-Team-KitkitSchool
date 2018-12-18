@@ -69,7 +69,7 @@ namespace MangoShop
     {
         Layer::onEnter();
         
-        initData();
+        initData(&_currentSheetNo);
     }
 
     void MangoShopScene::onEnterTransitionDidFinish()
@@ -81,8 +81,10 @@ namespace MangoShop
     // *****************************
     // Custom Methods
     // *****************************
-    void MangoShopScene::initData()
+    void MangoShopScene::initData(int *workSheetNo)
     {
+        *workSheetNo = 1;
+
         std::string rawString = cocos2d::FileUtils::getInstance()->getStringFromFile(kDataFile);
         
         std::vector<Problem*> result;
@@ -128,10 +130,10 @@ namespace MangoShop
         
         if (maxWorksheetNumber > 1)
         {
-            int selectedWorksheet = random(1, maxWorksheetNumber);
+            *workSheetNo = random(1, maxWorksheetNumber);
             for (int i = 0; i < result.size(); i++)
             {
-                if (selectedWorksheet != TodoUtil::stoi(result[i]->worksheet))
+                if (*workSheetNo != TodoUtil::stoi(result[i]->worksheet))
                     continue;
                 
                 _problems.push_back(result[i]);
@@ -1287,7 +1289,7 @@ namespace MangoShop
         auto workPath = [this] {
             stringstream ss;
             ss << "/" << "MangoShop";
-            ss << "/" << "level-" << _currentLevel;
+            ss << "/" << "level-" << _currentLevel << "-" << _currentSheetNo;
             ss << "/" << "work-" << _currentProblemIndex;
             return ss.str();
         }();
@@ -1332,7 +1334,7 @@ namespace MangoShop
             particleEffect->stopSystem();
             _shiningParticleNode->addChild(particleEffect);
         };
-        createParticleEffect("mangoshopParticle", "NumberMatching/Particle/star_particle.plist");
+        createParticleEffect("mangoshopParticle", "common/effects/particle/star_particle.plist");
         this->addChild(_shiningParticleNode);
     }
     

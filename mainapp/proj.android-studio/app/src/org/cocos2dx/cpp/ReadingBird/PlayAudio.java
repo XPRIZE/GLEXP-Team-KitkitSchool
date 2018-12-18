@@ -94,7 +94,7 @@ public class PlayAudio {
 
             if (mbExternalAudioFile == false)
             {
-                if (mFilePath.startsWith("Localized") == true) {
+                if (mFilePath.startsWith("localized") == true) {
                     AssetFileDescriptor assetFileDescriptor =mActivity.getAssets().openFd(mFilePath);
                     mMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
                     assetFileDescriptor.close();
@@ -104,7 +104,7 @@ public class PlayAudio {
 
                 }
             } else {
-                if (mFilePath.startsWith("Localized") == true) {
+                if (mFilePath.startsWith("localized") == true) {
                     mMediaPlayer.setDataSource(mExternalPath + filePath);
 
                 } else {

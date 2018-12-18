@@ -10,7 +10,7 @@
 
 #include "Managers/GameSoundManager.h"
 #include "Utils/TodoUtil.h"
-
+#include "Common/Controls/SignLanguageVideoPlayer.hpp"
 
 
 using namespace ui;
@@ -37,7 +37,7 @@ namespace BookPageSpace {
     const string titleFont = "fonts/Seshat.otf";
     const string bodyFont = "fonts/Andika-R.ttf";
     
-    
+    const bool DebugLayout = false;
     
     
 }
@@ -71,6 +71,7 @@ bool BookPage::init()
     _contentsView->setContentSize(defaultSize);
     addChild(_contentsView);
     
+    _isReading = false;
     
     return true;
     
@@ -153,29 +154,52 @@ void BookPage::update(float delta)
     
     for (auto b : _wordButtons) {
         auto wordObj = _words[b->getTag()];
-        if (wordObj.startTimingInPage<=_timePage && _timePage<=wordObj.endTimingInPage) {
-            b->resetNormalRender();
-            b->loadTextureNormal("Common/lightblue.png");
-            b->setTitleColor(Color3B::BLACK);
-        } else {
-            b->resetNormalRender();
-            b->loadTextureNormal("Common/transparent.png");
-            b->setTitleColor(textColor);
-        }
+        bool highlight = wordObj.startTimingInPage<=_timePage && _timePage<=wordObj.endTimingInPage;
+        highlightWordButton(b, highlight);
     }
 }
 
+void BookPage::highlightWordButton(ui::Button *btn, bool highlight)
+{
+    if (highlight) {
+        btn->resetNormalRender();
+        btn->loadTextureNormal("Common/lightblue.png");
+        btn->setTitleColor(Color3B::BLACK);
+    } else {
+        btn->resetNormalRender();
+        btn->loadTextureNormal("Common/transparent.png");
+        btn->setTitleColor(textColor);
+    }
+}
 
 void BookPage::startReading()
 {
-    if (_withAudio) scheduleUpdate();
+    _timePage = -0.5;
+    _timeSentence = -0.5;
+    _readingSentenceIndex = -1;
+    if (_withAudio ) {
+        _isReading = true;
+        scheduleUpdate();
+    }
+    
+    
+    SHOW_SL_VIDEO_IF_ENABLED("common/temp_video_short.mp4");
 }
 
 void BookPage::stopReading()
 {
-    if (_withAudio) unscheduleUpdate();
+    if (_withAudio) {
+        _isReading = false;
+        unscheduleUpdate();
+    }
+    
     GameSoundManager::getInstance()->stopAllEffects();
     GameSoundManager::getInstance()->stopBGM();
+    
+    for (auto b : _wordButtons) {
+        highlightWordButton(b, false);
+    }
+    
     
 }
 
@@ -485,9 +509,10 @@ void BookPage::setTitle(string title, string titleImagePath, string audioPath, T
         auto titleAudioPath = audioPath;
 
         scheduleOnce([titleAudioPath](float){  // Sound delay
-            GameSoundManager::getInstance()->playEffectSound(titleAudioPath);
+            GameSoundManager::getInstance()->playBGM(titleAudioPath);
         }, delay, "titleAudio");
 
+        SHOW_SL_VIDEO_IF_ENABLED("common/temp_video_short.mp4");
     }
 }
 
@@ -606,7 +631,7 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
         leftTexture->setPosition(wp1->getPosition());
         _leftView->addChild(leftTexture);
         
-        setPageNum((pageNum * 2 - 1), _leftView, Vec2(_leftView->getPositionX()/2, halfSize.height - _imageView->getContentSize().height - 150));
+        setPageNum((pageNum * 2 - 1), _leftView, Vec2(_leftView->getContentSize().width/2, 100));
         
         _textView = Node::create();
         _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -620,7 +645,7 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
         rightTexture->setPosition(wp2->getPosition());
         _rightView->addChild(rightTexture);
         
-        setPageNum(( pageNum * 2), _rightView, Vec2(_rightView->getPositionX()/2, halfSize.height - _textView->getContentSize().height - 150));
+        setPageNum(( pageNum * 2), _rightView, Vec2(_rightView->getContentSize().width/2, 100));
         
     } else if (layout==TDBookLayout::Landscape) {
 
@@ -633,6 +658,8 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
         _leftCover = Node::create();
         _leftCover->setContentSize(bigSize);
         _leftView->addChild(_leftCover);
+        
+        auto winsize = Director::getInstance()->getWinSize();
         
         
         auto sp = Sprite::create("Books/book_horizontal_bg.jpg", Rect(80/2, 0, (2560-80)/2, 1800/2));
@@ -716,22 +743,25 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
         leftTexture->setPosition(wp1->getPosition());
         _leftView->addChild(leftTexture);
         
-        
+       
         
         _textView = Node::create();
         _textView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         _textView->setContentSize(Size(2000, 300));
-        _textView->setPosition(Vec2(bigSize.width/2, 280));
+        
+        // what is the rationale behind doing this? this does not fix the issue...
+        _textView->setPosition(Vec2(_rightView->getContentSize().width/2,  280));
         _rightView->addChild(_textView);
         
-        
+        // adding pagespread texture after the textview is intentional - to give a feeling of embossing ; hard to notice though
         auto rightTexture = Sprite::create("Books/book_horizontal_inside_pagespread_texture.png");
         rightTexture->setScale(2);
         rightTexture->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         rightTexture->setPosition(wp2->getPosition());
         _rightView->addChild(rightTexture);
         
-        setPageNum(pageNum, _rightView, Vec2(bigSize.width/2, 130));
+        
+        setPageNum(pageNum, _rightView, Vec2(_rightView->getContentSize().width/2,100));
          
         
     } else if (layout==TDBookLayout::Square) {
@@ -790,15 +820,14 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
         _textView->setPosition(Vec2(squareSize.width/2, 240));
         _rightView->addChild(_textView);
         
-        setPageNum(pageNum, _rightView, Vec2(squareSize.width/2, 120));
+        setPageNum(pageNum, _rightView, Vec2(_contentsView->getContentSize().width/2, 100));
         
 
         
     }
     
     
-    _timePage = -0.5;
-    _timeSentence = -0.5;
+
 
     
     //auto image = Sprite::create(_book->imagePrefix+pageObj.pageImageFilename);
@@ -816,7 +845,7 @@ void BookPage::setPage(TodoBook *book, TodoPage *page, TDBookLayout layout,  boo
     
     GameSoundManager::getInstance()->stopAllEffects();
     
-    _readingSentenceIndex = -1;
+    
     
     _wordButtons.clear();
     
@@ -1291,6 +1320,27 @@ void BookPage::hideLeftHalf(bool animate)
     }
 }
 
+void BookPage::playWordSound(ui::Button *button, string path, float length)
+{
+    //GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
+    GameSoundManager::getInstance()->pauseBGM();
+    
+    
+    GameSoundManager::getInstance()->playEffectSound(path);
+    
+    if (_isReading) {
+        
+        button->resetNormalRender();
+        button->loadTextureNormal("Common/lightblue.png");
+        SHOW_SL_VIDEO_IF_ENABLED("common/temp_video_short.mp4");
+    
+        _pauseReading = true;
+        _pauseLength = length;
+    }
+    
+}
+
+
 Node* BookPage::createTextViewOneLine(Size size, float fontSize)
 {
     
@@ -1321,15 +1371,7 @@ Node* BookPage::createTextViewOneLine(Size size, float fontSize)
             auto wordAudioPath = _book->getWordAudioPath(word.wordAudioFilename);
             GameSoundManager::getInstance()->preloadEffect(wordAudioPath);
             wordButton->addClickEventListener([this, word, wordAudioPath, wordButton](Ref*){
-                //GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
-                GameSoundManager::getInstance()->pauseBGM();
-                
-                wordButton->resetNormalRender();
-                wordButton->loadTextureNormal("Common/lightblue.png");
-                GameSoundManager::getInstance()->playEffectSound(wordAudioPath);
-                _pauseReading = true;
-                _pauseLength = word.wordAudioLength;
-                
+                this->playWordSound(wordButton, wordAudioPath, word.wordAudioLength);
             });
         }
         
@@ -1405,24 +1447,19 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
         GameSoundManager::getInstance()->preloadEffect(path);
         button->addClickEventListener([this, path, button, length](Ref*){
             
-            //GameSoundManager::getInstance()->pauseEffect(_readingAudioID);
-            GameSoundManager::getInstance()->pauseBGM();
-            button->resetNormalRender();
-            button->loadTextureNormal("Common/lightblue.png");
-            
-            GameSoundManager::getInstance()->playEffectSound(path);
-            _pauseReading = true;
-            _pauseLength = length;
+            playWordSound(button, path, length);
             
         });
     };
     
+    bool singleLine = true;
     
     
     for (int i = 0; i < _page->paragraphs.size(); i++)
     {
         auto paragraph = _page->paragraphs[i];
         
+        // it appears that the auto identation causes the skewing problem when the sentence is short, but we can't just disable it
         currentLeft = indentation ? indentSpace : 0; // auto indentation
         if (i > 0) currentTop -= paragraphSpace;  // paragraph spacing
         
@@ -1443,6 +1480,7 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
                     currentLeft = 0;
                     currentTop -= lineSpace;
                     firstInLine = true;
+                    singleLine = false;
                 } else {
                     currentLeft += firstInLine ? 0 : wordSpace;
                 }
@@ -1520,6 +1558,7 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
         auto paragraph = _page->paragraphs[i];
         
         currentLeft = indentation ? indentSpace : 0; // auto indentation
+        if (singleLine) currentLeft = 0;
         if (i > 0) currentTop -= paragraphSpace;  // paragraph spacing
         
         firstInLine = true;
@@ -1590,6 +1629,13 @@ Node* BookPage::createTextViewMultiLine(Size size, float fontSize)
         auto textView = Node::create();
         viewSize = Size(maxWidth, viewSize.height-minBottom);
         textView->setContentSize(viewSize);
+        
+        // to check textview size
+        if (DebugLayout) {
+            auto lc = LayerColor::create(Color4B::YELLOW, viewSize.width, viewSize.height);
+            textView->addChild(lc);
+        }
+        
         innerTextView->setPosition(Vec2(0, -minBottom));
         textView->addChild(innerTextView);
         textView->setScale(MIN(1.f, MIN(size.width / viewSize.width, size.height / viewSize.height)));
@@ -1606,8 +1652,23 @@ void BookPage::setPageNum(int page, Node *_pageView, Vec2 pos)
     pagelabel->setSystemFontSize(40);
     pagelabel->setTextColor(Color4B::BLACK);
     pagelabel->setString(TodoUtil::itos(page));
+    pagelabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     pagelabel->setPosition(pos);
+    
+    if (DebugLayout) {
+        auto line = DrawNode::create();
+        auto pageSize = _pageView->getContentSize();
+        line->setContentSize(pageSize);
+        _pageView->addChild(line);
+        
+        line->drawLine(Vec2(0, pos.y+10), Vec2(pageSize.width, pos.y+10), Color4F::BLUE);
+        line->drawLine(Vec2(pageSize.width/2, pos.y), Vec2(pageSize.width/2, pos.y+20), Color4F::BLUE);
+        
+        
+        
+                       
+        
+    }
     
     _pageView->addChild(pagelabel);
 }
-

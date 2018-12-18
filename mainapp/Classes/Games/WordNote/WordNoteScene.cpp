@@ -165,7 +165,7 @@ bool WordNoteScene::init() {
 void WordNoteScene::onEnter(){
     LOGFN();
     Layer::onEnter();
-    _problems = ProblemBank::getInstance()->loadData(_currentLevel);
+    _problems = ProblemBank::getInstance()->loadData(_currentLevel, &_currentSheetNo);
     _currentProblemIndex = 0;
     _totalProblemCount = (int)_problems.size();
     _progressBar->setMax(_totalProblemCount);
@@ -954,8 +954,8 @@ void WordNoteScene::onExit() {
 
 string WordNoteScene::makeWorkPath() {
     stringstream ss;
-    ss << "WordNote";
-    ss << "/" << "level-" << _currentLevel;
+    ss << "/" << "WordNote";
+    ss << "/" << "level-" << _currentLevel << "-" << _currentSheetNo;
     ss << "/" << "work-" << _currentProblemIndex;
     return ss.str();
 }

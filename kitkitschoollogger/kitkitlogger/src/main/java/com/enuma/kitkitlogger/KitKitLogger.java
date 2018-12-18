@@ -30,6 +30,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by ingtellect on 7/14/17.
  */
@@ -38,18 +42,56 @@ public class KitKitLogger {
     private static final String TAG = "KitkitLogger";
     private File basePath;
     private String appName;
+    private String shortAppName;
     private Context _ctnx;
     //private String installId;
     //private String androidId;
     private String serialNumber;
+    private String macAddress;
+
 
     // NB(xenosoz, 2018): SNTP cache.
     Map<String, SntpResult> _sntpCache = new HashMap<>();
 
     private KitkitDBHandler dbHandler;
 
+    public static String getMacAddr() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    // res1.append(Integer.toHexString(b & 0xFF) + ":");
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+            //handle exception
+        }
+        return "";
+    }
+
     public KitKitLogger(String appName, Context ctnx) {
         this.appName = appName;
+        int pos;
+        if ( (pos = appName.lastIndexOf('.')) != -1) {
+            this.shortAppName = appName.substring(pos+1);
+        }
+        else
+            this.shortAppName = appName;
+
 
 //        try {
 //            Context launcherContext = ctnx.createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher", Context.MODE_PRIVATE);
@@ -60,7 +102,12 @@ public class KitKitLogger {
 //        }
 
         //basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" + installId);
-        basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" +"logs");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" +"logs");
+        } else {
+            basePath = new File(Environment.getExternalStorageDirectory() + "/Documents" + "/" +"logs");
+        }
+
         if(!basePath.exists()){
             basePath.mkdirs();
         }
@@ -68,6 +115,13 @@ public class KitKitLogger {
         //androidId = Settings.Secure.getString(_ctnx.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         serialNumber = Build.SERIAL;
+
+        // add mac address to serial number, for devices with the same serial numbers (e.g., MPGIO, Joy, etc...)
+        macAddress = getMacAddr().replace(":", "");
+
+        serialNumber = serialNumber + "_" + macAddress;
+
+
 
         //Log.d(TAG,appName+ " installId : " + installId);
         dbHandler = new KitkitDBHandler(_ctnx);
@@ -166,10 +220,15 @@ public class KitKitLogger {
         logEvent("putSntpResult");
     }
 
-    public void logSntpUpdateTo(BufferedWriter bw) {
-        if (bw == null) { return; }
+    public int logSntpUpdateTo(BufferedWriter bw) {
+        int resultId = -1;
+        if (bw == null) { return resultId; }
 
         for (SntpResult sr : dbHandler.getSntpResults()) {
+            if (resultId < sr.id) {
+                resultId = sr.id;
+            }
+
             SntpResult cache = _sntpCache.get(sr.serverSpec);
 
             if (cache != null && !cache.serverSpec.equals(sr.serverSpec)) { cache = null; }
@@ -187,11 +246,13 @@ public class KitKitLogger {
                 eventJson.put("1.serverSpec", sr.serverSpec);
                 eventJson.put("2.now", sr.now);
                 eventJson.put("3.snow", sr.snow);
+                //eventJson.put("4.id", sr.id);
 
                 logJson.put("appName", appName);
                 logJson.put("timeStamp", (double) (Calendar.getInstance().getTimeInMillis() / 1000));
                 logJson.put("event", eventJson);
-                logJson.put("user", dbHandler.getCurrentUsername());
+                logJson.put("id", sr.id);
+                //logJson.put("user", dbHandler.getCurrentUsername());
 
                 bw.write(logJson.toString() + "\n");
             }
@@ -205,6 +266,8 @@ public class KitKitLogger {
             // NB(xenosoz, 2018): Heat the cache.
             _sntpCache.put(sr.serverSpec, sr);
         }
+
+        return resultId;
     }
 
     public void logEvent(String eventString) {
@@ -224,16 +287,22 @@ public class KitKitLogger {
             FileWriter fw = new FileWriter(logPath.getAbsoluteFile(), true);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            logSntpUpdateTo(bw);
+            int id = logSntpUpdateTo(bw);
 
             JSONObject eventJson = new JSONObject(eventString);
             JSONObject logJson = new JSONObject();
 
-            logJson.put("appName", appName);
+            logJson.put("appName", shortAppName);
             logJson.put("timeStamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
             logJson.put("event", eventJson);
-            logJson.put("user", dbHandler.getCurrentUsername());
+            logJson.put("sntp", id);
 
+            String user = dbHandler.getCurrentUsername();
+            String tabletNumber = dbHandler.getTabletNumber();
+            if (!tabletNumber.isEmpty()) {
+                user = "t" + tabletNumber + "-" + user;
+            }
+            logJson.put("user", user);
             bw.write(logJson.toString() + "\n");
             bw.close();
         }

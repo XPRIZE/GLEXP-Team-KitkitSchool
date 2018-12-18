@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "../Models/Problem.h"
-#include "../Models/Worksheet.h"
-#include "../Utils/MainNS.h"
-#include "../Common/CountField/CountField.h"
+#include "../Models/NumberTraceProblem.h"
+#include "../Models/NumberTraceWorksheet.h"
+#include "../Utils/NumberTraceNS.h"
+#include "../Common/CountField/NumberTraceCountField.h"
 #include <Common/Controls/TraceField/TraceField.h>
 
 
@@ -33,6 +33,7 @@ public:
     Chain<Problem> TheProblem;
     
     int LevelID;
+    int SheetID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

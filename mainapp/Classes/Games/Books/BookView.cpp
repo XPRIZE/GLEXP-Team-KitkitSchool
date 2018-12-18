@@ -32,16 +32,29 @@ namespace BookViewSpace {
 
 using namespace BookViewSpace;
 
+bool BookView::_isReadAll = false;
 bool BookView::_libraryMode = false;
 static std::string _currentBook;
 std::string BookView::_languageCode = "en";
 
 
-
 BookView* BookView::create(const cocos2d::Size &size, std::string &bookPath)
 {
+    if (TodoUtil::endsWith(bookPath, "/") == false) {
+        bookPath += "/";
+    }
+    
+    return BookView::create(size, bookPath, true);
+}
+
+BookView* BookView::create(const cocos2d::Size &size, std::string &bookPath, bool checkCompleteCondition)
+{
+    if (TodoUtil::endsWith(bookPath, "/") == false) {
+        bookPath += "/";
+    }
+
     BookView *pRet = new(std::nothrow) BookView();
-    if (pRet && pRet->init(size, bookPath)) {
+    if (pRet && pRet->init(size, bookPath, checkCompleteCondition)) {
         pRet->autorelease();
         return pRet;
     } else {
@@ -51,13 +64,14 @@ BookView* BookView::create(const cocos2d::Size &size, std::string &bookPath)
     }
 }
 
-
-bool BookView::init(const Size &size, std::string &bookPath)
+bool BookView::init(const Size &size, std::string &bookPath, bool checkCompleteCondition)
 {
     if (!Node::init()) return false;
 
     GameSoundManager::getInstance()->stopAllEffects();
     GameSoundManager::getInstance()->unloadAllEffect();
+    
+    _checkCompleteCondition = checkCompleteCondition;
     
     _buttonEnabled = false;
     _soundSetting = true;
@@ -75,7 +89,7 @@ bool BookView::init(const Size &size, std::string &bookPath)
     
     setContentSize(size);
     
-    
+    _isReadAll = false;
     _finishReading = false;
     
     _bgView = Sprite::create("Books/book_vertical_bg.jpg");
@@ -87,7 +101,19 @@ bool BookView::init(const Size &size, std::string &bookPath)
     _bgView->setPosition(size/2);
     addChild(_bgView);
 
+    /*  moved to below: apply to all book layout
     if (_libraryMode && _book->bookType == TDBookType::WithAudio && (_bookLayout == TDBookLayout::Portrait || _bookLayout == TDBookLayout::Portrait_Traditional)) {
+        
+        _soundBtn = ui::Button::create("Common/Controls/library_book_button_sound-on.png");
+        _soundBtn->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+        _soundBtn->setPosition(Vec2(size.width-25, size.height-25));
+        addChild(_soundBtn);
+        _soundBtn->addClickEventListener([this](Ref*) {
+            this->setSoundSetting(!_soundSetting);
+        });
+        _soundSetting = getSoundSetting();
+        setSoundSetting(_soundSetting);
+        
         
         _soundView = Sprite::create("Common/Controls/book_readaloud_base.png");
 
@@ -171,8 +197,12 @@ bool BookView::init(const Size &size, std::string &bookPath)
         _soundSetting = BookView::getSoundSetting();
         setSoundButton(_soundSetting, _soundOnButton, _soundOnLabel);
         setSoundButton(!_soundSetting, _soundOffButton, _soundOffLabel);
+         
+     
+        
     }
-
+ */
+    
     _contentsView = Node::create();
     _contentsView->setContentSize(size);
     addChild(_contentsView);
@@ -219,7 +249,26 @@ bool BookView::init(const Size &size, std::string &bookPath)
     }
     
     
-    
+    {
+        if (_libraryMode && _book->bookType == TDBookType::WithAudio) {
+            // change - audio button for all book layout
+            
+            _soundBtn = ui::Button::create("Common/Controls/library_book_button_sound-on.png");
+            _soundBtn->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+            _soundBtn->setPosition(Vec2(size.width-25, size.height-25));
+            addChild(_soundBtn);
+            _soundBtn->addClickEventListener([this](Ref*) {
+                this->setSoundSetting(!_soundSetting);
+                if (_soundSetting) {
+                    _currentPageView->startReading();
+                } else {
+                    _currentPageView->stopReading();
+                }
+            });
+            _soundSetting = getSoundSetting();
+            setSoundSetting(_soundSetting);
+        }
+    }
     _progressBar = ProgressIndicator::create();
     _progressBar->setPosition(Vec2(size.width/2, size.height - _progressBar->getContentSize().height));
     addChild(_progressBar);
@@ -284,6 +333,8 @@ void BookView::onExit()
     GameSoundManager::getInstance()->stopAllEffects();
     GameSoundManager::getInstance()->unloadAllEffect();
     
+
+    
 }
 
 void BookView::setBook(TodoBook *book)
@@ -311,13 +362,15 @@ void BookView::viewTitle(float delay)
     }
     
     _currentPageView = BookPage::create();
-    _currentPageView->setTitle(_book->bookTitle, _book->imagePrefix+_book->titleImageFilename, _soundSetting ? _book->imagePrefix+_book->titleAudioFilename : "", _bookLayout, delay);
+    //_currentPageView->setTitle(_book->bookTitle, _book->imagePrefix+_book->titleImageFilename, _soundSetting ? _book->imagePrefix+_book->titleAudioFilename : "", _bookLayout, delay);
+    _currentPageView->setTitle(_book->bookTitle, _book->imagePrefix+_book->titleImageFilename, _book->imagePrefix+_book->titleAudioFilename, _bookLayout, delay);
+    
     _currentPageView->setScale(_pageScale);
     _currentPageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _currentPageView->setPosition(getContentSize()/2);
     _contentsView->addChild(_currentPageView);
 
-    showSoundButton();
+    //showSoundButton();
 }
 
 
@@ -349,7 +402,8 @@ void BookView::viewPage(int page)
     }
     
     _currentPageView = BookPage::create();
-    _currentPageView->setPage(_book, &(_book->pages[_currentPage]), _bookLayout, _book->bookType == TDBookType::WithAudio && _soundSetting);
+    //_currentPageView->setPage(_book, &(_book->pages[_currentPage]), _bookLayout, _book->bookType == TDBookType::WithAudio && _soundSetting);
+    _currentPageView->setPage(_book, &(_book->pages[_currentPage]), _bookLayout, _book->bookType == TDBookType::WithAudio);
     
     _currentPageView->setScale(_pageScale);
     _currentPageView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -396,16 +450,26 @@ void BookView::nextPage()
                                                     LogManager::getInstance()->logEvent(
                                                             _book->bookTitle, "finish_read", "",
                                                             _currentPage);
-                                                    CompletePopup::create()->show(0.0, []() {
-                                                        CCAppController::sharedAppController()->handleGameComplete(1);
+                                                    CompletePopup::create()->show(0.0, [this]() {
+                                                        _isReadAll = true;
+                                                        
+                                                        if (_checkCompleteCondition)
+                                                        {
+                                                            CCAppController::sharedAppController()->handleGameComplete(1);
+                                                        }
+                                                        else
+                                                        {
+                                                            CCAppController::sharedAppController()->handleGameQuit();
+                                                        }
+                                                        
                                                         //TodoSchoolBackButton::popGameScene();
                                                     });
                                                 } else {
                                                     showPageButton();
-                                                    _currentPageView->startReading();
+                                                    if (getSoundSetting())  _currentPageView->startReading();
                                                 }
 
-                                                hideSoundButton();
+                                                //hideSoundButton();
                                             }),
                                             DelayTime::create(turnDuration),
                                             CallFunc::create([oldPage](){
@@ -428,7 +492,7 @@ void BookView::nextPage()
             _contentsView->setPositionX(w);
             viewPage(_currentPage+1);
             showPageButton();
-           _currentPageView->startReading();
+            if (getSoundSetting()) _currentPageView->startReading();
         }),
                                                   
                                                   MoveBy::create(0.15, Vec2(-w, 0)),
@@ -475,7 +539,7 @@ void BookView::previousPage()
                                             DelayTime::create(turnDuration),
                                             CallFunc::create([this](){
                                                 showPageButton();
-                                                _currentPageView->startReading();
+                                                if (getSoundSetting())  _currentPageView->startReading();
                                             }),
                                             DelayTime::create(turnDuration),
                                             CallFunc::create([oldPage](){
@@ -509,7 +573,7 @@ void BookView::previousPage()
                 viewPage(_currentPage-1);
             }
             showPageButton();
-            _currentPageView->startReading();
+            if (getSoundSetting()) _currentPageView->startReading();
         }),
                                                   MoveBy::create(0.15, Vec2(w, 0)),
                                                   nullptr));
@@ -584,39 +648,40 @@ void BookView::popBookScene()
             CCAppController::sharedAppController()->handleGameComplete(1);
 
         } else {
-            (Director::getInstance())->popScene();
+            //(Director::getInstance())->popScene();
+            CCAppController::sharedAppController()->handleGameQuit();
         }
     }
 
 }
 
-void BookView::setSoundButton(bool isSelect, ui::ImageView *imageButton, Label *textLabel) {
-    Size size = imageButton->getContentSize();
+//void BookView::setSoundButton(bool isSelect, ui::ImageView *imageButton, Label *textLabel) {
+//    Size size = imageButton->getContentSize();
+//
+//    if (isSelect) {
+//        imageButton->loadTexture("Common/Controls/book_readaloud_button_active.png");
+//        textLabel->setTextColor(Color4B(255, 255, 255, 255));
+//        textLabel->setPosition(size.width / 2, 156 - 15);
+//
+//    } else {
+//        imageButton->loadTexture("Common/Controls/book_readaloud_button_normal.png");
+//        textLabel->setTextColor(Color4B(87, 44, 0, 255));
+//        textLabel->setPosition(size.width / 2, 156);
+//
+//    }
+//}
 
-    if (isSelect) {
-        imageButton->loadTexture("Common/Controls/book_readaloud_button_active.png");
-        textLabel->setTextColor(Color4B(255, 255, 255, 255));
-        textLabel->setPosition(size.width / 2, 156 - 15);
-
-    } else {
-        imageButton->loadTexture("Common/Controls/book_readaloud_button_normal.png");
-        textLabel->setTextColor(Color4B(87, 44, 0, 255));
-        textLabel->setPosition(size.width / 2, 156);
-
-    }
-}
-
-void BookView::showSoundButton() {
-    if (_soundView != nullptr) {
-        _soundView->setVisible(true);
-    }
-}
-
-void BookView::hideSoundButton() {
-    if (_soundView != nullptr) {
-        _soundView->setVisible(false);
-    }
-}
+//void BookView::showSoundButton() {
+//    if (_soundView != nullptr) {
+//        _soundView->setVisible(true);
+//    }
+//}
+//
+//void BookView::hideSoundButton() {
+//    if (_soundView != nullptr) {
+//        _soundView->setVisible(false);
+//    }
+//}
 
 string BookView::getCurrentBook() {
     return _currentBook;
@@ -627,6 +692,11 @@ void BookView::setCurrentBook(string book) {
 }
 
 bool BookView::getSoundSetting() {
+    
+    bool result = UserDefault::getInstance()->getBoolForKey("SOUND_ENABLE_BOOK_GLOBAL", true);
+    return result;
+    
+    /*
     bool result = true;
 
     string soundOffBook = UserDefault::getInstance()->getStringForKey("SOUND_OFF_BOOK", "");
@@ -642,9 +712,21 @@ bool BookView::getSoundSetting() {
     }
 
     return result;
+     */
+    
 }
 
 void BookView::setSoundSetting(bool enable) {
+    _soundSetting = enable;
+    if (enable) {
+        _soundBtn->loadTextureNormal("Common/Controls/library_book_button_sound-on.png");
+    } else {
+        _soundBtn->loadTextureNormal("Common/Controls/library_book_button_sound-off.png");
+    }
+    
+    UserDefault::getInstance()->setBoolForKey("SOUND_ENABLE_BOOK_GLOBAL", enable);
+    
+    /*
     string soundOffBook = UserDefault::getInstance()->getStringForKey("SOUND_OFF_BOOK", "");
     vector<std::string> splitSoundOffBook = TodoUtil::split(soundOffBook, ',');
     splitSoundOffBook.erase(std::remove(splitSoundOffBook.begin(), splitSoundOffBook.end(), getCurrentBook()), splitSoundOffBook.end());
@@ -662,4 +744,9 @@ void BookView::setSoundSetting(bool enable) {
     }
 
     UserDefault::getInstance()->setStringForKey("SOUND_OFF_BOOK", strSave);
+     */
+    
+    
+    
+    
 }

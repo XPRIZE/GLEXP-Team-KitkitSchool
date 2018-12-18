@@ -6,7 +6,7 @@
 //
 
 #include "Mango.hpp"
-#include "NumberCard.hpp"
+#include "MangoShopNumberCard.hpp"
 namespace MangoShop
 {
     bool Mango::_isOtherMovingCard = false;

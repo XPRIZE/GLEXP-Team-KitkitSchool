@@ -61,10 +61,10 @@ void WelcomeVideoScene::onEnterTransitionDidFinish()
 
     _player->setTouchEnabled(false);
     
-    _player->setFileName("TutorialVideo/Opening_movie.mp4");
+    _player->setFileName("TutorialVideo/vdo_phase3_opening_movie.mp4");
     _player->play();
     
-    UserDefault::getInstance()->setBoolForKey("WelcomeVideoPlayed", true);
+    UserDefault::getInstance()->setBoolForKey(UserManager::getInstance()->getWelcomeVideoPlayedKey().c_str(), true);
     
     _player->addEventListener([this](Ref*, VideoPlayer::EventType E) {
         switch (E) {

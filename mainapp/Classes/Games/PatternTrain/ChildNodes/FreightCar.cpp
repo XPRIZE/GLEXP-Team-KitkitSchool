@@ -7,7 +7,7 @@
 //
 
 #include "FreightCar.hpp"
-#include "Box.hpp"
+#include "PatternTrainBox.hpp"
 #include "Slot.hpp"
 
 BEGIN_NS_PATTERNTRAIN;

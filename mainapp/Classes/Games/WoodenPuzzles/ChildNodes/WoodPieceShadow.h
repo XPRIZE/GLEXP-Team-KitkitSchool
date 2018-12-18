@@ -12,6 +12,7 @@
 #pragma once
 
 #include "../Utils/WoodenPuzzleNS.h"
+#include <Common/Basic/CreateFunc.h>
 
 
 BEGIN_NS_WOODENPUZZLES
@@ -25,7 +26,9 @@ public:
 
 public:
     CREATE_FUNC(WoodPieceShadow);
-    bool init() override;
+    bool init(const string& Mode);
+    
+    string Mode;
     
 private:
     void clearInternals();

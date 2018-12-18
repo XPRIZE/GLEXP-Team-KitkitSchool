@@ -7,14 +7,15 @@
 //
 
 #include "Bird.hpp"
+#include "CoopScene.hpp"
 #include "Utils/TodoUtil.h"
 #include "Managers/UserManager.hpp"
 #include "Managers/GameSoundManager.h"
 
 int Bird::getBirdID(char category, int level)
 {
-    std::vector<int> literacyBirds = { 1, 5, 4, 3, 6, 7, 13, 14, 15};
-    std::vector<int> mathBirds = { 2, 8, 9, 11, 10, 12, 16, 17, 18 };
+    std::vector<int> literacyBirds = { 1, 5, 4, 3, 6, 7, 13, 14, 15, 19, 21, 23};
+    std::vector<int> mathBirds = { 2, 8, 9, 11, 10, 12, 16, 17, 18, 20, 22, 23 };
     
     if (category=='L') {
         if (level>=literacyBirds.size()) return 0;
@@ -44,6 +45,11 @@ Vec2 Bird::getBirdAnchor(int id)
         case 13: return Vec2(0.45, 0.02);
         case 14: return Vec2(0.45, 0.02);
         case 15: return Vec2(0.45, 0.05);
+            
+        case 19: return Vec2(0.45, 0.08);
+        case 21: return Vec2(0.4, 0.02);
+        case 23: return Vec2(0.5, 0.07);
+            
         case 8: return Vec2(0.45, 0.12);
         case 9: return Vec2(0.45, 0.18);
         case 11: return Vec2(0.45, 0.10);
@@ -52,6 +58,10 @@ Vec2 Bird::getBirdAnchor(int id)
         case 16: return Vec2(0.50, 0.08);
         case 17: return Vec2(0.50, 0.18);
         case 18: return Vec2(0.50, 0.08);
+            
+        case 20: return Vec2(0.5, 0.05);
+        case 22: return Vec2(0.58, 0.12);
+            
         default:
             return Vec2(0, 0);
     }
@@ -154,10 +164,13 @@ void Bird::refreshSize()
         setContentSize(_eggSprite->getContentSize()*_eggSprite->getScale());
         setAnchorPoint(Vec2(0.5, 0.05));
     } else {
-        auto size = aniFramesArray.front().front()->getOriginalSize()*_scale*_progressScale;
+        float scale = (_categoryLevel == CoopScene::LEVEL_FISH_PRESENT) ? 2.8f : _scale;
+        float progressScale = (_categoryLevel == CoopScene::LEVEL_FISH_PRESENT) ? 1.0f : _progressScale;
+        auto size = aniFramesArray.front().front()->getOriginalSize()*scale*progressScale;
+        
         setContentSize(size);
         if (_aniSprite) {
-            _aniSprite->setScale(_scale*_progressScale);
+            _aniSprite->setScale(scale*progressScale);
             _aniSprite->setPosition(Vec2(getContentSize().width/2, 0));
         }
        
@@ -183,6 +196,8 @@ void Bird::setStatus(BirdStatus status)
                 std::string eggName;
                 if (_categoryLevel==0) {
                     eggName = "coop_egg_english_1.png";
+                } else if (_categoryLevel==CoopScene::LEVEL_FISH_PRESENT) {
+                    eggName = "fishpresent_disabled.png";
                 } else if (_category=='M') {
                     eggName = "coop_egg_math_"+TodoUtil::itos(_categoryLevel)+".png";
                 } else if (_category=='L') {
@@ -191,7 +206,14 @@ void Bird::setStatus(BirdStatus status)
                     eggName = "coop_egg_english_1.png";
                 }
                 _eggSprite = Sprite::create("BirdAnimation/"+eggName);
-                _eggSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+                
+                if (_categoryLevel == CoopScene::LEVEL_SPECIAL_COURSE) {
+                    _eggSprite->setAnchorPoint(Vec2(0, 0.153f));
+                    
+                } else {
+                    _eggSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+                    
+                }
                 addChild(_eggSprite);
             }
             
@@ -248,7 +270,7 @@ void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frame
     std::string sub;
     std::string sheetPrefix;
     
-    if (UserManager::getInstance()->isLevelCleared(_levelID)) {
+    if (UserManager::getInstance()->isLevelCleared(_levelID) && _categoryLevel < CoopScene::LEVEL_SPECIAL_COURSE) {
         sub = "crown";
         sheetPrefix = animFilePrefix + "-crown";
         
@@ -279,7 +301,14 @@ void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frame
     
     
     for (int i = 0; i < numAni1Frames; i++) {
-        auto framename = StringUtils::format("%s/%s/%02d_%04d.png",animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1);
+        string framename;
+        if (_categoryLevel == CoopScene::LEVEL_FISH_PRESENT) {
+            framename = StringUtils::format("fishpresent/default/fishpresent_%04d.png", i+1);
+            
+        } else {
+            framename = StringUtils::format("%s/%s/%02d_%04d.png",animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1);
+        }
+
         auto frame = cache->getSpriteFrameByName(framename);
         ani1Frames.pushBack(frame);
     }
@@ -290,7 +319,13 @@ void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frame
     animateArray.pushBack(ani1Animate);
     
     for (int i = numAni1Frames; i < numAni1Frames+numAni2Frames; i++) {
-        auto frame = cache->getSpriteFrameByName(StringUtils::format("%s/%s/%02d_%04d.png", animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1));
+        SpriteFrame* frame;
+        if (_categoryLevel == CoopScene::LEVEL_FISH_PRESENT) {
+            frame = cache->getSpriteFrameByName(StringUtils::format("fishpresent/default/fishpresent_%04d.png", i+1));
+        } else {
+            frame = cache->getSpriteFrameByName(StringUtils::format("%s/%s/%02d_%04d.png", animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1));
+        }
+        
         ani2Frames.pushBack(frame);
     }
     aniFramesArray.push_back(ani2Frames);
@@ -301,7 +336,13 @@ void Bird::setupAnim(std::string animFilePrefix, int birdIndex, int numAni1Frame
     
     
     for (int i = numAni1Frames+numAni2Frames; i < numAni1Frames+numAni2Frames+numAniTouchFrames; i++) {
-        auto frame = cache->getSpriteFrameByName(StringUtils::format("%s/%s/%02d_%04d.png", animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1));
+        SpriteFrame* frame;
+        if (_categoryLevel == CoopScene::LEVEL_FISH_PRESENT) {
+            frame = cache->getSpriteFrameByName(StringUtils::format("fishpresent/default/fishpresent_%04d.png", i+1));
+        } else {
+            frame = cache->getSpriteFrameByName(StringUtils::format("%s/%s/%02d_%04d.png", animFilePrefix.c_str(), sub.c_str(), birdIndex, i+1));
+        }
+        
         aniNormalFrames.pushBack(frame);
     }
     aniFramesArray.push_back(aniNormalFrames);

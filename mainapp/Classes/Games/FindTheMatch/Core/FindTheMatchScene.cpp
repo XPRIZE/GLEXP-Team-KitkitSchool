@@ -8,7 +8,7 @@
 
 
 #include "FindTheMatchScene.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/FindTheMatchMainDepot.h"
 #include <Common/Basic/SoundEffect.h>
 #include "Common/Effects/FireworksEffect.hpp"
 #include <Managers/StrictLogManager.h>
@@ -254,7 +254,7 @@ void FindTheMatchScene::refreshChildNodes() {
                 // NB(xenosoz, 2018): Attach a log for future analysis (#1/2)
                 stringstream SS;
                 SS << "/" << MainDepot().gameName()
-                    << "/" << "level-" << LevelID
+                    << "/" << "level-" << LevelID << "-" << SheetID
                     << "/" << "work-" << WorkID;
                 StrictLogManager::shared()->game_Peek_Answer(MainDepot().gameName(),
                                                              SS.str(),
@@ -282,7 +282,7 @@ void FindTheMatchScene::refreshChildNodes() {
             // NB(xenosoz, 2018): Attach a log for future analysis (#2/2)
             stringstream SS;
             SS << "/" << MainDepot().gameName()
-            << "/" << "level-" << LevelID
+            << "/" << "level-" << LevelID << "-" << SheetID
             << "/" << "work-" << WorkID;
             StrictLogManager::shared()->game_Peek_Answer(MainDepot().gameName(),
                                                          SS.str(),

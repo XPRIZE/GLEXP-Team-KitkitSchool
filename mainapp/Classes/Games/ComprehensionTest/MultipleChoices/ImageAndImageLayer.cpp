@@ -55,6 +55,8 @@ namespace ComprehensionTest
         
         void ImageAndImageLayer::setAnswers(std::string folder, std::vector<std::string> imageFiles)
         {
+            random_shuffle(imageFiles.begin(), imageFiles.end());
+            
             Size totalSize;
             auto answersRootNode = Node::create();
             

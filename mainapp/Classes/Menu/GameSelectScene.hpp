@@ -52,7 +52,7 @@ private:
     void addGameButton(Node *parent, std::string levelID, int day, int gameIndex, Vector<ui::Button*>& iconVector);
     void addDayGameButtons(std::string levelID, int day, Vector<ui::Button*>& iconVector);
     void layoutGameButton(Node *parent, Vector<ui::Button*>& iconVector);
-    
+    void refreshGameButtonForSpecialCourse();
     
     Vector<Sprite*> clouds;
     

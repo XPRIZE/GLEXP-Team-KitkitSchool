@@ -9,12 +9,13 @@
 
 #pragma once
 
-#include "../ChildNodes/GameBoard.h"
+#include "../ChildNodes/WoodenPuzzlesGameBoard.h"
 #include "../ChildNodes/PlayField.h"
 #include "../ChildNodes/ShadowField.h"
-#include "../ChildNodes/DeckBase.h"
+#include "../ChildNodes/WoodenPuzzlesDeckBase.h"
 #include "../Stores/WoodenPuzzleStore.h"
 #include "../Utils/WoodenPuzzleNS.h"
+#include <Common/Basic/CreateFunc.h>
 
 
 BEGIN_NS_WOODENPUZZLES
@@ -38,9 +39,11 @@ public:
 public:
     CREATE_FUNC(OrderedPuzzleScene);
     OrderedPuzzleScene();
-    bool init() override;
+    bool init(const string& Mode);
     
+    string Mode;
     int LevelID;
+    int WorkSheetID;
     void grabPuzzleStore(WoodenPuzzleStore* Store);
 
 private:

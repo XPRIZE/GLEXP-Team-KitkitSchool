@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "../ChildNodes/BonusNode.h"
-#include "../ChildNodes/TrailerNode.h"
-#include "../Models/Problem.h"
-#include "../Models/Worksheet.h"
-#include "../Utils/MainNS.h"
+#include "../ChildNodes/LetterTraceBonusNode.h"
+#include "../ChildNodes/LetterTraceTrailerNode.h"
+#include "../Models/LetterTraceProblem.h"
+#include "../Models/LetterTraceWorksheet.h"
+#include "../Utils/LetterTraceNS.h"
 #include <Common/Controls/ProgressIndicator.hpp>
 #include <Common/Controls/TraceField/TraceField.h>
 
@@ -29,6 +29,7 @@ class LetterTraceScene: public Scene {
     
 public:
     int LevelID;
+    int SheetID;
     Sprite* Background;
     ProgressIndicator* TheProgressBar;
 
@@ -45,6 +46,10 @@ public:
     
     function<void()> OnSuccess;
     function<void()> OnFail;
+
+    //void removeSignLanguageVideo();
+    void drawSignLanguageVideo();
+    string getVideoFile(string letter);
 
 public:
     CREATE_FUNC(LetterTraceScene);

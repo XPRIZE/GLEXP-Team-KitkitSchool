@@ -11,20 +11,22 @@
 
 #include "cocos2d.h"
 #include "ui/UIButton.h"
-USING_NS_CC;
 
+USING_NS_CC;
 
 class BookChoiceScene: public Layer {
 public:
     static cocos2d::Scene* createScene();
+    static cocos2d::Scene* createSceneForBookWithQuiz();
     
-    virtual bool init() override;
     CREATE_FUNC(BookChoiceScene);
     
-
-private:
-
+    virtual bool init() override;
+    virtual void onEnter() override;
+        
+    bool forBookWithQuizScene;
     
+private:
 };
 
 #endif /* BookChoiceScene_hpp */

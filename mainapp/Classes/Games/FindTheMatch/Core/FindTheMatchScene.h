@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "../Models/Worksheet.h"
-#include "../Utils/MainNS.h"
-#include "../ChildNodes/Card.h"
-#include "../ChildNodes/DeckBase.h"
-#include "../ChildNodes/PlayerBase.h"
-#include "../ChildNodes/GameBoard.h"
+#include "../Models/FindTheMatchWorksheet.h"
+#include "../Utils/FindTheMatchNS.h"
+#include "../ChildNodes/FindTheMatchCard.h"
+#include "../ChildNodes/FindTheMatchDeckBase.h"
+#include "../ChildNodes/FindTheMatchPlayerBase.h"
+#include "../ChildNodes/FindTheMatchGameBoard.h"
 #include <Common/Controls/TodoSchoolBackButton.hpp>
 #include <Common/Controls/ProgressIndicator.hpp>
 
@@ -43,6 +43,7 @@ public:
     Chain<Worksheet> TheSheet;
 
     int LevelID;
+    int SheetID;
     function<void()> OnSuccess;
     function<void()> OnFail;
 

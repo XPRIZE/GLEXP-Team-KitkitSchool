@@ -23,7 +23,10 @@ public:
     virtual bool init() override;
     
     
-    void setImage(int level, int type, int number, const std::string& cardImageName, int rotation, float scale);
+    void setImage(int level, int type, int number,
+                  const std::string& cardImageName,
+                  const std::string& localizedName,
+                  int rotation, float scale);
     bool isTouchedIn(Point pt);
     
     // NB(xenosoz, 2016): Relationships between two cards.

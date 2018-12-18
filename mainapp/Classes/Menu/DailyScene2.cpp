@@ -6,6 +6,7 @@
 //
 //
 
+#include "CoopScene.hpp"
 #include "DailyScene2.hpp"
 #include "GameSelectScene.hpp"
 
@@ -39,6 +40,8 @@
 
 namespace DailyScene2Space {
     
+    const int LEVEL_SPECIAL_COURSE = CoopScene::LEVEL_SPECIAL_COURSE;
+    const int ACTION_ID_SPECIAL_COURSE = 100;
     
     const Size viewSize = Size(2560, 1800);
     
@@ -115,6 +118,8 @@ bool DailyScene2::init(string levelID)
     UserManager::getInstance()->setPlayingDay(0);
     StrictLogManager::shared()->dayChoice_Begin(levelID);
     _levelID = levelID;
+    _isSpecialCourse = TodoUtil::endsWith(_levelID, TodoUtil::itos(LEVEL_SPECIAL_COURSE));
+    
     _currentDay = 0;
     _doneClearedDay = false;
     
@@ -124,7 +129,20 @@ bool DailyScene2::init(string levelID)
     
     _freechoiceGames.clear();
     
-    
+    if(_isSpecialCourse) {
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(folder + "badge/special_course/sc_badge_small-money-bag.plist", folder + "badge/special_course/sc_badge_small-money-bag.png");
+        
+        if (_cur->category == 'L') {
+            SpriteFrameCache::getInstance()->addSpriteFramesWithFile(folder + "badge/special_course/sc_badge_large-money-bag.plist", folder + "badge/special_course/sc_badge_large-money-bag.png");
+
+        } else {
+            SpriteFrameCache::getInstance()->addSpriteFramesWithFile(folder + "badge/special_course/sc_badge_large-money-bag_math.plist", folder + "badge/special_course/sc_badge_large-money-bag_math.png");
+
+        }
+
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(folder + "badge/special_course/sc_badge_large-money-bag_effect.plist", folder + "badge/special_course/sc_badge_large-money-bag_effect.png");
+    }
+
     auto winSize = Director::getInstance()->getWinSize();
     setContentSize(winSize);
     
@@ -253,6 +271,10 @@ bool DailyScene2::init(string levelID)
     _choiceTab->setPosition(tabPos);
     addChild(_choiceTab);
     
+    if (_isSpecialCourse) {
+        _choiceTab->setVisible(false);
+    }
+    
   
     {
         _coinTab = CoinTab::create();
@@ -296,7 +318,6 @@ bool DailyScene2::init(string levelID)
     }
     
     GameSoundManager::getInstance()->playBGM("Common/Music/BGM2_DailySelection.m4a");
-    
     return true;
 }
 
@@ -382,11 +403,12 @@ void DailyScene2::refreshData()
     
     
     _maxAvailableDay = _currentDay;
-    if (UserManager::getInstance()->checkIfNextDayIsAvailable(_levelID, _currentDay)) {
-        _maxAvailableDay = _currentDay+1;
+    
+    if (!_isSpecialCourse) {
+        if (UserManager::getInstance()->checkIfNextDayIsAvailable(_levelID, _currentDay)) {
+            _maxAvailableDay = _currentDay+1;
+        }
     }
-    
-    
 }
 
 
@@ -405,23 +427,43 @@ void DailyScene2::Mango::setupShape(int birdID, string levelID, int day, bool cr
     _day = day;
     _isCrown = crown;
     _isQuiz = quiz;
-    
-    if (crown) {
-        _body = Sprite::create(folder+"badge/daily_badge_common_future_crown.png");
+    _isSpecialCourse = TodoUtil::endsWith(levelID, TodoUtil::itos(LEVEL_SPECIAL_COURSE));
+    if (_isSpecialCourse) {
+        loadSpriteFrameForSC(false);
+        _body = Sprite::createWithSpriteFrame(_spriteFrameForSC.front());
+        
     } else {
-        _body = Sprite::create(folder+"badge/daily_badge_common_future.png");
+        if (crown) {
+            _body = Sprite::create(folder+"badge/daily_badge_common_future_crown.png");
+        } else {
+            _body = Sprite::create(folder+"badge/daily_badge_common_future.png");
+        }
     }
     
     auto size = _body->getContentSize();
     this->setContentSize(size);
     this->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     
-    _body->setPosition(size/2);
+    _body->setPosition(size/2 + Size(0, 20));
+    if (_isSpecialCourse) {
+        _topGlow = Sprite::createWithSpriteFrame(_spriteFrameTopGlowForGC.front());
+        _topGlow->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+        _topGlow->setPosition(Vec2(_body->getContentSize().width / 2, _body->getContentSize().height));
+        _body->addChild(_topGlow);
+        _topGlow->setVisible(false);
+    }
     
     
-    _backGlow = Sprite::create(folder+"badge/daily_badge_common_current_effect.png");
+    if (_isSpecialCourse) {
+        _backGlow = Sprite::create(folder+"badge/special_course/sc_badge_large-money-bag_bg-effect.png");
+        _backGlow->setPosition(size/2 + Size(0, 20));
+        
+    } else {
+        _backGlow = Sprite::create(folder+"badge/daily_badge_common_current_effect.png");
+        _backGlow->setPosition(size/2 + Size(0, 20));
+    }
+    
     _backGlow->setVisible(false);
-    _backGlow->setPosition(size/2);
     this->addChild(_backGlow);
     
     this->addChild(_body);
@@ -445,11 +487,15 @@ void DailyScene2::Mango::setupShape(int birdID, string levelID, int day, bool cr
     _cover->setVisible(false);
     _cover->setAnchorPoint(Vec2::ZERO);
     this->addChild(_cover);
-
+    
+    _isFirstSetup = true;
 }
 
 void DailyScene2::Mango::setTouched(bool touched)
 {
+    if (_isSpecialCourse) {
+        return;
+    }
     _cover->setVisible(!touched);
 }
 
@@ -469,7 +515,8 @@ void DailyScene2::Mango::refresh(bool animate)
     bool isLevelCleared = UserManager::getInstance()->isLevelCleared(_levelID);
     bool isDayCleared = UserManager::getInstance()->isDayCleared(_levelID, _day);
         
-        
+    stopActionByTag(ACTION_ID_SPECIAL_COURSE);
+    
     btnColor = Color4B(49, 16, 0, 128);
     
     if (time>0) {
@@ -479,12 +526,18 @@ void DailyScene2::Mango::refresh(bool animate)
             //else (_isQuiz) btnFile = "daily_badge_common_future_withCrown.png";
             else {
                 btnFile = "daily_badge_common_front.png";
-                labelOffset = Vec2(0, 0);
+                labelOffset = Vec2(0, 15);
             }
         } else {
-            if (_isCrown) btnFile = "daily_badge_common_future_crown.png";
-            else if (_isQuiz) btnFile = "daily_badge_common_future_withCrown.png";
-            else btnFile = "daily_badge_common_future.png";
+            if (_isSpecialCourse) {
+                btnFile = "special_course/sc_badge_future.png";
+                
+            } else {
+                labelOffset = Vec2(0, 15);
+                if (_isCrown) btnFile = "daily_badge_common_future_crown.png";
+                else if (_isQuiz) btnFile = "daily_badge_common_future_withCrown.png";
+                else btnFile = "daily_badge_common_future.png";
+            }
         }
     } else {
         const string prefix = "daily_badge";
@@ -493,42 +546,137 @@ void DailyScene2::Mango::refresh(bool animate)
         string clearPostFix = isDayCleared ? "-gold" : "-silver";
         string withCrownPostFix = (isLevelCleared  && (time==0)) ? "_withCrown" : "";
         
-        btnFile = prefix + birdInFix + timeInFix + clearPostFix + withCrownPostFix + ".png";
-        labelOffset = Vec2(0, 45);
+        if (_isSpecialCourse) {
+            loadSpriteFrameForSC(time == 0);
+            labelOffset = Vec2(0, 0);
+            
+        } else {
+            btnFile = prefix + birdInFix + timeInFix + clearPostFix + withCrownPostFix + ".png";
+            labelOffset = Vec2(0, 60);
+        }
+
         if (time==0) btnColor = Color4B(0, 0, 0, 0);
     }
     
-    
-    if (animate) {
-        _body->setTexture(folder+"badge/"+btnFile);
-        _label->setTextColor(btnColor);
-        _label->setPosition(bodyCenter + labelOffset);
-    } else {
-        _body->setTexture(folder+"badge/"+btnFile);
-        _label->setTextColor(btnColor);
-        _label->setPosition(bodyCenter + labelOffset);
-    }
-    
-    if (isDayCleared && _isQuiz) {
-        auto addCrown = Sprite::create(folder+"badge/daily_badge_common_past_crown.png");
-        addCrown->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-        _body->addChild(addCrown);
-    }
-    
-    if (time==0) {
-        _backGlow->setVisible(true);
-        _backGlow->runAction(RepeatForever::create(Sequence::create(
-                                                                    EaseOut::create(ScaleTo::create(0.8, 1.2), 2.0),
-                                                                    EaseIn::create(ScaleTo::create(0.8, 0.7), 2.0), NULL)));
-    } else {
-        _backGlow->setVisible(false);
-        _backGlow->stopAllActions();
+    if (_isSpecialCourse && time <= 0) {
+        _body->stopAllActions();
+        _body->setSpriteFrame(_spriteFrameForSC.front());
+
+        if (time == 0) {
+            _topGlow->setVisible(true);
+            
+            auto action = Sequence::create(DelayTime::create(3.0f), CallFunc::create([this, animate]() {
+                if (random(0, 1)) {
+                    auto animation = Animation::createWithSpriteFrames(_spriteFrameForSC, 0.15);
+                    animation->setRestoreOriginalFrame(true);
+                    auto animate = Animate::create(animation);
+                    _body->runAction(animate);
+                }
+            }), NULL);
+            
+            auto repeat = RepeatForever::create(action);
+            repeat->setTag(ACTION_ID_SPECIAL_COURSE);
+            runAction(repeat);
+            
+            {
+                auto animation = Animation::createWithSpriteFrames(_spriteFrameTopGlowForGC, 0.15);
+                auto animate = Animate::create(animation);
+                _topGlow->runAction(RepeatForever::create(animate));
+            }
+
+        } else {
+            _topGlow->setVisible(false);
+            auto action = Sequence::create(DelayTime::create(random(2.0f, 5.0f)), CallFunc::create([this, animate]() {
+                if (random(0, 1)) {
+                    auto animation = Animation::createWithSpriteFrames(_spriteFrameForSC, 0.15);
+                    animation->setRestoreOriginalFrame(true);
+                    auto animate = Animate::create(animation);
+                    _body->runAction(animate);
+                }
+            }), NULL);
+            
+            auto repeat = RepeatForever::create(action);
+            repeat->setTag(ACTION_ID_SPECIAL_COURSE);
+            runAction(repeat);
+        }
         
+        _label->setTextColor(btnColor);
+        _label->setPosition(bodyCenter + labelOffset);
+
+    } else {
+        if (animate) {
+            _body->setTexture(folder+"badge/"+btnFile);
+            _label->setTextColor(btnColor);
+            _label->setPosition(bodyCenter + labelOffset);
+        } else {
+            _body->setTexture(folder+"badge/"+btnFile);
+            if (!_isSpecialCourse && _isCrown && time > 0) {
+                auto size = _body->getContentSize();
+                _body->setPosition(size/2 + Size(0, 35));
+            }
+            _label->setTextColor(btnColor);
+            _label->setPosition(bodyCenter + labelOffset);
+        }
     }
-    
+
+    if (_isSpecialCourse) {
+        _backGlow->setVisible(time==0);
+        _backGlow->stopAllActions();
+
+    } else {
+        if (isDayCleared && _isQuiz) {
+            auto addCrown = Sprite::create(folder+"badge/daily_badge_common_past_crown.png");
+            addCrown->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+            _body->addChild(addCrown);
+        }
+
+        if (time==0) {
+            _backGlow->setVisible(true);
+            _backGlow->runAction(RepeatForever::create(Sequence::create(
+                                                                        EaseOut::create(ScaleTo::create(0.8, 1.2), 2.0),
+                                                                        EaseIn::create(ScaleTo::create(0.8, 0.7), 2.0), NULL)));
+        } else {
+            _backGlow->setVisible(false);
+            _backGlow->stopAllActions();
+
+        }
+    }
+ 
+    _isFirstSetup = false;
 }
 
+void DailyScene2::Mango::loadSpriteFrameForSC(bool isCrown) {
+    _spriteFrameForSC.clear();
+    _spriteFrameTopGlowForGC.clear();
+    char category = 'L';
+    
+    vector<string> split = TodoUtil::split(_levelID, '_');
+    if (split.size() >= 2) {
+        category = split[1] == "L" ? 'L' : 'M';
+    }
+    
+    auto stringFormat = category == 'L' ? "sc_badge_large-money-bag_%02d.png" : "sc_badge_large-money-bag_math_%02d.png";
+    if (isCrown) {
+        for (int i = 1; i < 7; i++) {
+            auto framename = StringUtils::format(stringFormat, i);
+            auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(framename);
+            _spriteFrameForSC.pushBack(frame);
+        }
 
+    } else {
+        for (int i = 1; i <= 8; i++) {
+            auto framename = StringUtils::format("sc_badge_small-money-bag_%02d.png", i);
+            auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(framename);
+            _spriteFrameForSC.pushBack(frame);
+        }
+    }
+    
+    for (int i = 1; i <= 9; i++) {
+        auto framename = StringUtils::format("sc_badge_large-money-bag_effect_%02d.png", i);
+        auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(framename);
+        _spriteFrameTopGlowForGC.pushBack(frame);
+    }
+}
 
 void DailyScene2::setupMangoBoard()
 {
@@ -605,6 +753,7 @@ void DailyScene2::setupMangoBoard()
             mango->setTouched(false);
             
             if (!_touchEnabled) return;
+            if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
             
             auto P = mango->getParent();
             auto pos = P->convertToNodeSpace(T->getLocation());
@@ -662,9 +811,11 @@ void DailyScene2::setupFreechoiceTab()
         if (box.containsPoint(pos))
         {
             if (_choiceUp) {
+                GameSoundManager::getInstance()->playEffectSound("FishTank/Sounds/HB_turn off.m4a");
                 StrictLogManager::shared()->dayChoice_CloseFreeChoiceMenu();
             }
             else {
+                GameSoundManager::getInstance()->playEffectSound("FishTank/Sounds/HB_turn on.m4a");
                 StrictLogManager::shared()->dayChoice_OpenFreeChoiceMenu();
             }
 
@@ -821,7 +972,12 @@ void DailyScene2::onEnter()
     auto coin = UserManager::getInstance()->getStars();
     auto showingCoin = CoinTab::_numCoin;
     if (coin!=showingCoin) {
-        _coinTab->addCoin(coin-showingCoin, Vec2(viewSize.width/2, 250));
+        if (_isSpecialCourse) {
+            _coinTab->setCoinLabel(coin);
+            
+        } else {
+            _coinTab->addCoin(coin-showingCoin, Vec2(viewSize.width/2, 250));
+        }
         
     }
     
@@ -916,7 +1072,7 @@ void DailyScene2::lightFall(LightBall *l, bool first)
 
 void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int maxAvailable)
 {
-    GameSoundManager::getInstance()->playEffectSound("WordVoice/GameName/"+gameName+".m4a");
+    GameSoundManager::getInstance()->playEffectSoundForAutoStart("WordVoice/GameName/"+gameName+".m4a");
 
     Size popupSize = Size(1540, 1404);
     auto winSize = Director::getInstance()->getWinSize();
@@ -1028,6 +1184,8 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
             b->addClickEventListener([this, gameName, gameLevel, popup](Ref*) {
                 if (!_freeChoiceStartEnabled) return;
                 _freeChoiceStartEnabled = false;
+                if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
+                
                 CCLOG("start game %s, %d", gameName.c_str(), gameLevel);
                 StrictLogManager::shared()->dayChoice_ChooseFreeChoiceGame(gameName, gameLevel);
                 CCAppController::sharedAppController()->startFreeChoiceGame(gameName, gameLevel);
@@ -1048,6 +1206,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
 
 void DailyScene2::showChoiceTab(bool show)
 {
+    if (_choiceTab->isVisible() == false) return;
     if (_choiceUp==show) return;
     
     _choiceTab->stopAllActions();

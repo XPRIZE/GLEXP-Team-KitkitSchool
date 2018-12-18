@@ -11,7 +11,7 @@
 #include "cocos2d.h"
 #include <stdio.h>
 #include <string>
-#include "NumberCard.hpp"
+#include "MissingNumberNumberCard.hpp"
 USING_NS_CC;
 using namespace std;
 

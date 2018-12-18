@@ -55,9 +55,10 @@ TraceField* TraceField::createWithCustomCursor(const std::string &filename)
 }
 
 TraceField::TraceField()
-    : DefaultCursorPickDistance(120.f)
-    , CursorPickDistance(DefaultCursorPickDistance)
-    , cursorFilename("")
+: DefaultCursorPickDistance(120.f)
+, CursorPickDistance(DefaultCursorPickDistance)
+, cursorFilename("")
+, HasTraceSound(false)
 {
     cursorScaleNormal = 1.75;
     cursorScalePicked = 2.1;
@@ -222,26 +223,30 @@ bool TraceField::handleActiveTouchEvent(Touch* T, Event* E) {
 
     // We don't catch any touch events from outside.
     Point PointInParentSpace = getParent()->convertToNodeSpace(T->getLocation());
-    if (!getBoundingBox().containsPoint(PointInParentSpace))
+    
+    if (!getBoundingBox().containsPoint(PointInParentSpace)){
         return DONT_CATCH_EVENT;
-
+    }
+    
     if (!(PassedIndex().WorldIndex < 1 && PassedIndex().GlyphIndex < GlyphNodes.size())) {
         return DONT_CATCH_EVENT;
     }
 
     TraceGlyphNode* GlyphNode = GlyphNodes[PassedIndex().GlyphIndex].get();
-
+    
     Point TouchPointInGlyph = GlyphNode->convertToNodeSpace(T->getLocation());
     Point TouchPointInField = this->convertToNodeSpace(T->getLocation());
     Point CursorPointInGlyph = CursorPointInGlyphNode();
     Point CursorPointInField = this->convertToNodeSpace(GlyphNode->convertToWorldSpace(CursorPointInGlyph));
-
+    
     // NB(xenosoz, 2016): CursorPicked = CursorPicked || CursorPickedInThisEvent
     float CursorDist = TouchPointInGlyph.distance(CursorPointInGlyph);
     if (CursorDist < CursorPickDistance()) {
         CursorPicked.update(true);
+    } else {
+        return DONT_CATCH_EVENT;
     }
-
+    
     if (CursorPicked()) {
         TraceLocator Locator;
         TraceIndex BestIndex = Locator.bestIndexByFinger(PassedIndex(), TheTraceString(), TouchPointInGlyph);
@@ -485,14 +490,15 @@ void TraceField::updateCursorPoint(float DeltaSeconds) {
 }
 
 void TraceField::clearTraceSound() {
-    if (!TraceSound) { return; }
+    if (!HasTraceSound) { return; }
     
     if (showDebugLog()) {
         CCLOG("Turn off tracing sound in TraceField::clearTraceSound");
     }
 
-    TraceSound.value().stop();
-    TraceSound.reset();
+    TraceSound.stop();
+    TraceSound = SoundEffect::emptyEffect();
+    HasTraceSound = false;
 }
 
 void TraceField::playTraceSound(float Duration) {
@@ -506,7 +512,7 @@ void TraceField::playTraceSound(float Duration) {
 
 
     // NB(xenosoz, 2016): Playing? -> Don't bother restarting the sound.
-    if (TraceSound) { return; }
+    if (HasTraceSound) { return; }
 
     if (showDebugLog()) {
         CCLOG("Trun on tracing sound in TraceField::playTraceSound");
@@ -514,7 +520,8 @@ void TraceField::playTraceSound(float Duration) {
 
     SoundEffect SE = TraceFieldDepot().soundForTrace();
     SE.playLoop();
-    TraceSound.reset(SE);
+    TraceSound = SE;
+    HasTraceSound = true;
 }
 
 END_NS_TRACEFIELD

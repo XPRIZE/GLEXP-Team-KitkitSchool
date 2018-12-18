@@ -41,15 +41,16 @@ Sprite* TraceFieldDepot::createBackgroundSprite(const Size& ParentSize) const {
     int MarginRight = 82;
     int MarginBottom = 92;
 
-    Optional<Json::Value> BackgroundJson = jsonFromFile(assetPrefix() + "/TraceField_Background.json");
-    if (BackgroundJson) {
+    Json::Value BackgroundJson;
+    
+    if (jsonFromFile(assetPrefix() + "/TraceField_Background.json", BackgroundJson)) {
         // NB(xenosoz, 2016): Override default configurations.
-        Json::Value& Json = BackgroundJson.value();
-        Width = parseIntWithSuffix(Json.get("width", "").asString(), "px").value(Width);
-        Height = parseIntWithSuffix(Json.get("height", "").asString(), "px").value(Height);
-        MarginTop = parseIntWithSuffix(Json.get("margin-top", "").asString(), "px").value(MarginTop);
-        MarginRight = parseIntWithSuffix(Json.get("margin-right", "").asString(), "px").value(MarginRight);
-        MarginBottom = parseIntWithSuffix(Json.get("margin-bottom", "").asString(), "px").value(MarginBottom);
+        Json::Value& Json = BackgroundJson;
+        parseIntWithSuffix(Width, Json.get("width", "").asString(), "px");
+        parseIntWithSuffix(Height, Json.get("height", "").asString(), "px");
+        parseIntWithSuffix(MarginTop, Json.get("margin-top", "").asString(), "px");
+        parseIntWithSuffix(MarginRight, Json.get("margin-right", "").asString(), "px");
+        parseIntWithSuffix(MarginBottom, Json.get("margin-bottom", "").asString(), "px");
     }
 
     Sprite* It = Sprite::create(assetPrefix() + "/TraceField_Background.png");

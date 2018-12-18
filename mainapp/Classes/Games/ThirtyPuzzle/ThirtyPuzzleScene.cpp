@@ -231,7 +231,7 @@ void ThirtyPuzzleScene::writeActionLog(Piece& piece) {
     auto workPath = [this] {
         stringstream ss;
         ss << "/" << "ThirtyPuzzle";
-        ss << "/" << "level-" << _currentLevel;
+        ss << "/" << "level-" << _currentLevel << "-0";
         ss << "/" << "work-" << _currentProblemIndex;
         return ss.str();
     }();

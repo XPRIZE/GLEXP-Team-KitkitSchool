@@ -10,7 +10,7 @@
 #pragma once
 
 #include "DummyBall.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/SpellingNS.h"
 
 
 BEGIN_NS_SPELLING

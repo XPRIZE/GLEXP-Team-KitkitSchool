@@ -9,7 +9,7 @@
 
 #include "NumberTrace.h"
 #include "Core/NumberTraceScene.h"
-#include "Models/LevelData.h"
+#include "Models/NumberTraceLevelData.h"
 #include <Managers/LanguageManager.hpp>
 
 using todoschool::numbertrace::LevelData;
@@ -54,12 +54,14 @@ void NumberTrace::setOnFail(std::function<void()> F) {
 
 cocos2d::Scene* NumberTrace::createScene() {
     using namespace todoschool::numbertrace;
+    int SheetID;
     auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
-    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID);
+    auto Sheet = LevelData::defaultData().randomSheetFor(Lang, LevelID, &SheetID);
     
     auto It = NumberTraceScene::create();
     It->TheWorksheet.update(Sheet);
     It->LevelID = LevelID;
+    It->SheetID = SheetID;
     It->OnSuccess = OnSuccess;
     It->OnFail = OnFail;
     

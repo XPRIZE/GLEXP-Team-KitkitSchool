@@ -17,6 +17,7 @@ USING_NS_CC;
 
 
 class Bird;
+class CoinTab;
 
 class MainScene: public Layer {
 public:
@@ -25,16 +26,13 @@ public:
     
     virtual bool init() override;
     virtual void onExitTransitionDidStart() override;
-    
+    virtual void resume() override;
     CREATE_FUNC(MainScene);
 
 
     
     virtual void onEnter() override;
-    
-
-
-    
+    static const int MENU_SCENE_ID = 250;
     
 private:
     
@@ -42,6 +40,9 @@ private:
     void confirmDebug();
     void manageCache();
     void playLogoFall(float dt);
+    
+    void shakeCoop(Node *coop, int times = 100);
+    void setDisableTouchEventForCoopGuide(bool disable);
     
     Vector<Sprite*> clouds;
     
@@ -56,19 +57,25 @@ private:
     Node *_skyNode;
     Node *_groundNode;
     Node *_leavesLeft, *_leavesRight;
+    Node *_highlight;
     std::string _debugCommand;
+    int _debugCoopNo;
     
 
     
     ui::Button *_quitButton;
-    
-    
-    
-    Node *_coop1Node, *_coop2Node;
+    ui::Button *_coop1Node, *_coop2Node;
     
     Node *_debugView;
     
     bool _transitionBegins;
+    
+    
+    // demo
+    ui::Button *_resetBtn, *_openAllBtn, *_addCoinsBtn;
+    Label * _reviewModeLabel;
+    Label * _signLanguageModeLabel;
+    CoinTab *_coinTab;
     
 
 };

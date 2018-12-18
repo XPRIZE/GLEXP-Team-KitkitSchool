@@ -22,6 +22,7 @@
 #include "Managers/GameSoundManager.h"
 #include "Managers/LogManager.hpp"
 #include "Managers/StrictLogManager.h"
+#include "Managers/CacheManager.hpp"
 
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Common/Controls/KitkitVideoPlayer.hpp"
@@ -121,9 +122,9 @@ void CoopScene2::initWithType(CoopType type)
     
     _coopView = Node::create();
     _coopView->setContentSize(coopSize);
-    _coopView->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    _coopView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _coopView->setScale(coopScale);
-    _coopView->setPosition(Vec2(dirSize.width/2.f, 0));
+    _coopView->setPosition(dirSize/2.f);
     addChild(_coopView);
     
     
@@ -303,6 +304,10 @@ void CoopScene2::setupCoop()
             if (!room->isLightUp) return;
             
             setTouchEnabled(false);
+            
+            if (UserManager::getInstance()->getGuideDayStatus() == guideDayType::touchFirst) {
+                UserManager::getInstance()->setGuideDayStatus(guideDayType::recognizeDay);
+            }
             
             auto bird = room->bird;
             
@@ -572,6 +577,8 @@ void CoopScene2::onEnter()
     
     GameSoundManager::getInstance()->stopBGM();
     
+    CacheManager::getInstance()->loadDailyCache();
+    
     auto levelID = UserManager::getInstance()->getCurrentLevelID();
     
     for (auto room : _rooms) {
@@ -582,6 +589,17 @@ void CoopScene2::onEnter()
             bird->runTouchAnimation();
         }
     }
+
+    if (this->_coopType== CT_LITERACY && UserManager::getInstance()->getGuideDayStatus() == guideDayType::recognizeDay) {
+        zoomIn(1, 0);
+        this->runAction(Sequence::create(DelayTime::create(1.f),
+            CallFunc::create([this](){
+                zoomIn(0, 0.4);
+            }),
+        nullptr));
+        UserManager::getInstance()->setGuideDayStatus(guideDayType::finish);
+    }
+
 }
 
 
@@ -616,7 +634,41 @@ void CoopScene2::onEnterTransitionDidFinish()
     
     if (!_holdCheckLight) checkLight();
     
+    if (this->_coopType== CT_LITERACY && UserManager::getInstance()->getGuideDayStatus()==guideDayType::touchFirst) {
+        this->runAction(Sequence::create(DelayTime::create(1.f),
+            CallFunc::create([this](){
+                zoomIn(1, 0.4);
+            }),
+        nullptr));
+    }
+
+    
 }
+
+void CoopScene2::zoomIn(int level, float duration)
+{
+    if (level==_zoomLevel) return;
+    _zoomLevel = level;
+    
+    float targetScale;
+    Vec2 targetPos;
+    
+    auto dirSize = Director::getInstance()->getWinSize();
+    
+    
+    if (level==1) {
+        targetScale = 1.5*coopScale;
+        targetPos = dirSize/2.0 + Size(630, -dirSize.height/2+350);
+    } else {
+        targetScale = 1.0*coopScale;
+        targetPos = dirSize/2.0;
+    }
+    
+    auto coopSpawn = Spawn::create(MoveTo::create(duration, targetPos), ScaleTo::create(duration, targetScale), NULL);
+    _coopView->runAction(coopSpawn);
+    
+}
+
 
 
 
@@ -888,11 +940,13 @@ void CoopScene2::checkLight()
 
     int light = maxCleared;
     
+    /*
     if (maxCleared<2) {
         light = 2;
     } else {
         light = maxCleared+1;
-    }
+    }*/
+    light = maxCleared+1;
     light = MAX(light, maxOpened);
     
     

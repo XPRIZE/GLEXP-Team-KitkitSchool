@@ -9,7 +9,7 @@
 
 #include "Stage.h"
 #include "../ChildNodes/HiddenBackButton.h"
-#include "../Utils/MainDepot.h"
+#include "../Utils/DigitalQuizMainDepot.h"
 #include <Common/Controls/TodoSchoolBackButton.hpp>
 
 

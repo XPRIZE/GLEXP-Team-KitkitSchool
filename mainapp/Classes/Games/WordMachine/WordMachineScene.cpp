@@ -196,7 +196,7 @@ bool WordMachineScene::init(int levelID)
         
     }
     
-    auto worksheet = LevelData::defaultData().randomSheetFor(lang, _levelID);
+    auto worksheet = LevelData::defaultData().randomSheetFor(lang, _levelID, &_worksheetID);
     _worksheet = worksheet;
     _currentProblemID = worksheet.beginProblemID();
     
@@ -469,7 +469,7 @@ void WordMachineScene::showImageCard()
                 string workPath = [this] {
                     stringstream SS;
                     SS << "/" << "WordMachine";
-                    SS << "/" << "level-" << _levelID;
+                    SS << "/" << "level-" << _levelID << "-" << _worksheetID;
                     SS << "/" << "work-" << _currentProblemID;
                     return SS.str();
                 }();
@@ -526,13 +526,15 @@ void WordMachineScene::showImageCard()
                 string workPath = [this] {
                     stringstream SS;
                     SS << "/" << "WordMachine";
-                    SS << "/" << "level-" << _levelID;
+                    SS << "/" << "level-" << _levelID << "-" << _worksheetID;
                     SS << "/" << "work-" << _currentProblemID;
                     return SS.str();
                 }();
                 StrictLogManager::shared()->game_Peek_Answer("WordMachine", workPath, _currentProblem.goodImage, _currentProblem.goodImage);
-                tb->addClickEventListener(nullptr);
-                ab->addClickEventListener(nullptr);
+                //tb->addClickEventListener(nullptr);
+                //ab->addClickEventListener(nullptr);
+                tb->setTouchEnabled(false);
+                ab->setTouchEnabled(false);
             });
         };
                           

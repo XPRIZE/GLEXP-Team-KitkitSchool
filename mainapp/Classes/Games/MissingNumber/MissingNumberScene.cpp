@@ -13,6 +13,7 @@
 #include "Managers/LanguageManager.hpp"
 #include "Managers/GameSoundManager.h"
 #include "Managers/StrictLogManager.h"
+#include "Managers/UserManager.hpp"
 #include "CCAppController.hpp"
 
 using namespace cocos2d::ui;
@@ -135,7 +136,7 @@ namespace MissingNumber
         auto data = TodoUtil::readTSV(s);
         
         // data[0][2] : #Worksheet or #WorksheetAll
-        bool bWorkSheetAll = data[0][2] == "#WorksheetAll" ? true : false;
+        bool bWorkSheetAll = UserManager::getInstance()->isWorksheetTestMode();
         int maxWorkSheet = 0;
         for (vector<string> row : data)
         {
@@ -169,11 +170,11 @@ namespace MissingNumber
         
         if (bWorkSheetAll == false)
         {
-            int curWorksheet = RandomHelper::random_int(1, maxWorkSheet);
+            mWorkSheetID = RandomHelper::random_int(1, maxWorkSheet);
             
             for (int i = mData.size() - 1; i >= 0; --i)
             {
-                if (mData.at(i).mWorksheet != curWorksheet)
+                if (mData.at(i).mWorksheet != mWorkSheetID)
                 {
                     mData.erase(mData.begin() + i);
                 }
@@ -637,8 +638,8 @@ namespace MissingNumber
     
     string MissingNumberScene::makeWorkPath() const {
         stringstream ss;
-        ss << "MissingNumber";
-        ss << "/" << "level-" << mLevelID;
+        ss << "/" << "MissingNumber";
+        ss << "/" << "level-" << mLevelID << "-" << mWorkSheetID;
         ss << "/" << "work-" << mCurrentProblemID;
         return ss.str();
     }

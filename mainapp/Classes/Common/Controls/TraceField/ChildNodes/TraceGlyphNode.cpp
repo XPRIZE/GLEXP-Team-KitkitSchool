@@ -18,6 +18,7 @@ BEGIN_NS_TRACEFIELD
 bool TraceGlyphNode::init() {
     if (!Super::init()) { return false; }
     
+    HasDrawCache = false;
     clearInternals();
 
     return true;
@@ -29,14 +30,16 @@ void TraceGlyphNode::clearInternals() {
         BeginIndex = BaseIndex().indexForGlyphBegin(TheTraceString());
         EndIndex = BaseIndex().indexForGlyphEnd(TheTraceString());
         
-        TheDrawCache.reset();
+        TheDrawCache = TraceGlyphDrawInfo();
+        HasDrawCache = false;
     };
     
     TheTraceString.OnValueUpdate = [this](TraceString&) {
         BeginIndex = BaseIndex().indexForGlyphBegin(TheTraceString());
         EndIndex = BaseIndex().indexForGlyphEnd(TheTraceString());
         
-        TheDrawCache.reset();
+        TheDrawCache = TraceGlyphDrawInfo();
+        HasDrawCache = false;
     };
 }
 
@@ -63,7 +66,7 @@ void TraceGlyphNode::update(float DeltaSeconds) {
     DI.Index3 = clipIndex(PassedIndex().indexForStrokeEnd(String));
     DI.Index4 = EndIndex;
 
-    if (TheDrawCache && *TheDrawCache == DI) {
+    if (HasDrawCache && TheDrawCache == DI) {
         // NB(xenosoz, 2016): We're clean now. Nothing to draw yet.
         return;
     }
@@ -77,7 +80,8 @@ void TraceGlyphNode::update(float DeltaSeconds) {
     }
     
     // Set it clean.
-    TheDrawCache.reset(DI);
+    TheDrawCache = DI;
+    HasDrawCache = false;
 }
 
 void TraceGlyphNode::drawTraceStringInRange(const TraceIndex& Start, const TraceIndex Stop,

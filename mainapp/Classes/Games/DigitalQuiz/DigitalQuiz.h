@@ -10,7 +10,7 @@
 #pragma once
 
 #include <cocos/2d/CCScene.h>
-#include "Models/LevelData.h"
+#include "Models/DigitalQuizLevelData.h"
 
 
 class DigitalQuiz {

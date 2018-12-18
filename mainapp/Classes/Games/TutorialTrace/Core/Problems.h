@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../ScratchField/ScratchField.h"
-#include "../Utils/MainNS.h"
+#include "../Utils/TutorialTraceNS.h"
 
 
 BEGIN_NS_TUTORIALTRACE

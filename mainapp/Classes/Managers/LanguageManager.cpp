@@ -8,8 +8,10 @@
 
 #include "LanguageManager.hpp"
 #include "cocos2d.h"
+#include <utility>
 
 USING_NS_CC;
+using namespace std;
 
 LanguageManager* LanguageManager::_instance = 0;
 
@@ -29,7 +31,7 @@ void LanguageManager::init()
     auto defaultLang = LanguageType::ENGLISH;
 #endif
     //auto defaultLang = LanguageType::SWAHILI;
-    auto defaultLang = "sw-TZ";//UserDefault::getInstance()->getStringForKey("appLanguage", "en") == "en" ? "en-US" : "sw-TZ";
+    auto defaultLang = "sw-tz";//UserDefault::getInstance()->getStringForKey("appLanguage", "en") == "en" ? "en-US" : "sw-TZ";
 
     auto localeCode = UserDefault::getInstance()->getStringForKey("LocaleCode", defaultLang);
 
@@ -45,9 +47,14 @@ void LanguageManager::init()
         if (FileUtils::getInstance()->isFileExist(lp)) _supportedLocales.push_back(l);
         
     }
-    
-    if (std::find(_supportedLocales.begin(), _supportedLocales.end(), localeType)==_supportedLocales.end()) {
-        localeType = _supportedLocales.front();
+    if (_supportedLocales.size() == 0) {
+        CCLOGERROR("No curriculumdata.tsv is found for any language. check %s/KitkitSchool/location.txt, which is curretnly refers to %s",
+                   FileUtils::getInstance()->getWritablePath().c_str(),
+                   FileUtils::getInstance()->getDefaultResourceRootPath().c_str());
+        exit(1);
+    } else{
+        if (std::find(_supportedLocales.begin(), _supportedLocales.end(), localeType)==_supportedLocales.end())
+            localeType = _supportedLocales.front();
     }
     
     
@@ -111,10 +118,10 @@ void LanguageManager::setCurrentLocale(LocaleType type)
         default:
             CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
             // fall through
-        case sw_TZ: _localizedResourcePaths = { "sw-TZ" }; break;
-        case en_US: _localizedResourcePaths = { "en-US" }; break;
-        case en_GB: _localizedResourcePaths = { "en-GB", "en-US" }; break;
-        case en_KE: _localizedResourcePaths = { "en-KE", "en-US" }; break;
+        case sw_TZ: _localizedResourcePaths = { "sw-tz" }; break;
+        case en_US: _localizedResourcePaths = { "en-us" }; break;
+        case en_GB: _localizedResourcePaths = { "en-gb", "en-us" }; break;
+        case en_KE: _localizedResourcePaths = { "en-ke", "en-us" }; break;
             
     }
 
@@ -122,12 +129,12 @@ void LanguageManager::setCurrentLocale(LocaleType type)
     std::vector<std::string> paths = {};
     
     for (auto p : _localizedResourcePaths) {
-        auto localizedPath = "Localized/"+p;
+        auto localizedPath = "localized/"+p;
         paths.push_back(localizedPath);
-        paths.push_back(localizedPath+"/Games");
+        paths.push_back(localizedPath+"/games");
     }
-    paths.push_back("Games");
-    paths.push_back("Main");
+    paths.push_back("games");
+    paths.push_back("main");
     
     
     FileUtils::getInstance()->setSearchPaths(paths);
@@ -215,6 +222,7 @@ std::string LanguageManager::findLocalizedResource(std::string path)
     // handled by Cocos...
     
     return path;
+
 //    
 //    for (auto p : _localizedResourcePaths) {
 //        auto localizedPath = "Localized/"+p+"/"+path;
@@ -308,7 +316,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["HundredPuzzle"] = "100 Puzzle";
     _localizationMapSwahili["HundredPuzzle"] = "Fumbo la Nambari 100";
     
-    _localizationMapEnglish["LetterTrace"] = "Letter Trace";
+    _localizationMapEnglish["LetterTrace"] = "Letter Tracing";
     _localizationMapSwahili["LetterTrace"] = "Kufuatisha Herufi";
     
     _localizationMapEnglish["MovingInsects"] = "Bug Math";
@@ -379,10 +387,99 @@ void LanguageManager::initLocalizationMap()
     
     _localizationMapEnglish["WordNote"] = "Word Note";
     _localizationMapSwahili["WordNote"] = "Tunga neno";
+
+    _localizationMapEnglish["QuickFacts"] = "Quick Facts";
+    _localizationMapSwahili["QuickFacts"] = "Ukweli wa Uhakika";
+
+    _localizationMapEnglish["MultiplicationBoard"] = "Multiplication Lamp";
+    _localizationMapSwahili["MultiplicationBoard"] = "Taa ya Kuzidishia";
+
+    _localizationMapEnglish["WordMatrix"] = "Word Matrix";
+    _localizationMapSwahili["WordMatrix"] = "Chanzo cha Neno";
+
+    _localizationMapEnglish["SentenceBridge"] = "Sentence Bridge";
+    _localizationMapSwahili["SentenceBridge"] = "Daraja la Sentensi";
+
+    _localizationMapEnglish["WordWindow"] = "Word Window";
+    _localizationMapSwahili["WordWindow"] = "Dirisha la Neno";
+
+    _localizationMapEnglish["WordKicker"] = "Word Kicker";
+    _localizationMapSwahili["WordKicker"] = "Mpigo wa Neno";
+
+    _localizationMapEnglish["MathKicker"] = "Math Kicker";
+    _localizationMapSwahili["MathKicker"] = "Mpigo wa Hisabati";
     
+    _localizationMapEnglish["PlaceValue"] = "Place Value";
+    _localizationMapSwahili["PlaceValue"] = "Fungu la Thamani";
+
+    _localizationMapEnglish["Labeling"] = "Labeling";
+    _localizationMapSwahili["Labeling"] = "Pachika Jina";
+
+    _localizationMapEnglish["LRComprehension"] = "Comprehension";
+    _localizationMapSwahili["LRComprehension"] = "Ufahamu";
+
+    _localizationMapEnglish["BookwithQuiz"] = "Book with Quiz";
+    _localizationMapSwahili["BookwithQuiz"] = "Kitabu Chenye Jaribio";
+
     _localizationMapEnglish["Do you want to take a test on this egg?"] = "Do you want to take a test on this egg?";
     _localizationMapSwahili["Do you want to take a test on this egg?"] = "Je, unataka kufanya jaribio kuhusu hili yai?";
+    
+    
+    
+    _localizationMapEnglish["Take the quiz to add me to your sea world!"] = "Take the quiz to add me to your sea world!";
+    _localizationMapSwahili["Take the quiz to add me to your sea world!"] = "Fanya jaribio ili uniongeze kwenye\ndunia yako ya bahari!";
 
+    _localizationMapEnglish["Congratulations!\nSee you at your sea world!"] = "Congratulations!\nSee you at your sea world!";
+    _localizationMapSwahili["Congratulations!\nSee you at your sea world!"] = "Hongera!\nTuonane kwenye\ndunia yako ya bahari!";
+
+    _localizationMapEnglish["Try again to add me to your sea world!"] = "Try again to add me to your sea world!";
+    _localizationMapSwahili["Try again to add me to your sea world!"] = "Jaribu tena kuniongeza kwenye\ndunia yako ya bahari!";
+
+    _localizationMapEnglish["Don't give up! Let's try it again!"] = "Don't give up! Let's try it again!";
+    _localizationMapSwahili["Don't give up! Let's try it again!"] = "Usikate tamaa! Jaribu tena!";
+
+    // NB(xenosoz, 2018): Migrated from ShapeMatching. Datasheet? I agree.
+    vector<pair<string, string>> words_enUS_swTZ = {
+        /*
+        {"circle", "duara"},
+        {"square", "mraba"},
+        {"triangle", "pembe_tatu"},
+        {"rectangle", "mstatili"},
+        {"star", "nyota"},
+        {"rhombus", "rombasi"},
+        {"diamond", "almasi"},
+        {"oval", "mviringo"},
+        {"hexagon", "pembe_sita"},
+        {"pentagon", "pembe_tano"},
+        {"trapezoid", "trapeza"},
+        {"parallelogram", "msambamba"},
+        {"octagon", "pembe_nane"},
+        {"cone", "pia"},
+        {"sphere", "nyanja"},
+        {"cylinder", "mcheduara"},
+        {"cube", "mche_mraba"},
+        {"rectangular_prism", "mche_mstatili"},
+        {"triangular_prism", "mche_pembe_tatu"},
+        {"pyramid", "piramidi"},
+         */
+        {"face", "uso"},
+        {"faces", "nyuso"},
+        {"side", "upande"},
+        {"sides", "pande"},
+        {"large", "kubwa"},
+        {"medium", "wastani"},
+        {"small", "dogo"}
+    };
+    
+    for (auto item : words_enUS_swTZ) {
+        string enUS = item.first;
+        string swTZ = item.second;
+        
+        auto key = enUS;
+        _localizationMapEnglish[key] = enUS;
+        _localizationMapSwahili[key] = swTZ;
+    }
+    
 }
 
 std::vector<std::string> LanguageManager::getLocalizationMapKeys() {
@@ -394,3 +491,9 @@ std::vector<std::string> LanguageManager::getLocalizationMapKeys() {
     return rt;
 }
 
+bool LanguageManager::isSignLanguageMode()
+{
+    //return true;
+    auto ret = UserDefault::getInstance()->getBoolForKey("sign_language_mode_on", false);
+    return ret;
+}

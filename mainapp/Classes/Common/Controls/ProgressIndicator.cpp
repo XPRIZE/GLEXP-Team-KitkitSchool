@@ -37,10 +37,10 @@ void ProgressIndicator::setMax(int max, bool forEgg)
     _balls.clear();
  
     if (forEgg) {
-        _completedBall = "EggQuizLiteracy/Progress/pretest_progress_level_pass.png";
-        _futureBall = "EggQuizLiteracy/Progress/pretest_progress_level_notyet.png";
-        _currentBall = "EggQuizLiteracy/Progress/pretest_progress_level_current.png";
-        _missedBall = "EggQuizLiteracy/Progress/pretest_progress_level_fail.png";
+        _completedBall = "Common/Controls/pretest_progress_level_pass.png";
+        _futureBall = "Common/Controls/pretest_progress_level_notyet.png";
+        _currentBall = "Common/Controls/pretest_progress_level_current.png";
+        _missedBall = "Common/Controls/pretest_progress_level_fail.png";
     } else {
         _completedBall = "Common/Controls/wm_progress_completed.png";
         _futureBall = "Common/Controls/wm_progress_level.png";

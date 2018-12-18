@@ -16,7 +16,7 @@
 #include "LiveModels/TraceIndex.h"
 #include "StyleModels/TraceFieldStyle.h"
 
-#include "Utils/MainNS.h"
+#include "Utils/TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD
@@ -36,8 +36,8 @@ class TraceField: public Node {
     RefPtr<TraceScrollView> Scroll;
     vector<RefPtr<TraceGlyphNode>> GlyphNodes;
 
-    
-    Optional<SoundEffect> TraceSound;
+    bool HasTraceSound;
+    SoundEffect TraceSound;
     string cursorFilename;
     
 

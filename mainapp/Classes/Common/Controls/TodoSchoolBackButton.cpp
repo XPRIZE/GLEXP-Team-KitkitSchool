@@ -10,6 +10,7 @@
 #include "CCAppController.hpp"
 #include "Common/Basic/SoundEffect.h"
 #include "CompletePopup.hpp"
+#include "CustomDirector.h"
 
 bool TodoSchoolBackButton::_didFinish = false;
 
@@ -48,7 +49,7 @@ void TodoSchoolBackButton::popGameScene()
 
 void TodoSchoolBackButton::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event) {
     if (!_touchEnabled) return;
-    
+    if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
     if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE) {
         auto scene = Director::getInstance()->getRunningScene();
         if (scene->getChildByTag(CompletePopup::TAG) == nullptr) {
@@ -72,6 +73,7 @@ void TodoSchoolBackButton::onTouched(Ref* pSender, ui::Widget::TouchEventType eE
     }
 
     if (!_touchEnabled) return;
+    if (((CustomDirector*)Director::getInstance())->isNextScene()) return;
     
     if (onBack) {
         onBack();

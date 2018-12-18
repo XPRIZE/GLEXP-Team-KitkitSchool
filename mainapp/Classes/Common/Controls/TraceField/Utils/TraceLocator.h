@@ -13,7 +13,7 @@
 #pragma once
 
 #include "../LiveModels/TraceIndex.h"
-#include "MainNS.h"
+#include "TraceFieldNS.h"
 
 
 BEGIN_NS_TRACEFIELD

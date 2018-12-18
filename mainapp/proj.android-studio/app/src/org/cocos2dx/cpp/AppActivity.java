@@ -24,11 +24,9 @@ THE SOFTWARE.
 package org.cocos2dx.cpp;
 
 
-import java.util.Locale;
-import java.util.UUID;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
+import java.util.ArrayList;
+import java.util.UUID;
 import java.lang.Exception;
 
 import android.Manifest;
@@ -41,18 +39,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.os.Build.*;
 import android.app.ActivityManager;
 import android.content.Intent;
 
+import com.enuma.kitkitProvider.Fish;
 import com.enuma.kitkitProvider.KitkitDBHandler;
 import com.enuma.kitkitProvider.User;
 import com.enuma.kitkitlogger.KitKitLogger;
-import com.enuma.kitkitlogger.KitkitContextWrapper;
 
 import org.cocos2dx.cpp.ReadingBird.PlayAudio;
 import org.cocos2dx.cpp.ReadingBird.SpeechRecognition;
@@ -64,14 +60,15 @@ public class AppActivity extends Cocos2dxActivity {
     public static AppActivity _activity;
     public static String _launchString;
     private Cocos2dxGLSurfaceView glSurfaceView;
+    public static KitkitDBHandler _dbHandler;
 
     private static String TAG = "KitkitschoolActivity";
 
     protected String appLanguage;
-
     protected static String currentUsername;
     protected static User currentUser;
-
+    protected boolean signModeOn;
+    private static int _videoPlayerIndex = 0;
     public static AppActivity instance() { return _activity; }
 
     public boolean isPermissionGranted() {
@@ -117,6 +114,7 @@ public class AppActivity extends Cocos2dxActivity {
         Log.d(TAG,"onCreate");
         isPermissionGranted();
         _activity = this;
+        _dbHandler = new KitkitDBHandler(_activity);
 
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
@@ -128,6 +126,17 @@ public class AppActivity extends Cocos2dxActivity {
                 Log.d(TAG,"onCreate launch string " + _launchString);
 
             }
+        }
+
+        // init sign-language value
+        try {
+            Context launcherContext = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            SharedPreferences pref = launcherContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
+            signModeOn = pref.getBoolean("sign_language_mode_on", false);
+            Cocos2dxHelper.setBoolForKey("sign_language_mode_on", signModeOn);
+        }
+        catch (PackageManager.NameNotFoundException ne) {
+            Log.e(TAG, ne.toString());
         }
 
         try {
@@ -169,7 +178,12 @@ public class AppActivity extends Cocos2dxActivity {
                 _activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        _activity.moveTaskToBack(true);
+                        try {
+                            _activity.moveTaskToBack(true);
+                        } catch (Exception e) {
+                            Log.e(TAG, "", e);
+                            Process.killProcess(Process.myPid());
+                        }
                     }
                 });
             }
@@ -184,7 +198,20 @@ public class AppActivity extends Cocos2dxActivity {
 
     @Override
     public void onResume() {
+        {
+            try {
+                Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+                SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
+                boolean isReviewModeOn = pref.getBoolean("review_mode_on", false);
+                Cocos2dxHelper.setBoolForKey("review_mode_on", isReviewModeOn);
+
+            } catch (Exception e) {
+                Log.e(TAG, "error when getting review mode setting. please check launcher is installed.");
+            }
+        }
+
         super.onResume();
+
         Log.d(TAG,"onResume");
 
         Bundle extras = getIntent().getExtras();
@@ -200,10 +227,28 @@ public class AppActivity extends Cocos2dxActivity {
             }
         }
 
+        // sign-language
+        try {
+            Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
+            boolean sharedSignModeOn = pref.getBoolean("sign_language_mode_on", false);
+
+            if (signModeOn != sharedSignModeOn) {
+                signModeOn = sharedSignModeOn;
+                Cocos2dxHelper.setBoolForKey("sign_language_mode_on", signModeOn);
+                restartApp();
+            }
+        }
+        catch (PackageManager.NameNotFoundException ne) {
+            Log.e(TAG, ne.toString());
+        }
+
+        // language
         try {
             Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
             SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
             String sharedLang = pref.getString("appLanguage", getString(com.enuma.kitkitlogger.R.string.defaultLanguage));
+
             if (!appLanguage.equals(sharedLang)) {
                 Cocos2dxHelper.setStringForKey("appLanguage", appLanguage);
 
@@ -214,6 +259,7 @@ public class AppActivity extends Cocos2dxActivity {
             Log.e(TAG, ne.toString());
         }
 
+        // user
         try {
             currentUser = ((KitkitSchoolApplication)getApplication()).getDbHandler().getCurrentUser();
 
@@ -226,6 +272,9 @@ public class AppActivity extends Cocos2dxActivity {
         }
 
         resumeAudio();
+
+        Cocos2dxVideoHelper.resumeVideo(_videoPlayerIndex);
+        Cocos2dxVideoHelper.startVideo(_videoPlayerIndex);
     }
 
 
@@ -264,6 +313,11 @@ public class AppActivity extends Cocos2dxActivity {
         });
     }
 
+    public static void deleteAllUserDefault() {
+        if (_activity != null) {
+            _activity.getSharedPreferences("Cocos2dxPrefsFile", 0).edit().clear().apply();
+        }
+    }
 
     public static void moveToBackground() {
         _activity.moveTaskToBack(true);
@@ -472,22 +526,44 @@ public class AppActivity extends Cocos2dxActivity {
 
     }
 
-    public static String getResourceUri(String filename) {
-
+    public static void setUnlockFishBowl(boolean isUnlock) {
         try {
-            String packageName = "library.todoschool.enuma.com.todoschoollibrary";
-
-            Context libraryContext = _activity.createPackageContext(packageName,0);
-            int rId = libraryContext.getResources().getIdentifier(filename, "raw", libraryContext.getPackageName());
-
-            if (rId > 0) {
-                String uri = "android.resource://" + packageName + "/raw/" + filename;
-
-                return uri;
-            }
+            KitkitDBHandler dbHandler = ((KitkitSchoolApplication)_activity.getApplication()).getDbHandler();
+            User user = dbHandler.getCurrentUser();
+            user.setUnlockFishBowl(isUnlock);
+            dbHandler.updateUser(user);
         }
         catch (Exception e) {
-            Log.e(TAG, e.toString());
+            Log.e(TAG, "error when getting current user. please check launcher is installed.");
+        }
+    }
+
+    public static String getResourceUri(String filename) {
+        File fileCheck = new File(Environment.getExternalStorageDirectory() + File.separator + "Library" + File.separator + "cache.txt");
+        if (fileCheck.exists()) {
+            String appLanguage = Cocos2dxHelper.getStringForKey("appLanguage", "sw-tz").toLowerCase();
+            String pathExternalRaw = Environment.getExternalStorageDirectory() + File.separator + "Library" + File.separator + appLanguage + File.separator + "res" + File.separator + "raw";
+
+            File resourceFile = new File(pathExternalRaw + File.separator + filename + ".mp4");
+            Log.i(TAG, "resourcePath : " + resourceFile.getAbsolutePath() + ", exists : " + resourceFile.exists());
+            if (resourceFile.exists()) {
+                return resourceFile.getAbsolutePath();
+            }
+        } else {
+            try {
+                String packageName = "library.todoschool.enuma.com.todoschoollibrary";
+
+                Context libraryContext = _activity.createPackageContext(packageName,0);
+                int rId = libraryContext.getResources().getIdentifier(filename, "raw", libraryContext.getPackageName());
+                if (rId > 0) {
+                    String uri = "android.resource://" + packageName + "/raw/" + filename;
+
+                    return uri;
+                }
+            }
+            catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
         }
 
         return "";
@@ -498,6 +574,7 @@ public class AppActivity extends Cocos2dxActivity {
         super.onPause();
         onStopListeningAndRecognition();
         pauseAudio();
+        Cocos2dxVideoHelper.pauseVideo(_videoPlayerIndex);
     }
 
     private static SpeechRecognition mSpeechRecognition;
@@ -559,7 +636,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     public static void playAudio(String filePath) {
         if (mPlayAudio != null) {
-            mPlayAudio.play(filePath);
+            mPlayAudio.play(filePath.toLowerCase().replace(" ", "_"));
         }
     }
 
@@ -581,7 +658,36 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
+    public static void playVideoPlayer(int videoPlayerIndex) {
+        _videoPlayerIndex = videoPlayerIndex;
+        Log.i("myLog", "playVideoPlayer : " + videoPlayerIndex);
+    }
+
     public static String getExternalStorageDirectory() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // for fishbowl
+    public static void addFish(String fishID, int skinNo, String fishName, String position) {
+        if (_dbHandler != null) {
+            _dbHandler.addFish(fishID, skinNo, fishName, position);
+        }
+    }
+
+    public static String getFishes() {
+        String result = "[]";
+        if (_dbHandler != null) {
+            ArrayList<Fish> fishes = _dbHandler.getFishes();
+            result = fishes.toString();
+        }
+        return result;
+    }
+
+    public static boolean deleteFish(int id) {
+        if (_dbHandler != null) {
+            return _dbHandler.deleteFish(id);
+        }
+        return false;
     }
 }

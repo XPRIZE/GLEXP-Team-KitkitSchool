@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 #include "NumberMatchingCard.hpp"
-#include "Models/LevelData.hpp"
-#include "Models/Worksheet.hpp"
-#include "Models/Problem.hpp"
+#include "Models/NumberMatchingLevelData.hpp"
+#include "Models/NumberMatchingWorksheet.hpp"
+#include "Models/NumberMatchingProblem.hpp"
 
 #include "cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
@@ -40,6 +40,7 @@ private:
     float _upScaleFactor;
 
     int _currentLevelID;
+    int _currentSheetID;
     todoschool::numbermatching::Worksheet _currentWorksheet;
     int _currentProblemID;
     todoschool::numbermatching::Problem _currentProblem;

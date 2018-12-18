@@ -14,12 +14,14 @@ BEGIN_NS_WOODENPUZZLES;
 
 
 namespace {
-    Size contentSize() { return WoodenPuzzleDepot().gameSize(); }
+    Size contentSize(const string& Mode) { return WoodenPuzzleDepot(Mode).gameSize(); }
 }  // unnamed namespace
 
 
-bool PlayField::init() {
+bool PlayField::init(const string& Mode) {
     if (!Super::init()) { return false; }
+    
+    this->Mode = Mode;
     
     clearInternals();
     refreshChildNodes();
@@ -75,7 +77,7 @@ void PlayField::renice(WoodPiece* Piece) {
 }
 
 void PlayField::clearInternals() {
-    setContentSize(contentSize());
+    setContentSize(contentSize(Mode));
 }
 
 void PlayField::refreshChildNodes() {

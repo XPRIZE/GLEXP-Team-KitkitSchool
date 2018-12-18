@@ -14,15 +14,16 @@
 BEGIN_NS_WOODENPUZZLES
 
 namespace {
-    string shadowSkin(const string& PieceID) {
-        return WoodenPuzzleDepot().assetPrefix() + "/" + format("%s_3.png", PieceID.c_str());
+    string shadowSkin(const string& Mode, const string& PieceID) {
+        return WoodenPuzzleDepot(Mode).assetPrefix() + "/" + format("%s_3.png", PieceID.c_str());
     }
 }  // unnamed namespace
 
 
-bool WoodPieceShadow::init() {
+bool WoodPieceShadow::init(const string& Mode) {
     if (!Super::init()) { return false; }
     
+    this->Mode = Mode;
     clearInternals();
     refreshChildNodes();
     
@@ -45,7 +46,7 @@ void WoodPieceShadow::refreshChildNodes() {
     removeAllChildren();
     
     [&] {
-        auto It = Sprite::create(shadowSkin(PieceID()));
+        auto It = Sprite::create(shadowSkin(Mode, PieceID()));
         if (!It) {
             setContentSize(Size::ZERO);
             return (It = nullptr);

@@ -53,8 +53,6 @@ private:
     //std::vector<Bird*> birds;
     std::vector<CoopScene2Space::Room*> _rooms;
     
-
-    
     void hatchEgg(CoopScene2Space::Room *room);
     void showDailyScene(std::string levelID);
     
@@ -67,12 +65,8 @@ private:
     
     int _currentZ;
     
-    
-
-    
-    
-    
-    
+    void zoomIn(int level, float duration=0);
+    int _zoomLevel;
     
 };
 
