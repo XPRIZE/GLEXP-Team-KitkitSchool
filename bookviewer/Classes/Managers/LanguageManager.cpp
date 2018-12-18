@@ -29,7 +29,7 @@ void LanguageManager::init()
     auto defaultLang = LanguageType::ENGLISH;
 #endif
     //auto defaultLang = LanguageType::SWAHILI;
-    auto defaultLang = "sw-TZ";//UserDefault::getInstance()->getStringForKey("appLanguage", "en") == "en" ? "en-US" : "sw-TZ";
+    auto defaultLang = "en-US";//UserDefault::getInstance()->getStringForKey("appLanguage", "en") == "en" ? "en-US" : "sw-TZ";
 
     auto localeCode = defaultLang;//UserDefault::getInstance()->getStringForKey("LocaleCode", defaultLang);
 
@@ -109,10 +109,10 @@ void LanguageManager::setCurrentLocale(LocaleType type)
         default:
             CCLOGERROR("No proper language is found in %s", __PRETTY_FUNCTION__);
             // fall through
-        case sw_TZ: _localizedResourcePaths = { "sw-TZ" }; break;
-        case en_US: _localizedResourcePaths = { "en-US" }; break;
-        case en_GB: _localizedResourcePaths = { "en-GB", "en-US" }; break;
-        case en_KE: _localizedResourcePaths = { "en-KE", "en-US" }; break;
+        case sw_TZ: _localizedResourcePaths = { "sw-tz" }; break;
+        case en_US: _localizedResourcePaths = { "en-us" }; break;
+        case en_GB: _localizedResourcePaths = { "en-gb", "en-us" }; break;
+        case en_KE: _localizedResourcePaths = { "en-ke", "en-us" }; break;
             
     }
 
@@ -120,12 +120,13 @@ void LanguageManager::setCurrentLocale(LocaleType type)
     std::vector<std::string> paths = {};
     
     for (auto p : _localizedResourcePaths) {
-        auto localizedPath = "Localized/"+p;
+        auto localizedPath = "localized/"+p;
         paths.push_back(localizedPath);
-        paths.push_back(localizedPath+"/Games");
+        paths.push_back(localizedPath+"/games");
+        paths.push_back(localizedPath+"/games/books");
     }
-    paths.push_back("Games");
-    
+    paths.push_back("games");
+    paths.push_back("bookviewer");
     
     FileUtils::getInstance()->setSearchPaths(paths);
     

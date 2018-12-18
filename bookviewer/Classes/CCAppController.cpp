@@ -22,6 +22,12 @@ CCAppController *CCAppController::sharedAppController() {
     return instance;
 }
 
+
+void CCAppController::handleGameQuit(bool bImmediately)
+{
+    (Director::getInstance())->popScene();
+}
+
 void CCAppController::handleGameComplete(int result)
 {
     (Director::getInstance())->popScene();

@@ -67,6 +67,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
     
     register_all_packages();
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    std::string devicePath = "/sdcard/KitkitSchool/";
+    if (FileUtils::getInstance()->isFileExist(devicePath + "cache.txt")) {
+        FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
+    }
+    
+#endif
 
     Scene* scene;
     /*

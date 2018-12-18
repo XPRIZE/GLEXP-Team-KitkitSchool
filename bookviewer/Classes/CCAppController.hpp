@@ -16,6 +16,7 @@ public:
     
     static CCAppController *sharedAppController();
     
+    void handleGameQuit(bool bImmediately = false);
     void handleGameComplete(int result);
 };
 

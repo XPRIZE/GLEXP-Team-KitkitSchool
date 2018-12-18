@@ -15,7 +15,8 @@ public:
     virtual ~GameSoundManager(){};
     
 public:
-   
+
+    void playEffectSoundVoiceOnly(std::string name);
     unsigned int playEffectSound(std::string name,
                                  bool isLoop = false, float pitch = 1.f,
                                  float pan = 0.f, float gain = 1.f);
@@ -28,9 +29,13 @@ public:
     void stopAllEffects();
     
     
+    float getBGMSoundVolume();
+    void setBGMSoundVolume(float volume);
     
     float getEffectSoundVolume();
     void setEffectSoundVolume(float volume);
+    
+    
     
     void preloadAdultVoice();
     void preloadChildVoice();
@@ -38,7 +43,7 @@ public:
     void unloadAllEffect();
     void preloadEffect(std::string name);
     
-    
+    void preloadBGM(std::string name);
     void playBGM(std::string name);
     void stopBGM();
     void pauseBGM();

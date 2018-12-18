@@ -31,6 +31,10 @@ bool GameSoundManager::init(void)
     return true;
 }
 
+void GameSoundManager::playEffectSoundVoiceOnly(std::string name) {
+    stopBGM();
+    SimpleAudioEngine::getInstance()->playBackgroundMusic(name.c_str(), false);
+}
 
 unsigned int GameSoundManager::playEffectSound(std::string name,
                                                bool isLoop, float pitch, float pan, float gain)
@@ -71,6 +75,27 @@ void GameSoundManager::stopEffectSound(unsigned int soundID){
     }
 }
 
+
+
+float GameSoundManager::getBGMSoundVolume()
+{
+    return SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+}
+void GameSoundManager::setBGMSoundVolume(float volume)
+{
+    return SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(volume);
+}
+
+float GameSoundManager::getEffectSoundVolume()
+{
+    return SimpleAudioEngine::getInstance()->getEffectsVolume();
+}
+
+void GameSoundManager::setEffectSoundVolume(float volume)
+{
+    SimpleAudioEngine::getInstance()->setEffectsVolume(volume);
+}
+
 void GameSoundManager::unloadAllEffect(){
     SET_STRING::iterator itr = m_SetLoadedList.begin();
     SET_STRING::iterator itr_end = m_SetLoadedList.end();
@@ -94,6 +119,11 @@ void GameSoundManager::preloadEffect(std::string name){
         SimpleAudioEngine::getInstance()->preloadEffect(fullname.c_str());
         m_SetLoadedList.insert(fullname);
     }
+}
+
+void GameSoundManager::preloadBGM(std::string name)
+{
+    SimpleAudioEngine::getInstance()->preloadBackgroundMusic(name.c_str());
 }
 
 void GameSoundManager::playBGM(std::string name)
