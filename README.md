@@ -29,6 +29,7 @@ Kitkit School (phase 3) consists of 12 apps as following:
 * Additional tools/toys as rewards
 
 Most of the apps above share code from kitkitshcoollogger
+
 13. KitkitSchoolLogger
 * not a stand-alone app, but the code is shared among other apps
 
@@ -46,23 +47,25 @@ It may work with other OS/Tool versions, but not verified.
 
 
 1. Download Android Studio (2.2.3)
-* https://developer.android.com/studio/index.html
+* https://developer.android.com/studio/archive
 * Install Android Studio
 
 
 2. Download Android NDK (r14b, except for voice-engine which uses r16b) 
-* http://dl.google.com/android/ndk/android-ndk-r14b-darwin-x86.bin
-* http://dl.google.com/android/ndk/android-ndk-r16b-darwin-x86.bin
+* https://developer.android.com/ndk/downloads/older_releases.html
+* https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip
+* https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip
 * Extract bin file and move the folder to ~/Documents/
 
 
 3. Download Apache Ant
-* http://mirror.symnds.com/software/Apache//ant/binaries/apache-ant-1.9.8-bin.zip
+* https://archive.apache.org/dist/ant/binaries/
+* https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.8-bin.zip
 * Extract zip file and move the folder to ~/Documents/
 
 
 4. Download Java SE Runtime 1.8
-* http://download.oracle.com/otn-pub/java/jdk/8u112-b16/jdk-8u112-macosx-x64.dmg
+* https://www.oracle.com/technetwork/java/javase/downloads/java-archive-javase8-2177648.html
 * Install JRE 8u112
 * /usr/libexec/java_home -v 1.8
 
