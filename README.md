@@ -53,7 +53,7 @@ Android studio will also ask to install the relavent SDKs and build tools that a
 * https://developer.android.com/ndk/downloads/older_releases.html
 * https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip
 * https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip
-
+* unzip the NDK, and set the NDK path in the relavent projects (mainapp, seaworld, bookviewer) 
 
 
 
