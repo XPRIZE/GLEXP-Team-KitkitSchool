@@ -39,14 +39,12 @@ Book Viewer and MainApp are made upon cocos2d-x engine, while others are native 
 
 # Build Environment #
 
-This section describes the build environment we were using.
-Please note that we've used macOS version 10.11 and 10.12.
-It may work with other OS/Tool versions, but not verified.
+Android studio and Android NDK is necessary to build the APKs.
+Be sure to use the specified versions mentioned below, to avoid errors. 
+Android studio will also ask to install the relavent SDKs and build tools that are missing - please install them along the way. 
 
 
-
-
-1. Download Android Studio (2.2.3)
+1. Download Android Studio (2.2.3 or higher, but not 3.x)
 * https://developer.android.com/studio/archive
 * Install Android Studio
 
@@ -55,7 +53,7 @@ It may work with other OS/Tool versions, but not verified.
 * https://developer.android.com/ndk/downloads/older_releases.html
 * https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip
 * https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip
-* Extract bin file and move the folder to ~/Documents/
+
 
 
 
@@ -93,7 +91,7 @@ Download the relavent resources/3rd party files from the release assets (v1.3)
 
 
 
-# Build APKs #
+# Build the APKs #
 
 
 Build with Android Studio 
@@ -108,4 +106,9 @@ Build with Android Studio
 
 The resulting APK will be generated in app/build/outputs/apk/[appname]-[language]-debug.apk
 
+
+
+# Install & Run the APKs #
+
+Install the APKs with 
 
