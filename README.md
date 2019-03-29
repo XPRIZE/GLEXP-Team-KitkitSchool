@@ -63,6 +63,8 @@ It may work with other OS/Tool versions, but not verified.
 
 # Copy Resources/Engine Files #
 
+Download the relavent resources/3rd party files from the release assets (v1.3) 
+
 * to build "mainapp", place the resources/3rd party files in the following folders
   * cocos2d
    ROOT/mainapp/cocos2d
