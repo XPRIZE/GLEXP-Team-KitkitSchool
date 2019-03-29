@@ -110,5 +110,9 @@ The resulting APK will be generated in app/build/outputs/apk/[appname]-[language
 
 # Install & Run the APKs #
 
-Install the APKs with 
+Install all the APKs, then start the Kitkit Launcher to explorer. 
+
+- Please make sure there is enough storage on the device. 
+- Most of the APKs will not show up in the android (default) launcher. 
+
 
