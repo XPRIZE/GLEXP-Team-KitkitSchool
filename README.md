@@ -29,6 +29,7 @@ Kitkit School (phase 3) consists of 12 apps as following:
 * Additional tools/toys as rewards
 
 Most of the apps above share code from kitkitshcoollogger
+
 13. KitkitSchoolLogger
 * not a stand-alone app, but the code is shared among other apps
 
@@ -38,67 +39,59 @@ Book Viewer and MainApp are made upon cocos2d-x engine, while others are native 
 
 # Build Environment #
 
-This section describes the build environment we were using.
-Please note that we've used macOS version 10.11 and 10.12.
-It may work with other OS/Tool versions, but not verified.
+Android studio and Android NDK is necessary to build the APKs.
+Be sure to use the specified versions mentioned below, to avoid errors. 
+Android studio will also ask to install the relavent SDKs and build tools that are missing - please install them along the way. 
 
 
-
-
-1. Download Android Studio (2.2.3)
-* https://developer.android.com/studio/index.html
+1. Download Android Studio (2.2.3 or higher, but not 3.x)
+* https://developer.android.com/studio/archive
 * Install Android Studio
 
 
 2. Download Android NDK (r14b, except for voice-engine which uses r16b) 
-* http://dl.google.com/android/ndk/android-ndk-r14b-darwin-x86.bin
-* http://dl.google.com/android/ndk/android-ndk-r16b-darwin-x86.bin
-* Extract bin file and move the folder to ~/Documents/
+* https://developer.android.com/ndk/downloads/older_releases.html
+* https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip
+* https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip
+* unzip the NDK, and set the NDK path in the relavent projects (mainapp, seaworld, bookviewer) 
 
 
-3. Download Apache Ant
-* http://mirror.symnds.com/software/Apache//ant/binaries/apache-ant-1.9.8-bin.zip
-* Extract zip file and move the folder to ~/Documents/
-
-
-4. Download Java SE Runtime 1.8
-* http://download.oracle.com/otn-pub/java/jdk/8u112-b16/jdk-8u112-macosx-x64.dmg
-* Install JRE 8u112
-* /usr/libexec/java_home -v 1.8
-
-
-5. Add UTF-8 Settings to bash_profile
-* vi ~/.bash_profile
-* add two lines
-* export LC_ALL=en_US.UTF-8
-* export LANG=en_US.UTF-8
 
 
 
 # Copy Resources/Engine Files #
 
-Now the environment is setup, but we are not ready to build the apps yet.  
-Due to the large amount of resources, we could not put all the necessary resources into Githug. Instead, they are stored in Box folder.
+Download the relavent resources/3rd party files from the release assets (v1.3) 
 
-1. library.tar.gz
-* used by library
-* target directory is library/localized
-* in the "localized" folder, leave only the language to build, to minimize the build time and the binary size
+* to build "mainapp", place the resources/3rd party files in the following folders
+  * cocos2d
+   ROOT/mainapp/cocos2d
+  * common resources (mainapp_resources)
+   ROOT/mainapp/Resources
+  * language specific resources (pick only one) 
+    * mainapp_en_us (for English)
+    ROOT/mainapp/Resources/localized/en-us
+    * mainapp_sw_tz (for Swahili) 
+    ROOT/mainapp/Resources/localized/sw-tz
 
-2. mainapp.tar.gz
-* used by mainapp
-* target directory is mainapp/Resources
-* in the "Resources/localized" folder, leave only the language to build, to minimize the build time and the binary size
-* this resource files are also used by bookviewer, so these two projects (mainapp and bookviewer) need to in the same folder, side by side) 
+* to build "seaworld", place the cocos files in the following folder
+  * cocos2d
+  ROOT/seaworld/cocos2d
 
-3. cocos2d.tar.gz
-* used by mainapp, bookviewer, seaworld
-* overwrite "mainapp/cocos2d", "bookviewer/cocos2d", "seaworld/cocos2d" folder with the inflated cocos2d folder
+* to build "bookviewer",  place the cocos files in the following folder
+  * cocos2d
+  ROOT/bookviewer/cocos2d
+
+* to build "library", pick (only) one of the language specific resource files in the following folder
+  * library_en_us (for English) 
+  ROOT/library/localized/en-us
+  * library_sw_tz (for Swahili) 
+  ROOT/library/localized/sw-tz
 
 
 
 
-# Build APKs #
+# Build the APKs #
 
 
 Build with Android Studio 
@@ -115,124 +108,11 @@ The resulting APK will be generated in app/build/outputs/apk/[appname]-[language
 
 
 
-# Build AOSP to make image #
+# Install & Run the APKs #
 
-With all the APKs, it is time to build an image.
-We used a machine with ubuntu 16.04 LTS for that purpose.
+Install all the APKs, then start the Kitkit Launcher to explorer. 
 
-
-
-1.
-Follow this
-https://source.android.com/source/requirements.html
-https://source.android.com/source/downloading.html
-https://source.android.com/source/building.html
-need at least 150G of empty space.
-
-2.
-all the apps are signed with the platform key
-only mainapp will be installed in userdata.img, while other apps will be placed in system.img
-
-make a folder to <aosp root>/package/app/<app name>
-
-put *.apk file to the folder and make Android.mk and fill with
-
-LOCAL_PATH := $(call my-dir)
-include $(CLEAR_VARS)
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE := < your app folder name >
-LOCAL_CERTIFICATE := platform
-LOCAL_SRC_FILES := < app apk filename >
-LOCAL_MODULE_CLASS := APPS
-LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
-include $(BUILD_PREBUILT)
-
-#< desired key > for BookTest and TodoSchool : presigned
-#< desired key > for TodoSchoolLibrary and TodoSchoolLockScreen : shared
-#< desired key > for TodoSchoolLauncher : package
-
-to put the apk in the /data/app, add this line
-LOCAL_MODULE_PATH := $(TARGET_OUT_DATA)/app
-
-for system privileged app add this line (apk will be in /system/priv-app)
-LOCAL_PRIVILEGED_MODULE := true
-
-step 3.
-edit device/google/dragon/device.mk
-add package name to
-PRODUCT_PACKAGES += < package name >
-
-step 4.
-to create userdata.img
-edit device/google/dragon/BoardConfig.mk
-add
-
-#userdata
-#for 32GB device
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 26557284352
-#for 64GB device
-#BOARD_USERDATAIMAGE_PARTITION_SIZE := 57825820672
-#TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
-
-step 5.
-test by doing following
-https://source.android.com/source/running.html
-
-Troubleshooting
-
-Fix for Xcode 8 or newer
-Download Xcode 7.3 and copy and paste MacOSX10.11.sdk to <Xcode8 or newer.app>/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
-
-Fix for Marshmallow on ubuntu
-
-art/build/Android.common_build.mk
-line 75
-change
-ifneq ($(Without_HOST_CLANG),true)
-to
-ifeq ($(WITHOUT_HOST_CLANG),false)
+- Please make sure there is enough storage on the device. 
+- Most of the APKs will not show up in the android (default) launcher. 
 
 
-reference : http://stackoverflow.com/questions/10579827/add-apk-files-in-aosp/20137625#…
-http://stackoverflow.com/questions/19868138/aosp-privileged-vs-system-app
-
-
-
-# Build Android Image #
-
-make clobber
-source build/envsetup.sh
-lunch   (aosp_dragon-eng 16 )
-make -j8
-
-
-#after build
-
-adb reboot bootloader
-fastboot flash userdata '/usr/local/aosp/NMF26H/out/target/product/dragon/userdata.img'
-fastboot flashall
-
-#then, device will boot
-
-
-
-#change the wallpaper
-#put the image files to following directories
-#path for default_wallpaper.png
-device/google/dragon/overlay/frameworks/base/core/res/res/drawable-nodpi (1243x1024)
-device/google/dragon/overlay/frameworks/base/core/res/res/drawable-sw600dp-nodpi (2331x1920)
-device/google/dragon/overlay/frameworks/base/core/res/res/drawable-sw720dp-nodpi (2880x2560)
-
-#path for bootanimation.zip
-system/media
-
-#making bootanimation.zip
-cd kitkitbootanimation
-zip -0r bootanimation.zip desc.txt part0 part1 part2
-
-#To change language, edit /device/google/dragon/device.mk
-#and edit the following, en for english and sw for swahilli
-PRODUCT_PROPERTY_OVERRIDES += \
-persist.sys.language=en \
-persist.sys.country=TZ \
-persist.sys.timezone=Africa/Dar_es_Salaam
