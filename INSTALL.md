@@ -4,15 +4,16 @@
 3. Download the [_assets_](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/releases) folder of the project.
 4. Replace the _cocos2d_ folder from the _assets_ with the one present in the _mainapp_, _bookviewer_ and _seaworld_ project.
 5. Replace the _Resources_ folder from the _assets_ with the one present in _mainapp_ project and ensure that only one locale specific folder is present in the _localize_ folder i.e. keep either _en-us_ or _sw-tz_ folder and its related files.
-5. Replace _localized_ folder from the _assets_ with the one present in the project and ensure that only one locale specific folder is present inside it i.e. keep either _en-us_ or _en-ke_ or _sw-tz_ folder and its related files.
-3. Open the applications in Android Studio and select build option from Build menu.
-2. The build process may prompt to install various dependencies related to Android SDK and Build Tool. Make sure to install them.
-3. Do not update the _Gradle_ version used in the project.
-4. Install the application directly from Android Studio or using the APK generated in _app/build/outputs/apk_ folder.
+6. Replace _localized_ folder from the _assets_ with the one present in the _mainapp_ project and ensure that only one locale specific folder is present inside it i.e. keep either _en-us_ or _en-ke_ or _sw-tz_ folder and its related files.
+7. Open the applications in Android Studio and select build option from Build menu.
+8. The build process may prompt to install various dependencies related to Android SDK and Build Tool. Make sure to install them.
+9. Do not update the _Gradle_ version used in the project.
+10. Install the applications from Android Studio using _Run app_ option from _Run menu_ or using the APK generated in _app/build/outputs/apk_ folder.
 
 #### Note:
 1. The _mainapp_, _seaworld_ and _bookviewer_ projects build correctly on Mac OS only. Rest others build on both Mac and Windows OS.
-2. The _KitkitSchoologger_ is not a standalone application instead, it is shared amongst different other projects.
+2. If any of the applications throw error related to signing the APK then just simply comment the signing configuration from the app's gradle file or create your own _keystore_ file.
+2. The _KitkitSchoolLogger_ is not a standalone application. Instead, it is shared amongst other projects.
 3. Set the build variant to __debug__ for all project apps except for the _mainapp_ which is described in point 4 of FAQs.
 2. There is no need to install _cocos_ application separately for these projects.
 
@@ -30,6 +31,7 @@
 
 4. How to fix the the mainapp application which throws a run time error related to the package name _com.enuma.xprize_?
 	> The cause of this error is the incorrect setting of build variant of the applications. Kindly, refer to the below table which has the build variant settings.
+	> 
 	> |App name| Build variant|
 	> |--------|--------------|
 	> |KitkitSchool|generalDebug-armeabi|
