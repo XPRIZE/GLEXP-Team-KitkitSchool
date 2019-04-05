@@ -22,8 +22,6 @@ ___
 
 3.  Create locale specific images similar to the images available in [en-us](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/writingboard/app/src/main/assets/image/en-us) folder and place them in the newly created locale specific folder.
 ___
-#### Sea World
-___
 #### Library
 
   1.  [activity_bookdetail.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/library/app/src/main/res/layout/activity_bookdetail.xml)   
@@ -48,6 +46,8 @@ ___
 #### KitkitSchoolLogger - Not required
 ___
 #### Lock Screen - Not required
+___
+#### Seaworld - Not required
 ___
 #### Voice Engine (for English only) - Does not support localization
 ___
