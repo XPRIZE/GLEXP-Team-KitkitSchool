@@ -9,8 +9,6 @@ ___
 2. Replace content in the [assets](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/proj.android-studio/models/src/main/assets) folder with locale specific content.
 3. Replace content in [Resources](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/Resources) folder with locale specific content.
 ___
-#### Book Viewer
-___
 #### Writing Board
 1.  Change the language at following places in _onCreate_ function of [MainActivity.java](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/writingboard/app/src/main/java/com/enuma/writingboard/activity/MainActivity.java) file:  
    `mAppLanguage = extras.getString("LANGUAGE", "sw-TZ").toLowerCase();`  
@@ -37,17 +35,19 @@ ___
   4.  [book_item.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/library/app/src/main/res/layout/book_item.xml)      
 	  Replace the value of the attribute of TextView, `android:text` with the localized text.  
 ___
-#### Blackboard - NA
+#### Blackboard - Not required
 ___
-#### Drawing - NA
+#### Bookviewer - Not required
 ___
-#### Drum - NA
+#### Drawing - Not required
 ___
-#### Marimba - NA
+#### Drum - Not required
 ___
-#### KitkitSchoolLogger - NA
+#### Marimba - Not required
 ___
-#### Lock Screen - NA
+#### KitkitSchoolLogger - Not required
 ___
-#### Voice Engine (for English only) - NA
+#### Lock Screen - Not required
+___
+#### Voice Engine (for English only) - Does not support localization
 ___
