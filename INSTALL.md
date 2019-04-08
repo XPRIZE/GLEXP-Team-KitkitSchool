@@ -1,6 +1,6 @@
 ## Installation steps for all the apps
 1. Install [Android Studio 3.3.2](https://dl.google.com/dl/android/studio/install/3.3.2.0/android-studio-ide-182.5314842-mac.dmg) on a Mac OS device.
-2. Download Android [NDK 14](https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip) and [NDK 16](https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip) (required only for voice-engine project).
+2. Download Android [NDK 14](https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip) and [NDK 16](https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip). Please note that NDK 16 is required only for _voice-engine_ project.
 3. Download the [_assets_](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/releases) folder of the project.
 4. Replace the _cocos2d_ folder from the _assets_ with the one present in the _mainapp_, _bookviewer_ and _seaworld_ project.
 5. Replace the _Resources_ folder from the _assets_ with the one present in _mainapp_ project and ensure that only one locale specific folder is present in the _localize_ folder i.e. keep either _en-us_ or _sw-tz_ folder and its related files.
