@@ -13,19 +13,19 @@ ___
     3. Replace content in [Resources](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/Resources) folder with locale specific content.  
 ___
 ## Writing Board
-1.  Writing Board application uses images containing alphabets and words and the user is expected to trace them to learn to write. For localizing this application, the images containing alphabets and words needs to be replaced with locale specific images as follows:
+Writing Board application uses images containing alphabets and words and the user is expected to trace them to learn to write. For localizing this application, the images containing alphabets and words needs to be replaced with locale specific images as follows:
 
-      1.  Change the language at following places in _onCreate_ function of [MainActivity.java](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/writingboard/app/src/main/java/com/enuma/writingboard/activity/MainActivity.java) file:  
+  1.  Change the language at following places in _onCreate_ function of [MainActivity.java](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/writingboard/app/src/main/java/com/enuma/writingboard/activity/MainActivity.java) file:  
           `mAppLanguage = extras.getString("LANGUAGE", "sw-TZ").toLowerCase();`  
           `mAppLanguage = "sw-tz";`
      
-          For example, replace `"sw-TZ"` with `"hi-IN"` for Hindi India language.  
+       For example, replace `"sw-TZ"` with `"hi-IN"` and `"sw-tz"` with `"hi-in"` for Hindi India language.  
 
-      2.  Create a new folder in [assets/image/](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/writingboard/app/src/main/assets/image) with locale specific language:
+  2.  Create a new folder in [assets/image/](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/writingboard/app/src/main/assets/image) with locale specific language:
     
-          For example, create a folder named _"hi-in"_ for Hindi India language.
+       For example, create a folder named _"hi-in"_ for Hindi India language.
 
-      3.  Create locale specific images similar to the images available in [en-us](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/writingboard/app/src/main/assets/image/en-us) folder and place them in the newly created locale specific folder.
+  3.  Create locale specific images similar to the images available in [en-us](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/writingboard/app/src/main/assets/image/en-us) folder and place them in the newly created locale specific folder.
 ___
 ## Library
 
