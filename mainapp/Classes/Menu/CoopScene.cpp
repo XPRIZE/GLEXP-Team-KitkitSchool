@@ -260,18 +260,8 @@ void CoopScene::setupCoop()
         bool open = UserManager::getInstance()->isLevelOpen(cur.levelID);
         bool cleared = UserManager::getInstance()->isLevelCleared(cur.levelID);
         
-        if (cur.categoryLevel<=2 && !open) {
+        if (cur.categoryLevel<=0 && !open) {
             UserManager::getInstance()->setLevelOpen(cur.levelID);
-            for (int i=0; i<=cur.numDays; i++) {
-                UserManager::getInstance()->setDayCleared(cur.levelID, i);
-                auto day = i+1;
-                auto dayCur = cur.getDayCurriculum(day);
-                if (dayCur) {
-                    for (int j=0; j<=dayCur->numGames; j++) {
-                        UserManager::getInstance()->setGameCleared(cur.levelID, day, j);
-                    }
-                }
-            }
         }
         
         
@@ -286,12 +276,14 @@ void CoopScene::setupCoop()
                 _rooms[LEVEL_FISH_PRESENT]->turnLight(true, true);
                 UserManager::getInstance()->setFishPresentLightOn(category);
             }
-        } else if (room->bird->getCategoryLevel() == 7) {
-            if (_rooms.size() > LEVEL_SPECIAL_COURSE && !UserManager::getInstance()->getSpecialCourseLightOn(category)) {
-                _rooms[LEVEL_SPECIAL_COURSE]->turnLight(true, true);
-                UserManager::getInstance()->setSpecialCourseLightOn(category);
-            }
-        } else if (room->bird->getCategoryLevel() == LEVEL_FISH_PRESENT) {
+        }
+//        else if (room->bird->getCategoryLevel() == 7) {
+//            if (_rooms.size() > LEVEL_SPECIAL_COURSE && !UserManager::getInstance()->getSpecialCourseLightOn(category)) {
+//                _rooms[LEVEL_SPECIAL_COURSE]->turnLight(true, true);
+//                UserManager::getInstance()->setSpecialCourseLightOn(category);
+//            }
+//        }
+        else if (room->bird->getCategoryLevel() == LEVEL_FISH_PRESENT) {
             auto bird = _rooms[LEVEL_FISH_PRESENT]->bird;
             auto levelID = bird->getLevelID();
             if (!UserManager::getInstance()->isLevelOpen(levelID)) {
@@ -686,12 +678,12 @@ void CoopScene::onEnter()
     }
     
     if (this->_coopType== CT_LITERACY && UserManager::getInstance()->getGuideDayStatus() == guideDayType::recognizeDay) {
-//        zoomIn(1, 0);
-//        this->runAction(Sequence::create(DelayTime::create(1.f),
-//                                         CallFunc::create([this](){
-//            zoomIn(0, 0.4);
-//        }),
-//                                         nullptr));
+        zoomIn(1, 0);
+        this->runAction(Sequence::create(DelayTime::create(1.f),
+                                         CallFunc::create([this](){
+            zoomIn(0, 0.4);
+        }),
+                                         nullptr));
         UserManager::getInstance()->setGuideDayStatus(guideDayType::finish);
     }
 
@@ -740,7 +732,7 @@ void CoopScene::onEnterTransitionDidFinish()
     setTouchEnabled(true);
     
     auto levelID = UserManager::getInstance()->getCurrentLevelID();
-    
+/*
     for (auto room : _rooms) {
         auto bird = room->bird;
         //if (bird->getStatus() != Bird::BirdStatus::EGG) continue;
@@ -767,16 +759,16 @@ void CoopScene::onEnterTransitionDidFinish()
             default: break;
         }
     }
-    
+*/
     if (!_holdCheckLight) checkLight();
     
-//    if (this->_coopType== CT_LITERACY && UserManager::getInstance()->getGuideDayStatus()==guideDayType::touchFirst) {
-//        this->runAction(Sequence::create(DelayTime::create(1.f),
-//                                         CallFunc::create([this](){
-//            zoomIn(1, 0.4);
-//        }),
-//                                         nullptr));
-//    }
+    if (this->_coopType== CT_LITERACY && UserManager::getInstance()->getGuideDayStatus()==guideDayType::touchFirst) {
+        this->runAction(Sequence::create(DelayTime::create(1.f),
+                                         CallFunc::create([this](){
+            zoomIn(1, 0.4);
+        }),
+                                         nullptr));
+    }
 
 }
 
@@ -792,11 +784,11 @@ void CoopScene::zoomIn(int level, float duration)
     
     
     if (level==1) {
-//        targetScale = 1.7*coopScale;
-//        targetPos = dirSize/2.0 + Size(900, -dirSize.height/2+200);
+        targetScale = 1.7*coopScale;
+        targetPos = dirSize/2.0 + Size(900, -dirSize.height/2+200);
 
-        targetScale = 1.4*coopScale;
-        targetPos = dirSize/2.0 + Size(450, -dirSize.height/2+400);
+//        targetScale = 1.4*coopScale;
+//        targetPos = dirSize/2.0 + Size(450, -dirSize.height/2+400);
     } else {
         targetScale = 1.0*coopScale;
         targetPos = dirSize/2.0;
@@ -1076,7 +1068,10 @@ void CoopScene::checkLight()
     for (auto room : _rooms) {
         auto bird = room->bird;
         auto level = bird->getCategoryLevel();
-        if (level >= LEVEL_SPECIAL_COURSE) {
+//        if (level >= LEVEL_SPECIAL_COURSE) {
+//            continue;
+//        }
+        if (level >= LEVEL_FISH_PRESENT) {
             continue;
         }
         
@@ -1098,7 +1093,7 @@ void CoopScene::checkLight()
      }*/
     light = maxCleared+1;
     light = MAX(light, maxOpened);
-    light = MAX(light, 4);
+//    light = MAX(light, 4);
     
     bool newTurnOn = false;
     

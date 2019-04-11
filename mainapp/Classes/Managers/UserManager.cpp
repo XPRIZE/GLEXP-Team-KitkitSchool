@@ -256,15 +256,7 @@ bool UserManager::isLevelCleared(string levelID)
 }
 
 PretestProgressType UserManager::getPretestProgressType(string levelID) {
-    auto cur = CurriculumManager::getInstance()->findCurriculum(levelID);
-
-    if (cur->categoryLevel >= 3 && cur->categoryLevel <= 4) {
-        return (PretestProgressType)UserDefault::getInstance()->getIntegerForKey((_userName+"pretest_progress_"+levelID).c_str(), (int)PretestProgressType::required);
-
-    } else {
-        return PretestProgressType::finish;
-
-    }
+    return PretestProgressType::finish;
 }
 
 void UserManager::setPretestProgressType(string levelID, PretestProgressType type) {

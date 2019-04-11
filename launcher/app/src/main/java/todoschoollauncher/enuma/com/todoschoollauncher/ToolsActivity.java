@@ -55,8 +55,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView drum = (ToolsAppView) findViewById(R.id.app_drum);
         drum.setItem("drum", getString(R.string.drums), "tools_image_icon_drum", "tools_image_icon_drum_disabled", "30");
-        drum.setUnlocked(true);
-        drum.setEnable(true);
+//        drum.setUnlocked(true);
+//        drum.setEnable(true);
 
         drum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,8 +88,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView marimba = (ToolsAppView) findViewById(R.id.app_marimba);
         marimba.setItem("marimba", getString(R.string.marimba), "tools_image_icon_marimba", "tools_image_icon_marimba_disabled", "100");
-        marimba.setUnlocked(true);
-        marimba.setEnable(true);
+//        marimba.setUnlocked(true);
+//        marimba.setEnable(true);
 
         marimba.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +119,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView blackboard = (ToolsAppView) findViewById(R.id.app_blackboard);
         blackboard.setItem("blackboard", getString(R.string.blackboard), "tools_image_icon_board", "tools_image_icon_board_disabled", "200");
-        blackboard.setUnlocked(true);
-        blackboard.setEnable(true);
+//        blackboard.setUnlocked(true);
+//        blackboard.setEnable(true);
 
         blackboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,8 +151,9 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView drawing = (ToolsAppView) findViewById(R.id.app_drawing);
         drawing.setItem("drawing", getString(R.string.drawing), "tools_image_icon_drawing", "tools_image_icon_drawing_disabled", "300");
-        drawing.setUnlocked(true);
-        drawing.setEnable(true);
+//        drawing.setUnlocked(true);
+//        drawing.setEnable(true);
+
         drawing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,8 +184,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         ToolsAppView coloring = (ToolsAppView) findViewById(R.id.app_coloring);
         coloring.setItem("coloring", getString(R.string.coloring), "tools_image_icon_coloring", "tools_image_icon_coloring_disabled", "500");
-        coloring.setUnlocked(true);
-        coloring.setEnable(true);
+//        coloring.setUnlocked(true);
+//        coloring.setEnable(true);
 
         coloring.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,29 +338,65 @@ public class ToolsActivity extends KitKitLoggerActivity {
         TextView textViewNumCoin = (TextView) findViewById(R.id.textView_numCoin);
         textViewNumCoin.setText(String.format("%d", currentUser.getNumStars()));
 
+        ToolsAppView drum = (ToolsAppView) findViewById(R.id.app_drum);
+        if (currentUser.isUnlockDrum()) {
+            drum.setUnlocked(true);
+            drum.setEnable(true);
+        } else {
+            if (currentUser.getNumStars() >= 30) {
+                drum.setEnable(true);
+            } else {
+                drum.setEnable(false);
+            }
+        }
+
+        ToolsAppView marimba = (ToolsAppView) findViewById(R.id.app_marimba);
+        if (currentUser.isUnlockMarimba()) {
+            marimba.setUnlocked(true);
+            marimba.setEnable(true);
+        } else {
+            if (currentUser.getNumStars() >= 100) {
+                marimba.setEnable(true);
+            } else {
+                marimba.setEnable(false);
+            }
+        }
+
+        ToolsAppView blackboard = (ToolsAppView) findViewById(R.id.app_blackboard);
+        if (currentUser.isUnlockBlackboard()) {
+            blackboard.setUnlocked(true);
+            blackboard.setEnable(true);
+        } else {
+            if (currentUser.getNumStars() >= 200) {
+                blackboard.setEnable(true);
+            } else {
+                blackboard.setEnable(false);
+            }
+        }
+
         ToolsAppView drawing = (ToolsAppView) findViewById(R.id.app_drawing);
-//        if (currentUser.isUnlockDrawing()) {
-//            drawing.setUnlocked(true);
-//            drawing.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 300) {
-//                drawing.setEnable(true);
-//            } else {
-//                drawing.setEnable(false);
-//            }
-//        }
+        if (currentUser.isUnlockDrawing()) {
+            drawing.setUnlocked(true);
+            drawing.setEnable(true);
+        } else {
+            if (currentUser.getNumStars() >= 300) {
+                drawing.setEnable(true);
+            } else {
+                drawing.setEnable(false);
+            }
+        }
 
         ToolsAppView coloring = (ToolsAppView) findViewById(R.id.app_coloring);
-//        if (currentUser.isUnlockColoring()) {
-//            coloring.setUnlocked(true);
-//            coloring.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 500) {
-//                coloring.setEnable(true);
-//            } else {
-//                coloring.setEnable(false);
-//            }
-//        }
+        if (currentUser.isUnlockColoring()) {
+            coloring.setUnlocked(true);
+            coloring.setEnable(true);
+        } else {
+            if (currentUser.getNumStars() >= 500) {
+                coloring.setEnable(true);
+            } else {
+                coloring.setEnable(false);
+            }
+        }
 
         ToolsAppView album = (ToolsAppView) findViewById(R.id.app_album);
         if (drawing.isUnlocked() || coloring.isUnlocked()) {
