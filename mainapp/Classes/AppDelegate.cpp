@@ -148,15 +148,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     
     CacheManager::getInstance()->loadBirdCache([this](){
-        if (UserDefault::getInstance()->getBoolForKey(UserManager::getInstance()->getWelcomeVideoPlayedKey().c_str(), false)) {
-            CCLOG("monts : gotoMainScene");
-            Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(MainScene::createScene()));
-            
-        } else {
-            CCLOG("monts : gotoVideoPlayer");
-            Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(WelcomeVideoScene::createScene()));
-
-        }
+        Director::getInstance()->replaceScene(TouchEventLogger::wrapScene(MainScene::createScene()));
     });
     return true;
 }

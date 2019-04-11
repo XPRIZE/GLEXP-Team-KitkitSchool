@@ -932,17 +932,17 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
     }
 
     private boolean gotoVideoPlayer() {
-//        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
-//
-//        if (user.isFinishLauncherTutorial() == false) {
-//            user.setFinishLauncherTutorial(true);
-//            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
-//
-//            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
-//            startActivity(i);
-//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//            return true;
-//        }
+        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
+        Log.i("myLog", "user.isFinishLauncherTutorial() : " + user.isFinishLauncherTutorial());
+        if (user.isFinishLauncherTutorial() == false) {
+            user.setFinishLauncherTutorial(true);
+            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
+
+            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
+            startActivity(i);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            return true;
+        }
 
         return false;
     }

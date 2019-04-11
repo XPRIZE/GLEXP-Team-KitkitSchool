@@ -539,7 +539,6 @@ void MainScene::onEnter()
     _coop2Node->setScale(1);
     
    // _groundNode->reorderChild(_coopNode, coopBackZ);
-    UserManager::getInstance()->setGuideCoopStatus(guideCoopType::finish);
     
     if (__firstEnter)    {
         StrictLogManager::shared()->curriculumChoice_Begin();
