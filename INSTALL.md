@@ -12,7 +12,7 @@
 #### Note:
 1. The _mainapp_, _seaworld_ and _bookviewer_ projects build correctly on Mac OS only. Other applications build on both Mac and Windows OS.
 2. If any of the applications throw APK signing error then either comment the signing configuration from the app's gradle file or create your own _keystore_ file with the help of steps mentioned [here](https://developer.android.com/studio/publish/app-signing#generate-key).
-3. The _KitkitSchoolLogger_ is a shared module among other projects.
+3. _KitkitSchoolLogger_ module is among other projects.
 4. Set the build variant to __debug__ for all project apps except for the _mainapp_ which is described in point 4 of FAQs below.
 5. There is no need to install _cocos_ application separately for these projects.
 
@@ -26,10 +26,10 @@
 
 3. The application throws _keystore_ file not found error. How do I fix this?
 
-	>_keystore_ file is used to digitally sign an Android application and hence, it is not provided with the project. One must create its own _keystore_ file using the [Android keytool](https://developer.android.com/studio/publish/app-signing) which comes with the Android Studio itself in order to sign the APK.
+	>_keystore_ file is used to digitally sign an Android application and hence, it is not provided with the project. One must create their own _keystore_ file using the [Android keytool](https://developer.android.com/studio/publish/app-signing) which comes with the Android Studio itself in order to sign the APK.
 
 4. How to fix the the mainapp application which throws a run time error related to the package name _com.enuma.xprize_?
-	> The cause of this error is the incorrect setting of build variant of the applications. Kindly, refer to the below table which has the build variant settings.
+	> This error is caused by incorrect build variant setting for the application. Kindly, refer to the below table which has the build variant settings.
 	> 
 	> |App name| Build variant|
 	> |--------|--------------|
