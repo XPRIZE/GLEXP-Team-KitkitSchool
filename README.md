@@ -44,7 +44,7 @@ Be sure to use the specified versions mentioned below, to avoid errors.
 Android studio will also ask to install the relavent SDKs and build tools that are missing - please install them along the way. 
 
 
-1. Download Android Studio (2.2.3 or higher, but not 3.x)
+1. Download Android Studio
 * https://developer.android.com/studio/archive
 * Install Android Studio
 
