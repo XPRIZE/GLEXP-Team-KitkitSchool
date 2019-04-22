@@ -2,7 +2,7 @@
 
 ## Launcher
 1. The Launcher application is used for launching different applications in KitkitSchool world.
-2. The [strings.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/launcher/app/src/main/res/values/strings.xml) file defines the strings being used in the Launcher to display names for various elements. Change the value for each element in this file except for the following element: 
+2. The [strings.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/launcher/app/src/main/res/values/strings.xml) file defines the strings being used in the Launcher to display names for various elements. Change the value for each element in this file except for the following element:  
     `<string name="app_name">Kitkit Launcher</string>`
 ___
 ## Main App
