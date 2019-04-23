@@ -29,8 +29,8 @@ Writing Board application uses images containing alphabets and words and the use
 ___
 ## Library
 
-  1. The Library application consists of a collection story books and videos that need to be localized:  
-  		1. The story book comprises of images located at [library/localized](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/library/localized)/en-us/assets/en-us.  
+  1. The Library application consists of a collection of story books and videos that need to be localized:  
+  		1. A storybook is comprised of images located at [library/localized](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/library/localized)/en-us/assets/en-us.  
   		2. The videos are located at [library/localized](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/library/localized)/en-us/res/raw.    
   2. Strings are being used in the Library to display names for various elements. These can be localized by changing string values at the following locations:   
   		1. Change the value for each element in [strings.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/library/app/src/main/res/values/strings.xml) file except for the following element:  
@@ -38,20 +38,28 @@ ___
   		2. Replace the value of `android:text` attribute of TextView with the localized text in [activity_bookdetail.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/library/app/src/main/res/layout/activity_bookdetail.xml).
 ___
 ## Blackboard - Not required
+Blackboard is an app where the child can draw or write on a blackboard using a chalk. Localization is not needed for this application.  
 ___
 ## Bookviewer - Not required
+Bookviewer app reads the storybooks aloud. Localization is not needed for this application.  
 ___
 ## Drawing - Not required
+Drawing is an app where the child can draw on a paper using crayons. Localization is not needed for this application.  
 ___
 ## Drum - Not required
+The child can tap on the screen to hear Drum sound. Localization is not needed for this application.  
 ___
 ## Marimba - Not required
+The child can tap on the screen to hear Marimba sound. Localization is not needed for this application.  
 ___
 ## KitkitSchoolLogger - Not required
+Used for logging detials from all the applications. Localization is not needed for this application.  
 ___
 ## Lock Screen - Not required
+This app appears when the device wakes up. The device will be unlocked by touching the Kitkit School icon. Localization is not needed for this application.  
 ___
 ## Seaworld - Not required
+Seaworld is an app where different fishes appear on the screen. Localization is not needed for this application.  
 ___
 ## Voice Engine (for English only) - Does not support localization
-___
+Voice Engine is being used by "Word Note" activity in the Main App. This app does not support localization.  
