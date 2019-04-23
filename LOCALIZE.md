@@ -9,7 +9,7 @@ ___
 1. The Main App is the primary learning application in KitkitSchool with tailored curriculum. This application consists of content for literacy and numeracy training.  
 2. Each section of the application consists of section specific audios, videos and images. These assets can be localized as follows:  
     1. Set locale in [configuration.xml](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/blob/master/kitkitschoollogger/kitkitlogger/src/main/res/values/configuration.xml) file.  
-    2. Replace content in the [assets](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/proj.android-studio/models/src/main/assets) folder with locale specific content.  
+    2. PocketSphinx library is being used for speech recognition. Languages supported by PocketSphinx can be found [here](https://cmusphinx.github.io/wiki/download/). Replace the contents in [assets](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/proj.android-studio/models/src/main/assets) folder with a supported language.
     3. Replace content in [Resources](https://github.com/XPRIZE/GLEXP-Team-KitkitSchool/tree/master/mainapp/Resources) folder with locale specific content.  
 ___
 ## Writing Board
