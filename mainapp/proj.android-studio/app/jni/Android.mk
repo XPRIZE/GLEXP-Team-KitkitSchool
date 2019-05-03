@@ -1,4 +1,5 @@
 LOCAL_PATH := $(call my-dir)
+LOCAL_SHORT_COMMANDS := true
 
 include $(CLEAR_VARS)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d)
