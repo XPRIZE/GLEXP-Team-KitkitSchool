@@ -22,11 +22,6 @@ android {
     }
     productFlavors {
 
-        englishKE {
-
-
-        }
-
         englishUS {
 
         }

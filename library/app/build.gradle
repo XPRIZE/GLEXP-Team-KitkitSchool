@@ -43,15 +43,10 @@ android {
         }
 
         everything {
-            res.srcDirs          = ['../localized/sw-TZ/res', '../localized/en-KE/res', '../localized/en-US/res']
-            assets.srcDirs       = ['../localized/sw-TZ/assets', '../localized/en-KE/assets', '../localized/en-US/assets']
+            res.srcDirs          = ['../localized/sw-TZ/res', '../localized/en-US/res']
+            assets.srcDirs       = ['../localized/sw-TZ/assets', '../localized/en-US/assets']
         }
 
-        englishKE {
-            res.srcDirs          = ['../localized/en-KE/res']
-            assets.srcDirs       = ['../localized/en-KE/assets']
-
-        }
 
         englishUS {
             res.srcDirs          = ['../localized/en-US/res']
@@ -74,10 +69,6 @@ android {
 
         }
 
-        englishKE {
-
-
-        }
 
         englishUS {
 
