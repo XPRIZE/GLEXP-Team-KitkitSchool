@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200px"
+    android:layout_height="200px">
+
+    <TextView
+        android:id="@+id/tv_number"
+        android:layout_width="175px"
+        android:layout_height="175px"
+        android:layout_centerInParent="true"
+        android:background="@drawable/number_selector"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="80px" />
+
+</RelativeLayout>

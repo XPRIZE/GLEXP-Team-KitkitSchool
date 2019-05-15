@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">DrawingColoring</string>
+    <string name="title_drawing">Drawing</string>
+    <string name="title_coloring">Coloring</string>
+
+    <string name="white">White</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="yellow">Yellow</string>
+    <string name="red">Red</string>
+    <string name="black">Black</string>
+
+</resources>

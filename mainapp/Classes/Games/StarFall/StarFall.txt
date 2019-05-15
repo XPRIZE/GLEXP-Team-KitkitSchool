@@ -1,0 +1,41 @@
+* 2016년 9월 27일 화요일에 썼습니다. -- xenosoz
+* 먼 미래에서 보고 계신가요? 내용이 코드와 맞지 않다면 글을 고치거나 삭제해주세요. -- xenosoz
+
+
+StarFall
+========
+
+StarFall은 키보드로 단어를 입력해서 하늘에서 떨어지는 단어 방울을 터뜨리는 게임입니다.
+
+화면 위쪽에는 밤 하늘이, 아랫쪽에는 키보드가 있습니다. 하늘에서 단어가 들어있는 비눗방울이 하나씩 떨어집니다. 키보드의 키를 터치해서 비눗방울 속의 단어를 만들면 반딧불이 날아가 비눗방울을 터뜨립니다. 맞추지 않은 비눗방울은 일정 시간이 지나면 바닥에 떨어져서 사라집니다.
+
+레벨마다 등장하는 단어가 다르고 쓸 수 있는 키의 조합 또한 다릅니다. 키보드에서는 쓸 수 있는 키만 활성화됩니다. 2분이 지나면 게임이 끝나고 단어를 몇개 맞추었는지를 화면에 보여줍니다. 확인을 누르면 다음 레벨로 넘어갑니다.
+
+
+미해결 과제
+-----------
+
+1. 게임 시간 2분이 적당한지 고민이 필요합니다.
+2. 점수 화면 표시에 개선의 여지가 있습니다.
+
+
+소스 코드 지름길
+----------------
+
+* StarFall은··· [Core/StarFallScene.*, Core/StarFallLogic.*]
+* 화면 위쪽에는 '밤 하늘'이··· "StarFallDepot::createBackgroundNode" [Utils/StarFallDepot.*]
+* 아랫쪽에는 '키보드'가 있습니다. [ChildNodes/KeyboardNode.*]
+* 하늘에서 '단어가 들어있는 비눗방울'이··· [ChildNodes/TargetTextNode.*]
+* 키보드의 '키를 터치해서' ··· [ChildNodes/KeyNode.*]
+* '단어를 만들면'··· [ChildNodes/ActiveTextNode.*]
+* '반딧불'이 날아가··· [ChildNodes/RocketNode.*]
+* '비눗방울을 터뜨립니다' "TargetTextNode를 TargetDummyNode로 교체" [ChildNodes/TargetDummyNode.*]
+
+* '쓸 수 있는 키의 조합' 또한··· [Models/Worksheet.*]
+* '쓸 수 있는 키'만 활성화··· [Models/Symbol.*]
+* '몇개 맞추었는지를 화면에' 보여줍니다. [$ROOT/Common/Controls/CompletePopup.*]
+
+* [ChildNodes/GameResultNode.*]는 CompletePopup 도입 이전에 만들었으며, 지금은 쓰지 않습니다.
+* [Utils/StarFallNS.*]에는 (코드를 빨리 찍어내려고) 외부 의존 파일을 모아두었습니다.
+* [Utils/StarFallDepot.*]에는 여러번 등장하는 설정, 리소스 파일 등을 모아두었습니다.
+* [StarFall.*]은 StarFall 코드를 변경해도 메인 화면을 리빌드하지 않게 하려고 만들어 두었습니다.

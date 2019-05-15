@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="130px"
+        android:background="#F28F22"
+        android:elevation="8px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <RelativeLayout
+            android:id="@+id/v_back"
+            android:layout_width="180px"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="60px"
+                android:background="@drawable/library_icon_back" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/about_activity_title"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+        <TextView
+            android:id="@+id/textView_currentUserId_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30px"
+            android:text="@string/user_default_id"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:background="#f7f7f7"
+        android:orientation="vertical"
+        android:padding="30px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="90px"
+            android:orientation="horizontal">
+
+            <!-- left side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Settings -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickSetting">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_setting" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_setting"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- Administration -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickAdministration">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_administration"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <!-- Credit -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/setting_height"
+                    android:layout_marginBottom="32px"
+                    android:background="@drawable/bg_setting"
+                    android:onClick="onClickCredit">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:scaleType="center"
+                        android:src="@drawable/icon_document" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/setting_padding"
+                        android:gravity="center"
+                        android:text="@string/btn_credit"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/version_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30px"
+                    android:textColor="#6b6b6b"
+                    android:textSize="50px" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/xprize_about_image_enuma" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40px"
+                    android:gravity="bottom"
+                    android:text="@string/enuma_info"
+                    android:textColor="#6b6b6b"
+                    android:textSize="40px" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="50px" />
+
+            </LinearLayout>
+
+            <!-- center space -->
+            <Space
+                android:layout_width="30dp"
+                android:layout_height="match_parent" />
+
+            <!-- right side -->
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

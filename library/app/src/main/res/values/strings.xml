@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Kitkit School Library</string>
+    <string name="description">Media Controls</string>
+    <!--<string name="tutorial_title">How to use Todo School</string>-->
+    <!--<string name="musicvideo_title">Learning Songs</string>-->
+    <string name="tab_video">VIDEOS</string>
+    <string name="tab_book">BOOKS</string>
+    <!--<string name="tutorial_video1">How to use the tablet</string>-->
+    <!--<string name="tutorial_video2">How to care for the tablet</string>-->
+    <!--<string name="tutorial_video3">How to charge the tablet</string>-->
+    <!--<string name="tutorial_video4">How to use the game in school</string>-->
+    <!--<string name="tutorial_video5">Let’s play Kitkit Shule!</string>-->
+    <string name="button_next">Next</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_more">More</string>
+    <string name="button_less">Less</string>
+</resources>

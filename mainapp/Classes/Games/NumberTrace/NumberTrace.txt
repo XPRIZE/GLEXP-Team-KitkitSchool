@@ -1,0 +1,36 @@
+* 2016년 9월 26일 월요일에 썼습니다. -- xenosoz
+* 먼 미래에서 보고 계신가요? 내용이 코드와 맞지 않다면 글을 고치거나 삭제해주세요. -- xenosoz
+
+
+NumberTrace
+===========
+
+NumberTrace는 곤충이 몇마리인지를 살펴본 후 숫자를 따라 쓰는 게임입니다.
+
+곤충들이 화면 왼쪽편에 나타납니다. 화면 오른쪽에는 숫자가 나옵니다. 곤충들이 모두 자리를 잡고 나면 숫자를 따라 쓸 수 있도록 커서가 나옵니다. 숫자를 다 쓰고 나면 곤충을 한마리씩 눌러가며 숫자를 셉니다. 이 활동을 다 마치면 다음 문제로 넘어갑니다.
+
+곤충은 10종류가 있습니다.
+
+Ant, Bee, Beetle, BlueButterfly, Cockroach
+Ladybug, Moth, Spider, StagBeetle, YellowButterfly
+
+
+미해결 과제
+-----------
+
+1. 아직 그림자 표현을 살리지 못했습니다.
+2. 곤충 움직임을 계산할 때 CPU를 아낄 여지가 남아 있습니다.
+3. Common 폴더 아래의 소스 코드가 프로젝트 전체의 Common으로 승격될만큼 안정적인지, 아니라면 이대로 여러 게임의 의존 관계로 남아있도록 두어도 될지에 대한 분석과 판단이 필요합니다.
+
+
+소스 코드 배치
+--------------
+
+* 'NumberTrace'는 [Core/NumberTraceScene.*, Core/TraceLogic.*]
+* '곤충이 화면 왼쪽편에'나타납니다 [Common/CountField/*]
+* '곤충'이 [Common/CountField/ChildNodes/CountObject.*]
+* '화면 오른쪽에는 숫자가 나옵니다' [$ROOT/Common/Controls/TraceField/*]
+* '다음 문제'로 넘어갑니다 [Models/TraceWork.*, Models/TraceWorksheet.*]
+
+* 여러번 나오는 설정/리소스 [Utils/NumberTraceDepot.*]
+* 다른 게임에서도 자주 쓸만한 기본 자료구조 등 (정리가 필요합니다) [Common/*]
