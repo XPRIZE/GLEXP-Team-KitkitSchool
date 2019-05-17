@@ -31,7 +31,7 @@ Kitkit School (phase 3) consists of 13 apps as following:
 
 Most of the apps above share code from kitkitshcoollogger
 
-13. KitkitSchoolLogger
+14. KitkitSchoolLogger
 * not a stand-alone app, but the code is shared among other apps
 
 
