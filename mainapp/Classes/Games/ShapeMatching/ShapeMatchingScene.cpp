@@ -166,7 +166,7 @@ bool ShapeMatchingScene::init()
     //    _nextButton->loadTextures("ShapeMatching/Images/matchgame_next_inactivated.png", "ShapeMatching/Images/matchgame_next_activated.png");
     //    _nextButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     //    _nextButton->setPosition(Vec2(winSize.width - _nextButton->getContentSize().width - 40, _nextButton->getContentSize().height + 30));
-    //    _nextButton->setTitleFontName("fonts/TodoSchoolV2.ttf");
+    //    _nextButton->setTitleFontName("fonts/chanakya.ttf");
     //    _nextButton->setTitleFontSize(80.f);
     //    _nextButton->setTitleColor(normalColor);
     //    _nextButton->setTitleText(nextButtonTitle());

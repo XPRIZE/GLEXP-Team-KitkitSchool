@@ -36,8 +36,8 @@ using namespace std;
 
 namespace MultiplicationBoardSceneSpace
 {
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
-    const char* andikaFont = "fonts/andika-r.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
+    const char* andikaFont = "fonts/mukta-bold.ttf";
     
     const string resourcePath = "MultiplicationBoard/";
     
@@ -480,7 +480,6 @@ void MultiplicationBoardScene::createBoard(int index)
         };
         
         piece->onSnapped = [this, piece]() {
-            
             snapEffect().play();
             
             //가이드 40%로 보이기

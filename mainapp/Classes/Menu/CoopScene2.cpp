@@ -154,14 +154,14 @@ void CoopScene2::confirmReset()
     auto pSize = Size(500, 500);
     auto popup = PopupBase::create(this, pSize);
     
-    auto textedit = ui::TextField::create("password to reset", "fonts/OpenSans-Bold.ttf", 50);
+    auto textedit = ui::TextField::create("password to reset", "fonts/mukta-bold.ttf", 50);
     textedit->setPosition(Vec2(pSize.width*0.5, pSize.height*0.7));
     popup->addChild(textedit);
     
     {
         auto btn = ui::Button::create();
         btn->setTitleText("Cancel");
-        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleFontName("fonts/mukta-bold.ttf");
         btn->setTitleColor(Color3B::WHITE);
         btn->setTitleFontSize(50);
         
@@ -177,7 +177,7 @@ void CoopScene2::confirmReset()
     {
         auto btn = ui::Button::create();
         btn->setTitleText("Reset");
-        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleFontName("fonts/mukta-bold.ttf");
         btn->setTitleColor(Color3B::WHITE);
         btn->setTitleFontSize(50);
         
@@ -236,7 +236,7 @@ void CoopScene2::setupCoop()
     
     auto labelText = LanguageManager::getInstance()->getLocalizedString((this->_coopType== CT_LITERACY) ? "English" : "Math");
     
-    auto label = TodoUtil::createLabel(labelText, 62, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+    auto label = TodoUtil::createLabel(labelText, 62, Size::ZERO, "fonts/chanakya.ttf", Color4B(255, 252, 219, 255));
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     label->setPosition(panel->getContentSize()/2);
     panel->addChild(label);
@@ -406,7 +406,7 @@ void CoopScene2::setupDebug()
         }
     } else {
         
-        Label* versionTitle = Label::createWithTTF(UserManager::getInstance()->getAppVersion(), "fonts/OpenSans-Bold.ttf", 42);
+        Label* versionTitle = Label::createWithTTF(UserManager::getInstance()->getAppVersion(), "fonts/mukta-bold.ttf", 42);
         versionTitle->setTextColor(Color4B::WHITE);
         versionTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
         versionTitle->setPosition(Vec2(30, debugViewSize.height/2));
@@ -999,7 +999,7 @@ void Room::setupRoom(LevelCurriculum &cur)
         panel->setPosition(panelPos);
         this->addChild(panel);
         
-        auto panelLabel = TodoUtil::createLabel(TodoUtil::itos(cur.categoryLevel), 70, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+        auto panelLabel = TodoUtil::createLabel(TodoUtil::itos(cur.categoryLevel), 70, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(255, 252, 219, 255));
         panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         panelLabel->setPosition(panel->getContentSize()/2+Size(0, -5));
         panel->addChild(panelLabel);

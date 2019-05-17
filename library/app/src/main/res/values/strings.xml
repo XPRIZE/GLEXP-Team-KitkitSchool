@@ -14,4 +14,5 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_more">More</string>
     <string name="button_less">Less</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
 </resources>

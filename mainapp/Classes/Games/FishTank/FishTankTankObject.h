@@ -57,7 +57,7 @@ public:
     int m_fishCount;
     int m_needCount;
 private:
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
 
 };
 

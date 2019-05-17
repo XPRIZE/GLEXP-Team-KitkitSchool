@@ -1,17 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
     buildToolsVersion '25.0.3'
     defaultConfig {
-        applicationId "com.enuma.todoschool.xprize_gallery"
+        applicationId "com.maq.xprize.xprize_gallery"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
+    lintOptions {
+            checkReleaseBuilds false
+            // Or, if you prefer, you can continue to check for errors in release builds,
+            // but continue the build even when errors are found:
+            abortOnError false
+    }
     signingConfigs {
         debug {
             storeFile file('../debug.keystore')

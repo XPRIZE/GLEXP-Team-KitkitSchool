@@ -91,7 +91,7 @@ bool AnswerPiece::init()
 
 Node* AnswerPiece::createFace(int number)
 {
-    const string fontName = "fonts/OpenSans-Bold.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     
     auto faceSize = Size(222, 244)  - Size(22, 44) - Size(30, 30);
     if (number>=10000) {

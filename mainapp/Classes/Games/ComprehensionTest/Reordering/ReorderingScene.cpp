@@ -34,7 +34,7 @@ namespace ReorderingSceneSpace
     const float kImageMinDistance = 300.f;
     const float kTextMinDistance = 100.f;
     
-    const string kLetterFont = FONT_ANDIKA_REGULAR;
+    const string kLetterFont = FONT_MUKTA_BOLD;
     const float kLetterCorrectionX = -80.f;
     const Color4B kLetterColor = Color4B(56, 56, 56, 255);
     
@@ -83,7 +83,7 @@ namespace ComprehensionTest
             _gameNode->setPosition(Vec2(getContentSize().width / 2, 0.f));
             addChild(_gameNode);
             
-            string directionContent = LanguageManager::getInstance()->isEnglish() ? "Place them in order." : "Pangilia hadithi.";
+            string directionContent = LanguageManager::getInstance()->isEnglish() ? "©‹ãð¢ RUUUU× ×ð¢ Ú¹ð¢Ð" : "Pangilia hadithi."; // Place them in order. // उन्हें क्रम में रखें।
             _comprehensionScene->drawQuestionTitle(directionContent, _gameNode);
             
             drawBlocksByGameType();

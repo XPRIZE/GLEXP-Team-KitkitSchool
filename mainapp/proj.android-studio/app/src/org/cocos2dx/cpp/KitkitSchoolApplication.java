@@ -2,8 +2,8 @@ package org.cocos2dx.cpp;
 
 import android.app.Application;
 
-import com.enuma.kitkitProvider.KitkitDBHandler;
-import com.enuma.kitkitlogger.KitKitLogger;
+import com.maq.kitkitProvider.KitkitDBHandler;
+import com.maq.kitkitlogger.KitKitLogger;
 
 /**
  * Created by ingtellect on 7/24/17.

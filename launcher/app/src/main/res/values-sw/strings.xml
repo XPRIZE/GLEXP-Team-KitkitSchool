@@ -16,6 +16,7 @@
     <string name="enter_password">Chomeka neno la siri</string>
     <string name="wrong_password">Neno la siri si sawa</string>
     <string name="start">Anza</string>
+    <string name="install">Install</string>
     <string name="library">Maktaba</string>
     <string name="tools">Zana</string>
     <string name="btn_upload">Upload logs</string>

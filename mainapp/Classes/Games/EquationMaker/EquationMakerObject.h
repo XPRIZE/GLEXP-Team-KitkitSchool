@@ -79,7 +79,7 @@ private:
     bool m_isSlotHide;
     bool m_isHintObject;
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
     
     
 };

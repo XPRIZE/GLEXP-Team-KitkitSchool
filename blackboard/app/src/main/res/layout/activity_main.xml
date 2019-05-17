@@ -5,9 +5,9 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.enuma.blackboard.activity.MainActivity">
+    tools:context="com.maq.xprize.blackboard.activity.MainActivity">
 
-    <com.enuma.blackboard.view.ViewDrawingColoring
+    <com.maq.xprize.blackboard.view.ViewDrawingColoring
         android:id="@+id/v_drawing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

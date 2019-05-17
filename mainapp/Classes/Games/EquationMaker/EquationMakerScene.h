@@ -185,7 +185,7 @@ private:
     
     Size m_ObjectSize;
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     Node *m_gameView;
     

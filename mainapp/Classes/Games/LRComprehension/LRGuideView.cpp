@@ -85,7 +85,7 @@ bool LRGuideView::init(bool isSoundType, string soundPath, string textContent)
     }
     else
     {
-        _textLabel = TodoUtil::createLabelMultilineToFit(_textContent, 72.f, Size(1930, 844), FONT_ANDIKA_REGULAR, Color4B(77, 77, 77, 255));
+        _textLabel = TodoUtil::createLabelMultilineToFit(_textContent, 72.f, Size(1930, 844), FONT_MUKTA_BOLD, Color4B(77, 77, 77, 255));
         _textLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         _textLabel->setPosition(background->getContentSize()/2);
         this->addChild(_textLabel);

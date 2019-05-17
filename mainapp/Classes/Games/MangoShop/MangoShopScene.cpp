@@ -675,20 +675,20 @@ namespace MangoShop
         {
             if (!isFirstTime)
             {
-                auto sign = TodoUtil::createLabel(_problemSignString, kFontSize, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(255, 196, 0, 255 * 1.f));
+                auto sign = TodoUtil::createLabel(_problemSignString, kFontSize, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(255, 196, 0, 255 * 1.f));
                 totalWidth += kGap;
                 totalWidth += sign->getContentSize().width;
                 labels.push_back(sign);
             }
             
-            auto label = TodoUtil::createLabel(number, kFontSize, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(255, 196, 0, 255 * 1.f));
+            auto label = TodoUtil::createLabel(number, kFontSize, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(255, 196, 0, 255 * 1.f));
             totalWidth += label->getContentSize().width;
             labels.push_back(label);
             
             isFirstTime = false;
         }
         
-        auto sign = TodoUtil::createLabel("=", kFontSize, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(255, 196, 0, 255 * 1.f));
+        auto sign = TodoUtil::createLabel("=", kFontSize, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(255, 196, 0, 255 * 1.f));
         totalWidth += kGap;
         totalWidth += sign->getContentSize().width;
         
@@ -715,7 +715,7 @@ namespace MangoShop
         }
         
         cursorX += kGap;
-        auto equalSign = TodoUtil::createLabel("=", kFontSize, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(255, 196, 0, 255 * 1.f));
+        auto equalSign = TodoUtil::createLabel("=", kFontSize, Size::ZERO, "fonts/chanakya.ttf", Color4B(255, 196, 0, 255 * 1.f));
         equalSign->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         equalSign->setPosition(cursorX + equalSign->getContentSize().width / 2, numberExpressionRoot->getContentSize().height / 2 - 20.f);
         numberExpressionRoot->addChild(equalSign);

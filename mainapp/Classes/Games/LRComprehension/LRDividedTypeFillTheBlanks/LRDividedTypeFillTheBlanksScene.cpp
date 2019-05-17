@@ -25,7 +25,7 @@ namespace
     const Rect trayOuterRect = Rect((gameSize.width - trayOuterSize.width) / 2, 0, trayOuterSize.width, trayOuterSize.height);
     const Rect kTrayArrangeRect = Rect((gameSize.width-kTrayArrangeSize.width) / 2, 0.f, kTrayArrangeSize.width, kTrayArrangeSize.height);
     
-    const string fontName = FONT_ANDIKA_REGULAR;
+    const string fontName = FONT_MUKTA_BOLD;
     
     const char* kPickEffectSound = "Common/Sounds/Effect/SFX_Wood_SlideOut.m4a";
     const char* kSnapEffectSound = "Common/Sounds/Effect/SFX_Wood_Correct.m4a";
@@ -172,7 +172,7 @@ void LRDividedTypeFillTheBlanksScene::onEnter()
     }
     */
     
-    string directionContent = LanguageManager::getInstance()->isEnglish() ? "Fill in the blank(s)." : "Jaza nafasi.";
+    string directionContent = LanguageManager::getInstance()->isEnglish() ? "çÚQUUUU SÍæÙ ÖÚð¢Ð" : "Jaza nafasi."; // Fill in the blank(s). // रिक्त स्थान भरें|
     _comprehensionScene->drawQuestionTitleWithSoundButton(directionContent, _problemData->textOrSoundPath, _gameNode);
 }
 

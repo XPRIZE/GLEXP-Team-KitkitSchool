@@ -25,7 +25,7 @@ using namespace std;
 
 
 namespace {
-    const string defaultFont("fonts/TodoSchoolV2.ttf");
+    const string defaultFont("fonts/mukta-bold.ttf");
     const float defaultFontSize(100.f);
     
 
@@ -86,7 +86,7 @@ cocos2d::Scene* GradeSelector::minimalSceneByWrapping() {
     scene->addChild(backButton);
     
     auto label = Label::createWithTTF("Choose a level to play (" + gameName_ + ")",
-                                   defaultFont, defaultFontSize);
+                                   defaultFont, defaultFontSize); // खेलने के लिए एक स्तर चुनें
     
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     label->setPosition(_winSize.width/2, _winSize.height-150);

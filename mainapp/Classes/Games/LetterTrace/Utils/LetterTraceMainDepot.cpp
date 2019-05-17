@@ -64,8 +64,8 @@ Node* MainDepot::createGameNode() const {
 }
  
 Label* MainDepot::createNextLabel() const {
-    string titleString = LanguageManager::getInstance()->isEnglish() ? "next" : "Inayofuata";
-    Label* It = Label::createWithTTF(titleString, "fonts/TodoSchoolV2.ttf", 300.f);
+    string titleString = LanguageManager::getInstance()->isEnglish() ? "¥æ»ð" : "Inayofuata"; // next // आगे
+    Label* It = Label::createWithTTF(titleString, "fonts/chanakya.ttf", 300.f);
     It->setColor(Color3B(105, 68, 31));
 
     return It;

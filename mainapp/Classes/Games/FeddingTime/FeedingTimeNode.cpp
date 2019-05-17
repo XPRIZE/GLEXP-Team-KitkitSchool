@@ -620,7 +620,7 @@ bool FTRelationNode::init()
 	AddNode(Nodes::equalAnswer, "equalAnswer", "FeedingTime/UI/whichisbigger_rsc_inequality_1_answer.png");
 	AddNode(Nodes::lagerAnswer, "lagerAnswer", "FeedingTime/UI/whichisbigger_rsc_inequality_0_answer.png");
 
-	if (auto label = ui::Text::create("", "fonts/TodoSchoolV2.ttf", 440))
+	if (auto label = ui::Text::create("", "fonts/mukta-bold.ttf", 440))
 	{
 		label->setTextColor(Color4B(255, 247, 237, 255));
 		addChild(label, 0, "String");

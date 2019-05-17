@@ -24,7 +24,7 @@ BEGIN_NS_WORDNOTE;
 
 const int noteSizeX = 16;
 const int noteSizeY = 3;
-const string questionFontPath = "fonts/TodoSchoolV2.ttf";
+const string questionFontPath = "fonts/mukta-bold.ttf";
 
 Scene* WordNoteScene::createScene(int levelID)
 {

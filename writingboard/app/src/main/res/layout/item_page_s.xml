@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
-    <com.enuma.writingboard.view.ViewDrawingColoring
+    <com.maq.xprize.writingboard.view.ViewDrawingColoring
         android:id="@+id/drawing"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

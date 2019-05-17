@@ -27,7 +27,7 @@ std::string MainDepot::assetPrefix() const {
 }
 
 std::string MainDepot::defaultFont() const {
-    return "fonts/TodoSchoolV2.ttf";
+    return "fonts/mukta-bold.ttf";
 }
 
 Size MainDepot::windowSize() const {
@@ -81,7 +81,7 @@ BigLabel* MainDepot::createBonusTextLabel(const std::string& Text) const {
 }
 
 cocos2d::Label* MainDepot::createNextLabel() const {
-    Label* It = Label::createWithTTF(LanguageManager::getInstance()->isEnglish() ? "next" : "Inayofuata", defaultFont(), 300.f);
+    Label* It = Label::createWithTTF(LanguageManager::getInstance()->isEnglish() ? "¥æ»ð" : "Inayofuata", "fonts/chanakya.ttf", 300.f); // next // आगे
     It->setColor(Color3B(255, 249, 237));
     It->setOpacity(GLubyte(255 * .90f));
     

@@ -24,7 +24,7 @@
 BEGIN_NS_PATTERNTRAIN;
 
 const float gameNodeHeight = 1800; // 1536, 1800
-const string fontName = "fonts/TodoSchoolV2.ttf";
+const string fontName = "fonts/chanakya.ttf";
 const auto snapRadius = 150;
 
 const string soundSlotIn = "Common/Sounds/Effect/BlockSlotIn.m4a";

@@ -138,7 +138,7 @@ bool ReadingBirdScene::init()
     mCharacter2 = Sprite::create();
     addChild(mCharacter2);
     
-    mTextQuestion = Text::create("", "fonts/Andika-R.ttf", 300);
+    mTextQuestion = Text::create("", "fonts/mukta-bold.ttf", 300);
     mTextQuestion->setColor(Color3B(65, 64, 62));
     mTextQuestion->setOpacity(0xf2);
     mTextQuestion->setPosition(Vec2(winSize.width / 2 - 13, winSize.height / 2 - 251));
@@ -146,28 +146,28 @@ bool ReadingBirdScene::init()
     
     if (isDebug == true)
     {
-        auto mainState = Label::createWithTTF("main : " + strMainState[(int)mMainState], "fonts/TodoSchoolV2.ttf", 70);
+        auto mainState = Label::createWithTTF("main : " + strMainState[(int)mMainState], "fonts/mukta-bold.ttf", 70);
         mainState->setTextColor(Color4B::WHITE);
         mainState->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         mainState->setPosition(Vec2(25, winSize.height - 300));
         mainState->setTag(LABEL_MAIN_STATE);
         addChild(mainState);
 
-        auto character1State = Label::createWithTTF("c1 : " + strCharacter1State[(int)mCharacter1State], "fonts/TodoSchoolV2.ttf", 70);
+        auto character1State = Label::createWithTTF("c1 : " + strCharacter1State[(int)mCharacter1State], "fonts/mukta-bold.ttf", 70);
         character1State->setTextColor(Color4B::WHITE);
         character1State->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         character1State->setPosition(Vec2(25, winSize.height - 400));
         character1State->setTag(LABEL_CHARACTER1_STATE);
         addChild(character1State);
 
-        auto character2State = Label::createWithTTF("c2 : " + strCharacter2State[(int)mCharacter2State], "fonts/TodoSchoolV2.ttf", 70);
+        auto character2State = Label::createWithTTF("c2 : " + strCharacter2State[(int)mCharacter2State], "fonts/mukta-bold.ttf", 70);
         character2State->setTextColor(Color4B::WHITE);
         character2State->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         character2State->setPosition(Vec2(25, winSize.height - 500));
         character2State->setTag(LABEL_CHARACTER2_STATE);
         addChild(character2State);
 
-        auto volume = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 70);
+        auto volume = Label::createWithTTF("", "fonts/mukta-bold.ttf", 70);
         volume->setTextColor(Color4B::WHITE);
         volume->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         volume->setPosition(Vec2(25, winSize.height - 600));
@@ -175,7 +175,7 @@ bool ReadingBirdScene::init()
 
         addChild(volume);
 
-        auto score = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 70);
+        auto score = Label::createWithTTF("", "fonts/mukta-bold.ttf", 70);
         score->setTextColor(Color4B::WHITE);
         score->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         score->setPosition(Vec2(25, winSize.height - 700));

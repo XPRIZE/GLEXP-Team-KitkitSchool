@@ -1,4 +1,4 @@
-package com.enuma.writingboard;
+package com.maq.xprize.writingboard;
 
 import org.junit.Test;
 
