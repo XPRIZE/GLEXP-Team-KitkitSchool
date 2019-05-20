@@ -63,9 +63,9 @@ static string resourcePath = "WordKicker/";
 
 const Size gameSize = Size(2560, 1800);
 
-//const string fontName = "fonts/TodoSchoolV2.ttf";
+//const string fontName = "fonts/chanakya.ttf";
 //const string fontName = "fonts/AndikaNewBasic-B.ttf";
-const string fontName = "fonts/andika-r.ttf";
+const string fontName = "fonts/mukta-bold.ttf";
 const float fontSize_normal = 120;
 const float fontSize_math = 180;
 const bool gameDebug = false;

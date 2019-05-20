@@ -27,7 +27,7 @@ namespace DoubleDigitSceneSpace {
     const char* missEffect = "Common/Sounds/Effect/Help.m4a";
     const Size defaultGameSize = Size(2048, 1440);
     const char* touchEffect = "Common/Sounds/Effect/paneltouch.m4a";
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
 
 }
 

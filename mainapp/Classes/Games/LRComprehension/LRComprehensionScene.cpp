@@ -31,6 +31,7 @@ namespace
     const string missEffect = kPrefixPath + "help.m4a";
     const string pageTurnEffect = kPrefixPath + "card_move_right.m4a";
     const string defaultFont = FONT_ANDIKA_BOLD;
+    const string hindiFont = FONT_CHANAKYA;
     const float kGuideViewTweenDuration = 0.3f;
     const float kGuideViewDelayGameClear = 0.3f;
     const Size gameSize = Size(2560, 1800);
@@ -245,14 +246,14 @@ void LRComprehensionScene::showProblem()
     {
         auto text = problemSet[_currentProblem]->script;
         drawGuideView(false, text);
-        drawGuideTitle(LanguageManager::getInstance()->isEnglish() ? "Listen to the story." : "Sikiliza hadithi.");
+        drawGuideTitle(LanguageManager::getInstance()->isEnglish() ? "·UUUUãæÙè ·UUUUô âéÙôÐ" : "Sikiliza hadithi."); // Listen to the story. // कहानी को सुनो।
         _currentProblem++;
     }
     else if (questionType == LRComprehensionType::ReadingOnly)
     {
         auto soundPath = problemSet[_currentProblem]->script;
         drawGuideView(true, soundPath);
-        drawGuideTitle(LanguageManager::getInstance()->isEnglish() ? "Read the story." : "Soma hadithi.");
+        drawGuideTitle(LanguageManager::getInstance()->isEnglish() ? "·UUUUãæÙè ÂÉ¸ôÐ" : "Soma hadithi."); // कहानी पढ़ो।
         _currentProblem++;
     }
     
@@ -377,8 +378,9 @@ void LRComprehensionScene::drawQuestionTitle(string titleText, Node* parentNode,
     _questionHighlight->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _questionHighlight->setPosition(200.f, parentNode->getContentSize().height - 300.f);
     parentNode->addChild(_questionHighlight);
-    
-    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, FONT_ANDIKA_BOLD, Color4B(77, 77, 77, 255));
+
+    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, FONT_CHANAKYA, Color4B(77, 77, 77, 255));
+
     titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     titleLabel->setPosition(leftPadding + addLeftPadding, _questionHighlight->getContentSize().height / 2);
     _questionHighlight->addChild(titleLabel);
@@ -414,7 +416,7 @@ void LRComprehensionScene::drawGuideTitle(string titleText)
     _guideHighlight->setPosition(200.f, this->getContentSize().height - 300.f);
     guideHighlightWrapper->addChild(_guideHighlight);
     
-    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, FONT_ANDIKA_BOLD, Color4B(77, 77, 77, 255));
+    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, hindiFont, Color4B(77, 77, 77, 255));
     titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     titleLabel->setPosition(leftPadding - 100.f, _guideHighlight->getContentSize().height / 2);
     _guideHighlight->addChild(titleLabel);

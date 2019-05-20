@@ -29,7 +29,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             minifyEnabled false
@@ -50,6 +49,7 @@ android {
             }
         }
     }
+
 }
 
 dependencies {

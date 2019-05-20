@@ -35,7 +35,7 @@ namespace BookPageSpace {
     const float turnEase = 1.4;
     
     const string titleFont = "fonts/Seshat.otf";
-    const string bodyFont = "fonts/Andika-R.ttf";
+    const string bodyFont = "fonts/mukta-bold.ttf";
     
     const bool DebugLayout = false;
     

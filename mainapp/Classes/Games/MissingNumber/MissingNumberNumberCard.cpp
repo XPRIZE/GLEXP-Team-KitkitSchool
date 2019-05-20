@@ -45,7 +45,7 @@ namespace MissingNumber
         body->setPosition(this->getContentSize() / 2);
         this->addChild(body);
         
-        _label = TodoUtil::createLabel(_numberString, 167.f, Size::ZERO, "fonts/OpenSans-Bold.ttf", Color4B(85, 55, 52, 255));
+        _label = TodoUtil::createLabel(_numberString, 167.f, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(85, 55, 52, 255));
         _label->setCascadeOpacityEnabled(true);
         _label->setScale(scale);
         _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);

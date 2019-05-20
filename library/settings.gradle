@@ -1,3 +1,6 @@
 include ':app'
 include ':kitkitlogger'
 project(':kitkitlogger').projectDir = new File('../kitkitschoollogger/kitkitlogger/')
+include ':play_licensing'
+include ':downloader_library'
+include ':zip_file'

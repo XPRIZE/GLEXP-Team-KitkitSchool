@@ -30,7 +30,7 @@ namespace
     const float kImageMinDistance = 300.f;
     const float kTextMinDistance = 100.f;
     
-    const string kLetterFont = FONT_ANDIKA_REGULAR;
+    const string kLetterFont = FONT_MUKTA_BOLD;
     const float kLetterCorrectionX = -80.f;
     const Color4B kLetterColor = Color4B(56, 56, 56, 255);
     
@@ -75,7 +75,7 @@ void LRDividedTypeReorderingScene::onEnter()
     _gameNode->setPosition(Vec2(getContentSize().width / 2, 0.f));
     addChild(_gameNode);
     
-    string directionContent = LanguageManager::getInstance()->isEnglish() ? "Place the events in the correct sequence." : "Yaweke matukio katika mpangilio ulio sahihi.";
+    string directionContent = LanguageManager::getInstance()->isEnglish() ? "ƒæÅÙæ¥ô¢ ·UUUUô âãè RUUUU× ×ð¢ Ú¹ð¢Ð" : "Yaweke matukio katika mpangilio ulio sahihi."; // Place the events in the correct sequence. // घटनाओं को सही क्रम में रखें।
     _comprehensionScene->drawQuestionTitleWithSoundButton(directionContent, _problem->audio, _gameNode);
     
     drawBlocksByGameType();

@@ -19,7 +19,7 @@ using namespace std;
 
 namespace WordWindowSceneSpace
 {
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     const string resourcePath = "wordwindow/";
     
@@ -30,7 +30,7 @@ namespace WordWindowSceneSpace
     SoundEffect solveEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Counting_Win.m4a"); }
 
     
-    const string fontName = "fonts/andika-r.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
 	const string boldFontName = "fonts/andikanewbasic-b.ttf";
     const bool gameDebug = false;    
 }
@@ -475,7 +475,7 @@ void WordWindowScene::resetPuzzle()
 
 void WordWindowScene::loadData(int level)
 {
-	string P = "Games/" + resourcePath + "wordwindow_level.tsv";
+	string P = "games/" + resourcePath + "wordwindow_level.tsv";
 	string S = FileUtils::getInstance()->getStringFromFile(P);
 	auto data = TodoUtil::readTSV(S);
 	auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
@@ -565,7 +565,7 @@ void WordWindowScene::playSoundQuestion(string name)
 		return;
 	}
 
-    string path = "Games/WordWindow/Sound/" + name;
+    string path = "games/wordwindow/sound/" + name;
     
 	GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
 
@@ -3065,7 +3065,7 @@ void WordWindowScene::createQuestion()
 		}
 	}
 
-	m_pLabelQuestion = TodoUtil::createLabelMultilineToFit(newText, 80.f, Size(1424.f, 800.f), fontName, Color4B::WHITE, TextHAlignment::LEFT, TextVAlignment::CENTER);
+	m_pLabelQuestion = TodoUtil::createLabelMultilineToFit(newText, 80.f, Size(1424.f, 800.f), defaultFont, Color4B::WHITE, TextHAlignment::LEFT, TextVAlignment::CENTER);
 	m_pLabelQuestion->setPosition(Vec2(749.f + (1424.f / 2.f), 901.f + (336.f / 2.f)));
 	_gameNode->addChild(m_pLabelQuestion);
 }
@@ -3735,7 +3735,7 @@ void WordWindowScene::createRightFormula()
 			}
 			else
 			{
-				xml_formula += "<font color ='#140d07' face = 'main/fonts/andika-r.ttf' size = '288'>";
+				xml_formula += "<font color ='#140d07' face = 'main/fonts/mukta-bold.ttf' size = '288'>";
 				xml_formula += vecTexts[i].m_text;
 				xml_formula += "</font>";
 			}
@@ -3749,7 +3749,7 @@ void WordWindowScene::createRightFormula()
 			}
 			else
 			{
-				xml_shadow += "<font color ='#d8bfa3' face = 'main/fonts/andika-r.ttf' size = '288'>";
+				xml_shadow += "<font color ='#d8bfa3' face = 'main/fonts/mukta-bold.ttf' size = '288'>";
 				xml_shadow += vecTexts[i].m_text;
 				xml_shadow += "</font>";
 			}

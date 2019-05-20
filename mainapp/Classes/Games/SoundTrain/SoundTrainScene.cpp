@@ -29,7 +29,7 @@ const string soundMove = "NumberTrain/Sounds/Train1.m4a";
 const string soundWhistle1 = "SoundTrain/Sound/Pattern_Train_1.m4a";
 const string soundWhistle2 = "SoundTrain/Sound/Pattern_Train_2.m4a";
 const string soundWhistle3 = "SoundTrain/Sound/Pattern_Train_3.m4a";
-const string fontName = "fonts/Andika-R.ttf";
+const string fontName = "fonts/mukta-bold.ttf";
 bool isSW = false;
 bool isEN = false;
 

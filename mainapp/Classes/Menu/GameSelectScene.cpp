@@ -47,7 +47,8 @@ namespace GameSelectSceneSpace {
     const int coopBackZ = -100;
     const int coopFrontZ = 100;
     
-    const string fontName = "fonts/TodoMainCurly.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
+    const string hindiFontName = "fonts/chanakya.ttf";
     
 };
 
@@ -384,7 +385,7 @@ void GameSelectScene::addGameButton(Node *parent, std::string levelID, int day, 
         
         Node* levelNumber = Sprite::create(StringUtils::format("icons/game_level_circle_%d.png",gameInfo.gameLevel));
         if (!levelNumber) {
-            levelNumber = TodoUtil::createLabel(TodoUtil::itos(gameInfo.gameLevel), 62, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B::WHITE);
+            levelNumber = TodoUtil::createLabel(TodoUtil::itos(gameInfo.gameLevel), 62, Size::ZERO, "fonts/mukta-bold.ttf", Color4B::WHITE);
             levelNumber->setAnchorPoint(Vec2(0.5, 0.6));
         } else {
             levelNumber->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -925,7 +926,7 @@ void GameSelectScene::onEnter()
             panel->setPosition(panelNodeSize/2);
             _panelNode->addChild(panel);
             
-            auto panelLabel = TodoUtil::createLabel(cur->levelTitle, 55, Size::ZERO, fontName, Color4B(255, 240, 184, 255));
+            auto panelLabel = TodoUtil::createLabel(cur->levelTitle, 55, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
             panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             panelLabel->setPosition(panel->getContentSize()/2 - Size(0, 25));
             panel->addChild(panelLabel);

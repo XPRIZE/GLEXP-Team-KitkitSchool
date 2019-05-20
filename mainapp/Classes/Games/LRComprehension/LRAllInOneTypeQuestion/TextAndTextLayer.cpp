@@ -51,7 +51,7 @@ void TextAndTextLayer::setQuestionAnswers(std::string questionText, std::string 
     }
     else
     {
-        auto guideText = createMultiLine(_guideTextOrSoundPath, 60.f, guideArea->getContentSize() * 0.88f, FONT_ANDIKA_REGULAR, Color4B(77, 77, 77, 255), 2.8f);
+        auto guideText = createMultiLine(_guideTextOrSoundPath, 60.f, guideArea->getContentSize() * 0.88f, FONT_MUKTA_BOLD, Color4B(77, 77, 77, 255), 2.8f);
         guideText->setPosition(guideArea->getContentSize()/2);
         guideArea->addChild(guideText);
     }

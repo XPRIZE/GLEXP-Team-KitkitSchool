@@ -188,7 +188,7 @@ void Card::drawCardWithProblem(Problem* problem)
         image->setPosition(clipper->getContentSize() / 2);
         clipper->addChild(image);
 
-        label = TodoUtil::createLabel(problem->word, 200.f, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(81, 53, 24, 255 * 0.9f));
+        label = TodoUtil::createLabel(problem->word, 200.f, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(81, 53, 24, 255 * 0.9f));
         label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         label->setPosition(backFace->getContentSize().width / 2, backFace->getContentSize().height / 2 - label->getContentSize().height / 2 - 300.f);
         if (label->getContentSize().width > backFace->getContentSize().width - 100.f)

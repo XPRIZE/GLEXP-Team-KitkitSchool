@@ -25,7 +25,7 @@ std::string StarFallDepot::assetPrefix() const {
 }
 
 std::string StarFallDepot::defaultFontFace() const {
-    return "fonts/TodoSchoolV2.ttf";
+    return "fonts/mukta-bold.ttf";
 }
 
 Size StarFallDepot::windowSize() const {

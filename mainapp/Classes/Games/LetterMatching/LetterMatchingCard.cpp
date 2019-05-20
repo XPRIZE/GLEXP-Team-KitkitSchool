@@ -33,7 +33,7 @@ void LetterMatchingCard::setImage(int level, int type, int number,
     auto spriteName = std::string("NumberMatching/Images/Letter/") + cardImageName;
     Node* background = Sprite::create(spriteName);
     if (!background) {
-        background = TodoUtil::createLabel(cardImageName, 50, Size::ZERO, "fonts/OpenSans-Bold.ttf", Color4B::BLACK);
+        background = TodoUtil::createLabel(cardImageName, 50, Size::ZERO, "fonts/mukta-bold.ttf", Color4B::BLACK);
     }
 
     auto contentSize = background->getContentSize();
@@ -95,8 +95,7 @@ void LetterMatchingCard::createShiningParticle()
     _shiningParticleNode = Node::create();
     
     ParticleSystemQuad* particleEffect = nullptr;
-    
-    
+
     auto createParticleEffect = [&](std::string name, std::string plist) {
         particleEffect = ParticleSystemQuad::create(plist);
         particleEffect->setName(name);

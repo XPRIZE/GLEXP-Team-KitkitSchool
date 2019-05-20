@@ -122,7 +122,7 @@ bool BookView::init(const Size &size, std::string &bookPath, bool checkCompleteC
         bool isEnglish = _languageCode == "en";
         
         std::string textAloud = (isEnglish) ? "Read Aloud?" : "Sauti";
-        auto labelAloud = Label::createWithTTF(textAloud, "fonts/TodoSchoolV2.ttf", 90);
+        auto labelAloud = Label::createWithTTF(textAloud, "fonts/chanakya.ttf", 90);
         labelAloud->setTextColor(Color4B(255, 248, 219, 255));
         labelAloud->setPosition(soundSize.width / 2, soundSize.height / 2 + 255);
         _soundView->addChild(labelAloud);
@@ -148,7 +148,7 @@ bool BookView::init(const Size &size, std::string &bookPath, bool checkCompleteC
 
         std::string textOn = (isEnglish) ? "on" : "Washa";
         float textSizeOnOff = (isEnglish) ? 120 : 95;
-        _soundOnLabel = Label::createWithTTF(textOn, "fonts/TodoSchoolV2.ttf", textSizeOnOff);
+        _soundOnLabel = Label::createWithTTF(textOn, "fonts/chanakya.ttf", textSizeOnOff);
         _soundOnLabel->setTextColor(Color4B(255, 255, 255, 255));
         _soundOnLabel->setPosition(Vec2(_soundOnButton->getContentSize().width / 2, 156));
         _soundOnButton->addChild(_soundOnLabel);
@@ -182,7 +182,7 @@ bool BookView::init(const Size &size, std::string &bookPath, bool checkCompleteC
         });
 
         std::string textOff = (isEnglish) ? "off" : "Zima";
-        _soundOffLabel = Label::createWithTTF(textOff, "fonts/TodoSchoolV2.ttf", textSizeOnOff);
+        _soundOffLabel = Label::createWithTTF(textOff, "fonts/chanakya.ttf", textSizeOnOff);
         _soundOffLabel->setTextColor(Color4B(255, 255, 255, 255));
         _soundOffLabel->setPosition(Vec2(_soundOffButton->getContentSize().width / 2, 156));
         _soundOffButton->addChild(_soundOffLabel);

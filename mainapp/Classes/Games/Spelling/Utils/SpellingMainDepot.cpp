@@ -21,7 +21,7 @@ string MainDepot::assetPrefix() const {
 }
 
 string MainDepot::defaultFont() const {
-    return "fonts/Andika-R.ttf";
+    return "fonts/mukta-bold.ttf";
 }
 
 Size MainDepot::windowSize() const {

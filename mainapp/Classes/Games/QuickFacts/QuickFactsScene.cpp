@@ -49,7 +49,7 @@ namespace QuickFactsSceneSpace {
     SoundEffect wrongEffect() { return SoundEffect(wrongSFXPath); }
     SoundEffect showGemEffect() { return SoundEffect(popGemSFXPath); }
 
-    const string fontName = "fonts/andika-r.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     const string fontBoldName = "fonts/andikanewbasic-b.ttf";
     
     const int maxAnswerCount = 15;

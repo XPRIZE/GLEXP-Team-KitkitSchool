@@ -66,7 +66,7 @@ void ShapeMatchingCard::setImage(int level, int type, int number,
     Color4B fontColor = Color4B(105,65,27,255);
     Vec2 offset = Vec2::ZERO;
     
-    const string fontName = "fonts/OpenSans-Bold.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     
     if (!shape) {
         std::string localizedText = "";

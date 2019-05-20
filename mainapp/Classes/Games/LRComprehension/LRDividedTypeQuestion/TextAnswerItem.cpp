@@ -78,27 +78,27 @@ void TextAnswerItem::initText(std::string text, bool bLongText)
     _wrongAnswerSprite->setVisible(false);
     addChild(_wrongAnswerSprite);
     
-    _normalLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, kNormalLetterColor);
+    _normalLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_MUKTA_BOLD, kNormalLetterColor);
     _normalLetterLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _normalLetterLabel->setPosition(50.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
     addChild(_normalLetterLabel);
     
-    _wrongLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, kWrongLetterColor);
+    _wrongLetterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_MUKTA_BOLD, kWrongLetterColor);
     _wrongLetterLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _wrongLetterLabel->setPosition(50.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
     addChild(_wrongLetterLabel);
     
-    _normalAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_normalAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kNormalAnswerColor);
+    _normalAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_normalAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_MUKTA_BOLD, kNormalAnswerColor);
     _normalAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _normalAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
     addChild(_normalAnswerLabel);
     
-    _rightAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_rightAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kRightAnswerColor);
+    _rightAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_rightAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_MUKTA_BOLD, kRightAnswerColor);
     _rightAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _rightAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
     addChild(_rightAnswerLabel);
     
-    _wrongAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_wrongAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_ANDIKA_REGULAR, kWrongAnswerColor);
+    _wrongAnswerLabel = TodoUtil::createLabelMultilineToFit(text, 60, Size(_wrongAnswerSprite->getContentSize().width - 210.f, 160.f),  FONT_MUKTA_BOLD, kWrongAnswerColor);
     _wrongAnswerLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     _wrongAnswerLabel->setPosition(150.f + kRevisedX, getContentSize().height / 2 + kRevisedY);
     addChild(_wrongAnswerLabel);

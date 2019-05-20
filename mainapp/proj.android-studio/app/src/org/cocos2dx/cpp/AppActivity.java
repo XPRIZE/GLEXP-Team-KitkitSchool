@@ -24,36 +24,44 @@ THE SOFTWARE.
 package org.cocos2dx.cpp;
 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.lang.Exception;
-
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.os.Build.*;
-import android.app.ActivityManager;
-import android.content.Intent;
 
-import com.enuma.kitkitProvider.Fish;
-import com.enuma.kitkitProvider.KitkitDBHandler;
-import com.enuma.kitkitProvider.User;
-import com.enuma.kitkitlogger.KitKitLogger;
+import com.maq.kitkitProvider.Fish;
+import com.maq.kitkitProvider.KitkitDBHandler;
+import com.maq.kitkitProvider.User;
+import com.maq.kitkitlogger.KitKitLogger;
+import com.google.android.vending.expansion.downloader.Helpers;
 
 import org.cocos2dx.cpp.ReadingBird.PlayAudio;
 import org.cocos2dx.cpp.ReadingBird.SpeechRecognition;
-import org.cocos2dx.lib.*;
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+import org.cocos2dx.lib.Cocos2dxHelper;
+import org.cocos2dx.lib.Cocos2dxVideoHelper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.zip.ZipFile;
+
+import kitkitschool.DownloadExpansionFile;
+import utils.Zip;
 
 
 public class AppActivity extends Cocos2dxActivity {
@@ -62,7 +70,8 @@ public class AppActivity extends Cocos2dxActivity {
     private Cocos2dxGLSurfaceView glSurfaceView;
     public static KitkitDBHandler _dbHandler;
 
-    private static String TAG = "KitkitschoolActivity";
+    private static String TAG = "KitkitSchoolActivity";
+    private static final String EXPANSION_FILE_VERSION_KEY_NAME = "0";
 
     protected String appLanguage;
     protected static String currentUsername;
@@ -102,6 +111,11 @@ public class AppActivity extends Cocos2dxActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
+        String packageNameDirPath = Environment.getExternalStorageDirectory() + "/Android/data/" + getApplicationContext().getPackageName();
+        File packageNameDir = new File(packageNameDirPath);
+        if (!packageNameDir.exists()) {
+            packageNameDir.mkdir();
+        }
         // Workaround in https://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time/16447508
         if (!isTaskRoot()) {
             // Android launched another instance of the root activity into an existing task
@@ -130,7 +144,7 @@ public class AppActivity extends Cocos2dxActivity {
 
         // init sign-language value
         try {
-            Context launcherContext = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            Context launcherContext = createPackageContext("com.maq.xprize.kitkitlauncher.hindi",0);
             SharedPreferences pref = launcherContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
             signModeOn = pref.getBoolean("sign_language_mode_on", false);
             Cocos2dxHelper.setBoolForKey("sign_language_mode_on", signModeOn);
@@ -140,9 +154,9 @@ public class AppActivity extends Cocos2dxActivity {
         }
 
         try {
-            Context launcherContext = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            Context launcherContext = createPackageContext("com.maq.xprize.kitkitlauncher.hindi",0);
             SharedPreferences pref = launcherContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
-            appLanguage = pref.getString("appLanguage", getString(com.enuma.kitkitlogger.R.string.defaultLanguage));
+            appLanguage = pref.getString("appLanguage", getString(com.maq.kitkitlogger.R.string.defaultLanguage));
             Cocos2dxHelper.setStringForKey("appLanguage", appLanguage);
         }
         catch (PackageManager.NameNotFoundException ne) {
@@ -157,6 +171,11 @@ public class AppActivity extends Cocos2dxActivity {
             Log.e(TAG, "error when getting current user. please check launcher is installed.");
         }
 
+        /*SharedPreferences prefs = getSharedPreferences("किटकिट स्कूल", Context.MODE_PRIVATE);
+        if (isRequiredUnzipExpansionFile(prefs)) {
+            unzipExpansionFile(getExpansionFilePath());
+            prefs.edit().putInt(EXPANSION_FILE_VERSION_KEY_NAME, DownloadExpansionFile.xAPK.mFileVersion).apply();
+        }*/
     }
 
     public Cocos2dxGLSurfaceView onCreateView()
@@ -200,7 +219,7 @@ public class AppActivity extends Cocos2dxActivity {
     public void onResume() {
         {
             try {
-                Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+                Context context = createPackageContext("com.maq.xprize.kitkitlauncher.hindi",0);
                 SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
                 boolean isReviewModeOn = pref.getBoolean("review_mode_on", false);
                 Cocos2dxHelper.setBoolForKey("review_mode_on", isReviewModeOn);
@@ -225,11 +244,12 @@ public class AppActivity extends Cocos2dxActivity {
                 _launchString = extras.getString("test");
                 Log.d(TAG,"onResume launch string " + _launchString);
             }
+
         }
 
         // sign-language
         try {
-            Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            Context context = createPackageContext("com.maq.xprize.kitkitlauncher.hindi",0);
             SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
             boolean sharedSignModeOn = pref.getBoolean("sign_language_mode_on", false);
 
@@ -245,9 +265,9 @@ public class AppActivity extends Cocos2dxActivity {
 
         // language
         try {
-            Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
+            Context context = createPackageContext("com.maq.xprize.kitkitlauncher.hindi",0);
             SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
-            String sharedLang = pref.getString("appLanguage", getString(com.enuma.kitkitlogger.R.string.defaultLanguage));
+            String sharedLang = pref.getString("appLanguage", getString(com.maq.kitkitlogger.R.string.defaultLanguage));
 
             if (!appLanguage.equals(sharedLang)) {
                 Cocos2dxHelper.setStringForKey("appLanguage", appLanguage);
@@ -277,7 +297,40 @@ public class AppActivity extends Cocos2dxActivity {
         Cocos2dxVideoHelper.startVideo(_videoPlayerIndex);
     }
 
+    private boolean isRequiredUnzipExpansionFile(SharedPreferences prefs) {
+        return prefs.getInt(EXPANSION_FILE_VERSION_KEY_NAME, 0) != DownloadExpansionFile.xAPK.mFileVersion;
+    }
 
+    private void unzipExpansionFile(String zipFilePath) {
+        Log.i(getClass().getName(), "going to unzip the file for " + zipFilePath);
+        try {
+            File file = new File(zipFilePath);
+            ZipFile zipFile = new ZipFile(file);
+            Zip _zip = new Zip(zipFile, this);
+            _zip.unzip(getUnzippedExpansionFilePath());
+            _zip.close();
+            Log.i(getClass().getName(), "the file " + zipFilePath + " unzipped successfully");
+            //file.delete();
+        } catch (IOException ie) {
+            Log.e(getClass().getName(), "fail to unzip the file " + zipFilePath, ie);
+        }
+    }
+
+    private String getUnzippedExpansionFilePath() {
+        return getContext().getExternalFilesDir(null).toString() + File.separator;
+    }
+
+    /**
+     * get the path which the expansionFile which downloaded from play store will be stored
+     *
+     * @return
+     */
+    private String getExpansionFilePath() {
+
+        //return Environment.getExternalStorageDirectory().toString() + File.separator + "autocognita.zip";
+        return Environment.getExternalStorageDirectory().toString() + "/Android/obb/"/*APKExpansionSupport.EXP_PATH*/ + Helpers.getPackageName(this) + File.separator +
+                Helpers.getExpansionAPKFileName(this, DownloadExpansionFile.xAPK.mIsMain, DownloadExpansionFile.xAPK.mFileVersion);
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
@@ -446,7 +499,7 @@ public class AppActivity extends Cocos2dxActivity {
     //    @Override
 //    protected void attachBaseContext(Context newBase) {
 //
-//        final String defaultLanguage = newBase.getString(com.enuma.kitkitlogger.R.string.defaultLanguage);
+//        final String defaultLanguage = newBase.getString(com.maq.kitkitlogger.R.string.defaultLanguage);
 //        SharedPreferences preferences = newBase.getSharedPreferences("Cocos2dxPrefsFile",0);
 //        String lang = preferences.getString("appLanguage","");
 //        if (lang.isEmpty()) {
@@ -584,9 +637,11 @@ public class AppActivity extends Cocos2dxActivity {
         mSpeechRecognition = new SpeechRecognition();
         mSpeechRecognition.setup(_activity);
 
-        String externalFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/KitkitSchool/";
-        File externalFile = new File(externalFolderPath + "cache.txt");
-        mPlayAudio = new PlayAudio(_activity, externalFile.exists(), externalFolderPath);
+//        String externalFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/KitkitSchool/";
+        String externalFolderPath = getContext().getExternalFilesDir(null).toString() + File.separator; // Android/data/<package_name>/files/
+//        File externalFile = new File(externalFolderPath + "cache.txt");
+//        mPlayAudio = new PlayAudio(_activity, externalFile.exists(), externalFolderPath);
+        mPlayAudio = new PlayAudio(_activity, true, externalFolderPath);
     }
 
     public static void onCleanUpSpeechRecognition() {

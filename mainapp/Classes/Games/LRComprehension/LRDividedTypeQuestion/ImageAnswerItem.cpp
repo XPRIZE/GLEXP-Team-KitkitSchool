@@ -73,7 +73,7 @@ bool ImageAnswerItem::initImage(std::string image, float marginX, float marginY)
     _answerSprite->setPosition(this->getContentSize() / 2);
     this->addChild(_answerSprite);
     
-    _letterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_ANDIKA_REGULAR, Color4B(7, 171, 24, 255));
+    _letterLabel = TodoUtil::createLabel("", 60, Size::ZERO, FONT_MUKTA_BOLD, Color4B(7, 171, 24, 255));
     _letterLabel->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     _letterLabel->setPosition(33, this->getContentSize().height - 10.f);
     this->addChild(_letterLabel);

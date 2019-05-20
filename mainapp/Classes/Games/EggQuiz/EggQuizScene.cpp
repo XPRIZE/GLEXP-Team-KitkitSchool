@@ -1031,7 +1031,7 @@ void EggQuizScene::createWordProblemView() {
     
     createSmallSpeakerView(soundsPath+_problem.questionOption2);
         
-    auto label = TodoUtil::createLabel(_problem.questionOption1, 68, Size(1945,0), FONT_NORMAL, FONT_COLOR);
+    auto label = TodoUtil::createLabel(_problem.questionOption1, 68, Size(1945,0), FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     label->setPosition(questionBox->getPositionX()-questionBox->getContentSize().width/2+294+20, 1244+158/2);
     _gameNode->addChild(label);
@@ -1137,7 +1137,7 @@ void EggQuizScene::createImageWordView() {
 
 void EggQuizScene::createSentenceWordView() {
     
-    
+    Label* questionLabel;
     auto questionBox = Scale9Sprite::create(partsPath+"pretest-questionbox.png");
     questionBox->setPreferredSize(Size(2360,808));
     questionBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -1145,8 +1145,12 @@ void EggQuizScene::createSentenceWordView() {
     _gameNode->addChild(questionBox);
     
     createSmallSpeakerView(soundsPath+_problem.questionOption5);
-        
-    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_BOLD, FONT_COLOR, TextHAlignment::CENTER);
+
+    if (_problem.questionOption2.back() == '.'|| _problem.questionOption2.back() == '?'|| _problem.questionOption2.back() == '!'|| _problem.questionOption2.back() == '_') {
+        questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_NORMAL, FONT_COLOR, TextHAlignment::CENTER);
+    } else {
+        questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_BOLD, FONT_COLOR, TextHAlignment::CENTER);
+    }
     questionLabel->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(questionLabel);
 
@@ -1154,18 +1158,21 @@ void EggQuizScene::createSentenceWordView() {
 }
 
 void EggQuizScene::createSentenceSentenceView() {
-    
+
+    Label* questionLabel;
     auto questionBox = Scale9Sprite::create(partsPath+"pretest-questionbox.png");
     questionBox->setPreferredSize(Size(2360,620));
     questionBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     questionBox->setPosition(_gameNode->getContentSize().width/2,860);
     _gameNode->addChild(questionBox);
 
-    if (!_problem.questionOption5.empty()) {
-        createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    createSmallSpeakerView(soundsPath+_problem.questionOption5);
+
+    if (_problem.questionOption2.back() == '.'|| _problem.questionOption2.back() == '?'|| _problem.questionOption2.back() == '"'|| _problem.questionOption2.back() == '_') {
+        questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_NORMAL, FONT_COLOR, TextHAlignment::CENTER);
+    } else {
+        questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_BOLD, FONT_COLOR, TextHAlignment::CENTER);
     }
-        
-    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_BOLD, FONT_COLOR, TextHAlignment::CENTER);
     questionLabel->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(questionLabel);
     
@@ -1248,7 +1255,7 @@ void EggQuizScene::createParagraphSentenceView() {
     paragraphLabel->setPosition(questionBox->getContentSize()/2 + Size(0, paragraphWeight));
     questionBox->addChild(paragraphLabel);
     
-    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption1, questionLabelWeight ? 88 : 100, Size(1060-questionLabelWeight, 400), FONT_BOLD, FONT_COLOR, questionLabelWeight ? TextHAlignment::LEFT :TextHAlignment::CENTER);
+    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption1, questionLabelWeight ? 88 : 100, Size(1060-questionLabelWeight, 400), FONT_NORMAL, FONT_COLOR, questionLabelWeight ? TextHAlignment::LEFT :TextHAlignment::CENTER);
     questionLabel->setPosition(questionLabelWeight ? posX+questionLabelWeight/2 : posX, 1245+215/2);
     _gameNode->addChild(questionLabel);
     
@@ -1403,7 +1410,7 @@ void EggQuizScene::createListeningcompSentenceView() {
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
 
-    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1060, 600), FONT_BOLD, FONT_COLOR, TextHAlignment::CENTER);
+    Label* questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1060, 600), FONT_NORMAL, FONT_COLOR, TextHAlignment::CENTER);
     questionLabel->setPosition(posX, 1245+215/2);
     _gameNode->addChild(questionLabel);
     

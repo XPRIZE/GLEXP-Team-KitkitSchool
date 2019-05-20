@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/drum_image_bg"
     android:orientation="vertical"
-    tools:context="com.enuma.drum.activity.MainActivity">
+    tools:context="com.maq.xprize.drum.activity.MainActivity">
 
     <ImageView
         android:id="@+id/iv_drum"
