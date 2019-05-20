@@ -2,7 +2,7 @@ package com.enuma.todoschoollockscreen;
 
 import android.app.Application;
 
-import com.enuma.kitkitlogger.KitKitLogger;
+import com.maq.kitkitlogger.KitKitLogger;
 
 /**
  * Created by ingtellect on 7/24/17.

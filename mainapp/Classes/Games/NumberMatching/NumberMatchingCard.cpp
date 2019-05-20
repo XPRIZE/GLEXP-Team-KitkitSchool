@@ -40,7 +40,7 @@ void NumberMatchingCard::setImage(int level, int type, int number, const std::st
     
     Node* background = Sprite::create(spriteName);
     if (!background) {
-        background = TodoUtil::createLabel(cardImageName, 50, Size::ZERO, "fonts/OpenSans-Bold.ttf", Color4B::BLACK);
+        background = TodoUtil::createLabel(cardImageName, 50, Size::ZERO, "fonts/mukta-bold.ttf", Color4B::BLACK);
     }
     auto contentSize = background->getContentSize();
     

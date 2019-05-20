@@ -20,7 +20,7 @@
 
 BEGIN_NS_EGGQUIZ;
 
-const string curlyFont = "fonts/TodoMainCurly.ttf";
+const string curlyFont = "fonts/chanakya.ttf";
 
 EggQuizPopup* EggQuizPopup::create(Node* parent)
 {
@@ -81,8 +81,8 @@ void EggQuizPopup::setCommon(char category, int level)
 
 Node* createEgg(char category, int level, Size winSize)
 {
-    
-    
+
+
     string eggName;
     eggName = ((category=='L') ? "popup_egg_english_" : "popup_egg_math_") + TodoUtil::itos(level);
     auto egg = Sprite::create(partsPath+eggName+".png");

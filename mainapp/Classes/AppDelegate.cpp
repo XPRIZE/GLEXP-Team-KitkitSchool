@@ -107,11 +107,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #endif
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    string devicePath = "/sdcard/KitkitSchool/";
-    if (FileUtils::getInstance()->isFileExist(devicePath + "cache.txt")) {
+//    string devicePath = "/storage/emulated/0/KitkitSchool/";
+    string devicePath = "/storage/emulated/0/Android/data/com.maq.xprize.kitkitschool.hindi/files/"; // can be changed to any other resource location
+    /*if (FileUtils::getInstance()->isFileExist(devicePath + "cache.txt")) {
         FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
-    }
-    
+    }*/
+    FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
+
 #endif
     
     // search path will be set in LanguageManager

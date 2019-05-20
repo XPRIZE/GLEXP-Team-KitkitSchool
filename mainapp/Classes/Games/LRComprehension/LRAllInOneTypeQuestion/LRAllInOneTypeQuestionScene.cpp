@@ -61,11 +61,11 @@ void LRAllInOneTypeQuestionScene::onEnter()
     layer->setQuestionAnswers(_questionText, _questionSoundPath, _answers);
     _gameNode->addChild(layer);
     
-    string directionContent = LanguageManager::getInstance()->isEnglish() ? "Select the correct answer." : "Chagua jibu sahihi.";
+    string directionContent = LanguageManager::getInstance()->isEnglish() ? "âãè ©}æÚ ·UUUæ ¿ØÙ ·UUUUÚð¢Ð" : "Chagua jibu sahihi."; // Select the correct answer. // सही उत्तर का चयन करें।
     
     if (_questionText.find("Choose:") != std::string::npos)
     {
-        directionContent = "Select the picture to match the text";
+        directionContent = "ÂæÆ âð ç×ÜæÙ ·UUUUÚÙð ·ðUUU çÜ° ç¿˜æ ·UUUæ ¿ØÙ ·UUUUÚð¢"; // Select the picture to match the text // पाठ से मिलान करने के लिए चित्र का चयन करें
         TodoUtil::replaceAll(_questionText, "Choose:", "");
         _questionText = TodoUtil::trim(_questionText);
     }

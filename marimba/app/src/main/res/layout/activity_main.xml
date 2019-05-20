@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/tools_marimba_image_bg"
     android:orientation="vertical"
-    tools:context="com.enuma.marimba.activity.MainActivity">
+    tools:context="com.maq.xprize.marimba.activity.MainActivity">
 
     <ImageView
         android:id="@+id/v_back"

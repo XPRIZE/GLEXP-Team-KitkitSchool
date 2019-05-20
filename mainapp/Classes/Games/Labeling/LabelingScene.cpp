@@ -37,7 +37,7 @@ using namespace std;
 namespace LabelingSceneSpace {
 
     
-    const char* defaultFont = "fonts/andika-r.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     const string resourcePathLabeling = "labeling/";
     
@@ -74,7 +74,7 @@ namespace LabelingSceneSpace {
     SoundEffect paperTurnEffect() { return SoundEffect("Games/Labeling/Sounds/page_turn_ver2.m4a"); }
     SoundEffect highlightEffect() { return SoundEffect("Games/Labeling/Sounds/slot_highlight_ver2.m4a"); }
     
-    //const string fontName = "fonts/andika-r.ttf";
+    //const string fontName = "fonts/chanakya.ttf";
     const string fontName = "fonts/andikanewbasic-b.ttf";
     const float fontSize = 90.0f;
     const float fontSizeSmall = 70.0f;

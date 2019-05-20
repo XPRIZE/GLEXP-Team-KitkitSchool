@@ -600,7 +600,7 @@ void ComprehensionScene::drawQuestionTitle(string titleText, Node* parentNode, f
     questionHighlight->setPosition(200.f, parentNode->getContentSize().height - 300.f);
     parentNode->addChild(questionHighlight);
     
-    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, FONT_ANDIKA_BOLD, Color4B(77, 77, 77, 255));
+    auto titleLabel = TodoUtil::createLabel(titleText, 60.f, Size::ZERO, FONT_CHANAKYA, Color4B(77, 77, 77, 255));
     titleLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     titleLabel->setPosition(leftPadding + addLeftPadding, questionHighlight->getContentSize().height / 2);
     questionHighlight->addChild(titleLabel);

@@ -1,4 +1,4 @@
-package com.enuma.writingboard;
+package com.maq.xprize.writingboard;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.enuma.writingboard", appContext.getPackageName());
+        assertEquals("com.maq.xprize.writingboard", appContext.getPackageName());
     }
 }

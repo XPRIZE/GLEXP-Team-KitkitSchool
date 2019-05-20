@@ -84,7 +84,7 @@ bool STTopCard::init()
 			textNode->addChild(sprite, 0, "BGWrong");
 		}
 
-		if (auto label = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 130))
+		if (auto label = Label::createWithTTF("", "fonts/mukta-bold.ttf", 130))
 		{
 			label->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));
@@ -94,7 +94,7 @@ bool STTopCard::init()
 			textNode->addChild(label, 1, "labelBig");
 		}
 
-		if (auto label = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 100))
+		if (auto label = Label::createWithTTF("", "fonts/mukta-bold.ttf", 100))
 		{
 			label->setAlignment(TextHAlignment::LEFT, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));
@@ -167,7 +167,7 @@ void STTopCard::SetCard(const WhatIsThisCardData & data, const CardType & cardTy
 			textNode->setVisible(true);
             textNode->removeChildByName("label1");
 
-            auto label1 = TodoUtil::createLabel(data.answer, 120, Size(2038,0), "fonts/TodoSchoolV2.ttf", Color4B(81, 53, 24, 230), TextHAlignment::CENTER);
+            auto label1 = TodoUtil::createLabel(data.answer, 120, Size(2038,0), "fonts/mukta-bold.ttf", Color4B(81, 53, 24, 230), TextHAlignment::CENTER);
             label1->setName("label1");
             textNode->addChild(label1);
             
@@ -301,7 +301,7 @@ bool STDownCard::init()
 			textNode->addChild(sprite, 0, "BGWrong");
 		}
 
-		if (auto label = Label::createWithTTF("Hello World", "fonts/TodoSchoolV2.ttf", 82))
+		if (auto label = Label::createWithTTF("Hello World", "fonts/mukta-bold.ttf", 82))
 		{
 			label->setAlignment(TextHAlignment::LEFT, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));

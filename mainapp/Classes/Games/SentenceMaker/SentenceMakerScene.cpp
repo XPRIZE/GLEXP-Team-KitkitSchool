@@ -45,7 +45,7 @@ namespace SentenceMakerSpace
 //    const float kSentenceDelayTime = 0.3f; // 맞춰지는 효과음 때문에 딜레이 시간을 늘림
     const float kSentenceDelayTime = 0.6f;
     
-    const string kFontName = "fonts/Andika-R.ttf";
+    const string kFontName = "fonts/mukta-bold.ttf";
     const float kFontSize = 80.f;
 
 }

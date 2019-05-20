@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal|center_vertical"
-                tools:context="library.todoschool.enuma.com.todoschoollibrary.VideoPlayerActivity">
+                tools:context="com.maq.xprize.kitkitlibrary.english.VideoPlayerActivity">
 
                 <FrameLayout
                     android:id="@+id/videoSurfaceContainer"

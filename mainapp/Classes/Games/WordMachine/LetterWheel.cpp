@@ -184,7 +184,7 @@ void LetterWheel::setup(std::string wheelString, Size viewSize, float numShowing
     
     _lables.clear();
     for (int i=0; i<_labelNum; i++) {
-        auto l = Label::createWithTTF("", "fonts/OpenSans-Bold.ttf", fontSize);
+        auto l = Label::createWithTTF("", "fonts/mukta-bold.ttf", fontSize);
         _lables.push_back(l);
         
         l->setTextColor(Color4B::BLACK);
@@ -201,7 +201,7 @@ void LetterWheel::setup(std::string wheelString, Size viewSize, float numShowing
     
 
     if (__debugLetterWheel) {
-        _currentLabel = Label::createWithTTF("", "fonts/OpenSans-Bold.ttf", fontSize);
+        _currentLabel = Label::createWithTTF("", "fonts/mukta-bold.ttf", fontSize);
         _currentLabel->setString(_wheelString.substr(_currentLetterIndex, 1));
         _currentLabel->setPosition(Vec2(viewSize.width, viewSize.height/2));
         view->addChild(_currentLabel);

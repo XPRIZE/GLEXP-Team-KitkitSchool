@@ -222,7 +222,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Eugine Chung\nYoutaeg Jeon\nEunpah Kim\nHyunju Kim\nJae Yun (Adrian) Jeong\nTae Young Kim\nJosephine Lai"
+                    android:text="Eugine Chung\nYoutaeg Jeon\nEunpah Kim\nHyunju Kim\nJae Yoon Jung\nTae Young Kim\nJosephine Lai"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>
@@ -330,7 +330,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="20px"
                     android:layout_weight="1"
-                    android:text="Alexis Daniel\nJae Hun Lee\nSeunghwa Baek\nJiaqiang (David) Zhou\nJangsu Park\nTaekyung Kwon\nHyejung Han\nSeongji Kim\nYoonJung Ku"
+                    android:text="Alexis Daniel\nJae Hun Lee\nSeunghwa Baek\nJiaqiang (David) Zhou\nJangsu Park\nTaekyung Kwon\nHyejung Han\nSeongji Kim\nYoonJeong Ku"
                     android:textColor="@color/colorCreditText"
                     android:textSize="44px" />
             </LinearLayout>

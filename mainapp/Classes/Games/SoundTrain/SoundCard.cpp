@@ -11,7 +11,7 @@
 
 BEGIN_NS_SOUNDTRAIN;
 
-const string fontName = "fonts/TodoSchoolV2.ttf";
+const string fontName = "fonts/mukta-bold.ttf";
 
 bool SoundCard::init() {
     if (!Node::init()) return false;

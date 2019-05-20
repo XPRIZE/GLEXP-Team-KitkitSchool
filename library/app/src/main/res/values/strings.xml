@@ -14,4 +14,6 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_more">More</string>
     <string name="button_less">Less</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="content_extraction">यह प्रक्रिया केवल एक बार की जाएगी</string>
 </resources>

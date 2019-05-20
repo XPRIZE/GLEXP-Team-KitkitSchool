@@ -40,7 +40,7 @@
                 android:layout_width="630px"
                 android:layout_height="474px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_white"
@@ -63,7 +63,7 @@
                 android:layout_height="474px"
                 android:layout_marginLeft="60px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_green"
@@ -86,7 +86,7 @@
                 android:layout_height="474px"
                 android:layout_marginLeft="60px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_red"
@@ -115,7 +115,7 @@
                 android:layout_width="630px"
                 android:layout_height="474px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_blue"
@@ -138,7 +138,7 @@
                 android:layout_height="474px"
                 android:layout_marginLeft="60px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_yellow"
@@ -161,7 +161,7 @@
                 android:layout_height="474px"
                 android:layout_marginLeft="60px">
 
-                <com.enuma.drawingcoloring.view.base.TodoSchoolV3TextView
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/drawingpad_painting_paperoption_black"

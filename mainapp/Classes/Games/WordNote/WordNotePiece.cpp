@@ -47,10 +47,10 @@ void Piece::setLetter(string letter) {
     
     vector<string> fontPaths = {
         "fonts/Aileron-Regular.otf",
-        "fonts/OpenSans-Bold.ttf",
+        "fonts/mukta-bold.ttf",
         "fonts/Seshat.otf",
-        "fonts/TodoSchoolV2.ttf",
-        "fonts/Andika-R.ttf"
+        "fonts/mukta-bold.ttf",
+        "fonts/mukta-bold.ttf"
     };
     random_shuffle(fontPaths.begin(), fontPaths.end(), [](int n) { return rand() % n; });
 
@@ -106,7 +106,7 @@ void Piece::setLetter(string letter) {
     float startXPos = 160*totalLetterLength/2*-1;
     
     for (int i=0; i<totalLetterLength; i++) {
-        auto paperLetter = TodoUtil::createLabel(string(1,letter[i]), 130, Size(160,180), fontPaths[0], fontColor, TextHAlignment::CENTER);
+        auto paperLetter = TodoUtil::createLabel(string(1,letter[i]), 130, Size(160,180), fontPaths[1], fontColor, TextHAlignment::CENTER);
         paperLetter->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         paperLetter->setPosition(startXPos + ((float)((2*i)+1) / (totalLetterLength*2)) * 160*totalLetterLength + paper->getContentSize().width/2, 7 + paper->getContentSize().height/2);
         paper->addChild(paperLetter);

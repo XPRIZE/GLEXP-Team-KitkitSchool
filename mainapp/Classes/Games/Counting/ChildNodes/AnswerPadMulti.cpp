@@ -17,8 +17,9 @@
 
 namespace AnswerPadMultiSpace {
     const char* touchEffect = "Counting/paneltouch.m4a";
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
     const char* formalFont = "fonts/Aileron-Regular.otf";
+    const char* hindiFont = "fonts/chanakya.ttf";
 }
 
 using namespace AnswerPadMultiSpace;
@@ -48,7 +49,7 @@ bool AnswerPadMulti::init()
     addChild(_answerPadBg);
     
     
-    _questionLabel = Label::createWithSystemFont(LanguageManager::getInstance()->isEnglish() ?  "How many?" : "Ngapi?", formalFont, 100);
+    _questionLabel = Label::createWithSystemFont(LanguageManager::getInstance()->isEnglish() ?  "ç·UUUUÌÙð ãð?" : "Ngapi?", hindiFont, 100); // कितने हे?
     _questionLabel->setTextColor(Color4B(242, 245, 240, 255));
     _questionLabel->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     _questionLabel->setPosition(Vec2(150, answerPadSize.height-65));

@@ -39,7 +39,7 @@ namespace BirdPhonicsSceneSpace {
   //  const char* dropEffect = "Counting/panelput.m4a";
     
     
-    const char* defaultFont = "fonts/Andika-R.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
     const Size gameSize = Size(2560, 1800);
     
     const float floorY = 878;

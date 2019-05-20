@@ -13,7 +13,7 @@
 
 namespace WordItemNamespace
 {
-    const string kFontName = "fonts/Andika-R.ttf";
+    const string kFontName = "fonts/mukta-bold.ttf";
     const float kFontSize = 80.f;
     const float kItemPadding = 50.f;
 }

@@ -93,7 +93,7 @@ void Subtitle::setContent(string content) {
     
     this->removeAllChildren();
     
-    const string font = "fonts/andika-r.ttf";
+    const string font = "fonts/mukta-bold.ttf";
     const float shadow = 8;
     
     auto drawShadow = [this, font, content](float posX, float posY){

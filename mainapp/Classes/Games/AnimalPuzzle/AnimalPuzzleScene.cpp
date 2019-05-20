@@ -36,7 +36,7 @@ using namespace std;
 namespace AnimalPuzzleSceneSpace {
 
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     const string resourcePath = "AnimalPuzzle/";
     
@@ -52,7 +52,7 @@ namespace AnimalPuzzleSceneSpace {
     SoundEffect solveEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Counting_Win.m4a"); }
 
     
-    const string fontName = "fonts/TodoSchoolV2.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     const bool gameDebug = false;
     
     

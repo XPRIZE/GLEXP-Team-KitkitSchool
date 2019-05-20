@@ -36,7 +36,7 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.enuma.kitkitlogger.KitKitLogger;
+import com.maq.kitkitlogger.KitKitLogger;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;

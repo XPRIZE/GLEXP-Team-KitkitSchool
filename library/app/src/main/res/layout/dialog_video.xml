@@ -26,14 +26,14 @@
                 android:background="@android:color/transparent"/>
         </LinearLayout>
 
-        <library.todoschool.enuma.com.todoschoollibrary.TutorialVideoPopupView
+        <com.maq.xprize.kitkitlibrary.english.TutorialVideoPopupView
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_heightPercent="85%"
             android:layout_below="@+id/btn_close_wrapper">
 
-        </library.todoschool.enuma.com.todoschoollibrary.TutorialVideoPopupView>
+        </com.maq.xprize.kitkitlibrary.english.TutorialVideoPopupView>
     </android.support.percent.PercentRelativeLayout>
 
 

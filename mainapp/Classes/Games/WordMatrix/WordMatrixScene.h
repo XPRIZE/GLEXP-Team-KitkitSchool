@@ -46,7 +46,7 @@ typedef struct RESOURCES_DATA_{
     string _slotPath = "wordmatrix/slot_area.png";
     string _slotBottomPath = "wordmatrix/slot_area_bottom.png";
     
-    string _fontName = "fonts/andika-r.ttf";    
+    string _fontName = "fonts/mukta-bold.ttf";
     string _tsvPath = WM_TSV_PATH;
 }RESOURCES_DATA;
 

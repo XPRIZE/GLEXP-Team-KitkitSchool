@@ -7,7 +7,7 @@ android {
     buildToolsVersion "25.0.0"
 
     defaultConfig {
-        applicationId "com.enuma.booktest"
+        applicationId "com.maq.xprize.booktest"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
         versionCode 1
