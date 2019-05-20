@@ -116,4 +116,6 @@ Install all the APKs, then start the Kitkit Launcher to explorer.
 - Please make sure there is enough storage on the device. 
 - Most of the APKs will not show up in the android (default) launcher. 
 
+# Questions?
 
+Do you have questions about the code, content or data? Please reach out to the [Global Learning XPRIZE Community](http://community.xprize.org/learning).
