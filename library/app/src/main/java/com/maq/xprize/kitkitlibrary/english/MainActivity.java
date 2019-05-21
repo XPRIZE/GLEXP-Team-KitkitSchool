@@ -552,10 +552,8 @@ public class MainActivity extends KitKitLoggerActivity {
 
     private void checkExternalData() {
         useExternalData = true;
-        pathExternalAsset = Environment.getDataDirectory() + "/data/" + getPackageName() + "/files/en-us/assets/";
-        pathExternalRaw = Environment.getDataDirectory() + "/data/" + getPackageName() + "/files/en-us/raw/";
-        pathExternalAsset = "storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/assets";
-        pathExternalRaw = "storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/res/raw";
+        pathExternalAsset = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/assets";
+        pathExternalRaw = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/res/raw";
         Log.i(TAG, pathExternalAsset + "\n" + pathExternalRaw);
     }
 
