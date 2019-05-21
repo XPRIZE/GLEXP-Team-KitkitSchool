@@ -1,4 +1,4 @@
-package library.todoschool.enuma.com.todoschoollibrary;
+package com.maq.xprize.kitkitlibrary.english;
 
 import org.junit.Test;
 

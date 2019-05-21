@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.SyncStateContract.Helpers;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +34,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.vending.expansion.downloader.Helpers;
 import com.maq.kitkitlogger.KitKitLogger;
 import com.maq.kitkitlogger.KitKitLoggerActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -552,10 +552,8 @@ public class MainActivity extends KitKitLoggerActivity {
 
     private void checkExternalData() {
         useExternalData = true;
-        pathExternalAsset = Environment.getDataDirectory() + "/data/" + Helpers.getPackageName(this) + "/files/en-us/assets/";
-        pathExternalRaw = Environment.getDataDirectory() + "/data/" + Helpers.getPackageName(this) + "/files/en-us/raw/";
-        pathExternalAsset = "storage/emulated/0/Android/data/" + Helpers.getPackageName(this) + "/files/en-us/assets";
-        pathExternalRaw = "storage/emulated/0/Android/data/" + Helpers.getPackageName(this) + "/files/en-us/res/raw";
+        pathExternalAsset = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/assets";
+        pathExternalRaw = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/res/raw";
         Log.i(TAG, pathExternalAsset + "\n" + pathExternalRaw);
     }
 
