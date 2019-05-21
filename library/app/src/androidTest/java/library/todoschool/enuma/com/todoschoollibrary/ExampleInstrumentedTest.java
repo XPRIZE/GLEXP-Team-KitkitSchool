@@ -1,4 +1,4 @@
-package library.todoschool.enuma.com.todoschoollibrary;
+package com.maq.xprize.kitkitlibrary.english;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("library.todoschool.enuma.com.todoschoollibrary", appContext.getPackageName());
+        assertEquals("com.maq.xprize.kitkitlibrary.english", appContext.getPackageName());
     }
 }
