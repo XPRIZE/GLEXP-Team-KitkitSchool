@@ -622,21 +622,29 @@ public class MainActivity extends KitKitLoggerActivity {
             holder.mImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mActivity, VideoPlayerActivity.class);
-                    intent.putExtra("videoArray", mItems);
-                    intent.putExtra("libPath", pathExternalRaw);
-                    intent.putExtra("libAssetPath", pathExternalAsset);
-                    intent.putExtra("currentVideoIndex", position);
 
-                    mActivity.startActivity(intent);
-                    try {
-                        KitKitLogger logger = ((LibraryApplication) mActivity.getApplication()).getLogger();
-                        logger.logEvent("library", "start_video", item.title, 0);
-                    } catch (NullPointerException ne) {
-                        ne.printStackTrace();
-                        Log.e(MainActivity.class.getName(), ne.getMessage());
-                    } catch (Exception e) {
-                        Log.e(MainActivity.class.getName(), e.getMessage());
+                    if(mItems.get(position).category.equals("tutorial")){
+                        Uri uri = Uri.parse(mItems.get(position).filename);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        mActivity.startActivity(intent);
+                    }
+                    else {
+                        Intent intent = new Intent(mActivity, VideoPlayerActivity.class);
+                        intent.putExtra("videoArray", mItems);
+                        intent.putExtra("libPath", pathExternalRaw);
+                        intent.putExtra("libAssetPath", pathExternalAsset);
+                        intent.putExtra("currentVideoIndex", position);
+
+                        mActivity.startActivity(intent);
+                        try {
+                            KitKitLogger logger = ((LibraryApplication) mActivity.getApplication()).getLogger();
+                            logger.logEvent("library", "start_video", item.title, 0);
+                        } catch (NullPointerException ne) {
+                            ne.printStackTrace();
+                            Log.e(MainActivity.class.getName(), ne.getMessage());
+                        } catch (Exception e) {
+                            Log.e(MainActivity.class.getName(), e.getMessage());
+                        }
                     }
                 }
             });
@@ -782,5 +790,4 @@ public class MainActivity extends KitKitLoggerActivity {
         Log.i("myLog", comment + " : " + (System.currentTimeMillis() - mMarkTime) + "msec");
         return System.currentTimeMillis() - mMarkTime;
     }
-
 }
