@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -623,7 +622,7 @@ public class MainActivity extends KitKitLoggerActivity {
             holder.mImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
+
                     if(mItems.get(position).category.equals("tutorial")){
                         Uri uri = Uri.parse(mItems.get(position).filename);
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
