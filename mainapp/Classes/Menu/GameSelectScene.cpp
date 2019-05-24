@@ -926,7 +926,7 @@ void GameSelectScene::onEnter()
             panel->setPosition(panelNodeSize/2);
             _panelNode->addChild(panel);
             
-            auto panelLabel = TodoUtil::createLabel(cur->levelTitle, 55, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
+            auto panelLabel = TodoUtil::createLabel(cur->levelTitle, 100, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
             panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             panelLabel->setPosition(panel->getContentSize()/2 - Size(0, 25));
             panel->addChild(panelLabel);

@@ -243,7 +243,7 @@ void CoopScene::setupCoop()
     
     auto labelText = LanguageManager::getInstance()->getLocalizedString((this->_coopType== CT_LITERACY) ? "English" : "Math");
     
-    auto label = TodoUtil::createLabel(labelText, 62, Size::ZERO, "fonts/chanakya.ttf", Color4B(255, 252, 219, 255));
+    auto label = TodoUtil::createLabel(labelText, 100, Size::ZERO, "fonts/chanakya.ttf", Color4B(255, 252, 219, 255));
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     label->setPosition(panel->getContentSize()/2);
     panel->addChild(label);

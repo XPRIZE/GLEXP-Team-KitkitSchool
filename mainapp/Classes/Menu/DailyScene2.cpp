@@ -253,7 +253,7 @@ bool DailyScene2::init(string levelID)
         _panel->setPosition(Vec2(viewSize.width/2, viewSize.height));
         _mainView->addChild(_panel);
         
-        auto panelLabel = TodoUtil::createLabel(_cur->levelTitle, 70, Size::ZERO, defaultFont, Color4B(255, 252, 236, 255));
+        auto panelLabel = TodoUtil::createLabel(_cur->levelTitle, 100, Size::ZERO, defaultFont, Color4B(255, 252, 236, 255));
         panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         panelLabel->setPosition(_panel->getContentSize()/2 - Size(0, 42));
         _panel->addChild(panelLabel);
@@ -473,7 +473,7 @@ void DailyScene2::Mango::setupShape(int birdID, string levelID, int day, bool cr
 //    this->addChild(_labelGlow);
     
     
-    _label = TodoUtil::createLabel(TodoUtil::itos(day), 65, Size::ZERO, defaultFont, Color4B(49, 16, 0, 255));
+    _label = TodoUtil::createLabel(TodoUtil::itos(day), 100, Size::ZERO, defaultFont, Color4B(49, 16, 0, 255));
     _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     this->addChild(_label);
     
@@ -862,7 +862,7 @@ void DailyScene2::setupFreechoiceTab()
             gameIcon->setPosition(Vec2(btnSize.width/2, btnSize.height-iconSize.height/2));
             gameBtn->addChild(gameIcon);
             
-            auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(it.first.c_str()), 50, Size(btnSize.width, 70), defaultFont, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
+            auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(it.first.c_str()), 100, Size(btnSize.width, 70), defaultFont, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
             l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
             l->setPosition(Vec2(btnSize.width/2, 30));
             gameBtn->addChild(l);
@@ -1113,7 +1113,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
         popup->addChild(panel);
         
 //        auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size::ZERO, defaultFont, Color4B(255, 210, 74, 255));
-        auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
+        auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(gameName), 100, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
         l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
         l->setPosition(panel->getContentSize()/2);
         panel->addChild(l);
@@ -1177,7 +1177,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
             }
             
             
-            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 50, Size::ZERO, defaultFont, Color4B::WHITE);
+            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 100, Size::ZERO, defaultFont, Color4B::WHITE);
             l->setPosition(b->getContentSize()/2 + Size(2, -6));
             b->addChild(l);
             
