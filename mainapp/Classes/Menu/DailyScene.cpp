@@ -1100,7 +1100,7 @@ void DailyScene::showFreechoicePopup(std::string gameName, int maxPlayable, int 
             }
             
             
-            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 50, Size::ZERO, defaultFont, Color4B::WHITE);
+            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 100, Size::ZERO, defaultFont, Color4B::WHITE);
             l->setPosition(b->getContentSize()/2 + Size(2, -6));
             b->addChild(l);
             
