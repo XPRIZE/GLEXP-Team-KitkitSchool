@@ -59,9 +59,9 @@ public class DownloadExpansionFile extends Activity implements IDownloaderClient
 
             XAPKFile(
             true, // true signifies a main file
-            1,// the version of the APK that the file was uploaded
+            5,// the version of the APK that the file was uploaded
             // against
-            1644208342// the length of the file in bytes
+            1569810537// the length of the file in bytes
             )
             ;
     /* expansion services*/
