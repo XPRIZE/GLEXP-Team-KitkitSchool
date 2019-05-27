@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.maq.xprize.kitkitlibrary.english"
-    android:sharedUserId="com.enuma.kitkitschool">
+    android:sharedUserId="com.maq.xprize.kitkitlibrary.english">
 </manifest>
