@@ -46,6 +46,7 @@ namespace DailyScene2Space {
     const Size viewSize = Size(2560, 1800);
     
     const string defaultFont = "fonts/chanakya.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     const string folder = "MainScene/DailyScene/";
     
     const Color4B whiteColor = Color4B(255, 252, 236, 255);
@@ -836,7 +837,7 @@ void DailyScene2::setupFreechoiceTab()
         
         
         auto iconSize = Size(574, 408);
-        auto btnSize = iconSize + Size(0, 50);
+        auto btnSize = iconSize + Size(0, 100);
         
         
         auto xMargin = (cs.width-btnSize.width*4)/5.0;
@@ -861,11 +862,21 @@ void DailyScene2::setupFreechoiceTab()
             gameIcon->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
             gameIcon->setPosition(Vec2(btnSize.width/2, btnSize.height-iconSize.height/2));
             gameBtn->addChild(gameIcon);
-            
-            auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(it.first.c_str()), 100, Size(btnSize.width, 70), defaultFont, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
-            l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-            l->setPosition(Vec2(btnSize.width/2, 30));
-            gameBtn->addChild(l);
+
+            string labelName = LanguageManager::getInstance()->getLocalizedString(it.first.c_str());
+            string delim = "\n";
+            string labelHindi = labelName.substr(0, labelName.find(delim));
+            string labelEnglish = labelName.substr(labelName.find(delim) + delim.length(),labelName.length()-1);
+
+            auto panelLabelHindi = TodoUtil::createLabelMultilineToFit(labelHindi, 90, Size(btnSize.width, 70), defaultFont, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
+            panelLabelHindi->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+            panelLabelHindi->setPosition(Vec2(btnSize.width/2, 80));
+            gameBtn->addChild(panelLabelHindi);
+
+            auto panelLabelEnglish = TodoUtil::createLabelMultilineToFit(labelEnglish, 120, Size(btnSize.width, 120), fontName, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
+            panelLabelEnglish->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+            panelLabelEnglish->setPosition(Vec2(btnSize.width/2, 20));
+            gameBtn->addChild(panelLabelEnglish);
             
             index++;
             if (index%4==0) {
@@ -1113,7 +1124,10 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
         popup->addChild(panel);
         
 //        auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size::ZERO, defaultFont, Color4B(255, 210, 74, 255));
-        auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(gameName), 100, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
+        string labelName = LanguageManager::getInstance()->getLocalizedString(gameName);
+        string delim = "\n";
+        string labelHindi = labelName.substr(0, labelName.find(delim));
+        auto l = TodoUtil::createLabelMultilineToFit(labelHindi, 100, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
         l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
         l->setPosition(panel->getContentSize()/2);
         panel->addChild(l);
