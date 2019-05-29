@@ -390,6 +390,16 @@ bool UserManager::isGameCleared(string levelID, int day, int gameIndex)
 
 void UserManager::setGameCleared(string levelID, int day, int gameIndex, bool isCleared)
 {
+    ///////////////////////////////
+    // store the number of games cleared
+    string gamesClearedInTotalKey = _userName + "_gamesClearedInTotal_" + levelID.substr(0, 7);
+    bool presentGameCleared = isGameCleared(levelID, day, gameIndex);
+    int gamesClearedInTotal = UserDefault::getInstance()->getIntegerForKey(gamesClearedInTotalKey.c_str(), 0);
+    if (!presentGameCleared) {
+        gamesClearedInTotal++;
+        UserDefault::getInstance()->setIntegerForKey(gamesClearedInTotalKey.c_str(), gamesClearedInTotal);
+    }
+    ///////////////////////////////
     auto key = make_tuple(levelID, day, gameIndex);
     _gameClearedMap[key] = isCleared;
     UserDefault::getInstance()->setBoolForKey(getGameClearedKey(levelID, day, gameIndex).c_str(), isCleared);
