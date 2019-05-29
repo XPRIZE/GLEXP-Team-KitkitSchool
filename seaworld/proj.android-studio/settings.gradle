@@ -2,3 +2,5 @@ include ':libcocos2dx', ':kitkitlogger-release'
 project(':libcocos2dx').projectDir = new File(settingsDir, '../cocos2d/cocos/platform/android/libcocos2dx')
 include ':KitKit_FB'
 project(':KitKit_FB').projectDir = new File(settingsDir, 'app')
+include ':kitkitlogger'
+project(':kitkitlogger').projectDir = new File('../../kitkitschoollogger/kitkitlogger/')

@@ -27,10 +27,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.WindowManager;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
+import com.maq.kitkitProvider.KitkitDBHandler;
+import com.maq.kitkitProvider.Fish;
 
-import com.enuma.kitkitProvider.Fish;
-import com.enuma.kitkitProvider.KitkitDBHandler;
+import org.cocos2dx.lib.Cocos2dxActivity;
 
 import java.io.File;
 import java.util.ArrayList;

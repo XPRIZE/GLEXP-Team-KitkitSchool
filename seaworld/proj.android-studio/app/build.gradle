@@ -5,7 +5,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
     buildToolsVersion "25.0.0"
-
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
     defaultConfig {
         applicationId "com.maq.xprize.FB"
         minSdkVersion PROP_MIN_SDK_VERSION
@@ -102,4 +107,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libcocos2dx')
     compile project(':kitkitlogger-release')
+    compile project(path: ':kitkitlogger')
 }
