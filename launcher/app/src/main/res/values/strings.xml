@@ -14,10 +14,10 @@
     <string name="go_setting">Go to Android Settings</string>
     <string name="enter_password">Enter password</string>
     <string name="wrong_password">Wrong password</string>
-    <string name="start">शुरू करो</string>
+    <string name="start">Start\nशुरू करो</string>
     <string name="install">Install</string>
-    <string name="library">पुस्तकालय</string>
-    <string name="tools">उपकरण</string>
+    <string name="library">Library\nपुस्तकालय</string>
+    <string name="tools">Tools\nउपकरण</string>
     <string name="btn_upload">Upload logs</string>
     <string name="btn_clear_appdata">Clear app data</string>
     <string name="setting_activity_title">Settings</string>
@@ -42,15 +42,15 @@
     <string name="enter">ENTER</string>
     <string name="number">number</string>
 
-    <string name="drums">ढोल</string>
-    <string name="marimba">सिलाफ़न</string>
-    <string name="drawing">चित्रकारी</string>
-    <string name="coloring">रंग भरे</string>
-    <string name="camera">कैमरा</string>
-    <string name="album">एल्बम</string>
-    <string name="blackboard">श्यामपट्ट</string>
-    <string name="fish_bowl">समुद्री दुनिया</string>
-    <string name="writing_board">बोर्ड लेखन</string>
+    <string name="drums">Drums\nढोल</string>
+    <string name="marimba">Xylophone\nसिलाफ़न</string>
+    <string name="drawing">Drawing\nचित्रकारी</string>
+    <string name="coloring">Coloring\nरंग भरे</string>
+    <string name="camera">Camera\nकैमरा</string>
+    <string name="album">Album\nएल्बम</string>
+    <string name="blackboard">Black Board\nश्यामपट्ट</string>
+    <string name="fish_bowl">Sea World\nसमुद्री दुनिया</string>
+    <string name="writing_board">Writing Board\nबोर्ड लेखन</string>
 
     <string name="select_user_no">Select user number</string>
     <string name="select_tablet_no">Select tablet number</string>

@@ -870,12 +870,12 @@ void DailyScene2::setupFreechoiceTab()
 
             auto panelLabelHindi = TodoUtil::createLabelMultilineToFit(labelHindi, 90, Size(btnSize.width, 100), defaultFont, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
             panelLabelHindi->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-            panelLabelHindi->setPosition(Vec2(btnSize.width/2, 80));
+            panelLabelHindi->setPosition(Vec2(btnSize.width/2, 10));
             gameBtn->addChild(panelLabelHindi);
 
             auto panelLabelEnglish = TodoUtil::createLabelMultilineToFit(labelEnglish, 90, Size(btnSize.width, 100), fontName, Color4B(255, 210, 74, 255*(avaliable ? 1 : 0.1)));
             panelLabelEnglish->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-            panelLabelEnglish->setPosition(Vec2(btnSize.width/2, 10));
+            panelLabelEnglish->setPosition(Vec2(btnSize.width/2, 80));
             gameBtn->addChild(panelLabelEnglish);
             
             index++;

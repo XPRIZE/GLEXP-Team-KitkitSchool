@@ -379,7 +379,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["NumberTracing"] = "â¢wØæ ¥ÙéÚð¹‡æ\nNumber Tracing"; // संख्या अनुरेखण
     _localizationMapSwahili["NumberTracing"] = "Jifunze Mpaka 10";
 
-    _localizationMapEnglish["StarFall"] = "Åæ§çÂ¢»\nStar Fall"; // टाइपिंग
+    _localizationMapEnglish["StarFall"] = "Åæ§çÂ¢»\nTyping"; // टाइपिंग
     _localizationMapSwahili["StarFall"] = "Kuchapa";
 
     _localizationMapEnglish["WordMachine"] = "àæyÎ ×àæèÙ\nWord Machine"; // वर्ड मशीन
