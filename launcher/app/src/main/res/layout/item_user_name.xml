@@ -31,6 +31,37 @@
             android:textColor="#0b0000"
             android:textSize="50px" />
 
+        <TextView
+            android:id="@+id/tv_English"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:paddingLeft="20px"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_Math"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:paddingLeft="20px"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_Total"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:paddingLeft="20px"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+
     </LinearLayout>
 
 </LinearLayout>
