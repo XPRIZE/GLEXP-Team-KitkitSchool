@@ -104,6 +104,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libcocos2dx')
-    compile project(':kitkitlogger-release')
     compile project(path: ':kitkitlogger')
 }
