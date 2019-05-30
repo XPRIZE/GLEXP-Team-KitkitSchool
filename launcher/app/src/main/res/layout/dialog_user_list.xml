@@ -39,6 +39,36 @@
                 android:textColor="#0b0000"
                 android:textSize="55px"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="@string/user_english_progress"
+                android:textColor="#0b0000"
+                android:textSize="55px"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="@string/user_math_progress"
+                android:textColor="#0b0000"
+                android:textSize="55px"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="@string/user_total_progress"
+                android:textColor="#0b0000"
+                android:textSize="55px"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
