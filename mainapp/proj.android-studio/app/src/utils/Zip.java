@@ -52,7 +52,7 @@ public class Zip {
         File flagFile;
         BufferedInputStream inputStream;
         BufferedOutputStream outputStream;
-        Boolean isOBBExtracted = false;
+        boolean isOBBExtracted = false;
 
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IOException("Unable to create directory");
@@ -115,11 +115,11 @@ public class Zip {
                     outputStream.close();
                     inputStream.close();
                 }
-                if(isOBBExtracted){
-                    flagFile = new File(extractPath + ".success.txt");
-                    flagFile.createNewFile();
-                }
             }
+        }
+        if(isOBBExtracted){
+            flagFile = new File(extractPath + ".success.txt");
+            flagFile.createNewFile();
         }
     }
 }

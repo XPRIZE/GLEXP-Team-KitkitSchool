@@ -25,7 +25,7 @@
         tools:srcCompat="@drawable/splash_screen_background" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/oneTimeExtractionMessage"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
