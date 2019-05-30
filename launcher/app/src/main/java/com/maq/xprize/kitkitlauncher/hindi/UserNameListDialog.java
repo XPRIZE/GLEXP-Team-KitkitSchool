@@ -78,7 +78,10 @@ public class UserNameListDialog extends Dialog {
             User item = mData.get(position);
             holder.mTvNumber.setText(item.getUserName());
             holder.mTvName.setText(item.getDisplayName());
-            holder.itemView.setBackgroundColor(position % 2 == 0 ? Color.LTGRAY : 0xd5d5d5);
+            holder.mTvEnglish.setText(item.getGamesClearedInTotal_L());
+            holder.mTvMath.setText(item.getGamesClearedInTotal_M());
+            holder.mTvCoins.setText(item.getNumStars());
+            holder.itemView.setBackgroundColor(position % 6 == 0 ? Color.LTGRAY : 0xd5d5d5);
         }
 
         @Override
@@ -92,11 +95,19 @@ public class UserNameListDialog extends Dialog {
         public class ViewHolder extends RecyclerView.ViewHolder {
             private TextView mTvNumber;
             private TextView mTvName;
+            private TextView mTvEnglish;
+            private TextView mTvMath;
+            private TextView mTvTotal;
+            private TextView mTvCoins;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 mTvNumber = (TextView) itemView.findViewById(R.id.tv_number);
                 mTvName = (TextView) itemView.findViewById(R.id.tv_name);
+                mTvEnglish = (TextView) itemView.findViewById(R.id.tv_english);
+                mTvMath = (TextView) itemView.findViewById(R.id.tv_math);
+                mTvTotal = (TextView) itemView.findViewById(R.id.tv_total);
+                mTvCoins = (TextView) itemView.findViewById(R.id.tv_coins);
             }
         }
     }

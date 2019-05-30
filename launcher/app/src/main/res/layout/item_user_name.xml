@@ -32,7 +32,7 @@
             android:textSize="50px" />
 
         <TextView
-            android:id="@+id/tv_English"
+            android:id="@+id/tv_english"
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="3"
@@ -42,7 +42,7 @@
             android:textSize="50px" />
 
         <TextView
-            android:id="@+id/tv_Math"
+            android:id="@+id/tv_math"
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="3"
@@ -52,7 +52,7 @@
             android:textSize="50px" />
 
         <TextView
-            android:id="@+id/tv_Total"
+            android:id="@+id/tv_total"
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="3"
@@ -62,7 +62,7 @@
             android:textSize="50px" />
 
         <TextView
-            android:id="@+id/tv_Coins"
+            android:id="@+id/tv_coins"
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="3"
