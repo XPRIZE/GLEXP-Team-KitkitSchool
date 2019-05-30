@@ -25,6 +25,10 @@ public class User {
     private boolean _unlockFishBowl;
     private boolean _unlockWritingBoard;
     private boolean _finishWritingBoardTutorial;
+    /////////////////////
+    private int _gamesClearedInTotal_L;
+    private int _gamesClearedInTotal_M;
+    /////////////////////
 
     public User() {
         this._id = 0;
@@ -43,6 +47,8 @@ public class User {
         this._unlockFishBowl = false;
         this._unlockWritingBoard = false;
         this._finishWritingBoardTutorial = false;
+        this._gamesClearedInTotal_L = 0;
+        this._gamesClearedInTotal_M = 0;
     }
 
     public User(int id, String username, int stars) {
@@ -62,6 +68,8 @@ public class User {
         this._unlockFishBowl = false;
         this._unlockWritingBoard = false;
         this._finishWritingBoardTutorial = false;
+        this._gamesClearedInTotal_L = 0;
+        this._gamesClearedInTotal_M = 0;
     }
 
     public User(String productname, int stars) {
@@ -80,6 +88,8 @@ public class User {
         this._unlockFishBowl = false;
         this._unlockWritingBoard = false;
         this._finishWritingBoardTutorial = false;
+        this._gamesClearedInTotal_L = 0;
+        this._gamesClearedInTotal_M = 0;
     }
 
     public void setID(int id) {
@@ -171,4 +181,13 @@ public class User {
 
     public boolean isFinishWritingBoardTutorial() {return this._finishWritingBoardTutorial;}
 
+    /////////////////////////
+    public void setGamesClearedInTotal_L(int gamesClearedInTotal_L) {this._gamesClearedInTotal_L = gamesClearedInTotal_L; }
+
+    public int getGamesClearedInTotal_L() {return this._gamesClearedInTotal_L; }
+
+    public void setGamesClearedInTotal_M(int gamesClearedInTotal_M) {this._gamesClearedInTotal_M = gamesClearedInTotal_M; }
+
+    public int getGamesClearedInTotal_M() {return this._gamesClearedInTotal_M; }
+    /////////////////////////
 }

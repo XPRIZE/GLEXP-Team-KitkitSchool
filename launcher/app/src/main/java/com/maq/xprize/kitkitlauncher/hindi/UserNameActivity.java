@@ -1,8 +1,12 @@
 package com.maq.xprize.kitkitlauncher.hindi;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +26,9 @@ public class UserNameActivity extends KitKitLoggerActivity {
     private TextView mTvUserNo;
     private TextView mTvUserName;
     private View mVRename;
+
+    private Context schoolContext;
+    private SharedPreferences schoolPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +154,19 @@ public class UserNameActivity extends KitKitLoggerActivity {
                 {
                     KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
                     ArrayList<User> users = dbHandler.getUserList();
+                    //////////////////////////////////////////
+                    try {
+                        schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
+                        schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
+                        for (User u:users) {
+                            u.setGamesClearedInTotal_L(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_L"), 0));
+                            u.setGamesClearedInTotal_M(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_M"), 0));
+                        }
+                    }
+                    catch (PackageManager.NameNotFoundException ne) {
+                        Log.e(TAG, ne.toString());
+                    }
+                    //////////////////////////////////////////
                     UserNameListDialog userNameListDialog = new UserNameListDialog(UserNameActivity.this, users);
                     userNameListDialog.show();
                 }
