@@ -23,6 +23,8 @@ public class Zip {
     private ZipFile _zipFile;
     private TextView percentText;
     private Activity zipActivity;
+    static int percent;
+    static int finalPercent;
 
     public Zip(ZipFile zipFile, Activity _activity) {
         this._zipFile = zipFile;
@@ -41,7 +43,6 @@ public class Zip {
         File targetDir = new File(extractPath);
         int zipSize = _zipFile.size();
         int count = 0;
-        int percent = 0;
         ProgressBar progressBar = zipActivity.findViewById(R.id.p);
         percentText = zipActivity.findViewById(R.id.mPercentText);
         String path;
@@ -51,6 +52,7 @@ public class Zip {
         File flagFile;
         BufferedInputStream inputStream;
         BufferedOutputStream outputStream;
+        boolean isOBBExtracted = false;
 
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IOException("Unable to create directory");
@@ -70,7 +72,7 @@ public class Zip {
             Log.d(TAG, "unzip percent: " + percent);
             // Sync the progress bar with percentage value
             progressBar.setProgress(percent);
-            final int finalPercent = percent;
+            finalPercent = percent;
             zipActivity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Show the percentage value on progress bar
@@ -105,15 +107,19 @@ public class Zip {
                     while ((currByte = inputStream.read()) != -1) {
                         outputStream.write(currByte);
                     }
-                    flagFile = new File(extractPath + ".success.txt");
-                    flagFile.createNewFile();
+                    isOBBExtracted = true;
                 } catch (Exception e) {
+                    isOBBExtracted = false;
                     e.printStackTrace();
                 } finally {
                     outputStream.close();
                     inputStream.close();
                 }
             }
+        }
+        if(isOBBExtracted){
+            flagFile = new File(extractPath + ".success.txt");
+            flagFile.createNewFile();
         }
     }
 }

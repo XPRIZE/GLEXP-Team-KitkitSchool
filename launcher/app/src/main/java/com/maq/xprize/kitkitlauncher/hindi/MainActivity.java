@@ -187,7 +187,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                             i.setComponent(new ComponentName("com.maq.xprize.kitkitschool.hindi", "org.cocos2dx.cpp.AppActivity"));
                             startActivity(i);
                         }
-                    } catch (Exception e) {
+                    }  catch (Exception e) {
                         Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
                         i.putExtra("video", "main_app_demo_video");
                         startActivity(i);
