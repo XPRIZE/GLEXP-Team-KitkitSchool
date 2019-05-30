@@ -450,6 +450,9 @@ public class SettingActivity extends KitKitLoggerActivity {
         startActivity(i);
     }
 
+
+
+
     public static class LanguageDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
