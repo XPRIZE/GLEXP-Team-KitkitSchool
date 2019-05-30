@@ -14,7 +14,7 @@
     <string name="go_setting">Go to Android Settings</string>
     <string name="enter_password">Enter password</string>
     <string name="wrong_password">Wrong password</string>
-    <string name="start">Start\nशुरू करो</string>
+    <string name="start">\tStart\nशुरू करो</string>
     <string name="install">Install</string>
     <string name="library">Library\nपुस्तकालय</string>
     <string name="tools">Tools\nउपकरण</string>
