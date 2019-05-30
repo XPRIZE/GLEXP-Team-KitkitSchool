@@ -925,13 +925,16 @@ void GameSelectScene::onEnter()
             auto panel = Sprite::create("MainScene/"+panelFilename);
             panel->setPosition(panelNodeSize/2);
             _panelNode->addChild(panel);
-            
-            auto panelLabel = TodoUtil::createLabel(cur->levelTitle, 100, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
-            panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-            panelLabel->setPosition(panel->getContentSize()/2 - Size(0, 25));
-            panel->addChild(panelLabel);
-            
-            
+
+            string labelName = cur->levelTitle;
+            string delim = "\n";
+            string labelHindi = labelName.substr(0, labelName.find(delim));
+
+            auto panelLabelHindi = TodoUtil::createLabel(labelHindi, 100, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
+            panelLabelHindi->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+            panelLabelHindi->setPosition(panel->getContentSize()/2 - Size(0, 25));
+            panel->addChild(panelLabelHindi);
+
         }
         
         {
