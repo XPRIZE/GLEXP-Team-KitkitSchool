@@ -62,4 +62,5 @@
     <string name="user_english_progress" translatable="false">English</string>
     <string name="user_math_progress" translatable="false">Math</string>
     <string name="user_total_progress" translatable="false">Total</string>
+    <string name="coins_earned" translatable="false">Coins</string>
 </resources>
