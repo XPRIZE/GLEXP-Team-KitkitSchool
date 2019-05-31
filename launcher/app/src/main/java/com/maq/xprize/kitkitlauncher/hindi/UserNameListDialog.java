@@ -79,8 +79,8 @@ public class UserNameListDialog extends Dialog {
             holder.mTvNumber.setText(item.getUserName());
             holder.mTvName.setText(item.getDisplayName());
             holder.mTvMaths.setText(""+item.getMaths());
-            holder.mTvEnglish.setText(""+item.getMaths());
-            holder.mTvTotal.setText(""+item.getTotal());
+            holder.mTvEnglish.setText(""+item.getEnglish());
+            holder.mTvTotal.setText(""+item.getEnglish()+item.getMaths());
             holder.mTvCoins.setText(""+item.get_coins());
 
             holder.itemView.setBackgroundColor(position % 2 == 0 ? Color.LTGRAY : 0xd5d5d5);
