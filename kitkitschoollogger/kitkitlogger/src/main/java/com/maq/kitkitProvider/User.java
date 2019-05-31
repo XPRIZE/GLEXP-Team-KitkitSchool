@@ -59,7 +59,7 @@ public class User<string> {
 
     public User(String displayname, String gender, String age) {
         this._id = 0;
-        this._username = "User-" + displayname;
+        this._username = displayname;
         this._gender = gender;
         this._age = (string) age;
         this._maths = 0;
