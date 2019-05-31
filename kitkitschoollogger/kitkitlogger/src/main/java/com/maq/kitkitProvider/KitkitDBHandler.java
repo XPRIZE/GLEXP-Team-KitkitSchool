@@ -97,7 +97,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_USERNAME + " TEXT,"
             + COLUMN_GENDER + " TEXT,"
-            + COLUMN_AGE + " TEXT,"
+            + COLUMN_AGE + " TEXT"
            // + COLUMN_ENGLISH + " INTEGER,"
           //  + COLUMN_MATHS + " INTEGER,"
             //+ COLUMN_TOTAL + " INTEGER,"
