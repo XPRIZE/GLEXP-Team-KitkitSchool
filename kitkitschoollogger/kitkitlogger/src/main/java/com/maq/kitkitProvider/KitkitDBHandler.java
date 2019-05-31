@@ -182,7 +182,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_AGE, user.getAge());
         values.put(COLUMN_MATHS, user.getMaths());
         values.put(COLUMN_ENGLISH, user.getEnglish());
-        values.put(COLUMN_TOTAL, user.getTotal());
+       // values.put(COLUMN_TOTAL, user.getTotal());
         values.put(COLUMN_COINS, user.get_coins());
         values.put(COLUMN_STARS, user.getNumStars());
         values.put(COLUMN_FINISH_TUTORIAL, user.isFinishTutorial());
@@ -244,7 +244,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             user.setMaths(Integer.parseInt(cursor.getString(4)));
             user.setEnglish(Integer.parseInt(cursor.getString(5)));
             user.setCoins(Integer.parseInt(cursor.getString(6)));
-            user.setTotal(Integer.parseInt(cursor.getString(7)));
+          //  user.setTotal(Integer.parseInt(cursor.getString(7)));
             user.setNumStars(Integer.parseInt(cursor.getString(8)));
             user.setFinishTutorial("1".equals(cursor.getString(9)));
             user.setUnlockDrum("1".equals(cursor.getString(10)));
@@ -307,7 +307,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 user.setMaths(Integer.parseInt(cursor.getString(4)));
                 user.setEnglish(Integer.parseInt(cursor.getString(5)));
                 user.setCoins(Integer.parseInt(cursor.getString(6)));
-                user.setTotal(Integer.parseInt(cursor.getString(7)));
+                //user.setTotal(Integer.parseInt(cursor.getString(7)));
                 user.setNumStars(Integer.parseInt(cursor.getString(8)));
                 user.setFinishTutorial("1".equals(cursor.getString(9)));
                 user.setUnlockDrum("1".equals(cursor.getString(10)));
@@ -449,7 +449,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_AGE, user.getAge());
         values.put(COLUMN_MATHS, user.getMaths());
         values.put(COLUMN_ENGLISH, user.getEnglish());
-        values.put(COLUMN_TOTAL, user.getTotal());
+       // values.put(COLUMN_TOTAL, user.getTotal());
         values.put(COLUMN_COINS, user.get_coins());
         values.put(COLUMN_STARS, user.getNumStars());
         values.put(COLUMN_FINISH_TUTORIAL, user.isFinishTutorial());

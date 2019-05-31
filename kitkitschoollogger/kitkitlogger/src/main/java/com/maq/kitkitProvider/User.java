@@ -15,7 +15,7 @@ public class User<string> {
     private string _age;
     private int _maths;
     private int _english;
-    private int _total;
+   // private int _total;
     private int _coins;
     private int _numStars;
     private boolean _finishTutorial;
@@ -39,7 +39,7 @@ public class User<string> {
         this._age = (string) "0";
         this._maths = 0;
         this._english = 0;
-        this._total = 0;
+       // this._total = 0;
         this._coins = 0;
         this._numStars = 0;
         this._finishTutorial = false;
@@ -63,7 +63,7 @@ public class User<string> {
         this._age = (string) age;
         this._maths = 0;
         this._english = 0;
-        this._total = 0;
+      //  this._total = 0;
         this._coins = 0;
         this._numStars = 0;
         this._finishTutorial = false;
@@ -88,7 +88,7 @@ public class User<string> {
         this._age = (string) "0";
         this._maths = 0;
         this._english = 0;
-        this._total = 0;
+      //  this._total = 0;
         this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
@@ -112,7 +112,7 @@ public class User<string> {
         this._age = (string) "0";
         this._maths = 0;
         this._english = 0;
-        this._total = 0;
+      //  this._total = 0;
         this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
@@ -178,11 +178,10 @@ public class User<string> {
         return this._english;
     }
 
-    public void setTotal(int total) {
-        this._total = total;
-    }
-
-    public int getTotal() { return this._total; }
+   // public void setTotal(int total) {
+    //    this._total = total;
+   // }
+   // public int getTotal() { return this._total; }
 
     public void setCoins(int coins) {
         this._coins = coins;
