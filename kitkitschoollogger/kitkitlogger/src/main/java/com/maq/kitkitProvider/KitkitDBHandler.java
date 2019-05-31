@@ -33,10 +33,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_USERNAME = "username";
-    public static final String COLUMN_MATHS = "maths";
-    public static final String COLUMN_ENGLISH = "english";
-    public static final String COLUMN_TOTAL = "total";
-    public static final String COLUMN_COINS = "coins";
+   // public static final String COLUMN_MATHS = "maths";
+    //public static final String COLUMN_ENGLISH = "english";
+   // public static final String COLUMN_TOTAL = "total";
+   // public static final String COLUMN_COINS = "coins";
     public static final String COLUMN_GENDER = "_gender";
     public static final String COLUMN_AGE = "_age";
     public static final String COLUMN_STARS = "stars";
@@ -71,10 +71,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             + COLUMN_USERNAME + " TEXT,"
             + COLUMN_GENDER + " TEXT,"
             + COLUMN_AGE + " TEXT,"
-            + COLUMN_ENGLISH + " INTEGER,"
-            + COLUMN_MATHS + " INTEGER,"
+           // + COLUMN_ENGLISH + " INTEGER,"
+           // + COLUMN_MATHS + " INTEGER,"
            // + COLUMN_TOTAL + " INTEGER,"
-            + COLUMN_COINS + " INTEGER,"
+           // + COLUMN_COINS + " INTEGER,"
             + COLUMN_STARS + " INTEGER,"
             + COLUMN_FINISH_TUTORIAL + " BOOLEAN,"
             + COLUMN_UNLOCK_DRUM + " BOOLEAN,"
@@ -98,10 +98,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             + COLUMN_USERNAME + " TEXT,"
             + COLUMN_GENDER + " TEXT,"
             + COLUMN_AGE + " TEXT,"
-            + COLUMN_ENGLISH + " INTEGER,"
-            + COLUMN_MATHS + " INTEGER,"
+           // + COLUMN_ENGLISH + " INTEGER,"
+          //  + COLUMN_MATHS + " INTEGER,"
             //+ COLUMN_TOTAL + " INTEGER,"
-            + COLUMN_COINS + " INTEGER"
+           // + COLUMN_COINS + " INTEGER"
             + ")";
 
     final String CREATE_SNTP_RESULT_TABLE = "CREATE TABLE "
@@ -180,10 +180,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, user.getUserName());
         values.put(COLUMN_GENDER, user.getgender());
         values.put(COLUMN_AGE, user.getAge());
-        values.put(COLUMN_MATHS, user.getMaths());
-        values.put(COLUMN_ENGLISH, user.getEnglish());
+        //values.put(COLUMN_MATHS, user.getMaths());
+       // values.put(COLUMN_ENGLISH, user.getEnglish());
        // values.put(COLUMN_TOTAL, user.getTotal());
-        values.put(COLUMN_COINS, user.get_coins());
+       // values.put(COLUMN_COINS, user.get_coins());
         values.put(COLUMN_STARS, user.getNumStars());
         values.put(COLUMN_FINISH_TUTORIAL, user.isFinishTutorial());
         values.put(COLUMN_UNLOCK_DRUM, user.isUnlockDrum());
@@ -207,10 +207,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 COLUMN_USERNAME,
                 COLUMN_GENDER,
                 COLUMN_AGE,
-                COLUMN_MATHS,
-                COLUMN_ENGLISH,
+               // COLUMN_MATHS,
+               // COLUMN_ENGLISH,
                // COLUMN_TOTAL,
-                COLUMN_COINS,
+              //  COLUMN_COINS,
                 COLUMN_STARS,
                 COLUMN_FINISH_TUTORIAL,
                 COLUMN_UNLOCK_DRUM,
@@ -241,24 +241,24 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             user.setUserName(cursor.getString(1));
             user.setgender(cursor.getString(2));
             user.setAge(Integer.parseInt(cursor.getString(3)));
-            user.setMaths(Integer.parseInt(cursor.getString(4)));
-            user.setEnglish(Integer.parseInt(cursor.getString(5)));
-            user.setCoins(Integer.parseInt(cursor.getString(6)));
+           // user.setMaths(Integer.parseInt(cursor.getString(4)));
+            //user.setEnglish(Integer.parseInt(cursor.getString(5)));
+           // user.setCoins(Integer.parseInt(cursor.getString(6)));
             //user.setTotal(Integer.parseInt(cursor.getString(7)));
-            user.setNumStars(Integer.parseInt(cursor.getString(7)));
-            user.setFinishTutorial("1".equals(cursor.getString(8)));
-            user.setUnlockDrum("1".equals(cursor.getString(9)));
-            user.setUnlockMarimba("1".equals(cursor.getString(10)));
-            user.setUnlockDrawing("1".equals(cursor.getString(11)));
-            user.setUnlockColoring("1".equals(cursor.getString(12)));
-            user.setUnlockBlackboard("1".equals(cursor.getString(13)));
-            user.setFinishLauncherTutorial("1".equals(cursor.getString(14)));
-            user.setDisplayName(cursor.getString(15));
-            user.setOpenLibrary("1".equals(cursor.getString(16)));
-            user.setOpenTools("1".equals(cursor.getString(17)));
-            user.setUnlockFishBowl("1".equals(cursor.getString(18)));
-            user.setUnlockWritingBoard("1".equals(cursor.getString(19)));
-            user.setFinishWritingBoardTutorial("1".equals(cursor.getString(20)));
+            user.setNumStars(Integer.parseInt(cursor.getString(4)));
+            user.setFinishTutorial("1".equals(cursor.getString(5)));
+            user.setUnlockDrum("1".equals(cursor.getString(6)));
+            user.setUnlockMarimba("1".equals(cursor.getString(7)));
+            user.setUnlockDrawing("1".equals(cursor.getString(8)));
+            user.setUnlockColoring("1".equals(cursor.getString(9)));
+            user.setUnlockBlackboard("1".equals(cursor.getString(10)));
+            user.setFinishLauncherTutorial("1".equals(cursor.getString(11)));
+            user.setDisplayName(cursor.getString(12));
+            user.setOpenLibrary("1".equals(cursor.getString(13)));
+            user.setOpenTools("1".equals(cursor.getString(14)));
+            user.setUnlockFishBowl("1".equals(cursor.getString(15)));
+            user.setUnlockWritingBoard("1".equals(cursor.getString(16)));
+            user.setFinishWritingBoardTutorial("1".equals(cursor.getString(17)));
             cursor.close();
         } else {
             user = null;
@@ -272,10 +272,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 COLUMN_USERNAME,
                 COLUMN_GENDER,
                 COLUMN_AGE,
-                COLUMN_MATHS,
-                COLUMN_ENGLISH,
+                //COLUMN_MATHS,
+                //COLUMN_ENGLISH,
                 //COLUMN_TOTAL,
-                COLUMN_COINS,
+                //COLUMN_COINS,
                 COLUMN_STARS,
                 COLUMN_FINISH_TUTORIAL,
                 COLUMN_UNLOCK_DRUM,
@@ -304,24 +304,24 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 user.setUserName(cursor.getString(1));
                 user.setgender(cursor.getString(2));
                 user.setAge(Integer.parseInt(cursor.getString(3)));
-                user.setMaths(Integer.parseInt(cursor.getString(4)));
-                user.setEnglish(Integer.parseInt(cursor.getString(5)));
-                user.setCoins(Integer.parseInt(cursor.getString(6)));
+               // user.setMaths(Integer.parseInt(cursor.getString(4)));
+               // user.setEnglish(Integer.parseInt(cursor.getString(5)));
+               // user.setCoins(Integer.parseInt(cursor.getString(6)));
                 //user.setTotal(Integer.parseInt(cursor.getString(7)));
-                user.setNumStars(Integer.parseInt(cursor.getString(7)));
-                user.setFinishTutorial("1".equals(cursor.getString(8)));
-                user.setUnlockDrum("1".equals(cursor.getString(9)));
-                user.setUnlockMarimba("1".equals(cursor.getString(10)));
-                user.setUnlockDrawing("1".equals(cursor.getString(11)));
-                user.setUnlockColoring("1".equals(cursor.getString(12)));
-                user.setUnlockBlackboard("1".equals(cursor.getString(13)));
-                user.setFinishLauncherTutorial("1".equals(cursor.getString(14)));
-                user.setDisplayName(cursor.getString(15));
-                user.setOpenLibrary("1".equals(cursor.getString(16)));
-                user.setOpenTools("1".equals(cursor.getString(17)));
-                user.setUnlockFishBowl("1".equals(cursor.getString(18)));
-                user.setUnlockWritingBoard("1".equals(cursor.getString(19)));
-                user.setFinishWritingBoardTutorial("1".equals(cursor.getString(20)));
+                user.setNumStars(Integer.parseInt(cursor.getString(4)));
+                user.setFinishTutorial("1".equals(cursor.getString(5)));
+                user.setUnlockDrum("1".equals(cursor.getString(6)));
+                user.setUnlockMarimba("1".equals(cursor.getString(7)));
+                user.setUnlockDrawing("1".equals(cursor.getString(8)));
+                user.setUnlockColoring("1".equals(cursor.getString(9)));
+                user.setUnlockBlackboard("1".equals(cursor.getString(10)));
+                user.setFinishLauncherTutorial("1".equals(cursor.getString(11)));
+                user.setDisplayName(cursor.getString(12));
+                user.setOpenLibrary("1".equals(cursor.getString(13)));
+                user.setOpenTools("1".equals(cursor.getString(14)));
+                user.setUnlockFishBowl("1".equals(cursor.getString(15)));
+                user.setUnlockWritingBoard("1".equals(cursor.getString(16)));
+                user.setFinishWritingBoardTutorial("1".equals(cursor.getString(17)));
                 result.add(user);
 
             } while(cursor.moveToNext());
@@ -447,10 +447,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, user.getUserName());
         values.put(COLUMN_GENDER, user.getgender());
         values.put(COLUMN_AGE, user.getAge());
-        values.put(COLUMN_MATHS, user.getMaths());
-        values.put(COLUMN_ENGLISH, user.getEnglish());
+       // values.put(COLUMN_MATHS, user.getMaths());
+       // values.put(COLUMN_ENGLISH, user.getEnglish());
        // values.put(COLUMN_TOTAL, user.getTotal());
-        values.put(COLUMN_COINS, user.get_coins());
+        //values.put(COLUMN_COINS, user.get_coins());
         values.put(COLUMN_STARS, user.getNumStars());
         values.put(COLUMN_FINISH_TUTORIAL, user.isFinishTutorial());
         values.put(COLUMN_UNLOCK_DRUM, user.isUnlockDrum());
