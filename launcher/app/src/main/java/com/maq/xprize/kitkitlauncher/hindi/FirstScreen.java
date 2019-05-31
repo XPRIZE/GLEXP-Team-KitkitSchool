@@ -105,10 +105,10 @@ public class FirstScreen extends AppCompatActivity {
                 try {
                     KitkitDBHandler dbHandler = new KitkitDBHandler(getApplicationContext());
 
-                    User user = new User(toString(), toString(), toString());
-                    user.setDisplayName(usrnameInput.getText().toString());
-                    user.setAge(ageno.getText().toString());
-                    user.setgender(userGender);
+                    User user = new User(usrnameInput.getText().toString(), userGender,ageno.getText().toString());
+                   // user.setDisplayName(usrnameInput.getText().toString());
+                    //user.setAge(ageno.getText().toString());
+                    //user.setgender(userGender);
 
 
                     dbHandler.addUser(user);
@@ -177,7 +177,6 @@ public class FirstScreen extends AppCompatActivity {
                             //refreshUI();
                         }
                     });
-
                     registerUserDialog.show();
                 }
                 break;*/
@@ -187,8 +186,8 @@ public class FirstScreen extends AppCompatActivity {
 
 
 
-    //public void onClick(View final){
-   // }
+//public void onClick(View final){
+// }
 
 
 //    mydialogS.setContentView(R.layout.selectalluser);
@@ -199,4 +198,3 @@ public class FirstScreen extends AppCompatActivity {
 //mydialogS.show();
 
 //}
-

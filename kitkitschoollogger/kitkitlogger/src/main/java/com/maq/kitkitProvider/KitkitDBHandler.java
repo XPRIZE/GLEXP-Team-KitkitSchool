@@ -73,7 +73,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             + COLUMN_AGE + " TEXT,"
             + COLUMN_ENGLISH + " INTEGER,"
             + COLUMN_MATHS + " INTEGER,"
-            + COLUMN_TOTAL + " INTEGER,"
+           // + COLUMN_TOTAL + " INTEGER,"
             + COLUMN_COINS + " INTEGER,"
             + COLUMN_STARS + " INTEGER,"
             + COLUMN_FINISH_TUTORIAL + " BOOLEAN,"
@@ -100,7 +100,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             + COLUMN_AGE + " TEXT,"
             + COLUMN_ENGLISH + " INTEGER,"
             + COLUMN_MATHS + " INTEGER,"
-            + COLUMN_TOTAL + " INTEGER,"
+            //+ COLUMN_TOTAL + " INTEGER,"
             + COLUMN_COINS + " INTEGER"
             + ")";
 
@@ -209,7 +209,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 COLUMN_AGE,
                 COLUMN_MATHS,
                 COLUMN_ENGLISH,
-                COLUMN_TOTAL,
+               // COLUMN_TOTAL,
                 COLUMN_COINS,
                 COLUMN_STARS,
                 COLUMN_FINISH_TUTORIAL,
@@ -244,21 +244,21 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             user.setMaths(Integer.parseInt(cursor.getString(4)));
             user.setEnglish(Integer.parseInt(cursor.getString(5)));
             user.setCoins(Integer.parseInt(cursor.getString(6)));
-          //  user.setTotal(Integer.parseInt(cursor.getString(7)));
-            user.setNumStars(Integer.parseInt(cursor.getString(8)));
-            user.setFinishTutorial("1".equals(cursor.getString(9)));
-            user.setUnlockDrum("1".equals(cursor.getString(10)));
-            user.setUnlockMarimba("1".equals(cursor.getString(11)));
-            user.setUnlockDrawing("1".equals(cursor.getString(12)));
-            user.setUnlockColoring("1".equals(cursor.getString(13)));
-            user.setUnlockBlackboard("1".equals(cursor.getString(14)));
-            user.setFinishLauncherTutorial("1".equals(cursor.getString(15)));
-            user.setDisplayName(cursor.getString(16));
-            user.setOpenLibrary("1".equals(cursor.getString(17)));
-            user.setOpenTools("1".equals(cursor.getString(18)));
-            user.setUnlockFishBowl("1".equals(cursor.getString(19)));
-            user.setUnlockWritingBoard("1".equals(cursor.getString(20)));
-            user.setFinishWritingBoardTutorial("1".equals(cursor.getString(21)));
+            //user.setTotal(Integer.parseInt(cursor.getString(7)));
+            user.setNumStars(Integer.parseInt(cursor.getString(7)));
+            user.setFinishTutorial("1".equals(cursor.getString(8)));
+            user.setUnlockDrum("1".equals(cursor.getString(9)));
+            user.setUnlockMarimba("1".equals(cursor.getString(10)));
+            user.setUnlockDrawing("1".equals(cursor.getString(11)));
+            user.setUnlockColoring("1".equals(cursor.getString(12)));
+            user.setUnlockBlackboard("1".equals(cursor.getString(13)));
+            user.setFinishLauncherTutorial("1".equals(cursor.getString(14)));
+            user.setDisplayName(cursor.getString(15));
+            user.setOpenLibrary("1".equals(cursor.getString(16)));
+            user.setOpenTools("1".equals(cursor.getString(17)));
+            user.setUnlockFishBowl("1".equals(cursor.getString(18)));
+            user.setUnlockWritingBoard("1".equals(cursor.getString(19)));
+            user.setFinishWritingBoardTutorial("1".equals(cursor.getString(20)));
             cursor.close();
         } else {
             user = null;
@@ -274,7 +274,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 COLUMN_AGE,
                 COLUMN_MATHS,
                 COLUMN_ENGLISH,
-                COLUMN_TOTAL,
+                //COLUMN_TOTAL,
                 COLUMN_COINS,
                 COLUMN_STARS,
                 COLUMN_FINISH_TUTORIAL,
@@ -308,20 +308,20 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 user.setEnglish(Integer.parseInt(cursor.getString(5)));
                 user.setCoins(Integer.parseInt(cursor.getString(6)));
                 //user.setTotal(Integer.parseInt(cursor.getString(7)));
-                user.setNumStars(Integer.parseInt(cursor.getString(8)));
-                user.setFinishTutorial("1".equals(cursor.getString(9)));
-                user.setUnlockDrum("1".equals(cursor.getString(10)));
-                user.setUnlockMarimba("1".equals(cursor.getString(11)));
-                user.setUnlockDrawing("1".equals(cursor.getString(12)));
-                user.setUnlockColoring("1".equals(cursor.getString(13)));
-                user.setUnlockBlackboard("1".equals(cursor.getString(14)));
-                user.setFinishLauncherTutorial("1".equals(cursor.getString(15)));
-                user.setDisplayName(cursor.getString(16));
-                user.setOpenLibrary("1".equals(cursor.getString(17)));
-                user.setOpenTools("1".equals(cursor.getString(18)));
-                user.setUnlockFishBowl("1".equals(cursor.getString(19)));
-                user.setUnlockWritingBoard("1".equals(cursor.getString(20)));
-                user.setFinishWritingBoardTutorial("1".equals(cursor.getString(21)));
+                user.setNumStars(Integer.parseInt(cursor.getString(7)));
+                user.setFinishTutorial("1".equals(cursor.getString(8)));
+                user.setUnlockDrum("1".equals(cursor.getString(9)));
+                user.setUnlockMarimba("1".equals(cursor.getString(10)));
+                user.setUnlockDrawing("1".equals(cursor.getString(11)));
+                user.setUnlockColoring("1".equals(cursor.getString(12)));
+                user.setUnlockBlackboard("1".equals(cursor.getString(13)));
+                user.setFinishLauncherTutorial("1".equals(cursor.getString(14)));
+                user.setDisplayName(cursor.getString(15));
+                user.setOpenLibrary("1".equals(cursor.getString(16)));
+                user.setOpenTools("1".equals(cursor.getString(17)));
+                user.setUnlockFishBowl("1".equals(cursor.getString(18)));
+                user.setUnlockWritingBoard("1".equals(cursor.getString(19)));
+                user.setFinishWritingBoardTutorial("1".equals(cursor.getString(20)));
                 result.add(user);
 
             } while(cursor.moveToNext());

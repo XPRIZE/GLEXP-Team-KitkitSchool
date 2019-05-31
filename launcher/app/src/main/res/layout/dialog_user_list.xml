@@ -8,6 +8,7 @@
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="1500px"
+        android:layout_gravity="center"
         android:layout_height="1400px"
         android:background="#d5d5d5"
         android:orientation="vertical">
