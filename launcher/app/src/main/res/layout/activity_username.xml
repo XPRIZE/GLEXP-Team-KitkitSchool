@@ -157,7 +157,6 @@
                 android:layout_marginTop="100px"
                 android:gravity="center"
                 android:text="@string/username_list"
-                android:textColor="@drawable/user_name_list_selector"
                 android:textSize="70px" />
 
         </LinearLayout>

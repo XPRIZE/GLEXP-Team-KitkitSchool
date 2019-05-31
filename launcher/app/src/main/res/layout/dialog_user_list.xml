@@ -3,12 +3,12 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="1500px"
+        android:layout_gravity="center"
         android:layout_height="1400px"
         android:background="#d5d5d5"
         android:orientation="vertical">
@@ -27,23 +27,59 @@
                 android:gravity="center"
                 android:text="@string/user_no"
                 android:textColor="#0b0000"
-                android:textSize="55px"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userclick"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/username_activity_title"
+                android:textColor="#0b0000"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
                 android:gravity="center"
-                android:text="@string/username_activity_title"
+                android:layout_weight="1"
+                android:text="Maths"
                 android:textColor="#0b0000"
-                android:textSize="55px"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="English"
+                android:textColor="#0b0000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Coins"
+                android:textColor="#0b0000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Total"
+                android:textColor="#0b0000"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
-            android:layout_width="1500px"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="#d5d5d5"

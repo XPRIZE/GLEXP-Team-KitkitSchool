@@ -191,7 +191,7 @@ public class Util {
                 result += ("-t" + tabletNumber);
             }
 
-            tvUserName.setText(result);
+            tvUserName.setText(displayName);
 
         } else {
             tvUserName.setText("");

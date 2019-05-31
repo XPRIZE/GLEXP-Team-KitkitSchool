@@ -61,7 +61,15 @@ public class LauncherApplication extends Application {
         logger = new KitKitLogger(getPackageName(), getApplicationContext());
         dbHandler = new KitkitDBHandler(getApplicationContext());
 
-        if (dbHandler.numUser() == 0) {
+
+
+
+
+
+
+        //Start here
+
+      //  if (dbHandler.numUser() == 0) {
             //make users in DB
             for (int i = 0; i < 100; i++) {
                 User user = new User("user" + i, 0);
@@ -75,15 +83,32 @@ public class LauncherApplication extends Application {
                     currentUsername = user.getUserName();
                 }
             }
+        //    for (int i = 1; i <= 1; i++) {
+          //      User user = new User("user" + i, 0);
+//     no           user.setNumStars(i*50);
+//     no           user.setFinishTutorial(true);
+                //dbHandler.addUser(user);
 
-        }
+                //if (i == 0) {
+                   // dbHandler.setCurrentUser(user);
+                    //currentUser = user;
+                    //currentUsername = user.getUserName();
+                //}
+            //}
+
+        //}
+
+        //ends here
+
+        /*
         if (currentUser == null) {
             currentUser = dbHandler.getCurrentUser();
             currentUsername = currentUser.getUserName();
         }
+        */
 
-        defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
+       /* defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
         // Setup handler for uncaught exceptions.
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -91,15 +116,15 @@ public class LauncherApplication extends Application {
                 handleUncaughtException(thread, e);
             }
         });
+        */
     }
 
-    public void handleUncaughtException(Thread thread, Throwable e) {
+  /*  public void handleUncaughtException(Thread thread, Throwable e) {
         e.printStackTrace(); // not all Android versions will print the stack trace automatically
-
         logger.extractLogToFile();
-
         defaultExceptionHandler.uncaughtException(thread, e);
     }
+    */
 
     public KitKitLogger getLogger() {
         return logger;
@@ -120,5 +145,4 @@ public class LauncherApplication extends Application {
     public KitkitDBHandler getDbHandler() {
         return dbHandler;
     }
-
 }

@@ -5,12 +5,18 @@ package com.maq.kitkitProvider;
  */
 
 
-public class User {
+public class User<string> {
     public static boolean DEFAULT_OPEN_LIBRARY = true;
     public static boolean DEFAULT_OPEN_TOOLS = true;
 
     private int _id;
     private String _username;
+    private String _gender;
+    private string _age;
+    private int _maths;
+    private int _english;
+   // private int _total;
+    private int _coins;
     private int _numStars;
     private boolean _finishTutorial;
     private boolean _unlockDrum;
@@ -29,6 +35,12 @@ public class User {
     public User() {
         this._id = 0;
         this._username = "user";
+        this._gender = "male";
+        this._age = (string) "0";
+        this._maths = 0;
+        this._english = 0;
+       // this._total = 0;
+        this._coins = 0;
         this._numStars = 0;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -45,9 +57,40 @@ public class User {
         this._finishWritingBoardTutorial = false;
     }
 
+    public User(String displayname, String gender, String age) {
+        this._id = 0;
+        this._username = displayname;
+        this._gender = gender;
+        this._age = (string) age;
+        this._maths = 0;
+        this._english = 0;
+      //  this._total = 0;
+        this._coins = 0;
+        this._numStars = 0;
+        this._finishTutorial = false;
+        this._unlockDrum = true;
+        this._unlockMarimba = true;
+        this._unlockDrawing = true;
+        this._unlockColoring = true;
+        this._unlockBlackboard = true;
+        this._finishLauncherTutorial = false;
+        this._displayName = displayname;
+        this._openLibrary = DEFAULT_OPEN_LIBRARY;
+        this._openTools = DEFAULT_OPEN_TOOLS;
+        this._unlockFishBowl = false;
+        this._unlockWritingBoard = false;
+        this._finishWritingBoardTutorial = false;
+    }
+
     public User(int id, String username, int stars) {
         this._id = id;
         this._username = username;
+        this._gender = "male";
+        this._age = (string) "0";
+        this._maths = 0;
+        this._english = 0;
+      //  this._total = 0;
+        this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -66,6 +109,12 @@ public class User {
 
     public User(String productname, int stars) {
         this._username = productname;
+        this._gender = "male";
+        this._age = (string) "0";
+        this._maths = 0;
+        this._english = 0;
+      //  this._total = 0;
+        this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -96,6 +145,51 @@ public class User {
 
     public String getUserName() {
         return this._username;
+    }
+
+    public void setgender(String gender) {
+        this._gender = gender;
+    }
+
+    public String getgender() {
+        return this._gender;
+    }
+
+    public void setAge(string age) {
+        this._age = age;
+    }
+
+    public String getAge() {
+        return (String) this._age;
+    }
+
+    public void setMaths(int maths) {
+        this._maths = maths;
+    }
+
+    public int getMaths() {
+        return this._maths;
+    }
+
+    public void setEnglish(int english) {
+        this._english = english;
+    }
+
+    public int getEnglish() {
+        return this._english;
+    }
+
+   // public void setTotal(int total) {
+    //    this._total = total;
+   // }
+   // public int getTotal() { return this._total; }
+
+    public void setCoins(int coins) {
+        this._coins = coins;
+    }
+
+    public int get_coins() {
+        return this._coins;
     }
 
     public void setNumStars(int stars) {
@@ -136,11 +230,11 @@ public class User {
     public boolean isFinishLauncherTutorial() {return this._finishLauncherTutorial;}
 
     public void setDisplayName(String name) {
-        _displayName = name;
+        this._displayName = name;
     }
 
     public String getDisplayName() {
-        return _displayName;
+        return this._displayName;
     }
 
     public void setOpenLibrary(boolean open) {

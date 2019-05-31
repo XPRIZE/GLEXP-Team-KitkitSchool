@@ -496,7 +496,7 @@
 
                 </FrameLayout>
 
-                <!-- User name -->
+                <!-- User name -->     <!-- here should be my Add Button -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/setting_height"

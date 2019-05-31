@@ -15,8 +15,8 @@
         <TextView
             android:id="@+id/tv_number"
             android:layout_width="0px"
-            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="#0b0000"
             android:textSize="50px" />
@@ -25,11 +25,49 @@
             android:id="@+id/tv_name"
             android:layout_width="0px"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:gravity="center_vertical|left"
-            android:paddingLeft="20px"
+            android:layout_weight="1"
+            android:onClick="SetUser"
+            android:gravity="center"
             android:textColor="#0b0000"
             android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_maths"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_english"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+        <TextView
+            android:id="@+id/tv_coins"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#0b0000"
+            android:textSize="50px" />
+
+
 
     </LinearLayout>
 

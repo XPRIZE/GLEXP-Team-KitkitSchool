@@ -82,18 +82,12 @@ public class UserNameActivity extends KitKitLoggerActivity {
         Util.displayUserName(this, (TextView) findViewById(R.id.textView_currentUsername));
 
         User user = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
-        mTvUserNo.setText(getString(R.string.user_no) + " " + user.getUserName().replace("user", ""));
+        mTvUserNo.setText(getString(R.string.user_no) + " " + user.getUserName().replace("user" , ""));
         String displayName = user.getDisplayName();
-        if (displayName == null || displayName.isEmpty()) {
-            mTvUserName.setBackgroundResource(R.drawable.rounded_line_blue);
-            mTvUserName.setText("");
-            mVRename.setVisibility(View.INVISIBLE);
 
-        } else {
             mTvUserName.setBackgroundColor(Color.WHITE);
             mTvUserName.setText(displayName);
             mVRename.setVisibility(View.VISIBLE);
-        }
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {

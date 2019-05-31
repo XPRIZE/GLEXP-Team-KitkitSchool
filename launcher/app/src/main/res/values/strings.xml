@@ -59,4 +59,11 @@
     <string name="username_activity_title">User name</string>
     <string name="username_list">[ User name list ]</string>
     <string name="rename">Rename</string>
+    <string name="radio_male">Male</string>
+    <string name="radio_female">Female</string>
+    <string name="X">X</string>
+    <string name="Username">Username</string>
+    <string name="Gender">Gender</string>
+    <string name="Age">Age</string>
+
 </resources>
