@@ -78,11 +78,11 @@ public class UserNameListDialog extends Dialog {
             User item = mData.get(position);
             holder.mTvNumber.setText(item.getUserName());
             holder.mTvName.setText(item.getDisplayName());
-            holder.mTvEnglish.setText(item.getGamesClearedInTotal_L());
-            holder.mTvMath.setText(item.getGamesClearedInTotal_M());
-            holder.mTvTotal.setText(item.getGamesClearedInTotal_L() + item.getGamesClearedInTotal_M());
-            holder.mTvCoins.setText(item.getNumStars());
-            holder.itemView.setBackgroundColor(position % 6 == 0 ? Color.LTGRAY : 0xd5d5d5);
+            holder.mTvEnglish.setText("" + item.getGamesClearedInTotal_L());
+            holder.mTvMath.setText("" + item.getGamesClearedInTotal_M());
+            holder.mTvTotal.setText("" + item.getGamesClearedInTotal_L() + item.getGamesClearedInTotal_M());
+            holder.mTvCoins.setText("" + item.getNumStars());
+            holder.itemView.setBackgroundColor(position % 2 == 0 ? Color.LTGRAY : 0xd5d5d5);
         }
 
         @Override
