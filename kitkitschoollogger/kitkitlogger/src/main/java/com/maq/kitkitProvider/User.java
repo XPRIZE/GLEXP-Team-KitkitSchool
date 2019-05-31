@@ -13,10 +13,6 @@ public class User<string> {
     private String _username;
     private String _gender;
     private string _age;
-    private int _maths;
-    private int _english;
-   // private int _total;
-    private int _coins;
     private int _numStars;
     private boolean _finishTutorial;
     private boolean _unlockDrum;
@@ -41,10 +37,6 @@ public class User<string> {
         this._username = "user";
         this._gender = "male";
         this._age = (string) "0";
-        this._maths = 0;
-        this._english = 0;
-       // this._total = 0;
-        this._coins = 0;
         this._numStars = 0;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -68,10 +60,6 @@ public class User<string> {
         this._username = displayname;
         this._gender = gender;
         this._age = (string) age;
-        this._maths = 0;
-        this._english = 0;
-      //  this._total = 0;
-        this._coins = 0;
         this._numStars = 0;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -86,6 +74,8 @@ public class User<string> {
         this._unlockFishBowl = false;
         this._unlockWritingBoard = false;
         this._finishWritingBoardTutorial = false;
+        this._gamesClearedInTotal_L = 0;
+        this._gamesClearedInTotal_M = 0;
     }
 
     public User(int id, String username, int stars) {
@@ -93,10 +83,6 @@ public class User<string> {
         this._username = username;
         this._gender = "male";
         this._age = (string) "0";
-        this._maths = 0;
-        this._english = 0;
-      //  this._total = 0;
-        this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -119,10 +105,6 @@ public class User<string> {
         this._username = productname;
         this._gender = "male";
         this._age = (string) "0";
-        this._maths = 0;
-        this._english = 0;
-      //  this._total = 0;
-        this._coins = 0;
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -171,35 +153,6 @@ public class User<string> {
 
     public String getAge() {
         return (String) this._age;
-    }
-
-    public void setMaths(int maths) {
-        this._maths = maths;
-    }
-
-    public int getMaths() {
-        return this._maths;
-    }
-
-    public void setEnglish(int english) {
-        this._english = english;
-    }
-
-    public int getEnglish() {
-        return this._english;
-    }
-
-   // public void setTotal(int total) {
-    //    this._total = total;
-   // }
-   // public int getTotal() { return this._total; }
-
-    public void setCoins(int coins) {
-        this._coins = coins;
-    }
-
-    public int get_coins() {
-        return this._coins;
     }
 
     public void setNumStars(int stars) {
