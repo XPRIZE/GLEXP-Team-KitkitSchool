@@ -59,11 +59,8 @@
     <string name="username_activity_title">User name</string>
     <string name="username_list">[ User name list ]</string>
     <string name="rename">Rename</string>
-    <string name="radio_male">Male</string>
-    <string name="radio_female">Female</string>
-    <string name="X">X</string>
-    <string name="Username">Username</string>
-    <string name="Gender">Gender</string>
-    <string name="Age">Age</string>
-
+    <string name="user_english_progress" translatable="false">English</string>
+    <string name="user_math_progress" translatable="false">Math</string>
+    <string name="user_total_progress" translatable="false">Total</string>
+    <string name="coins_earned" translatable="false">Coins</string>
 </resources>
