@@ -73,6 +73,13 @@ public class FirstScreen extends AppCompatActivity {
         submit = (Button) mydialog.findViewById(R.id.button2);
         RG = (RadioGroup) mydialog.findViewById(R.id.radio);
 
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mydialog.dismiss();
+            }
+        });
+
         RG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
