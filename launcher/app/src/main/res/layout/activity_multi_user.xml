@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/launcher_mode_game"
-    tools:context=".FirstScreen">
+    tools:context=".MultiUserActivity">
 
     <Button
         android:id="@+id/Add"

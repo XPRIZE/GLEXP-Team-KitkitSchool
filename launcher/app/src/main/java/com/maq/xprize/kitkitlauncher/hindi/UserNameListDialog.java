@@ -43,7 +43,7 @@ public class UserNameListDialog extends Dialog {
         setContentView(R.layout.dialog_user_list);
         Util.setScale(((Activity) context), findViewById(R.id.root));
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(new RecyclerAdapter());
 
@@ -62,8 +62,6 @@ public class UserNameListDialog extends Dialog {
             }
         });
     }
-
-    ////////////////////////////////////////////////////////////////////////////////
 
     public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
@@ -103,12 +101,12 @@ public class UserNameListDialog extends Dialog {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                mTvNumber = (TextView) itemView.findViewById(R.id.tv_number);
-                mTvName = (TextView) itemView.findViewById(R.id.tv_name);
-                mTvEnglish = (TextView) itemView.findViewById(R.id.tv_english);
-                mTvMath = (TextView) itemView.findViewById(R.id.tv_math);
-                mTvTotal = (TextView) itemView.findViewById(R.id.tv_total);
-                mTvCoins = (TextView) itemView.findViewById(R.id.tv_coins);
+                mTvNumber = itemView.findViewById(R.id.tv_number);
+                mTvName = itemView.findViewById(R.id.tv_name);
+                mTvEnglish = itemView.findViewById(R.id.tv_english);
+                mTvMath = itemView.findViewById(R.id.tv_math);
+                mTvTotal = itemView.findViewById(R.id.tv_total);
+                mTvCoins = itemView.findViewById(R.id.tv_coins);
             }
         }
     }

@@ -29,7 +29,7 @@
         android:launchMode="singleTask"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FirstScreen">
+        <activity android:name=".MultiUserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

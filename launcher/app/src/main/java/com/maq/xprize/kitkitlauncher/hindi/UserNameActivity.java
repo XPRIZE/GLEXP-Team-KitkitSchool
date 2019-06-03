@@ -45,10 +45,9 @@ public class UserNameActivity extends KitKitLoggerActivity {
             }
         });
 
-        mTvUserNo = (TextView) findViewById(R.id.tvUserNo);
-        mTvUserName = (TextView) findViewById(R.id.tvUserName);
+        mTvUserNo = findViewById(R.id.tvUserNo);
+        mTvUserName = findViewById(R.id.tvUserName);
         mTvUserName.setOnClickListener(mOnClickListener);
-
         mVRename = findViewById(R.id.vRename);
         mVRename.setOnClickListener(mOnClickListener);
         findViewById(R.id.vSelectUserNumber).setOnClickListener(mOnClickListener);
@@ -148,7 +147,6 @@ public class UserNameActivity extends KitKitLoggerActivity {
                 {
                     KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
                     ArrayList<User> users = dbHandler.getUserList();
-                    //////////////////////////////////////////
                     try {
                         schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
                         schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
@@ -160,7 +158,6 @@ public class UserNameActivity extends KitKitLoggerActivity {
                     catch (PackageManager.NameNotFoundException ne) {
                         Log.e(TAG, ne.toString());
                     }
-                    //////////////////////////////////////////
                     UserNameListDialog userNameListDialog = new UserNameListDialog(UserNameActivity.this, users);
                     userNameListDialog.show();
                 }

@@ -228,7 +228,6 @@ public class User<string> {
 
     public boolean isFinishWritingBoardTutorial() {return this._finishWritingBoardTutorial;}
 
-    /////////////////////////
     public void setGamesClearedInTotal_L(int gamesClearedInTotal_L) {this._gamesClearedInTotal_L = gamesClearedInTotal_L; }
 
     public int getGamesClearedInTotal_L() {return this._gamesClearedInTotal_L; }
@@ -236,5 +235,4 @@ public class User<string> {
     public void setGamesClearedInTotal_M(int gamesClearedInTotal_M) {this._gamesClearedInTotal_M = gamesClearedInTotal_M; }
 
     public int getGamesClearedInTotal_M() {return this._gamesClearedInTotal_M; }
-    /////////////////////////
 }
