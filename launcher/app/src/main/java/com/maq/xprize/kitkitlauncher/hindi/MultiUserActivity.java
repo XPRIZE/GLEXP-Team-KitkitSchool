@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,7 +29,6 @@ public class MultiUserActivity extends AppCompatActivity {
 
     private static final String TAG = "UserNameActivity" ;
     Dialog addUserDialog;
-    TextView closeButton;
     TextView gender;
     TextView usrname;
     EditText usrnameInput;
@@ -45,9 +43,22 @@ public class MultiUserActivity extends AppCompatActivity {
     private TextView mTvTabletNumber;
     private Switch mLibrarySwitch;
     private Switch mToolsSwitch;
+    private UserNameListDialog userNameListDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = this.getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
         setContentView(R.layout.activity_multi_user);
         addUserDialog = new Dialog(this);
         mLibrarySwitch = (Switch)findViewById(R.id.librarySwitch);
@@ -59,19 +70,11 @@ public class MultiUserActivity extends AppCompatActivity {
     public void AddAllUser(View v) {
 
         addUserDialog.setContentView(R.layout.addalluser);
-        closeButton = (TextView) addUserDialog.findViewById(R.id.textView3);
         usrnameInput = (EditText) addUserDialog.findViewById(R.id.editText);
         gender = (TextView) addUserDialog.findViewById(R.id.textView4);
         userAge = (EditText) addUserDialog.findViewById(R.id.editText2);
         submit =  (Button) addUserDialog.findViewById(R.id.button2);
         genderRadioGroup = (RadioGroup) addUserDialog.findViewById(R.id.radio);
-
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addUserDialog.dismiss();
-            }
-        });
 
         genderRadioGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +82,7 @@ public class MultiUserActivity extends AppCompatActivity {
                 //get selected radio button from Radio Group
                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                 mf = (RadioButton) findViewById(selectedId);
-                /*switch(selectedId){
+                switch(selectedId){
                     case R.id.radioFemale:
                         userGender = "Female";
                         break;
@@ -87,7 +90,6 @@ public class MultiUserActivity extends AppCompatActivity {
                         userGender = "Male";
                         break;
                 }
-                */
             }
         });
 
@@ -118,34 +120,32 @@ public class MultiUserActivity extends AppCompatActivity {
     // code for selecting all users.
 
     public void SelectAllUser(View view) {
-        KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
-        ArrayList<User> users = dbHandler.getUserList();
-
         try {
+            KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
+            ArrayList<User> users = dbHandler.getUserList();
             schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
             schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
             for (User u:users) {
                 u.setGamesClearedInTotal_L(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_L"), 0));
                 u.setGamesClearedInTotal_M(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_M"), 0));
             }
+            userNameListDialog  = new UserNameListDialog(MultiUserActivity.this, users);
         }
         catch (PackageManager.NameNotFoundException ne) {
+            userNameListDialog  = new UserNameListDialog(MultiUserActivity.this, null);
             Log.e(TAG, ne.toString());
         }
-
-        UserNameListDialog userNameListDialog = new UserNameListDialog(MultiUserActivity.this, users);
         userNameListDialog.show();
     }
 
     public void SetUser(View view) {
-        SelectNumberDialog selectNumberDialog = new SelectNumberDialog(MultiUserActivity.this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
+        new SelectNumberDialog(MultiUserActivity.this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
             @Override
             public void onSelectedNumber(int number) {
                 KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
                 User user = dbHandler.findUser(usrname.getText().toString());
                 if (user != null) {
                     dbHandler.setCurrentUser(user);
-                    refreshUI();
                 }
             }
         });
@@ -153,47 +153,4 @@ public class MultiUserActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
-    public void refreshUI() {
-        Util.displayUserName(this, (TextView) findViewById(R.id.textView_currentUsername));
-
-        final User user = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
-        TextView textViewNumcoin = (TextView) findViewById(R.id.textView_numCoin);
-        textViewNumcoin.setText(String.format("%d", user.getNumStars()));
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String tabletNumber = prefs.getString("TABLET_NUMBER", "");
-
-        if (!tabletNumber.isEmpty()) {
-            SpannableString content = new SpannableString(tabletNumber);
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            mTvTabletNumber.setText(content);
-
-        } else {
-            mTvTabletNumber.setText(tabletNumber);
-
-        }
-
-
-        mLibrarySwitch.setChecked(user.isOpenLibrary());
-        mLibrarySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                user.setOpenLibrary(isChecked);
-                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
-            }
-        });
-
-        mToolsSwitch.setChecked(user.isOpenTools());
-        mToolsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                user.setOpenTools(isChecked);
-                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
-            }
-        });
-    }
-
-
 }
