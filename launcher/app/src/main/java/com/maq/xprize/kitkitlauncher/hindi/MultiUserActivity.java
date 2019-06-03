@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -31,11 +32,13 @@ public class MultiUserActivity extends AppCompatActivity {
     Dialog addUserDialog;
     TextView closeButton;
     TextView gender;
+    TextView usrname;
     EditText usrnameInput;
     EditText userAge;
-    String userGender = "";
+    String userGender = "Male";
     Button submit;
     private RadioGroup genderRadioGroup;
+    private RadioButton mf;
     private Context schoolContext;
     private SharedPreferences schoolPref;
     private TextView mTvTabletNumber;
@@ -55,12 +58,12 @@ public class MultiUserActivity extends AppCompatActivity {
     public void AddAllUser(View v) {
 
         addUserDialog.setContentView(R.layout.addalluser);
-        closeButton = addUserDialog.findViewById(R.id.textView3);
-        usrnameInput = addUserDialog.findViewById(R.id.editText);
-        gender =  addUserDialog.findViewById(R.id.textView4);
-        userAge =  addUserDialog.findViewById(R.id.editText2);
-        submit =  addUserDialog.findViewById(R.id.button2);
-        genderRadioGroup =  addUserDialog.findViewById(R.id.radio);
+        closeButton = (TextView) addUserDialog.findViewById(R.id.textView3);
+        usrnameInput = (EditText) addUserDialog.findViewById(R.id.editText);
+        gender = (TextView) addUserDialog.findViewById(R.id.textView4);
+        userAge = (EditText) addUserDialog.findViewById(R.id.editText2);
+        submit =  (Button) addUserDialog.findViewById(R.id.button2);
+        genderRadioGroup = (RadioGroup) addUserDialog.findViewById(R.id.radio);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +77,8 @@ public class MultiUserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //get selected radio button from Radio Group
                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                switch(selectedId){
+                mf = (RadioButton) findViewById(selectedId);
+                /*switch(selectedId){
                     case R.id.radioFemale:
                         userGender = "Female";
                         break;
@@ -82,6 +86,7 @@ public class MultiUserActivity extends AppCompatActivity {
                         userGender = "Male";
                         break;
                 }
+                */
             }
         });
 
@@ -114,7 +119,7 @@ public class MultiUserActivity extends AppCompatActivity {
         KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
         ArrayList<User> users = dbHandler.getUserList();
 
-     /*   try {
+        try {
             schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
             schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
             for (User u:users) {
@@ -124,21 +129,21 @@ public class MultiUserActivity extends AppCompatActivity {
         }
         catch (PackageManager.NameNotFoundException ne) {
             Log.e(TAG, ne.toString());
-        }*/
+        }
 
         UserNameListDialog userNameListDialog = new UserNameListDialog(MultiUserActivity.this, users);
         userNameListDialog.show();
     }
 
     public void SetUser(View view) {
-        new SelectNumberDialog(MultiUserActivity.this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
+        SelectNumberDialog selectNumberDialog = new SelectNumberDialog(MultiUserActivity.this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
             @Override
             public void onSelectedNumber(int number) {
                 KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
                 User user = dbHandler.findUser("user" + number);
                 if (user != null) {
                     dbHandler.setCurrentUser(user);
-                    //refreshUI();
+                    refreshUI();
                 }
             }
         });
@@ -147,7 +152,7 @@ public class MultiUserActivity extends AppCompatActivity {
         finish();
     }
 
-   /*
+
     public void refreshUI() {
         Util.displayUserName(this, (TextView) findViewById(R.id.textView_currentUsername));
 
@@ -187,6 +192,6 @@ public class MultiUserActivity extends AppCompatActivity {
             }
         });
     }
-    */
+
 
 }
