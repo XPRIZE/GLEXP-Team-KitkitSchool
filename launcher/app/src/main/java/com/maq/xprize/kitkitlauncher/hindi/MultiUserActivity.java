@@ -37,6 +37,7 @@ public class MultiUserActivity extends AppCompatActivity {
     EditText userAge;
     String userGender = "Male";
     Button submit;
+
     private RadioGroup genderRadioGroup;
     private RadioButton mf;
     private Context schoolContext;
@@ -51,7 +52,7 @@ public class MultiUserActivity extends AppCompatActivity {
         addUserDialog = new Dialog(this);
         mLibrarySwitch = (Switch)findViewById(R.id.librarySwitch);
         mToolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
-
+        usrname = (TextView)findViewById(R.id.tv_name);
         mTvTabletNumber = (TextView)findViewById(R.id.tv_tablet_number);
     }
 
@@ -101,6 +102,7 @@ public class MultiUserActivity extends AppCompatActivity {
                     User user = new User(usrnameInput.getText().toString(), userGender,userAge.getText().toString());
                     dbHandler.addUser(user);
                     dbHandler.setCurrentUser(user);
+                    //refreshUI();
 
                     Intent intent = new Intent(MultiUserActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -140,7 +142,7 @@ public class MultiUserActivity extends AppCompatActivity {
             @Override
             public void onSelectedNumber(int number) {
                 KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
-                User user = dbHandler.findUser("user" + number);
+                User user = dbHandler.findUser(usrname.getText().toString());
                 if (user != null) {
                     dbHandler.setCurrentUser(user);
                     refreshUI();
