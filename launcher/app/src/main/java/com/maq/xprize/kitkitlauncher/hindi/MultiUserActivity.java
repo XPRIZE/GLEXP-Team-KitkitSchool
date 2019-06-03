@@ -5,13 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.maq.kitkitProvider.KitkitDBHandler;
@@ -33,12 +38,18 @@ public class MultiUserActivity extends AppCompatActivity {
     private RadioGroup genderRadioGroup;
     private Context schoolContext;
     private SharedPreferences schoolPref;
-
+    private TextView mTvTabletNumber;
+    private Switch mLibrarySwitch;
+    private Switch mToolsSwitch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_user);
         addUserDialog = new Dialog(this);
+        mLibrarySwitch = (Switch)findViewById(R.id.librarySwitch);
+        mToolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
+
+        mTvTabletNumber = (TextView)findViewById(R.id.tv_tablet_number);
     }
 
     public void AddAllUser(View v) {
@@ -103,7 +114,7 @@ public class MultiUserActivity extends AppCompatActivity {
         KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
         ArrayList<User> users = dbHandler.getUserList();
 
-        try {
+     /*   try {
             schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
             schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
             for (User u:users) {
@@ -113,7 +124,7 @@ public class MultiUserActivity extends AppCompatActivity {
         }
         catch (PackageManager.NameNotFoundException ne) {
             Log.e(TAG, ne.toString());
-        }
+        }*/
 
         UserNameListDialog userNameListDialog = new UserNameListDialog(MultiUserActivity.this, users);
         userNameListDialog.show();
@@ -127,6 +138,7 @@ public class MultiUserActivity extends AppCompatActivity {
                 User user = dbHandler.findUser("user" + number);
                 if (user != null) {
                     dbHandler.setCurrentUser(user);
+                    //refreshUI();
                 }
             }
         });
@@ -134,4 +146,47 @@ public class MultiUserActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+   /*
+    public void refreshUI() {
+        Util.displayUserName(this, (TextView) findViewById(R.id.textView_currentUsername));
+
+        final User user = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
+        TextView textViewNumcoin = (TextView) findViewById(R.id.textView_numCoin);
+        textViewNumcoin.setText(String.format("%d", user.getNumStars()));
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String tabletNumber = prefs.getString("TABLET_NUMBER", "");
+
+        if (!tabletNumber.isEmpty()) {
+            SpannableString content = new SpannableString(tabletNumber);
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            mTvTabletNumber.setText(content);
+
+        } else {
+            mTvTabletNumber.setText(tabletNumber);
+
+        }
+
+
+        mLibrarySwitch.setChecked(user.isOpenLibrary());
+        mLibrarySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setOpenLibrary(isChecked);
+                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
+            }
+        });
+
+        mToolsSwitch.setChecked(user.isOpenTools());
+        mToolsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setOpenTools(isChecked);
+                ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
+            }
+        });
+    }
+    */
+
 }
