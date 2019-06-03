@@ -1,10 +1,14 @@
 package com.maq.xprize.kitkitlauncher.hindi;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +36,7 @@ import java.util.ArrayList;
 public class FirstScreen extends AppCompatActivity {
 
 
+    private static final String TAG = "UserNameActivity" ;
     Dialog mydialog;
     Dialog mydialogS;
     TextView txtclose;
@@ -47,6 +52,8 @@ public class FirstScreen extends AppCompatActivity {
     private User currentUser;
     private String currentUsername;
     int i = 0;
+    private Context schoolContext;
+    private SharedPreferences schoolPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +147,19 @@ public class FirstScreen extends AppCompatActivity {
     public void SelectAllUser(View view) {
         KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
         ArrayList<User> users = dbHandler.getUserList();
+
+        try {
+            schoolContext = getApplicationContext().createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
+            schoolPref = schoolContext.getSharedPreferences("Cocos2dxPrefsFile", Context.MODE_PRIVATE);
+            for (User u:users) {
+                u.setGamesClearedInTotal_L(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_L"), 0));
+                u.setGamesClearedInTotal_M(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_M"), 0));
+            }
+        }
+        catch (PackageManager.NameNotFoundException ne) {
+            Log.e(TAG, ne.toString());
+        }
+
         UserNameListDialog userNameListDialog = new UserNameListDialog(FirstScreen.this, users);
         userNameListDialog.show();
     }
@@ -153,6 +173,7 @@ public class FirstScreen extends AppCompatActivity {
                 if (user != null) {
                     dbHandler.setCurrentUser(user);
                 }
+
             }
         });
         Intent intent = new Intent(FirstScreen.this, MainActivity.class);
