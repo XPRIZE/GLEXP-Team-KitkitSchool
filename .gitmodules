@@ -1,0 +1,6 @@
+[submodule "GLEXP-Team-KitkitSchool-Hindi-Assets-MainApp"]
+	path = GLEXP-Team-KitkitSchool-Hindi-Assets-MainApp
+	url = https://github.com/maqsoftware/GLEXP-Team-KitkitSchool-Hindi-Assets-MainApp.git
+[submodule "GLEXP-Team-KitkitSchool-Hindi-Assets-Library"]
+	path = GLEXP-Team-KitkitSchool-Hindi-Assets-Library
+	url = https://github.com/maqsoftware/GLEXP-Team-KitkitSchool-Hindi-Assets-Library.git
