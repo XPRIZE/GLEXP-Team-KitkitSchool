@@ -33,16 +33,12 @@ public class MultiUserActivity extends AppCompatActivity {
     TextView usrname;
     EditText usrnameInput;
     EditText userAge;
-    String userGender = "Male";
+    String userGender;
     Button submit;
 
     private RadioGroup genderRadioGroup;
-    private RadioButton mf;
     private Context schoolContext;
     private SharedPreferences schoolPref;
-    private TextView mTvTabletNumber;
-    private Switch mLibrarySwitch;
-    private Switch mToolsSwitch;
     private UserNameListDialog userNameListDialog;
 
     @Override
@@ -61,10 +57,7 @@ public class MultiUserActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_multi_user);
         addUserDialog = new Dialog(this);
-        mLibrarySwitch = (Switch)findViewById(R.id.librarySwitch);
-        mToolsSwitch = (Switch)findViewById(R.id.toolsSwitch);
         usrname = (TextView)findViewById(R.id.tv_name);
-        mTvTabletNumber = (TextView)findViewById(R.id.tv_tablet_number);
     }
 
     public void AddAllUser(View v) {
@@ -81,7 +74,6 @@ public class MultiUserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //get selected radio button from Radio Group
                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                mf = (RadioButton) findViewById(selectedId);
                 switch(selectedId){
                     case R.id.radioFemale:
                         userGender = "Female";
@@ -104,7 +96,6 @@ public class MultiUserActivity extends AppCompatActivity {
                     User user = new User(usrnameInput.getText().toString(), userGender,userAge.getText().toString());
                     dbHandler.addUser(user);
                     dbHandler.setCurrentUser(user);
-                    //refreshUI();
 
                     Intent intent = new Intent(MultiUserActivity.this, MainActivity.class);
                     startActivity(intent);
