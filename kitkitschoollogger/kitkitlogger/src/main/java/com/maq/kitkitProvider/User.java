@@ -27,10 +27,8 @@ public class User<string> {
     private boolean _unlockFishBowl;
     private boolean _unlockWritingBoard;
     private boolean _finishWritingBoardTutorial;
-    /////////////////////
     private int _gamesClearedInTotal_L;
     private int _gamesClearedInTotal_M;
-    /////////////////////
 
     public User() {
         this._id = 0;
