@@ -14,9 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.maq.kitkitProvider.KitkitDBHandler;
@@ -62,7 +60,7 @@ public class MultiUserActivity extends AppCompatActivity {
 
     public void AddAllUser(View v) {
 
-        addUserDialog.setContentView(R.layout.addalluser);
+        addUserDialog.setContentView(R.layout.add_all_user);
         usrnameInput = (EditText) addUserDialog.findViewById(R.id.editText);
         gender = (TextView) addUserDialog.findViewById(R.id.textView4);
         userAge = (EditText) addUserDialog.findViewById(R.id.editText2);
@@ -121,25 +119,22 @@ public class MultiUserActivity extends AppCompatActivity {
                 u.setGamesClearedInTotal_M(schoolPref.getInt((u.getUserName() + "_gamesClearedInTotal_en-US_M"), 0));
             }
             userNameListDialog  = new UserNameListDialog(MultiUserActivity.this, users);
+            userNameListDialog.show();
         }
         catch (PackageManager.NameNotFoundException ne) {
             userNameListDialog  = new UserNameListDialog(MultiUserActivity.this, null);
             Log.e(TAG, ne.toString());
+            userNameListDialog.show();
         }
-        userNameListDialog.show();
     }
 
     public void SetUser(View view) {
-        new SelectNumberDialog(MultiUserActivity.this, SelectNumberDialog.MODE.USER_NO, new SelectNumberDialog.Callback() {
-            @Override
-            public void onSelectedNumber(int number) {
-                KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
-                User user = dbHandler.findUser(usrname.getText().toString());
-                if (user != null) {
-                    dbHandler.setCurrentUser(user);
-                }
-            }
-        });
+        KitkitDBHandler dbHandler = ((LauncherApplication) getApplication()).getDbHandler();
+        usrname = view.findViewById(R.id.tv_name);
+        User user = dbHandler.findUser(usrname.getText().toString());
+        if (user != null) {
+            dbHandler.setCurrentUser(user);
+        }
         Intent intent = new Intent(MultiUserActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
