@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by ingtellect on 9/1/17.
  */
@@ -220,7 +222,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
             user.setID(Integer.parseInt(cursor.getString(0)));
             user.setUserName(cursor.getString(1));
             user.setgender(cursor.getString(2));
-            user.setAge(Integer.parseInt(cursor.getString(3)));
+            user.setAge((cursor.getString(3)));
             user.setNumStars(Integer.parseInt(cursor.getString(4)));
             user.setFinishTutorial("1".equals(cursor.getString(5)));
             user.setUnlockDrum("1".equals(cursor.getString(6)));
@@ -275,7 +277,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
                 user.setID(Integer.parseInt(cursor.getString(0)));
                 user.setUserName(cursor.getString(1));
                 user.setgender(cursor.getString(2));
-                user.setAge(Integer.parseInt(cursor.getString(3)));
+                user.setAge((cursor.getString(3)));
                 user.setNumStars(Integer.parseInt(cursor.getString(4)));
                 user.setFinishTutorial("1".equals(cursor.getString(5)));
                 user.setUnlockDrum("1".equals(cursor.getString(6)));
@@ -387,6 +389,7 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         }
 
         String currentUserName = cursor.getString(0);
+        Log.d(TAG,"HelloWord"+currentUserName);
         User user = findUser(currentUserName);
         cursor.close();
         return user;
@@ -404,13 +407,14 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         }
         String result = cursor.getString(0);
         cursor.close();
+        Log.d(TAG,"HelloWord1"+result);
         return result;
     }
 
     public void updateUser(User user) {
 
         String selection = "username = \"" + user.getUserName() + "\"";
-
+        try{
         ContentValues values = new ContentValues();
         values.put(COLUMN_USERNAME, user.getUserName());
         values.put(COLUMN_GENDER, user.getgender());
@@ -431,6 +435,10 @@ public class KitkitDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_FINISH_WRITING_BOARD_TUTORIAL, user.isFinishWritingBoardTutorial());
         Log.i("myLog", "value : " + values.toString());
         myCR.update(KitkitProvider.CONTENT_URI, values, selection, null);
+        }
+        catch (Exception e){
+            Log.e(TAG,"error updating coin:-"+e.getMessage());
+        }
     }
 
     public void uniqueInsertSntpResult(SntpResult sntpResult) {

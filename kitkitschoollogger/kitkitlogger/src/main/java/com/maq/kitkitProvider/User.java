@@ -12,7 +12,7 @@ public class User<string> {
     private int _id;
     private String _username;
     private String _gender;
-    private string _age;
+    private String _age;
     private int _numStars;
     private boolean _finishTutorial;
     private boolean _unlockDrum;
@@ -34,7 +34,7 @@ public class User<string> {
         this._id = 0;
         this._username = "user";
         this._gender = "male";
-        this._age = (string) "0";
+        this._age = "0";
         this._numStars = 0;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -57,7 +57,7 @@ public class User<string> {
         this._id = 0;
         this._username = displayname;
         this._gender = gender;
-        this._age = (string) age;
+        this._age = age;
         this._numStars = 0;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -80,7 +80,7 @@ public class User<string> {
         this._id = id;
         this._username = username;
         this._gender = "male";
-        this._age = (string) "0";
+        this._age = "0";
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -102,7 +102,7 @@ public class User<string> {
     public User(String productname, int stars) {
         this._username = productname;
         this._gender = "male";
-        this._age = (string) "0";
+        this._age = "0";
         this._numStars = stars;
         this._finishTutorial = false;
         this._unlockDrum = true;
@@ -145,12 +145,12 @@ public class User<string> {
         return this._gender;
     }
 
-    public void setAge(string age) {
+    public void setAge(String age) {
         this._age = age;
     }
 
     public String getAge() {
-        return (String) this._age;
+        return this._age;
     }
 
     public void setNumStars(int stars) {
