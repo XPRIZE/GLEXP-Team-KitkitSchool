@@ -793,6 +793,7 @@ void MainScene::confirmDebug()
 void MainScene::resume() {
     CCLOG("MainScene : resume");
     isDemo = UserDefault::getInstance()->getBoolForKey("review_mode_on", true);
+    isDemo = false;
     GameSoundManager::getInstance()->stopBGM();
     
     if (isDemo) {
