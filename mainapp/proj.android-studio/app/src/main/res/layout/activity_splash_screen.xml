@@ -25,8 +25,8 @@
 
     <TextView
         android:id="@+id/oneTimeExtractionMessage"
-        android:layout_width="599dp"
-        android:layout_height="40dp"
+        android:layout_width="653dp"
+        android:layout_height="55dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
@@ -35,10 +35,10 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.669"
+        app:layout_constraintHorizontal_bias="0.557"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.881" />
+        app:layout_constraintVertical_bias="0.902" />
 
     <ProgressBar
         android:id="@+id/p"

@@ -1125,7 +1125,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
         
 //        auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size::ZERO, defaultFont, Color4B(255, 210, 74, 255));
         string labelName = LanguageManager::getInstance()->getLocalizedString(gameName);
-        string delim = "\n";
+        string delim = "$#$";
         string labelHindi = labelName.substr(0, labelName.find(delim));
         auto l = TodoUtil::createLabelMultilineToFit(labelHindi, 100, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
         l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
@@ -1153,7 +1153,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
             StrictLogManager::shared()->dayChoice_CloseFreeChoiceLevelPopup();
             popup->dismiss(true);
         });
-        cancelBtn->setPosition(Vec2(1985, 1600));
+        cancelBtn->setPosition(Vec2(winSize.width/2 + 600, 1600));
         popup->addChild(cancelBtn);
     }
     
