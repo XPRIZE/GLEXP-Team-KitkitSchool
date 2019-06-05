@@ -466,8 +466,8 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["Take the quiz to add me to your sea world!"] = "×éÛæð ¥ÂÙè â×é¼ýè ÎéçÙØæ ×ð¢ ÁôÇ¸Ùð ·ðUUU çÜ° ÂýoAô}æÚè Üô!"; // मुझे अपनी समुद्री दुनिया में जोड़ने के लिए प्रश्नोत्तरी लो!
     _localizationMapSwahili["Take the quiz to add me to your sea world!"] = "Fanya jaribio ili uniongeze kwenye\ndunia yako ya bahari!";
 
-    _localizationMapEnglish["Congratulations!$#$See you at your sea world!"] = "ÕÏæ§ü ãô! ¥æÂ·UUUè â×é¼ýè ÎéçÙØæ ×ð¢ ç×ÜÌð ãñ!"; // बधाई हो! आपकी समुद्री दुनिया में मिलते है!
-    _localizationMapSwahili["Congratulations!$#$See you at your sea world!"] = "Hongera!\nTuonane kwenye\ndunia yako ya bahari!";
+    _localizationMapEnglish["Congratulations!\nSee you at your sea world!"] = "ÕÏæ§ü ãô! ¥æÂ·UUUè â×é¼ýè ÎéçÙØæ ×ð¢ ç×ÜÌð ãñ!"; // बधाई हो! आपकी समुद्री दुनिया में मिलते है!
+    _localizationMapSwahili["Congratulations!\nSee you at your sea world!"] = "Hongera!\nTuonane kwenye\ndunia yako ya bahari!";
 
     _localizationMapEnglish["Try again to add me to your sea world!"] = "¥ÂÙè â×é¼ýè ÎéçÙØæ ×ð¢ ×éÛæð ÁôÇ¸Ùð ·ðUUU çÜ° çÈUUUUÚ âð ·UUUUôçàæàæ ·UUUUÚð¢!"; // अपनी समुद्री दुनिया में मुझे जोड़ने के लिए फिर से कोशिश करें!
     _localizationMapSwahili["Try again to add me to your sea world!"] = "Jaribu tena kuniongeza kwenye\ndunia yako ya bahari!";

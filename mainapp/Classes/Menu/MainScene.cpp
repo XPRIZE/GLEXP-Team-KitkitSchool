@@ -361,7 +361,7 @@ bool MainScene::init()
         _coinTab->setVisible(false);
         addChild(_coinTab);
         {
-            _reviewModeLabel = TodoUtil::createLabel("You are in admin mode: please use the features below to access all of Kitkit School’s content. Select “Add Coins” to access the tools section.", 50, Size(1300, 300), "fonts/mukta-bold.ttf", Color4B(116, 198, 225, 255));
+            _reviewModeLabel = TodoUtil::createLabel("You are in admin mode: please use the features below to access all of Kitkit School’s content. Select “Add Coins” to access the tools section.", 50, Size(1300, 300), "fonts/mukta-bold.ttf", Color4B(0, 0, 0, 255));
             _reviewModeLabel->setPosition(Vec2(visibleSize.width/2, visibleSize.height-150));
             this->addChild(_reviewModeLabel);
             
@@ -373,7 +373,7 @@ bool MainScene::init()
         
         {
             _resetBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
-            auto l = TodoUtil::createLabel("ÚèâðÅ", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(116, 198, 225, 255)); // रीसेट
+            auto l = TodoUtil::createLabel("ÚèâðÅ", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(0, 0, 0, 255)); // रीसेट
             l->setPosition(_resetBtn->getContentSize()/2 + Size(0, 10));
             _resetBtn->addChild(l);
 
@@ -405,7 +405,7 @@ bool MainScene::init()
         
         {
             _addCoinsBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
-            auto l = TodoUtil::createLabel("çâPðUUU ÁôÇô", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(116, 198, 225, 255)); // सिक्के जोडो
+            auto l = TodoUtil::createLabel("çâPðUUU ÁôÇô", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(0, 0, 0, 255)); // सिक्के जोडो
             l->setPosition(_addCoinsBtn->getContentSize()/2 + Size(0, 10));
             _addCoinsBtn->addChild(l);
             
@@ -432,7 +432,7 @@ bool MainScene::init()
         
         {
             _openAllBtn = ui::Button::create("MainScene/for-manager_button_normal.png","MainScene/for-manager_button_touch.png");
-            auto l = TodoUtil::createLabel("âÕ ¹ôÜ Îô", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(116, 198, 225, 255)); // सब खोल दो
+            auto l = TodoUtil::createLabel("âÕ ¹ôÜ Îô", 50, Size::ZERO, "fonts/chanakya.ttf", Color4B(0, 0, 0, 255)); // सब खोल दो
             l->setPosition(_openAllBtn->getContentSize()/2 + Size(0, 10));
             _openAllBtn->addChild(l);
             _openAllBtn->setPosition(Vec2(visibleSize.width/2+400, visibleSize.height-400));
@@ -793,7 +793,6 @@ void MainScene::confirmDebug()
 void MainScene::resume() {
     CCLOG("MainScene : resume");
     isDemo = UserDefault::getInstance()->getBoolForKey("review_mode_on", true);
-    isDemo = false;
     GameSoundManager::getInstance()->stopBGM();
     
     if (isDemo) {
