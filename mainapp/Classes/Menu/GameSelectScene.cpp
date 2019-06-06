@@ -927,7 +927,7 @@ void GameSelectScene::onEnter()
             _panelNode->addChild(panel);
 
             string labelName = cur->levelTitle;
-            string delim = "\n";
+            string delim = "$#$";
             string labelHindi = labelName.substr(0, labelName.find(delim));
 
             auto panelLabelHindi = TodoUtil::createLabel(labelHindi, 100, Size::ZERO, hindiFontName, Color4B(255, 240, 184, 255));
