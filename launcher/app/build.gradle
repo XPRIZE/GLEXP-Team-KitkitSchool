@@ -8,8 +8,8 @@ android {
         targetSdkVersion 28
 
         applicationId "com.maq.xprize.kitkitlauncher.hindi"
-        versionCode 8
-        versionName "3.0.0"
+        versionCode 9
+        versionName "3.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     
