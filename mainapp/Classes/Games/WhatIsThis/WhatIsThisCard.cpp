@@ -9,6 +9,7 @@
  ****************************************************************************************/
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#include <Managers/VoiceMoldManager.h>
 #include "WhatIsThisCard.h"
 
 #include "ui/CocosGUI.h"
@@ -446,7 +447,7 @@ void STDownCard::Flip(const bool& success, const std::function<void()>& cbf)
 		float scale = _cardType == CardType::Image ? 1.1f : 1.05f;
 		actions.pushBack(Spawn::create(EaseOut::create(ScaleTo::create(FLIP_TIME, scale, scale), 1.5), EaseOut::create(MoveBy::create(FLIP_TIME / 2.f, Vec2(0, 0.f)), 2.f), nullptr));
 		if (!_soundFile.empty())
-			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/" + _soundFile); }));
+			actions.pushBack(CallFunc::create([this] {/* GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/" + _soundFile);*/ VoiceMoldManager::shared()->speak(_soundFile); }));
 		actions.pushBack(DelayTime::create(MAX(WAIT_TIME, _soundDuration)));
 	}
 	else
@@ -492,7 +493,7 @@ void STDownCard::Fail(const bool & hit, const std::function<void()>& cbf)
 		actions.pushBack(CallFunc::create([] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/SFX_Wood_Incorrect.m4a"); }));
 
 		if (!_soundFile.empty())
-			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSoundVoiceOnly("WhatIsThis/Sounds/" + _soundFile); }));
+			actions.pushBack(CallFunc::create([this] { /*GameSoundManager::getInstance()->playEffectSoundVoiceOnly("WhatIsThis/Sounds/" + _soundFile);*/  VoiceMoldManager::shared()->speak(_soundFile); }));
 		actions.pushBack(DelayTime::create(MAX(WAIT_TIME, _soundDuration)));
 
 		Node* targetNode = nullptr;

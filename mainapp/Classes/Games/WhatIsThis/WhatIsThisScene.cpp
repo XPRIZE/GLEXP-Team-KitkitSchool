@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////
+ /////////////////////////////////////////////////////////////////////////////////////////
 /****************************************************************************************
 Created		:	2018.02.08
 
@@ -9,6 +9,7 @@ Purpose		:	WhatIsThisScene
 ****************************************************************************************/
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#include <Managers/VoiceMoldManager.h>
 #include "WhatIsThisScene.h"
 
 #include "CCAppController.hpp"
@@ -125,6 +126,7 @@ void WhatIsThisLayer::StartGame()
     _progressBar->setCurrent(++currentProblemIndex, false);
     
 	GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/ShowAndTell_SFX_Card_shuffle_short.m4a");
+	//VoiceMoldManager::shared()->speak("india");
 
 	// 상단 카드 설정
 	if (auto card = dynamic_cast<STTopCard*>(topCardNode))
@@ -372,15 +374,22 @@ void WhatIsThisLayer::LoadDatas()
 		cardData.answer = MMUtil::ReplaceReturn(line[paser["answer"]]);
 		cardData.pic = line[paser["answer pic"]];
 		cardData.sound = line[paser["answer sound"]];
+
 		cardData.soundDuration = (float)atof(line[paser["answer sound duration"]].c_str());
 		data.answer = cardData;
+ //  float speeching(string text)
+  // {
+   	//	 VoiceMoldManager::shared()->speak(text);
 
+  // }
 		for (int i = 1; i < CARD_COUNT; i++)
 		{
 			WhatIsThisCardData cardData;
 			cardData.answer = MMUtil::ReplaceReturn(line[paser[StringUtils::format("wrong answer %d", i)]]);
 			cardData.pic = line[paser[StringUtils::format("wrong answer %d pic", i)]];
 			cardData.sound = line[paser[StringUtils::format("wrong answer %d sound", i)]];
+
+
 			cardData.soundDuration = (float)atof(line[paser[StringUtils::format("wrong answer %d sound duration", i)]].c_str());
 			if (!cardData.answer.empty() || !cardData.pic.empty())
 				data.wrong_answer.push_back(cardData);
@@ -421,7 +430,7 @@ bool WhatIsThisScene::init()
         return false;
     }
 
-	setName("WhatIsThisScene");
+	setName(" WhatIsThisScene");
 
 	mainLayer = WhatIsThisLayer::create();
     mainLayer->initUI();

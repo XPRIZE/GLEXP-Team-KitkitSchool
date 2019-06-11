@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "SentenceMakerScene.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "Managers/UserManager.hpp"
@@ -220,10 +221,10 @@ void SentenceMakerScene::createGame(int problemId)
     _gameNode->addChild(tray);
     
     // Sound Button
-    if (FileUtils::getInstance()->isFileExist(kSoundPrefixPath + _problemData->soundPath))
-    {
+  //  if (FileUtils::getInstance()->isFileExist(/*kSoundPrefixPath +*/ _problemData->soundPath))
+  //  {
         _sketchbookPage->addChild(createSoundButton());
-    }
+  //  }
     
     // Back Button
     auto backButton = TodoSchoolBackButton::create();
@@ -251,7 +252,8 @@ void SentenceMakerScene::onSolve()
     
     auto delayTime = getSentenceDuration(_problemData->soundPath);
     auto seq = Sequence::create(DelayTime::create(kSentenceDelayTime),
-                                CallFunc::create([this](){ GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath); }),
+                                CallFunc::create([this](){// GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath); }),
+                                    VoiceMoldManager::shared()->speak(_problemData->soundPath);}),
                                 DelayTime::create(kSentenceDelayTime + delayTime),
                                 CallFunc::create([this](){ onSolvePostProcess(); }),
                                 nullptr);
@@ -261,7 +263,7 @@ void SentenceMakerScene::onSolve()
 void SentenceMakerScene::onSolvePostProcess()
 {
     GameSoundManager::getInstance()->playEffectSound(kSolveEffectSound);
-    
+   // VoiceMoldManager::shared()->speak(kSolveEffectSound);
     _progressBar->setCurrent(_currentProblem, true);
     
     if (_currentProblem >= _progressBarSize)
@@ -475,7 +477,9 @@ void SentenceMakerScene::playWordSound(string word)
     {
         auto effectName = LanguageManager::getInstance()->soundPathForWordFile(wordSoundName);
         auto seq = Sequence::create(DelayTime::create(delayTime),
-                                    CallFunc::create([this, effectName, wordSoundName](){ GameSoundManager::getInstance()->playEffectSoundForAutoStart(effectName); }),
+                                    CallFunc::create([this, effectName, wordSoundName]{ VoiceMoldManager::shared()->speak(wordSoundName); }),
+                                                    // {VoiceMoldManager::shared()->speak(wordSoundName);}),
+                                  //  GameSoundManager::getInstance()->playEffectSoundForAutoStart(effectName);
                                     nullptr);
         
         this->runAction(seq);
@@ -510,6 +514,7 @@ WordItem* SentenceMakerScene::createWordItem(string word)
     // (s) touch callback
     item->onCheckTargetBegan = [this, item](){
         GameSoundManager::getInstance()->playEffectSound(kPickEffectSound);
+       // VoiceMoldManager::shared()->speak("abcd");
         auto blank = item->_pair;
         if (blank) blank->_pair = nullptr;
         item->_pair = nullptr;
@@ -643,7 +648,8 @@ Node* SentenceMakerScene::createSoundButton()
     soundButton->setPosition(Vec2(130.f, _sketchbookPage->getContentSize().height - 180.f));
     soundButton->addTouchEventListener([this](Ref*,Widget::TouchEventType e) {
         if (e == Widget::TouchEventType::ENDED) {
-            GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath);
+           // GameSoundManager::getInstance()->playEffectSoundForAutoStart(kSoundPrefixPath + _problemData->soundPath);
+           VoiceMoldManager::shared()->speak(_problemData->soundPath);
         }
     });
     return soundButton;

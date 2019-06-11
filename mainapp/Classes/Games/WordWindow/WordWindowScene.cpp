@@ -4,6 +4,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
@@ -16,6 +17,7 @@
 
 using namespace cocos2d::ui;
 using namespace std;
+string x;
 
 namespace WordWindowSceneSpace
 {
@@ -36,7 +38,6 @@ namespace WordWindowSceneSpace
 }
 
 using namespace WordWindowSceneSpace;
-
 WordWindowLevelStruct::WordWindowLevelStruct()
 {
 	m_languageTag = "";
@@ -44,7 +45,8 @@ WordWindowLevelStruct::WordWindowLevelStruct()
 	m_worksheet = 0;
 	m_problemNo = 0;
 	m_sequenceType = 0;
-	m_soundFilename = "";
+	//m_soundFilename = "";
+	m_text1="";
 	m_text = "";
 	for (int i = 0; i < 4; i++)
 	{
@@ -243,6 +245,23 @@ bool WordWindowScene::init()
 
 	return true;
 }
+//speech
+//void WordWindowScene::speech1(string input) {
+  //  if (LanguageManager::getInstance()->isEnglish()) {
+     //   if (!_ttsAlert && CC_TARGET_PLATFORM == CC_PLATFORM_MAC) {
+          //  _ttsAlert = true;
+          //  NativeAlert::show("TTS engine is not supported in mac version", "", "OK");
+       // } else {
+            //VoiceMoldManager::shared()->speak(input);
+
+      //  return 0.5f;
+ //   } else {
+      //  return speechWithFiles(input);
+ //   }
+
+//}
+//float f = WordWindowScene::speech1(x);
+
 
 void WordWindowScene::createBackground()
 {
@@ -457,7 +476,8 @@ void WordWindowScene::createPuzzle(int index)
 	startFirstDisableExamples();
 
 	// 문장 사운드 플레이
-	playSoundQuestion(m_curLevelStruct.m_soundFilename);
+	//playSoundQuestion(m_curLevelStruct.m_soundFilename);
+	speech1(m_curLevelStruct.m_text1);
 
 	if (m_curLevelStruct.m_sequenceType == SEQUENCE_TYPE_EQUATION)
 	{
@@ -475,8 +495,8 @@ void WordWindowScene::resetPuzzle()
 
 void WordWindowScene::loadData(int level)
 {
-	string P = "games/" + resourcePath + "wordwindow_level.tsv";
-	string S = FileUtils::getInstance()->getStringFromFile(P);
+	string P = "games/"+ resourcePath + "wordwindow_level.tsv";
+	string S = cocos2d::FileUtils::getInstance()->getStringFromFile(P);
 	auto data = TodoUtil::readTSV(S);
 	auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
 
@@ -502,7 +522,11 @@ void WordWindowScene::loadData(int level)
 
 		s.m_problemNo = TodoUtil::stoi(row[3]);
 		s.m_sequenceType = TodoUtil::stoi(row[4]);
-		s.m_soundFilename = row[5];
+		// x = row[5];
+
+       //VoiceMoldManager::shared()->speak(x);
+		//s.m_soundFilename = row[5];
+		s.m_text1=row[5];
 		s.m_text = row[6];
 		for (int i = 0; i < 4; i++)
 		{
@@ -557,22 +581,49 @@ void WordWindowScene::loadData(int level)
 	}
 }
 
-void WordWindowScene::playSoundQuestion(string name)
+//void WordWindowScene::playSoundQuestion(string name)
+//{
+//	//CCLOG("[WordWindowScene::playSound] %s", name.c_str());
+//	if (name.empty() == true)
+//	{
+//		return;
+//	}
+//
+//    string path = "games/wordwindow/sound/" + name;
+//
+//	GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+//
+//	disableSoundButton();
+//
+//	m_soundDuraton = getDuration(name);
+//}
+void WordWindowScene::speech1(string name)
 {
-	//CCLOG("[WordWindowScene::playSound] %s", name.c_str());
-	if (name.empty() == true)
+	if(name.empty()==true)
 	{
 		return;
 	}
+//	string path = "games/wordwindow/sound/" + name;
+	//void WordWindowScene::speech1(string input) {
+//		 if (LanguageManager::getInstance()->isEnglish()) {
+//		 if (!_ttsAlert && CC_TARGET_PLATFORM == CC_PLATFORM_MAC) {
+//		  _ttsAlert = true;
+//		  NativeAlert::show("TTS engine is not supported in mac version", "", "OK");
+		// } else {
+		VoiceMoldManager::shared()->speak(name,"hi-IN");
+		disableSoundButton();
+		m_soundDuraton= getDuration(name);
+	}
+	//  return 0.5f;
+	//   } else {
+	//  return speechWithFiles(input);
+	//   }
 
-    string path = "games/wordwindow/sound/" + name;
-    
-	GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+//}
+//float f = WordWindowScene::speech1(x);
 
-	disableSoundButton();
 
-	m_soundDuraton = getDuration(name);
-}
+
 
 void WordWindowScene::stopSoundQuestion()
 {
@@ -3010,7 +3061,9 @@ void WordWindowScene::createSoundButton()
 
 			if (m_soundDuraton <= 0.f)
 			{
-				playSoundQuestion(m_curLevelStruct.m_soundFilename);
+			//	playSoundQuestion(m_curLevelStruct.m_soundFilename);
+			//VoiceMoldManager::shared()->speak("helloworld");
+			speech1(m_curLevelStruct.m_text1);
 			}
 		}
 	});

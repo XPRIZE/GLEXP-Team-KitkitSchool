@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "SentenceBridgeScene.hpp"
 #include "NodeBridgeMain.hpp"
 #include "NodeBlockMain.hpp"
@@ -225,7 +226,8 @@ bool SentenceBridgeScene::touchSpeakerButton(float delayTime)
 			DelayTime::create(delayTime),
 			CallFunc::create([this, strSoundFileName]() {
 				//GameSoundManager::getInstance()->playEffectSound("sentencebridge/sound/" + strSoundFileName);
-                GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+               // GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+				VoiceMoldManager::shared()->speak(strSoundFileName);
 			}),
 			nullptr
 		));
@@ -233,7 +235,8 @@ bool SentenceBridgeScene::touchSpeakerButton(float delayTime)
 	else
 	{
 		//GameSoundManager::getInstance()->playEffectSound("sentencebridge/sound/" + strSoundFileName);
-        GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+       //voice GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+		VoiceMoldManager::shared()->speak(strSoundFileName);
 	}
 	
 
