@@ -20,7 +20,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
         <activity
@@ -35,7 +34,7 @@
         </activity>
         <activity
             android:name="com.maq.xprize.kitkitlibrary.english.MainActivity"
-            android:screenOrientation="sensorLandscape" /> <!-- <activity android:name=".BookDetailActivity" -->
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name="com.maq.xprize.kitkitlibrary.english.VideoPlayerActivity"
             android:screenOrientation="sensorLandscape" />
