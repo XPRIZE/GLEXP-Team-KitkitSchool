@@ -78,7 +78,7 @@ private:
 
 };
 
-
+void speech2(string input);
 struct AnimalPuzzleLevelStruct {
     string text;
     string backgroundFilename;

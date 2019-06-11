@@ -11,7 +11,7 @@
 #include <Managers/GameSoundManager.h>
 #include <cocos/platform/CCFileUtils.h>
 #include <string>
-
+#include <Managers/VoiceMoldManager.h>
 
 
 using cocos2d::FileUtils;
@@ -77,9 +77,14 @@ void SoundEffect::preload() {
 }
 
 void SoundEffect::play() {
-    SoundID = GameSoundManager::getInstance()->playEffectSound(EffectPath);
+   SoundID = GameSoundManager::getInstance()->playEffectSound(EffectPath);
+   // VoiceMoldManager::shared()->speak(word);
 }
-    
+
+//void SoundEffect::playTtsSound(const std::string &word) {
+//    VoiceMoldManager::shared()->speak(word);
+//}
+//
 void SoundEffect::playLoop() {
     SoundID = GameSoundManager::getInstance()->playEffectSound(EffectPath, true);
 }

@@ -13,6 +13,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 #include "Common/Basic/SoundEffect.h"
 #include "Managers/LanguageManager.hpp"
@@ -66,7 +67,6 @@ using namespace BirdPhonicsSceneSpace;
 /*************
  Bread
  *************/
-
 void Bread::setWord(string word, string phonic_owner, string word_sound, string phonic_position)
 {
     _word = word;
@@ -75,6 +75,7 @@ void Bread::setWord(string word, string phonic_owner, string word_sound, string 
     _isEaten = false;
     auto sprite = Sprite::create("BirdPhonics/phonics_bread_answers.png");
     auto size = sprite->getContentSize();
+
     
     sprite->setAnchorPoint(Vec2::ZERO);
     addChild(sprite);
@@ -122,7 +123,7 @@ void Bread::setWord(string word, string phonic_owner, string word_sound, string 
     
     auto path = StringUtils::format("Games/BirdPhonics/sounds/%s", word_sound.c_str());
     _wordEffect.setPath(path);
-    
+   // VoiceMoldManager::shared()->speak(word_sound);
     singleTouch = true;
     auto *listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
@@ -137,7 +138,9 @@ void Bread::setWord(string word, string phonic_owner, string word_sound, string 
         
         if (box.containsPoint(pos)) {
             _wordEffect.stop();
-            _wordEffect.play();
+           // _wordEffect.play();
+           VoiceMoldManager::shared()->speak(_word);
+       //   _wordEffect.playTtsSound(word);
             
             return true;
         }
@@ -154,8 +157,9 @@ void Bread::setWord(string word, string phonic_owner, string word_sound, string 
         if (this->getBoundingBox().containsPoint(pos)) {
             singleTouch = false;
             _wordEffect.stop();
-            _wordEffect.play();
-            
+           // _wordEffect.play();
+           // _wordEffect.playTtsSound(word);
+          VoiceMoldManager::shared()->speak(_word);
             this->getParent()->reorderChild(this, this->getLocalZOrder());
 //            this->retain();
 //            this->removeFromParent();
@@ -371,12 +375,14 @@ void Bird::eatBread(Bread *bread)
     double now = getCurrentTimeOfDouble();
 
     if (now - chirpTime > 0.5f) {
-        bread->_wordEffect.play();
+     //   bread->_wordEffect.play();
+        VoiceMoldManager::shared()->speak(bread->_word);
 
     } else {
         this->runAction(Sequence::create(DelayTime::create(0.5),
                                          CallFunc::create([this, bread]() {
-                                            bread->_wordEffect.play();
+                                          //  bread->_wordEffect.play();
+                                             VoiceMoldManager::shared()->speak(bread->_word);
         }), nullptr));
     }
 

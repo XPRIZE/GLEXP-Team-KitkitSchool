@@ -5,6 +5,7 @@
 //  Created by Gunho Lee on 12/22/17.
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "CommonSound.hpp"
 
 
@@ -46,12 +47,12 @@ SoundEffect CommonSound::soundForLetterName(const std::string& Letter) const {
 
 SoundEffect CommonSound::soundForWord(const std::string& Word) const {
     
-    auto path = cocos2d::StringUtils::format("WordVoice/%s.m4a", Word.c_str());
-    if (!cocos2d::FileUtils::getInstance()->isFileExist(path)) {
-        path = cocos2d::StringUtils::format("WordVoice/%s.wav", Word.c_str());
-    }
-    return SoundEffect(path.c_str());
-    
+//    auto path = cocos2d::StringUtils::format("WordVoice/%s.m4a", Word.c_str());
+//    if (!cocos2d::FileUtils::getInstance()->isFileExist(path)) {
+//        path = cocos2d::StringUtils::format("WordVoice/%s.wav", Word.c_str());
+//    }
+//    return SoundEffect(path.c_str());
+    VoiceMoldManager::shared()->speak(Word);
 }
 
 

@@ -5,6 +5,7 @@
 //  Created by HyeonGyu Yu on 21/09/2018.
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "LRSoundButton.hpp"
 #include "Utils/TodoUtil.h"
 #include "Managers/GameSoundManager.h"
@@ -133,16 +134,17 @@ void LRSoundButton::onEnter()
 
 void LRSoundButton::playSound()
 {
-    if (FileUtils::getInstance()->isFileExist(kBasePath + _soundName) == false)
-        return;
+  //  if (FileUtils::getInstance()->isFileExist(kBasePath + _soundName) == false)
+       // return;
     
-    if (_durationMap.count(_soundName) == 0)
-        return;
+   // if (_durationMap.count(_soundName) == 0)
+      //  return;
     
     _isPlaying = true;
     _defaultImage->setVisible(false);
     _playingImage->setVisible(true);
-    GameSoundManager::getInstance()->playEffectSoundVoiceOnly(kBasePath + _soundName);
+   // GameSoundManager::getInstance()->playEffectSoundVoiceOnly(kBasePath + _soundName);
+   VoiceMoldManager::shared()->speak(_soundName);
     DELAYED_CALLFUNC(_durationMap[_soundName], {
         _isPlaying = false;
         _defaultImage->setVisible(true);

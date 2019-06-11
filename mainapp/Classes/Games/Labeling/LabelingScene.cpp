@@ -13,6 +13,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 
 #include "Managers/LanguageManager.hpp"
@@ -372,7 +373,7 @@ void LabelingScene::createPuzzle(int index)
         slotNode->runAction(Sequence::create(DelayTime::create(currentDelay),
                                              EaseElasticInOut::create(ScaleTo::create(popDelay, 1.0f)),
                                              DelayTime::create(0.01f),
-                                             CallFunc::create([this](){ slotApperEffect().play();}),
+                                             CallFunc::create([this](){ slotApperEffect().play(); }),
                                              nullptr));
         if (i == 1)
             currentDelay += slotAppearDelay + 0.2f;
@@ -425,7 +426,7 @@ void LabelingScene::createPuzzle(int index)
             this->runAction(Sequence::create(DelayTime::create(snapAnimationDelay),
                                              CallFunc::create([this,label](){ this->unblockTouches(); _slotPieces.at(_slotPieces.size()-label->_labelId-1)->revealText();}),
                                              DelayTime::create(tearAnimationDelay+additionalDelay),
-                                             CallFunc::create([this,label](){ playSound(label->_voiceFilename); }),
+                                             CallFunc::create([this,label](){ playSound(label->_voiceFilename);/* VoiceMoldManager::shared()->speak(label->_voiceFilename);*/ }),
                                              nullptr));
             
             
@@ -648,13 +649,22 @@ void LabelingScene::loadData(int level)
 }
 
 
+//void LabelingScene::playSound(string name)
+//{
+//    string path = "Games/Labeling/Sound/"+name;
+//
+//    //GameSoundManager::getInstance()->playEffectSound(path);
+//    GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+//}
 void LabelingScene::playSound(string name)
 {
-    string path = "Games/Labeling/Sound/"+name;
-    
+    //string path = "Games/Labeling/Sound/"+name;
+
     //GameSoundManager::getInstance()->playEffectSound(path);
-    GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+    //GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+    VoiceMoldManager::shared()->speak(name);
 }
+
 
 void LabelingScene::loadDurationsheet() {
 
