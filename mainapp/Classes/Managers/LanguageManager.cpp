@@ -236,8 +236,8 @@ std::string LanguageManager::findLocalizedResource(std::string path)
 void LanguageManager::initLocalizationMap()
 {
     string delm =  "$#$";
-    _localizationMapEnglish["Stop the test"] = "ÂÚèÿææ Õ¢Î ·UUUUÚô"; // परीक्षा बंद करो
-    _localizationMapEnglish["Go back to test"] = "ÂÚèÿæ‡æ ·UUUUÚÙð ·ðUUU çÜ° ßæÂâ Áæ°¢"; // परीक्षण करने के लिए वापस जाएं
+    _localizationMapEnglish["Stop the test"] = "ÅðSÅ Õ‹Î ·UUUUçÚ°"; // टेस्ट बन्द करिए
+    _localizationMapEnglish["Go back to test"] = "ÅðSÅ ÂÚ ÕæÂâ Áæ§Øð"; // टेस्ट पर बापस जाइये
 
     _localizationMapEnglish["Great!"] = "ÕãéÌ ¥‘Àð!"; // बहुत अच्छे
     _localizationMapSwahili["Great!"] = "Vizuri!";
@@ -248,16 +248,16 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["Prove it!"] = "âæçÕÌ ·¤ÚUô!"; // साबित करो!
     _localizationMapSwahili["Prove it!"] = "Thibitisha!";
 
-    _localizationMapEnglish["Try and get 8 questions correct!"] = "·UUUUôçàæàæ ·UUUUÚô ¥æñÚ ¥æÆ ÂýoAô ·UUUæ âãè ÁßæÕ Îô!"; // कोशिश करो और आठ प्रश्नो का सही जवाब दो!
+    _localizationMapEnglish["Try and get 8 questions correct!"] = "·UUUUôçàæàæ ·UUUUÚô ¥æñÚ ¥æÆ ÂýàæÙô ·UUUæ âãè ÁÕæÕ ÎèçÁØð"; // कोशिश करो और आठ प्रशनो का सही जबाब दीजिये
     _localizationMapSwahili["Try and get 8 questions correct!"] = "Jaribu na toa majibu sahihi manane!";
 
-    _localizationMapEnglish["Challenge"] = "¿éÙõÌè"; // चुनौती
+    _localizationMapEnglish["Challenge"] = "¿éÙõÌè ãñ"; // चुनौती है
     _localizationMapSwahili["Challenge"] = "Jaribu";
 
     _localizationMapEnglish["Congratulations!"] = "ÕÏæ§ü ãô!"; // बधाई हो!
     _localizationMapSwahili["Congratulations!"] = "Hongera!";
 
-    _localizationMapEnglish["You passed!"] = "Ìé× âÈ¤Ü ãô »°!"; // तुम सफल हो गए!
+    _localizationMapEnglish["You passed!"] = "Ìé× Âæâ ãô »Øð"; // तुम पास हो गये
     _localizationMapSwahili["You passed!"] = "Umefaulu!";
 
     _localizationMapEnglish["You failed"] = "Ìé× ¥âÈ¤Ü ÚUãð"; // तुम असफल रहे
@@ -275,7 +275,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["You need more practice."] = "¥æÂ·UUUUô ¥æñÚ ¥zØæâ ·UUUè ¥æßàØ·UUUUÌæ ãñÐ"; // आपको और अभ्यास की आवश्यकता है।
     _localizationMapSwahili["You need more practice."] = "Unahitaji mazoezi zaidi.";
 
-    _localizationMapEnglish["Welcome!"] = "Sßæ»Ì ãð!"; // स्वागत हे!
+    _localizationMapEnglish["Welcome!"] = "Sßæ»Ì ãñ!"; // स्वागत है!
     _localizationMapSwahili["Welcome!"] = "Karibu!";
 
     _localizationMapEnglish["Start"] = "àæéLUUUU ·UUUUÚô"; // शुरु करो
@@ -290,7 +290,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["OK"] = "¥ô·Ô¤"; // ओके
     _localizationMapSwahili["OK"] = "OK";
 
-    _localizationMapEnglish["Error"] = "»ÜÌ"; // गलत
+    _localizationMapEnglish["Error"] = "»ÜÌè"; // गलती
     _localizationMapSwahili["Error"] = "Hitilafu";
 
     _localizationMapEnglish["Enter"] = "çÜ¹Ùæ ÂýæÚ{Ö ·UUUUÚð¢"; // लिखना प्रारम्भ करें
@@ -305,7 +305,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["Math"] = "»ç‡æÌ"; // गणित
     _localizationMapSwahili["Math"] = "Hesabu";
 
-    _localizationMapEnglish["TutorialTrace"] = "ÚUð¹æ ¥ÙéÚUð¹‡æ" + delm + "Line Tracing"; // रेखा अनुरेखण
+    _localizationMapEnglish["TutorialTrace"] = "Üæ§Ù ¹è¿ð¢" + delm + "Line Tracing"; // लाइन खीचें
     _localizationMapSwahili["TutorialTrace"] = "Kufuatisha Mstari";
 
     _localizationMapEnglish["FindTheMatch"] = "ÁôÇ¸è ¹ôçÁØð" + delm + "Find The Match"; // जोड़ी खोजिये
@@ -320,7 +320,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["LetterMatching"] = "¥ÿæÚ ç×ÜæÙæ" + delm + "Letter Matching"; // अक्षर मिलाना
     _localizationMapSwahili["LetterMatching"] = "Kufananisha Kusoma na Kuandika";
 
-    _localizationMapEnglish["AnimalPuzzle"] = "Âàæé ÂãðÜè" + delm + "Animal Puzzle"; // पशु पहेली
+    _localizationMapEnglish["AnimalPuzzle"] = "Âàæé¥ô¢ ·UUUè ÂãðÜè" + delm + "Animal Puzzle"; // पशुओं की पहेली
     _localizationMapSwahili["AnimalPuzzle"] = "Fumbo la Picha";
 
     _localizationMapEnglish["PatternTrain"] = "ÂñÅÙü ÅþñÙ" + delm + "Pattern Train"; // पैटर्न ट्रैन
@@ -338,7 +338,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["NumberTrain"] = "â¢wØæ ÅþðÙ" + delm + "Number Train"; // संख्या ट्रेन
     _localizationMapSwahili["NumberTrain"] = "Nambari ya Garimoshi";
 
-    _localizationMapEnglish["AlphabetPuzzle"] = "ß‡æü×æÜæ ÂãðÜè" + delm + "Alphabet Puzzle"; // वर्णमाला पहेली
+    _localizationMapEnglish["AlphabetPuzzle"] = "ß‡æü×æÜæ ·UUUè ÂãðÜè" + delm + "Alphabet Puzzle"; // वर्णमाला की पहेली
     _localizationMapSwahili["AlphabetPuzzle"] = "Fumbo la Alfabeti";
 
     _localizationMapEnglish["Book"] = "ç·¤ÌæÕ"; // किताब
@@ -347,7 +347,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["Comprehension"] = "â×Ûæ ÕêÛæ" + delm + "Comprehension"; // समझ बूझ
     _localizationMapSwahili["Comprehension"] = "Maswali ya Ufahamu";
 
-    _localizationMapEnglish["DoubleDigit"] = "Îô ¥´·¤ô ·¤æ »ç‡æÌ" + delm + "Double Digit Math"; // दो अंको का गणित
+    _localizationMapEnglish["DoubleDigit"] = "Îô ¥¢·UUUUô ·UUUè »ç‡æÌ" + delm + "Double Digit Math"; // दो अंको की गणित
     _localizationMapSwahili["DoubleDigit"] = "Hisabati ya Tarakimu Mbili";
 
     _localizationMapEnglish["FishTank"] = "×ÀÜè ƒæÚU" + delm + "Fish Tank"; // मछली घर
@@ -356,7 +356,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["HundredPuzzle"] = "100 ÂãðÜè" + delm + "100 Puzzle"; // 100 पहेली
     _localizationMapSwahili["HundredPuzzle"] = "Fumbo la Nambari 100";
 
-    _localizationMapEnglish["LetterTrace"] = "¥ÿæÚ ¥ÙéÚð¹‡æ" + delm + "Letter Trace"; // अक्षर अनुरेखण
+    _localizationMapEnglish["LetterTrace"] = "¥ÿæÚ ÕÙæ°¢" + delm + "Letter Trace"; // अक्षर बनाएं
     _localizationMapSwahili["LetterTrace"] = "Kufuatisha Herufi";
 
     _localizationMapEnglish["MovingInsects"] = "·UUUèÇ¸ð ·UUUè  ç»ÙÌè" + delm + "Bug Math"; // कीड़े की गिनती
@@ -383,7 +383,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["StarFall"] = "Åæ§çÂ¢»" + delm + "Typing"; // टाइपिंग
     _localizationMapSwahili["StarFall"] = "Kuchapa";
 
-    _localizationMapEnglish["WordMachine"] = "àæyÎ ×àæèÙ" + delm + "Word Machine"; // वर्ड मशीन
+    _localizationMapEnglish["WordMachine"] = "àæyÎô¢ ·UUUè ×àæèÙ" + delm + "Word Machine"; // शब्दों की मशीन
     _localizationMapSwahili["WordMachine"] = "Mashine ya Maneno";
 
     _localizationMapEnglish["NumberTracingExt"] = "â¢wØæ ¥ÙéÚð¹‡æ" + delm + "Number Tracing"; // संख्या अनुरेखण
@@ -392,10 +392,10 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["LetterTracingCard"] = "¥ÿæÚ Åþðçâ¢» ·UUUæÇü" + delm + "Letter Tracing Card"; // अक्षर ट्रेसिंग कार्ड
     _localizationMapSwahili["LetterTracingCard"] = "Fuatisha Mara 3";
 
-    _localizationMapEnglish["NumberPuzzle"] = "â¢wØæ ÂãðÜè" + delm + "Number Blocks"; // संख्या पहेली
+    _localizationMapEnglish["NumberPuzzle"] = "â¢wØæØô¢ ·UUUè ÂãðçÜØæ¡" + delm + "Number Blocks"; // संख्यायों की पहेलियाँ
     _localizationMapSwahili["NumberPuzzle"] = "Fumbo la Nambari";
 
-    _localizationMapEnglish["Arrange the numbers in order from smallest to largest"] = "ÀôÅè âð Üð·UUUUÚ ÕÇ¸è ¥¢·UUUU ·ðUUU RUUUU× ×ð¢ â¢wØæ¥ô¢ ·UUUè RUUUU×Õh ·UUUUÚð¢Ð"; // छोटी से लेकर बड़ी अंक के क्रम में संख्याओं की क्रमबद्ध करें|
+    _localizationMapEnglish["Arrange the numbers in order from smallest to largest"] = "ÀôÅè âð Üð·UUUUÚ ÕÇ¸è ¥¢·UUUU ·ðUUU RUUUU× ×ð¢ â¢wØæ¥ô¢ ·UUUè RUUUU×Õh ·UUUUÚð¢|"; // छोटी से लेकर बड़ी अंक के क्रम में संख्याओं की क्रमबद्ध करें|
     _localizationMapSwahili["Arrange the numbers in order from smallest to largest"] = "panga kwa mpangilio kutoka ndogo zaidi kwenda kubwa zaidi";
 
     _localizationMapEnglish["Largest number"] = "âÕâð ÕÇ¸è â¢wØæ"; // सबसे बड़ी संख्या
@@ -428,7 +428,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["WordNote"] = "àæyÎ ÙôÅ" + delm + "Word Note"; // शब्द नोट
     _localizationMapSwahili["WordNote"] = "Tunga neno";
 
-    _localizationMapEnglish["QuickFacts"] = "ˆßçÚÌ Ì‰Ø" + delm + "Quick Facts"; // त्वरित तथ्य
+    _localizationMapEnglish["QuickFacts"] = "ÌéÚ‹Ì Ì‰Ø" + delm + "Quick Facts"; // ततुरन्त तथ्य
     _localizationMapSwahili["QuickFacts"] = "Ukweli wa Uhakika";
 
     _localizationMapEnglish["MultiplicationBoard"] = "»é‡ææ Â^" + delm + "Multiplication Lamp"; // गुणा पट्ट
@@ -437,7 +437,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["WordMatrix"] = "àæyÎ ¥æÃØêã" + delm + "Word Matrix"; // शब्द आव्यूह
     _localizationMapSwahili["WordMatrix"] = "Chanzo cha Neno";
 
-    _localizationMapEnglish["SentenceBridge"] = "ßævØ ÂéÜ" + delm + "Sentence Bridge"; // वाक्य पुल
+    _localizationMapEnglish["SentenceBridge"] = "ßævØô¢ ·UUUæ ÂéÜ" + delm + "Sentence Bridge"; // वाक्यों का पुल
     _localizationMapSwahili["SentenceBridge"] = "Daraja la Sentensi";
 
     _localizationMapEnglish["WordWindow"] = "ßÇü çß¢Çô" + delm + "Word Window"; // वर्ड विंडो
