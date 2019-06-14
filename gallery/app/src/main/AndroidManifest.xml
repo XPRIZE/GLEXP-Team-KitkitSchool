@@ -4,7 +4,6 @@
     package="com.maq.xprize.xprize_gallery">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".core.GalleryApplication"
@@ -19,8 +18,7 @@
             android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
 
@@ -28,6 +26,7 @@
             android:name=".activity.SlideActivity"
             android:screenOrientation="sensorLandscape">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>

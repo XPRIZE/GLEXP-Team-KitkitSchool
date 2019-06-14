@@ -4,13 +4,7 @@
     package="com.maq.xprize.kitkitlibrary.english"
     android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.READ_LOGS"
-        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="com.maq.xprize.kitkitlibrary.english.LibraryApplication"
@@ -25,8 +19,7 @@
             android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity
@@ -35,13 +28,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.LAUNCHER" />
-
+                <action android:name="android.intent.action.VIEW" />
                  <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.maq.xprize.kitkitlibrary.english.MainActivity"
-            android:screenOrientation="sensorLandscape" /> <!-- <activity android:name=".BookDetailActivity" -->
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name="com.maq.xprize.kitkitlibrary.english.VideoPlayerActivity"
             android:screenOrientation="sensorLandscape" />
