@@ -59,6 +59,6 @@
     <string name="username_activity_title">User name</string>
     <string name="username_list">[ User name list ]</string>
     <string name="rename">Rename</string>
-    <string name="dialog_message" translatable="false">Install this application to enable music and arts section\nसंगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।</string>
+    <string name="dialog_message" translatable="false">Install this application to enable music and arts section.\nसंगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।</string>
 
 </resources>
