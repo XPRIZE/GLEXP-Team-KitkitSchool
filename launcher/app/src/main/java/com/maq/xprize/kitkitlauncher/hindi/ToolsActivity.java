@@ -330,7 +330,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
     }
 
-    private void redirectPopup(final String packagName) {
+    private void redirectPopup(final String packageName) {
 
         new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.dialog_message))
@@ -338,7 +338,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PLAYSTORE_URL + packagName)));
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PLAYSTORE_URL + packageName)));
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
