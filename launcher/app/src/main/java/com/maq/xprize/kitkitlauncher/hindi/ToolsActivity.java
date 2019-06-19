@@ -105,7 +105,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drum", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Drum: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Drum: किटकिट स्कूल - Kitkit School module");
                     }
 
                 } else {
@@ -138,7 +138,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_marimba", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Marimba: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Marimba: किटकिट स्कूल - Kitkit School module");
                     }
 
                 } else {
@@ -171,7 +171,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_blackboard", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Blackboard: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Blackboard: किटकिट स्कूल - Kitkit School module");
                     }
                 } else {
                     unlock(tv);
@@ -203,7 +203,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drawing", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Drawing: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Drawing: किटकिट स्कूल - Kitkit School module");
                     }
                 } else {
                     unlock(tv);
@@ -236,7 +236,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_coloring", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Drawing: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Drawing: किटकिट स्कूल - Kitkit School module");
                     }
                 } else {
                     unlock(tv);
@@ -262,10 +262,9 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_album", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Gallery: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Gallery: किटकिट स्कूल - Kitkit School module");
                     }
-                }
-                else{
+                } else {
                     unlock(tv);
                 }
             }
@@ -289,7 +288,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName,"Sea World: किटकिट स्कूल - Kitkit School module");
+                        redirectPopup(packageName, "Sea World: किटकिट स्कूल - Kitkit School module");
                     }
 
                 }
@@ -316,7 +315,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                             KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                             logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
                         } catch (Exception e) {
-                            redirectPopup(packageName,"Writing Board: किटकिट स्कूल - Kitkit School module");
+                            redirectPopup(packageName, "Writing Board: किटकिट स्कूल - Kitkit School module");
                         }
                     }
 
@@ -335,7 +334,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
     private void redirectPopup(final String packageName, final String appTitle) {
 
         new AlertDialog.Builder(this)
-                .setTitle("Download "+appTitle)
+                .setTitle("Download " + appTitle)
                 .setMessage(getString(R.string.dialog_message))
                 .setPositiveButton("Continue",
                         new DialogInterface.OnClickListener() {

@@ -21,19 +21,19 @@ import com.maq.kitkitlogger.KitKitLoggerActivity;
  * Created by yshong on 2018. 4. 13..
  */
 
-public class VideoPlayerActivity extends KitKitLoggerActivity implements SurfaceHolder.Callback{
+public class VideoPlayerActivity extends KitKitLoggerActivity implements SurfaceHolder.Callback {
+    private static String MAIN_APP_PACKAGE_NAME = null;
+    private static String LIBRARY_PACKAGE_NAME = null;
+    private static String WRITING_BOARD_PACKAGE_NAME = null;
+    public String video = "";
+    ImageButton mVideoCloseButton;
+    TextView mInstallAppButton;
     private MediaPlayer mMediaPlayer;
     private SurfaceView mVideoView;
     private int mCurrentPosition;
     private boolean mbPause;
     private String mVideoFileName;
-    ImageButton mVideoCloseButton ;
-    TextView mInstallAppButton ;
-    private static String MAIN_APP_PACKAGE_NAME = null;
-    private static String LIBRARY_PACKAGE_NAME = null;
-    private static String WRITING_BOARD_PACKAGE_NAME = null;
     private String packageName;
-    public String video = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
 
         MAIN_APP_PACKAGE_NAME = "com.maq.xprize.kitkitschool.hindi";
         LIBRARY_PACKAGE_NAME = "com.maq.xprize.kitkitlibrary.english";
-        WRITING_BOARD_PACKAGE_NAME="com.maq.xprize.writingboard";
+        WRITING_BOARD_PACKAGE_NAME = "com.maq.xprize.writingboard";
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -83,16 +83,13 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
                 mVideoFileName = "tutorial_writingboard_en.mp4";
             }
             packageName = WRITING_BOARD_PACKAGE_NAME;
-        }
-        else if(video.equals("main_app_demo_video")){
+        } else if (video.equals("main_app_demo_video")) {
             mVideoFileName = "main_app_demo.mp4";
             packageName = MAIN_APP_PACKAGE_NAME;
-        }
-        else if(video.equals("library_app_demo")){
+        } else if (video.equals("library_app_demo")) {
             mVideoFileName = "library_app_demo.mp4";
             packageName = LIBRARY_PACKAGE_NAME;
-        }
-        else {
+        } else {
             if (appLanguage != null && appLanguage.equals("sw-TZ")) {
                 mVideoFileName = "sw_vdo_tut_welcome.m4v";
 
@@ -107,7 +104,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if(video.equals("main_app_demo_video") || video.equals("library_app_demo")){
+                if (video.equals("main_app_demo_video") || video.equals("library_app_demo")) {
                     try {
 // Stop the video playback
                         mVideoCloseButton.setVisibility(View.INVISIBLE);
@@ -119,8 +116,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
                     } catch (android.content.ActivityNotFoundException anfe) {
                         Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
+                } else {
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
