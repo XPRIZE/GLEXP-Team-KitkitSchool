@@ -9,7 +9,7 @@ android {
 
         applicationId "com.maq.xprize.kitkitlauncher.hindi"
         versionCode 13
-        versionName "3.1.0"
+        versionName "3.1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     
