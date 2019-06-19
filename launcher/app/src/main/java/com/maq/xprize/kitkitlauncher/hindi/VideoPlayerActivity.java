@@ -31,6 +31,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
     TextView mInstallAppButton ;
     private static String MAIN_APP_PACKAGE_NAME = null;
     private static String LIBRARY_PACKAGE_NAME = null;
+    private static String WRITING_BOARD_PACKAGE_NAME = null;
     private String packageName;
     public String video = "";
 
@@ -51,6 +52,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
 
         MAIN_APP_PACKAGE_NAME = "com.maq.xprize.kitkitschool.hindi";
         LIBRARY_PACKAGE_NAME = "com.maq.xprize.kitkitlibrary.english";
+        WRITING_BOARD_PACKAGE_NAME="com.maq.xprize.writingboard";
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -75,12 +77,12 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
         mVideoView.getHolder().addCallback(this);
 
         if (video.equals("writing_board")) {
-            if (getAppLanguage().equals("sw-TZ")) {
+            if (appLanguage != null && appLanguage.equals("sw-TZ")) {
                 mVideoFileName = "tutorial_writingboard_sw.mp4";
             } else {
                 mVideoFileName = "tutorial_writingboard_en.mp4";
             }
-
+            packageName = WRITING_BOARD_PACKAGE_NAME;
         }
         else if(video.equals("main_app_demo_video")){
             mVideoFileName = "main_app_demo.mp4";
@@ -91,7 +93,7 @@ public class VideoPlayerActivity extends KitKitLoggerActivity implements Surface
             packageName = LIBRARY_PACKAGE_NAME;
         }
         else {
-            if (getAppLanguage().equals("sw-TZ")) {
+            if (appLanguage != null && appLanguage.equals("sw-TZ")) {
                 mVideoFileName = "sw_vdo_tut_welcome.m4v";
 
             } else {
