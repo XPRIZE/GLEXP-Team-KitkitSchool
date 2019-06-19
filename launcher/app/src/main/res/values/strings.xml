@@ -2,7 +2,7 @@
     <string name="app_name">किटकिट स्कूल - Kitkit School</string>
     <!--<string name="action_settings">Settings</string>-->
     <!--<string name="action_close">Close</string>-->
-    <string name="tools_activity_title">Kitkit School Tools</string>
+    <string name="tools_activity_title">More apps</string>
     <string name="user_default_id">user0</string>
     <string name="launcher_title">किटकिट स्कूल</string>
     <string name="btn_setting">Settings</string>
@@ -59,6 +59,6 @@
     <string name="username_activity_title">User name</string>
     <string name="username_list">[ User name list ]</string>
     <string name="rename">Rename</string>
-    <string name="dialog_message" translatable="false">Install this application to enable music and arts section.\nसंगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।</string>
+    <string name="dialog_message" translatable="false">Install this application to enable this module in music and arts section.\nसंगीत और कला अनुभाग में इस मॉड्यूल को शुरू करने के लिए इस एप्लिकेशन को इंस्टॉल करें।</string>
 
 </resources>
