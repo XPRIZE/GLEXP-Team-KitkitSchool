@@ -18,7 +18,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.maq.kitkitProvider.KitkitDBHandler;
 import com.maq.kitkitProvider.User;
@@ -35,7 +34,33 @@ public class ToolsActivity extends KitKitLoggerActivity {
     private boolean isAnimating;
     private float mScale;
     private View mVBack;
-    private String packageName="";
+    private String packageName = "";
+    private Rect mTempRect = new Rect();
+    private boolean mbPressed = false;
+    private View.OnTouchListener mBlockViewTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mVBack.getGlobalVisibleRect(mTempRect);
+                if (mTempRect.contains((int) event.getX(), (int) event.getY())) {
+                    mbPressed = true;
+                    mVBack.dispatchTouchEvent(event);
+                } else {
+                    mbPressed = false;
+                }
+            } else {
+                if (mbPressed) {
+                    mVBack.dispatchTouchEvent(event);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mbPressed = false;
+                }
+            }
+
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +95,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.drum";
+                    packageName = "com.maq.xprize.drum";
 
                     try {
                         //Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.drum");
@@ -80,7 +105,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drum", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
 
                 } else {
@@ -104,7 +129,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.marimba";
+                    packageName = "com.maq.xprize.marimba";
                     try {
                         //Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.marimba");
                         Intent i = new Intent(Intent.ACTION_MAIN);
@@ -113,7 +138,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_marimba", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
 
                 } else {
@@ -136,7 +161,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.blackboard";
+                    packageName = "com.maq.xprize.blackboard";
                     try {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.setComponent(new ComponentName("com.maq.xprize.blackboard", "com.maq.xprize.blackboard.activity.MainActivity"));
@@ -146,7 +171,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_blackboard", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
                 } else {
                     unlock(tv);
@@ -168,7 +193,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.drawingcoloring";
+                    packageName = "com.maq.xprize.drawingcoloring";
                     try {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.putExtra("LANGUAGE", getAppLanguage());
@@ -178,7 +203,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drawing", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
                 } else {
                     unlock(tv);
@@ -201,7 +226,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.drawingcoloring";
+                    packageName = "com.maq.xprize.drawingcoloring";
                     try {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.putExtra("LANGUAGE", getAppLanguage());
@@ -211,7 +236,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_coloring", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
                 } else {
                     unlock(tv);
@@ -229,7 +254,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.xprize_gallery";
+                    packageName = "com.maq.xprize.xprize_gallery";
                     try {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.setComponent(new ComponentName("com.maq.xprize.xprize_gallery", "com.maq.xprize.xprize_gallery.activity.MainActivity"));
@@ -237,7 +262,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_album", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
 
                 }
@@ -254,7 +279,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.FB";
+                    packageName = "com.maq.xprize.FB";
                     try {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.setComponent(new ComponentName("com.maq.xprize.FB", "org.cocos2dx.cpp.AppActivity"));
@@ -262,7 +287,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
                     } catch (Exception e) {
-                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                        redirectPopup(packageName);
                     }
 
                 }
@@ -279,7 +304,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName="com.maq.xprize.writingboard";
+                    packageName = "com.maq.xprize.writingboard";
                     if (gotoVideoPlayerForWritingBoard() == false) {
                         try {
                             Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -289,7 +314,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                             KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                             logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
                         } catch (Exception e) {
-                            redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
+                            redirectPopup(packageName);
                         }
                     }
 
@@ -305,17 +330,17 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
     }
 
-    private void redirectPopup(final String URL) {
+    private void redirectPopup(final String packagName) {
 
+        String dialogMessage = "Install this application to enable music and arts section." +
+                "\n" + "संगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।";
         new AlertDialog.Builder(this)
-                .setMessage("Install this application to enable music and arts section." +
-                        "\n" +
-                        "संगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।")
+                .setMessage(dialogMessage)
                 .setPositiveButton("Continue",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URL)));
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PLAYSTORE_URL + packagName)));
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -440,13 +465,13 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         int[] coinLocation = new int[2];
         coinImageInToolbar.getLocationInWindow(coinLocation);
-        coinLocation[0] = (int)(coinLocation[0] / mScale + 0.5f);
-        coinLocation[1] = (int)(coinLocation[1] / mScale + 0.5f);
+        coinLocation[0] = (int) (coinLocation[0] / mScale + 0.5f);
+        coinLocation[1] = (int) (coinLocation[1] / mScale + 0.5f);
 
         int[] itemLocation = new int[2];
         view.getLocationInWindow(itemLocation);
-        itemLocation[0] = (int)(itemLocation[0] / mScale + 0.5f);
-        itemLocation[1] = (int)(itemLocation[1] / mScale + 0.5f);
+        itemLocation[0] = (int) (itemLocation[0] / mScale + 0.5f);
+        itemLocation[1] = (int) (itemLocation[1] / mScale + 0.5f);
 
         final ToolsAppView appView = view;
 
@@ -517,14 +542,14 @@ public class ToolsActivity extends KitKitLoggerActivity {
             }
             coin.setAnimation(anim);
         }
-  }
+    }
 
     private boolean gotoVideoPlayerForWritingBoard() {
-        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
+        User user = ((LauncherApplication) getApplication()).getDbHandler().getCurrentUser();
 
         if (user.isFinishWritingBoardTutorial() == false) {
             user.setFinishWritingBoardTutorial(true);
-            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
+            ((LauncherApplication) getApplication()).getDbHandler().updateUser(user);
 
             Intent i = new Intent(ToolsActivity.this, VideoPlayerActivity.class);
             i.putExtra("video", "writing_board");
@@ -535,31 +560,4 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
         return false;
     }
-
-    private Rect mTempRect = new Rect();
-    private boolean mbPressed = false;
-    private View.OnTouchListener mBlockViewTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                mVBack.getGlobalVisibleRect(mTempRect);
-                if (mTempRect.contains((int) event.getX(), (int) event.getY())) {
-                    mbPressed = true;
-                    mVBack.dispatchTouchEvent(event);
-                } else {
-                    mbPressed = false;
-                }
-            } else {
-                if (mbPressed) {
-                    mVBack.dispatchTouchEvent(event);
-                }
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mbPressed = false;
-                }
-            }
-
-            return true;
-        }
-    };
 }
