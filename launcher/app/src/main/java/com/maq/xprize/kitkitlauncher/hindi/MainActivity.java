@@ -1,10 +1,12 @@
 package com.maq.xprize.kitkitlauncher.hindi;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -122,29 +124,6 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
             }*/
         }
     };
-
-    private void checkNetworkAndProcess(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI &&
-                networkInfo.isConnected()) {
-// Wifi is connected
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            String ssid = wifiInfo.getSSID();
-
-            Log.d(TAG, "-- Wifi connected ---" + " SSID " + ssid);
-            if (ssid.equals("\"XPRIZE\"")) {
-                connectToFTPAddress();
-                connectToSNTPServers();
-            } else {
-                connectToWifi();
-            }
-        } else {
-            connectToWifi();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,8 @@
 package com.maq.xprize.kitkitlauncher.hindi;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -78,7 +80,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drum", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
 
                 } else {
@@ -111,7 +113,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_marimba", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
 
                 } else {
@@ -144,7 +146,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_blackboard", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
                 } else {
                     unlock(tv);
@@ -176,7 +178,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drawing", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
                 } else {
                     unlock(tv);
@@ -209,7 +211,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_coloring", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
                 } else {
                     unlock(tv);
@@ -235,7 +237,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_album", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
 
                 }
@@ -260,7 +262,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
                     } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                        redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                     }
 
                 }
@@ -287,7 +289,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
                             KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                             logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
                         } catch (Exception e) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                            redirectPopup("https://play.google.com/store/apps/details?id=" + packageName);
                         }
                     }
 
@@ -301,6 +303,29 @@ public class ToolsActivity extends KitKitLoggerActivity {
         Typeface f = Typeface.createFromAsset(getAssets(), "TodoMainCurly.ttf");
         textViewCoinNum.setTypeface(f);
 
+    }
+
+    private void redirectPopup(final String URL) {
+
+        new AlertDialog.Builder(this)
+                .setMessage("Install this application to enable music and arts section." +
+                        "\n" +
+                        "संगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।")
+                .setPositiveButton("Continue",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URL)));
+                            }
+                        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override
