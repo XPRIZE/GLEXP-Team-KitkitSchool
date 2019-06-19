@@ -264,7 +264,9 @@ public class ToolsActivity extends KitKitLoggerActivity {
                     } catch (Exception e) {
                         redirectPopup(packageName);
                     }
-
+                }
+                else{
+                    unlock(tv);
                 }
             }
         });

@@ -119,7 +119,7 @@ public class KitKitLoggerActivity extends Activity {
             SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
             //String sharedLang = pref.getString("appLanguage", getString(R.string.defaultLanguage));
             String sharedLang = pref.getString("appLanguage", "en-US");
-            if (!appLanguage.equals(sharedLang)) {
+            if (appLanguage != null && !appLanguage.equals(sharedLang)) {
                 restartApp();
             }
         }
