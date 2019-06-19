@@ -332,10 +332,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
 
     private void redirectPopup(final String packagName) {
 
-        String dialogMessage = "Install this application to enable music and arts section." +
-                "\n" + "संगीत और कला अनुभाग शुरू करने के लिए इस ऐप को इंस्टॉल करें।";
         new AlertDialog.Builder(this)
-                .setMessage(dialogMessage)
+                .setMessage(getString(R.string.dialog_message))
                 .setPositiveButton("Continue",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
