@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "SimpleAudioEngine.h"
 #include "ShapeMatchingScene.hpp"
 #include "cocostudio/CocoStudio.h"
@@ -47,7 +48,7 @@ namespace ShapeMatching
     string soundPathForShape(const string& shapeName)
     {
         stringstream ss;
-        ss << "ShapeMatching/Sound/" << shapeName << ".m4a";
+        ss <<  shapeName ;
         return ss.str();
     }
     
@@ -542,9 +543,7 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             auto fileNameVec = TodoUtil::split(card->matchSound, '/');
             auto playFileName = fileNameVec.back();
             if (_duration.count(playFileName)) duration = _duration[playFileName];
-
-            
-            GameSoundManager::getInstance()->playEffectSound(card->matchSound);
+          VoiceMoldManager::shared()->speak(card->matchSound); //tts implementation for htis module
             
             auto other = card->linkedTarget;
             

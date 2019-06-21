@@ -61,7 +61,7 @@ public class VoiceMold {
         }
 
         if (!wrapper.isGood()) {
-            String header = "Yo! ";
+            String header = " ";
             text = header + text;
         }
 
@@ -75,6 +75,8 @@ public class VoiceMold {
         }
 
         String text = "";
+        wrapper.getTts().setPitch(0.80f);
+        wrapper.getTts().setSpeechRate(0.75f);
         wrapper.getTts().speak(text, TextToSpeech.QUEUE_FLUSH, createParamsForSpeak());
     }
 
@@ -85,7 +87,7 @@ public class VoiceMold {
         }
 
         if (!wrapper.isGood()) {
-            String header = "Yo! ";
+            String header = " ";
             text = header + text;
         }
 

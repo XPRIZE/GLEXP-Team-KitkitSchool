@@ -4,7 +4,7 @@
 
 
 
-#ifndef MAKE_STRING 
+#ifndef MAKE_STRING
 #   define MAKE_STRING(_Text) "" #_Text
 #endif
 

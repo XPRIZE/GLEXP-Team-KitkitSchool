@@ -1,3 +1,4 @@
+
 #include "WordMatrixScene.h"
 
 #include "Common/Controls/CompletePopup.hpp"
@@ -799,6 +800,7 @@ bool WordMatrixBlock::setSound(const char* fileName)
             tt =  __String::createWithFormat("LetterVoice/%s.m4a", fileName);
             if (FileUtils::getInstance()->isFileExist(tt->getCString()))
                 wordSound = new SoundEffect(tt->getCString());
+
         }
     }
     

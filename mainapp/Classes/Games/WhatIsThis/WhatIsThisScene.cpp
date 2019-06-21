@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////
+ /////////////////////////////////////////////////////////////////////////////////////////
 /****************************************************************************************
 Created		:	2018.02.08
 
@@ -9,6 +9,7 @@ Purpose		:	WhatIsThisScene
 ****************************************************************************************/
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#include <Managers/VoiceMoldManager.h>
 #include "WhatIsThisScene.h"
 
 #include "CCAppController.hpp"
@@ -125,7 +126,6 @@ void WhatIsThisLayer::StartGame()
     _progressBar->setCurrent(++currentProblemIndex, false);
     
 	GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/ShowAndTell_SFX_Card_shuffle_short.m4a");
-
 	// 상단 카드 설정
 	if (auto card = dynamic_cast<STTopCard*>(topCardNode))
 	{

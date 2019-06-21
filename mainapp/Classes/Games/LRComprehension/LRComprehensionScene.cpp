@@ -5,6 +5,7 @@
 //  Created by HyeonGyu Yu on 07/08/2018.
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "LRComprehensionScene.hpp"
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include "LRLevelData.hpp"
@@ -129,6 +130,7 @@ void LRComprehensionScene::onExit()
 {
     Layer::onExit();
     LRSoundButton::soundButtons.clear();
+    VoiceMoldManager::shared()->speak(" ");        //To stop the speech of tts after clicking back button
     GameSoundManager::getInstance()->stopBGM();
     GameSoundManager::getInstance()->stopAllEffects();
 }

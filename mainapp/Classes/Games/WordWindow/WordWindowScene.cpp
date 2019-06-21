@@ -16,7 +16,6 @@
 
 using namespace cocos2d::ui;
 using namespace std;
-
 namespace WordWindowSceneSpace
 {
     const char* defaultFont = "fonts/chanakya.ttf";
@@ -36,7 +35,6 @@ namespace WordWindowSceneSpace
 }
 
 using namespace WordWindowSceneSpace;
-
 WordWindowLevelStruct::WordWindowLevelStruct()
 {
 	m_languageTag = "";
@@ -475,8 +473,8 @@ void WordWindowScene::resetPuzzle()
 
 void WordWindowScene::loadData(int level)
 {
-	string P = "games/" + resourcePath + "wordwindow_level.tsv";
-	string S = FileUtils::getInstance()->getStringFromFile(P);
+	string P = "games/"+ resourcePath + "wordwindow_level.tsv";
+	string S = cocos2d::FileUtils::getInstance()->getStringFromFile(P);
 	auto data = TodoUtil::readTSV(S);
 	auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
 
@@ -502,7 +500,7 @@ void WordWindowScene::loadData(int level)
 
 		s.m_problemNo = TodoUtil::stoi(row[3]);
 		s.m_sequenceType = TodoUtil::stoi(row[4]);
-		s.m_soundFilename = row[5];
+        s.m_soundFilename = row[5];
 		s.m_text = row[6];
 		for (int i = 0; i < 4; i++)
 		{
@@ -559,14 +557,13 @@ void WordWindowScene::loadData(int level)
 
 void WordWindowScene::playSoundQuestion(string name)
 {
-	//CCLOG("[WordWindowScene::playSound] %s", name.c_str());
-	if (name.empty() == true)
+	if(name.empty()==true)
 	{
 		return;
 	}
 
-    string path = "games/wordwindow/sound/" + name;
-    
+	string path = "games/wordwindow/sound/" + name;
+
 	GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
 
 	disableSoundButton();

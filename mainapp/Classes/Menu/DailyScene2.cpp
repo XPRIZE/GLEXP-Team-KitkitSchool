@@ -12,6 +12,8 @@
 
 #include "CCAppController.hpp"
 #include "CustomDirector.h"
+#include <map>
+#include <iterator>
 
 #include "ui/UIButton.h"
 #include "Utils/TodoUtil.h"
@@ -37,6 +39,7 @@
 #include <time.h>
 #include <algorithm>
 #include <iterator>
+#include <Managers/VoiceMoldManager.h>
 
 namespace DailyScene2Space {
     
@@ -1081,9 +1084,61 @@ void DailyScene2::lightFall(LightBall *l, bool first)
 }
 
 
+
 void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int maxAvailable)
 {
-    GameSoundManager::getInstance()->playEffectSoundForAutoStart("WordVoice/GameName/"+gameName+".m4a");
+                                                                                                                                                                                                                                                                                                                                 GameSoundManager::getInstance()->playEffectSoundForAutoStart("WordVoice/GameName/"+gameName+".m4a");
+    map<string, string> gquiz1;
+    gquiz1.insert(pair<string, string>("AlphabetPuzzle","वर्णमाला की पहेली"));
+    gquiz1.insert(pair<string, string>("AnimalPuzzle","पशुओं की पहेली"));
+    gquiz1.insert(pair<string, string>("BirdPhonics", "पक्षी की ध्वनि"));
+    gquiz1.insert(pair<string, string>("BookWithQuiz", "प्रश्नोत्तरी के साथ बुक करें"));
+    gquiz1.insert(pair<string, string>("Counting", "गिनती"));
+    gquiz1.insert(pair<string, string>("DoubleDigit", "दो अंको की गणित"));
+    gquiz1.insert(pair<string, string>("EquationMaker", "समीकरण बनाने वाला"));
+    gquiz1.insert(pair<string, string>("FeedingTime", "खिलाने का समय"));
+    gquiz1.insert(pair<string, string>("FindTheMatch", "जोड़ी खोजिए"));
+    gquiz1.insert(pair<string, string>("FishTank", "मछली घर"));
+    gquiz1.insert(pair<string, string>("HundredPuzzle", "100 पहेली"));
+    gquiz1.insert(pair<string, string>("Labeling", "अंकितक लगाना"));
+    gquiz1.insert(pair<string, string>("LetterMatching", "अक्षर मिलाना"));
+    gquiz1.insert(pair<string, string>("TutorialTrace", "लाइन खीचें"));
+    gquiz1.insert(pair<string, string>("LetterTrace", "अक्षर बनाएं"));
+    gquiz1.insert(pair<string, string>("LetterTracingCard", "अक्षर ट्रेसिंग कार्ड"));
+    gquiz1.insert(pair<string, string>("LineMatching", "रेखा मिलान"));
+    gquiz1.insert(pair<string, string>("LRComprehension", "समझ बुझ"));
+    gquiz1.insert(pair<string, string>("MangoShop", "आम की दुकान"));
+    gquiz1.insert(pair<string, string>("MathKicker", "मैथ्स किकर"));
+    gquiz1.insert(pair<string, string>("MisingNumber", "अनुपस्तिथ संख्या"));
+    gquiz1.insert(pair<string, string>("MovingInsects", "कीड़े की गिनती"));
+    gquiz1.insert(pair<string, string>("MultiplicationBoard", "गुणा  पट्ट"));
+    gquiz1.insert(pair<string, string>("NumberMatching", "संख्या मिलाना"));
+    gquiz1.insert(pair<string, string>("NumberTracing", "संख्या अनुरेखण"));
+    gquiz1.insert(pair<string, string>("NumberPuzzle", "संख्यायों की पहेलियाँ"));
+    gquiz1.insert(pair<string, string>("NumberTracingExt", "संख्या अनुरेखण"));
+    gquiz1.insert(pair<string, string>("NumberTrain", "संख्या ट्रेन"));
+    gquiz1.insert(pair<string, string>("PatternTrain", "पैटर्न ट्रेन"));
+    gquiz1.insert(pair<string, string>("PlaceValue", "मान रखे"));
+    gquiz1.insert(pair<string, string>("QuickFacts", "ततुरन्त तथ्य"));
+    gquiz1.insert(pair<string, string>("ReadingBird", "पढ़ने वाला पक्षी"));
+    gquiz1.insert(pair<string, string>("SentenceBridge", "वाक्यों का पुल"));
+    gquiz1.insert(pair<string, string>("SentenceMaker", "वाक्य बनाने वाला"));
+    gquiz1.insert(pair<string, string>("ShapeMatching", "आकार मिलाना"));
+    gquiz1.insert(pair<string, string>("SoundTrain", "ध्वनि ट्रेन"));
+    gquiz1.insert(pair<string, string>("Spelling", "वर्तनी"));
+    gquiz1.insert(pair<string, string>("BubblePop", "बबल पॉप"));
+    gquiz1.insert(pair<string, string>("StarFall", "टाइपिंग"));
+    gquiz1.insert(pair<string, string>("ThirtyPuzzle", "30 पहेली"));
+    gquiz1.insert(pair<string, string>("WhatIsThis", "यह क्या है?"));
+    gquiz1.insert(pair<string, string>("WordTracing", "शब्द अनुरेखण "));
+    gquiz1.insert(pair<string, string>("WordKicker", "शब्द किकर"));
+    gquiz1.insert(pair<string, string>("WordNote", "शब्द नोट"));
+    gquiz1.insert(pair<string, string>("WordMatrix", "शब्द आव्यूह"));
+    gquiz1.insert(pair<string, string>("WordMachine", "शब्दों की मशीन"));
+    gquiz1.insert(pair<string, string>("WordWindow", "वर्ड विंडो"));
+
+    VoiceMoldManager::shared()->speak(gquiz1.at(gameName),"hi-IN");
+
 
     Size popupSize = Size(1540, 1404);
     auto winSize = Director::getInstance()->getWinSize();

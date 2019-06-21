@@ -12,7 +12,11 @@
 #include <cocos/ui/CocosGUI.h>
 #include <functional>
 #include <string>
+#include <Managers/VoiceMoldManager.h>
 #include "Common/Effects/LightBall.hpp"
+#include <iostream>
+#include <utility>
+#include<map>
 
 USING_NS_CC;
 

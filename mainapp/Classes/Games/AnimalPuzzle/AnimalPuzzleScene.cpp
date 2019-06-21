@@ -13,6 +13,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 
 #include "Managers/LanguageManager.hpp"
@@ -493,12 +494,10 @@ void AnimalPuzzleScene::loadData(int level)
     }
 }
 
-
+ // implementation of tts for this module
 void AnimalPuzzleScene::playSound(string name)
 {
-    string path = "Games/AnimalPuzzle/Sound/"+name;
-    
-    GameSoundManager::getInstance()->playEffectSound(path);
+    VoiceMoldManager::shared()->speak(name);
 }
 
 void AnimalPuzzleScene::loadDurationsheet() {

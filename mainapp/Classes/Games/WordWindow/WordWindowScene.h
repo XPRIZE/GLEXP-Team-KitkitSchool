@@ -67,7 +67,6 @@ public:
 
 		SEQUENCE_TYPE_MAX,
 	};
-
 public:
     static Scene* createScene(string levelID);
     virtual bool init() override;

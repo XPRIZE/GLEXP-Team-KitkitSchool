@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "SentenceBridgeScene.hpp"
 #include "NodeBridgeMain.hpp"
 #include "NodeBlockMain.hpp"
@@ -18,6 +19,7 @@
 
 
 #include "CCAppController.hpp"
+
 
 using namespace cocos2d::ui;
 using namespace std;
@@ -179,11 +181,9 @@ void SentenceBridgeScene::startGame()
 	showSpeakerButton();
 
 	_touchEnabled = true;
-	processBlockTouch();
-
-	touchSpeakerButton(0.5f);
-
-	createShiningParticle();
+processBlockTouch();
+touchSpeakerButton(0.5f);
+createShiningParticle();
 	//startParticle();
 }
 
@@ -198,16 +198,16 @@ void SentenceBridgeScene::makeSpeakerButton(Size winSize)
 	listener->onTouchBegan = [this](Touch* T, Event* E) {
 		if (_touchEnabled && !_speakerPlaying)
 		{
-			auto pos = _speakerButton->getParent()->convertToNodeSpace(T->getLocation());
+		    auto pos = _speakerButton->getParent()->convertToNodeSpace(T->getLocation());
 			if (_speakerButton->getBoundingBox().containsPoint(pos)) {
-				return touchSpeakerButton(0);
+				 touchSpeakerButton(0);
 			}
 		}
 		return false;
 	};
 	_speakerButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 }
-
+// Implementation of tts for this module
 bool SentenceBridgeScene::touchSpeakerButton(float delayTime)
 {
 	_speakerPlaying = true;
@@ -224,16 +224,14 @@ bool SentenceBridgeScene::touchSpeakerButton(float delayTime)
 		runAction(Sequence::create(
 			DelayTime::create(delayTime),
 			CallFunc::create([this, strSoundFileName]() {
-				//GameSoundManager::getInstance()->playEffectSound("sentencebridge/sound/" + strSoundFileName);
-                GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+				VoiceMoldManager::shared()->speak(strSoundFileName);
 			}),
 			nullptr
 		));
 	}
 	else
 	{
-		//GameSoundManager::getInstance()->playEffectSound("sentencebridge/sound/" + strSoundFileName);
-        GameSoundManager::getInstance()->playEffectSoundVoiceOnly("sentencebridge/sound/" + strSoundFileName);
+		VoiceMoldManager::shared()->speak(strSoundFileName);
 	}
 	
 
@@ -254,6 +252,7 @@ void SentenceBridgeScene::processBlockTouch()
 {
 	_blockMainNode->onBlockTouchBegan = [this]() {
         if (_touchEnabled && !_blockMoving) {
+            touchSpeakerButton(0.5f);
             _blockMoving = true;
             return  true;
         }
