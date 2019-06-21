@@ -794,7 +794,7 @@ void MainScene::resume() {
     CCLOG("MainScene : resume");
     isDemo = UserDefault::getInstance()->getBoolForKey("review_mode_on", true);
     GameSoundManager::getInstance()->stopBGM();
-    
+    MainScene::openAllLevels();
     if (isDemo) {
         _resetBtn->setVisible(true);
         _openAllBtn->setVisible(true);
@@ -817,4 +817,18 @@ void MainScene::resume() {
     } else {
         _coinTab->setVisible(false);
     }
+}
+
+// function to open all modules
+void MainScene::openAllLevels(){
+        auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
+
+        for (auto it : CurriculumManager::getInstance()->levels) {
+            LevelCurriculum cur = it.second;
+            UserManager::getInstance()->setLevelOpen(cur.levelID);
+            UserManager::getInstance()->setPretestProgressType(cur.levelID, PretestProgressType::finish);
+            for (int iCounter=0; iCounter<cur.numDays; iCounter++) {
+                UserManager::getInstance()->setDayCleared(cur.levelID, iCounter);
+            }
+        }
 }

@@ -107,8 +107,7 @@ public:
     
     string getGameClearedKey(string levelID, int day, int gameIndex);
     bool isGameCleared(string levelID, int day, int gameIndex);
-    void setGameCleared(string levelID, int day, int gameIndex, bool isCleared = true);
-    
+
     string getSpecialCourseCurrentProgressKey(string levelID, int day);
     void setSpecialCourseCurrentProgress(string levelID, int day, int gameIndex);
     int getSpecialCourseCurrentProgress(string levelID, int day);

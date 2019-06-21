@@ -273,7 +273,7 @@ void CoopScene::setupCoop()
     auto onFinishTurnLight = [this, category](Room* room) {
         if (room->bird->getCategoryLevel() == 6) {
             if (_rooms.size() > LEVEL_FISH_PRESENT && !UserManager::getInstance()->getFishPresentLightOn(category)) {
-                _rooms[LEVEL_FISH_PRESENT]->turnLight(true, true);
+                _rooms[LEVEL_FISH_PRESENT]->turnLight(false, false);
                 UserManager::getInstance()->setFishPresentLightOn(category);
             }
         }
@@ -743,11 +743,6 @@ void CoopScene::onEnterTransitionDidFinish()
                     UserManager::getInstance()->setDayCleared(levelID, i+1);
                     auto day = i+1;
                     auto dayCur = cur->getDayCurriculum(day);
-                    if (dayCur) {
-                        for (int j=0; j<=dayCur->numGames; j++) {
-                            UserManager::getInstance()->setGameCleared(cur->levelID, day, j);
-                        }
-                    }
                 }
             }
             case PretestProgressType::fail:
@@ -1289,10 +1284,6 @@ void Room::turnLight(bool turnOn, bool animate)
 }
 
 bool Room::isEnableFishPresent() {
-    if (!UserManager::getInstance()->isFishPresentEnable(levelID)) {
-        return false;
-    }
-
-    return true;
+   return false;
 }
 

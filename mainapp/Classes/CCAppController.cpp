@@ -992,8 +992,6 @@ void CCAppController::handleGameComplete(int result)
     //UserManager::getInstance()->setCompletedGame(_currentGame, _currentLevel);
     
     if (_currentCurrLevelID!="") {
-        UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
-        
         if (TodoUtil::endsWith(_currentCurrLevelID, StringUtils::format("_%d", CoopScene::LEVEL_SPECIAL_COURSE))) {
             int currentSpecialGame = UserManager::getInstance()->getSpecialCourseCurrentProgress(_currentCurrLevelID, _currentCurrDay);
             
@@ -1070,10 +1068,6 @@ void CCAppController::startBookScene(std::string bookFolder, bool replaceParent,
             auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Error"), 200, Size::ZERO, "fonts/Aileron-Regular.otf", Color4B::WHITE);
             l->setPosition(nextScene->getContentSize()/2);
             nextScene->addChild(l);
-            
-            if (_currentCurrLevelID!="") {
-                UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
-            }
             
         }
 

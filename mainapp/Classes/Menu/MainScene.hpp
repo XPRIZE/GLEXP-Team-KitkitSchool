@@ -40,6 +40,7 @@ private:
     void confirmDebug();
     void manageCache();
     void playLogoFall(float dt);
+    void openAllLevels();
     
     void shakeCoop(Node *coop, int times = 100);
     void setDisableTouchEventForCoopGuide(bool disable);
