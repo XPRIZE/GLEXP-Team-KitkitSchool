@@ -1109,7 +1109,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
     gquiz1.insert(pair<string, string>("LRComprehension", "समझ बुझ"));
     gquiz1.insert(pair<string, string>("MangoShop", "आम की दुकान"));
     gquiz1.insert(pair<string, string>("MathKicker", "मैथ्स किकर"));
-    gquiz1.insert(pair<string, string>("MisingNumber", "अनुपस्तिथ संख्या"));
+    gquiz1.insert(pair<string, string>("MissingNumber", "अनुपस्तिथ संख्या"));
     gquiz1.insert(pair<string, string>("MovingInsects", "कीड़े की गिनती"));
     gquiz1.insert(pair<string, string>("MultiplicationBoard", "गुणा  पट्ट"));
     gquiz1.insert(pair<string, string>("NumberMatching", "संख्या मिलाना"));
@@ -1126,7 +1126,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
     gquiz1.insert(pair<string, string>("ShapeMatching", "आकार मिलाना"));
     gquiz1.insert(pair<string, string>("SoundTrain", "ध्वनि ट्रेन"));
     gquiz1.insert(pair<string, string>("Spelling", "वर्तनी"));
-    gquiz1.insert(pair<string, string>("BubblePop", "बबल पॉप"));
+    gquiz1.insert(pair<string, string>("Tapping", "बबल पॉप"));
     gquiz1.insert(pair<string, string>("StarFall", "टाइपिंग"));
     gquiz1.insert(pair<string, string>("ThirtyPuzzle", "30 पहेली"));
     gquiz1.insert(pair<string, string>("WhatIsThis", "यह क्या है?"));
