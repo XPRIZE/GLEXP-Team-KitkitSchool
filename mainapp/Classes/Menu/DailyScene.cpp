@@ -1089,7 +1089,7 @@ void DailyScene::showFreechoicePopup(std::string gameName, int maxPlayable, int 
                             folder+"daily_freechoice_popup_level_done.png",
                             folder+"daily_freechoice_popup_level_unavailable.png");
             
-            b->setEnabled(gameLevel<=maxPlayable);
+            b->setEnabled(true);
             b->setPosition(Vec2(x, y));
             popup->addChild(b);
             if (i%10==9) {
