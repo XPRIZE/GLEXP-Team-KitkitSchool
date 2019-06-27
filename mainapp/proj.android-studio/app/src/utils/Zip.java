@@ -1,6 +1,7 @@
 package utils;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,11 +21,11 @@ import static android.content.ContentValues.TAG;
 
 public class Zip {
 
+    private static int count = 0;
     private ZipFile _zipFile;
     private TextView percentText;
     private Activity zipActivity;
-    static int percent;
-    static int finalPercent;
+    private boolean isExpansionSuccessful = false;
 
     public Zip(ZipFile zipFile, Activity _activity) {
         this._zipFile = zipFile;
@@ -39,20 +40,17 @@ public class Zip {
         _zipFile.close();
     }
 
-    public void unzip(String extractPath) throws IOException {
-        File targetDir = new File(extractPath);
-        int zipSize = _zipFile.size();
-        int count = 0;
+    public void unzip(File targetDir, int totalZipSize, boolean isMain, int expansionFileVersion, SharedPreferences sharedPref) throws IOException {
+        int percent;
         ProgressBar progressBar = zipActivity.findViewById(R.id.p);
         percentText = zipActivity.findViewById(R.id.mPercentText);
         String path;
         ZipEntry zipEntry;
         File outputFile;
         File outputDir;
-        File flagFile;
         BufferedInputStream inputStream;
         BufferedOutputStream outputStream;
-        boolean isOBBExtracted = false;
+        SharedPreferences.Editor editor = sharedPref.edit();
 
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IOException("Unable to create directory");
@@ -68,33 +66,29 @@ public class Zip {
         while (zipEntries.hasMoreElements()) {
             ++count;
             // Calculate the percentage of extracted content
-            percent = (count * 100) / zipSize;
+            percent = (count * 100) / totalZipSize;
             Log.d(TAG, "unzip percent: " + percent);
             // Sync the progress bar with percentage value
             progressBar.setProgress(percent);
-            finalPercent = percent;
+            final int finalPercent = percent;
             zipActivity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Show the percentage value on progress bar
-                    percentText.setText(finalPercent + " %");
+                    String finalpercent = finalPercent + " %";
+                    percentText.setText(finalpercent);
                 }
             });
 
             zipEntry = zipEntries.nextElement();
-            path = extractPath + zipEntry.getName();
-            if (zipEntry.isDirectory()) {
-                /*File newDir = new File(path);
-				if(!newDir.mkdirs()){
-					throw new IOException("Unable to extract the zip entry " + path);
-				}*/
-            } else {
+            path = targetDir.getPath() + "/" + zipEntry.getName();
+            if (!zipEntry.isDirectory()) {
                 inputStream = new BufferedInputStream(_zipFile.getInputStream(zipEntry));
 
                 outputFile = new File(path);
                 outputDir = new File(outputFile.getParent());
 
                 if (!outputDir.exists() && !outputDir.mkdirs()) {
-                    throw new IOException("unable to make directory for entry " + path);
+                    throw new IOException("Unable to make directory for entry " + path);
                 }
 
                 if (!outputFile.exists() && !outputFile.createNewFile()) {
@@ -107,19 +101,23 @@ public class Zip {
                     while ((currByte = inputStream.read()) != -1) {
                         outputStream.write(currByte);
                     }
-                    isOBBExtracted = true;
+                    isExpansionSuccessful = true;
                 } catch (Exception e) {
-                    isOBBExtracted = false;
                     e.printStackTrace();
+                    isExpansionSuccessful = false;
                 } finally {
                     outputStream.close();
                     inputStream.close();
                 }
             }
         }
-        if(isOBBExtracted){
-            flagFile = new File(extractPath + ".success.txt");
-            flagFile.createNewFile();
+        if (isExpansionSuccessful) {
+            if (isMain) {
+                editor.putInt("mainFileVersion", expansionFileVersion);
+            } else {
+                editor.putInt("patchFileVersion", expansionFileVersion);
+            }
+            editor.commit();
         }
     }
 }

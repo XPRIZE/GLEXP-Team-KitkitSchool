@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">किटकिट स्कूल</string>
+    <string name="mainFileVersion" translatable="false">mainFileVersion</string>
+    <string name="patchFileVersion" translatable="false">patchFileVersion</string>
 </resources>

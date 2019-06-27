@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,18 +18,41 @@ import android.widget.ImageButton;
 
 import com.maq.kitkitlogger.KitKitLoggerActivity;
 
+import kitkitschool.DownloadExpansionFile;
+
+import static kitkitschool.DownloadExpansionFile.xAPKS;
+
 /**
  * Created by ingtellect on 9/7/17.
  */
 
 public class SelectActivity extends KitKitLoggerActivity {
 
-    private String TAG = "SelectActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPref = getSharedPreferences("ExpansionFile", MODE_PRIVATE);
+        int defaultFileVersion = 0;
+
+        // Retrieve the stored values of main and patch file version
+        int storedMainFileVersion = sharedPref.getInt(getString(R.string.mainFileVersion), defaultFileVersion);
+        int storedPatchFileVersion = sharedPref.getInt(getString(R.string.patchFileVersion), defaultFileVersion);
+        boolean isExtractionRequired = isExpansionExtractionRequired(storedMainFileVersion, storedPatchFileVersion);
+
+        if (storedMainFileVersion == 0 && storedPatchFileVersion == 0) {
+            // Set main and patch file version to 0, if the extractions takes place for the first time
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt(getString(R.string.mainFileVersion), 0);
+            editor.putInt(getString(R.string.patchFileVersion), 0);
+            editor.commit();
+            startSplashScreenActivity();
+        } else if (isExtractionRequired) {
+            // If main or patch file is updated, the extraction process needs to be performed again
+            startSplashScreenActivity();
+        }
+
         super.onCreate(savedInstanceState);
 
+        String TAG = "SelectActivity";
         Log.d(TAG, "onCreate()");
         Util.hideSystemUI(this);
 
@@ -45,6 +69,22 @@ public class SelectActivity extends KitKitLoggerActivity {
 
     }
 
+    private void startSplashScreenActivity() {
+        Intent intent = new Intent(SelectActivity.this, SplashScreenActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private boolean isExpansionExtractionRequired(int storedMainFileVersion, int storedPatchFileVersion) {
+        for (DownloadExpansionFile.XAPKFile xf : xAPKS) {
+            // If main or patch file is updated set isExtractionRequired to true
+            if (xf.mIsMain && xf.mFileVersion != storedMainFileVersion || !xf.mIsMain && xf.mFileVersion != storedPatchFileVersion) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -56,13 +96,13 @@ public class SelectActivity extends KitKitLoggerActivity {
 
     public void onClickBook(View v) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("tab",1);
+        intent.putExtra("tab", 1);
         startActivity(intent);
     }
 
     public void onClickVideo(View v) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("tab",0);
+        intent.putExtra("tab", 0);
         startActivity(intent);
 
     }
@@ -70,29 +110,18 @@ public class SelectActivity extends KitKitLoggerActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-/*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showTutorial = prefs.getBoolean("Show_tutorial", true);
-        if (showTutorial) {
-            showTutorialVideo(null);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("Show_tutorial",false);
-            editor.apply();
-        }
-*/
     }
-
 
     public void showTutorialVideo(View v) {
         VideoDialogFragment fragment = new VideoDialogFragment();
-        fragment.show(getFragmentManager(),"video");
+        fragment.show(getFragmentManager(), "video");
     }
 
 
     static public class VideoDialogFragment extends DialogFragment {
 
         TutorialVideoPopupView popupView;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -116,7 +145,6 @@ public class SelectActivity extends KitKitLoggerActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-//            Dialog dialog = super.onCreateDialog(savedInstanceState);
             final Dialog dialog = new Dialog(getActivity(), R.style.DialogFullScreen);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setCanceledOnTouchOutside(false);
@@ -163,8 +191,6 @@ public class SelectActivity extends KitKitLoggerActivity {
             super.onResume();
         }
 
-
     }
-
 
 }

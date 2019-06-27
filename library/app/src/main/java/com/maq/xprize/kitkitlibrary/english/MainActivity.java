@@ -14,9 +14,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.provider.SyncStateContract.Helpers;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,21 +55,17 @@ import java.util.TreeMap;
 
 public class MainActivity extends KitKitLoggerActivity {
 
+    static boolean useExternalData = false;
+    static String appLanguage;
+    static String pathExternalAsset = "";
+    static String pathExternalRaw = "";
+    private static boolean mbSignLanguageMode = false;
+    private static long mMarkTime;
     LayoutParams params;
     int viewWidth;
     ArrayList<LinearLayout> layouts;
     int mWidth;
-
-    static boolean useExternalData = false;
-    static String appLanguage;
-    private static boolean mbSignLanguageMode = false;
-    static String pathExternalAsset = "";
-    static String pathExternalRaw = "";
-
     private String TAG = "MainActivity";
-
-    private static LibraryApplication application;
-
 
     public static int dpTopx(int dp, Context context) {
         Resources r = context.getResources();
@@ -83,7 +77,113 @@ public class MainActivity extends KitKitLoggerActivity {
         return px;
     }
 
-    public static class VideoData implements Serializable {
+    private static void setMarkTime() {
+        mMarkTime = System.currentTimeMillis();
+    }
+
+    private static void getElapsedTime(String comment) {
+        Log.i("myLog", comment + " : " + (System.currentTimeMillis() - mMarkTime) + "msec");
+        System.currentTimeMillis();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            Util.hideSystemUI(this);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate()");
+        Util.hideSystemUI(this);
+
+        appLanguage = "en-us";
+
+        mbSignLanguageMode = isSignLanguageMode();
+        if (!appLanguage.startsWith("en")) {
+            mbSignLanguageMode = false;
+        }
+
+        Log.i(TAG, "appLanguage : " + appLanguage + ", mbSignLanguageMode : " + mbSignLanguageMode);
+
+        checkExternalData();
+        setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.library_icon_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
+        final CustomViewPager viewPager = findViewById(R.id.pager);
+        final SectionsPagerAdapter adapter = new SectionsPagerAdapter(getFragmentManager());
+        viewPager.setAdapter(adapter);
+        viewPager.setPagingEnabled(false);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Switch to view for this tab
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        mWidth = display.getWidth(); // deprecated
+        viewWidth = mWidth / 3;
+        layouts = new ArrayList<LinearLayout>();
+        params = new LayoutParams(viewWidth, LayoutParams.WRAP_CONTENT);
+
+        viewPager.setCurrentItem(getIntent().getIntExtra("tab", 0));
+
+    }
+
+    private boolean isSignLanguageMode() {
+        boolean result = false;
+        try {
+            Context context = createPackageContext("com.maq.xprize.kitkitlauncher", 0);
+            //this seems working but Context.MODE_MULTI_PROCESS is deprecated since SDK 23. If it has problem, need to change to ContentProvider for sharing data.
+            SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
+            result = pref.getBoolean("sign_language_mode_on", false);
+
+        } catch (Exception e) {
+            Log.e(TAG, "e : " + e);
+        }
+
+        return result;
+    }
+
+    private void checkExternalData() {
+        useExternalData = true;
+        pathExternalAsset = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/assets";
+        pathExternalRaw = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/res/raw";
+        Log.i(TAG, pathExternalAsset + "\n" + pathExternalRaw);
+    }
+
+    static class VideoData implements Serializable {
         String id;
         String category;
         String categoryName;
@@ -193,8 +293,7 @@ public class MainActivity extends KitKitLoggerActivity {
             } catch (FileNotFoundException ex) {
                 Log.e(TAG, "File not found exception");
 
-            } catch (IOException ex) {
-
+            } catch (IOException ignored) {
             }
 
 
@@ -207,53 +306,67 @@ public class MainActivity extends KitKitLoggerActivity {
                 TextView categoryTitle;
                 RecyclerView recyclerView;
 
-                if (mbSignLanguageMode == false) {
-                    if (category.equals("tutorial")) {
-                        categoryTitle = rootView.findViewById(R.id.tutorial_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_0);
-                    } else if (category.equals("music_video")) {
-                        categoryTitle = rootView.findViewById(R.id.musicvideo_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_1);
-                    } else if (category.equals("literacy_video")) {
-                        categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_2);
-                    } else if (category.equals("literacy_video_2")) {
-                        categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView_2);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_2_2);
-                    } else if (category.equals("math_video")) {
-                        categoryTitle = rootView.findViewById(R.id.math_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_3);
-                    } else if (category.equals("math_video_2")) {
-                        categoryTitle = rootView.findViewById(R.id.math_video_title_textView_2);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_3_2);
-                    } else if (category.equals("alphabet_video")) {
-                        categoryTitle = rootView.findViewById(R.id.alphabet_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_4);
+                if (!mbSignLanguageMode) {
+                    switch (category) {
+                        case "tutorial":
+                            categoryTitle = rootView.findViewById(R.id.tutorial_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_0);
+                            break;
+                        case "music_video":
+                            categoryTitle = rootView.findViewById(R.id.musicvideo_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_1);
+                            break;
+                        case "literacy_video":
+                            categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_2);
+                            break;
+                        case "literacy_video_2":
+                            categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView_2);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_2_2);
+                            break;
+                        case "math_video":
+                            categoryTitle = rootView.findViewById(R.id.math_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_3);
+                            break;
+                        case "math_video_2":
+                            categoryTitle = rootView.findViewById(R.id.math_video_title_textView_2);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_3_2);
+                            break;
+                        case "alphabet_video":
+                            categoryTitle = rootView.findViewById(R.id.alphabet_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_4);
 
-                    } else {
-                        continue;
+                            break;
+                        default:
+                            continue;
                     }
 
                 } else {
-                    if (category.equals("parents")) {
-                        categoryTitle = rootView.findViewById(R.id.tutorial_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_0);
-                    } else if (category.equals("story")) {
-                        categoryTitle = rootView.findViewById(R.id.musicvideo_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_1);
-                    } else if (category.equals("tutorial")) {
-                        categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_2);
-                    } else if (category.equals("music_video")) {
-                        categoryTitle = rootView.findViewById(R.id.math_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_3);
+                    switch (category) {
+                        case "parents":
+                            categoryTitle = rootView.findViewById(R.id.tutorial_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_0);
+                            break;
+                        case "story":
+                            categoryTitle = rootView.findViewById(R.id.musicvideo_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_1);
+                            break;
+                        case "tutorial":
+                            categoryTitle = rootView.findViewById(R.id.literacy_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_2);
+                            break;
+                        case "music_video":
+                            categoryTitle = rootView.findViewById(R.id.math_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_3);
 
-                    } else if (category.equals("literacy_video")) {
-                        categoryTitle = rootView.findViewById(R.id.alphabet_video_title_textView);
-                        recyclerView = rootView.findViewById(R.id.recycler_video_4);
+                            break;
+                        case "literacy_video":
+                            categoryTitle = rootView.findViewById(R.id.alphabet_video_title_textView);
+                            recyclerView = rootView.findViewById(R.id.recycler_video_4);
 
-                    } else {
-                        continue;
+                            break;
+                        default:
+                            continue;
                     }
                 }
 
@@ -275,7 +388,6 @@ public class MainActivity extends KitKitLoggerActivity {
         }
     }
 
-
     public static class BookFragment extends Fragment {
         private String TAG = "BookFragment";
 
@@ -289,27 +401,9 @@ public class MainActivity extends KitKitLoggerActivity {
         public Bitmap loadBookThumbnail(BookData bookData) {
             Bitmap thumbnail = null;
             BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inPreferredConfig = Bitmap.Config.RGB_565;
-//            //options.inJustDecodeBounds = true;
-//            options.inSampleSize = 8;
             try {
-
                 String filename = "";
                 filename = bookData.thumbnail;
-
-//                DisplayMetrics metrics = new DisplayMetrics();
-//                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//                int density = metrics.densityDpi;
-//                Log.d("density",new Integer(density).toString());
-
-//                if (density < DisplayMetrics.DENSITY_XHIGH) {
-//                    Log.d("filename",filename);
-
-//                    StringTokenizer tokenizer = new StringTokenizer(bookData.thumbnail,".");
-//                    filename = tokenizer.nextElement().toString() + "_hdpi." + tokenizer.nextElement().toString();
-//
-//                }
-
                 Log.i(TAG, "thumbnail : " + thumbnail);
                 thumbnail = BitmapFactory.decodeStream(getActivity().getAssets().open(filename), null, options);
 
@@ -317,12 +411,10 @@ public class MainActivity extends KitKitLoggerActivity {
                 Log.e(TAG, "IOException in book thumbnail");
                 return null;
             }
-
             int imageHeight = options.outHeight;
             int imageWidth = options.outWidth;
             String imageType = options.outMimeType;
             return thumbnail;
-
         }
 
         @Override
@@ -331,7 +423,6 @@ public class MainActivity extends KitKitLoggerActivity {
             KitKitLogger logger = ((LibraryApplication) getActivity().getApplication()).getLogger();
             logger.tagScreen(TAG);
         }
-
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -349,7 +440,6 @@ public class MainActivity extends KitKitLoggerActivity {
                 } else {
                     is = getActivity().getAssets().open(appLanguage + File.separator + bookDataFilename);
                 }
-
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 try {
@@ -389,10 +479,8 @@ public class MainActivity extends KitKitLoggerActivity {
                     }
                 }
 
-            } catch (FileNotFoundException ex) {
-
-            } catch (IOException ex) {
-
+            } catch (FileNotFoundException ignored) {
+            } catch (IOException ignored) {
             }
 
             View rootView = inflater.inflate(R.layout.fragment_book, container, false);
@@ -404,40 +492,49 @@ public class MainActivity extends KitKitLoggerActivity {
                 TextView categoryTitle;
                 RecyclerView recyclerView;
 
-                if (category.equals("cate_2")) {
-                    categoryTitle = rootView.findViewById(R.id.book1_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_1);
+                switch (category) {
+                    case "cate_2":
+                        categoryTitle = rootView.findViewById(R.id.book1_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_1);
 
-                } else if (category.equals("cate_3")) {
-                    categoryTitle = rootView.findViewById(R.id.book2_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_2);
+                        break;
+                    case "cate_3":
+                        categoryTitle = rootView.findViewById(R.id.book2_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_2);
 
-                } else if (category.equals("cate_4")) {
-                    categoryTitle = rootView.findViewById(R.id.book3_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_3);
+                        break;
+                    case "cate_4":
+                        categoryTitle = rootView.findViewById(R.id.book3_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_3);
 
-                } else if (category.equals("cate_5")) {
-                    categoryTitle = rootView.findViewById(R.id.book4_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_4);
+                        break;
+                    case "cate_5":
+                        categoryTitle = rootView.findViewById(R.id.book4_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_4);
 
-                } else if (category.equals("cate_6")) {
-                    categoryTitle = rootView.findViewById(R.id.book5_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_5);
+                        break;
+                    case "cate_6":
+                        categoryTitle = rootView.findViewById(R.id.book5_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_5);
 
-                } else if (category.equals("cate_7")) {
-                    categoryTitle = rootView.findViewById(R.id.book6_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_6);
+                        break;
+                    case "cate_7":
+                        categoryTitle = rootView.findViewById(R.id.book6_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_6);
 
-                } else if (category.equals("cate_8")) {
-                    categoryTitle = rootView.findViewById(R.id.book7_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_7);
+                        break;
+                    case "cate_8":
+                        categoryTitle = rootView.findViewById(R.id.book7_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_7);
 
-                } else if (category.equals("cate_9")) {
-                    categoryTitle = rootView.findViewById(R.id.book8_title_textView);
-                    recyclerView = rootView.findViewById(R.id.recycler_book_8);
+                        break;
+                    case "cate_9":
+                        categoryTitle = rootView.findViewById(R.id.book8_title_textView);
+                        recyclerView = rootView.findViewById(R.id.recycler_book_8);
 
-                } else {
-                    continue;
+                        break;
+                    default:
+                        continue;
                 }
 
                 categoryTitle.setVisibility(View.VISIBLE);
@@ -458,136 +555,11 @@ public class MainActivity extends KitKitLoggerActivity {
         }
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus) {
-            Util.hideSystemUI(this);
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Log.d(TAG, "onCreate()");
-        Util.hideSystemUI(this);
-
-//        appLanguage = getAppLanguage().toLowerCase();
-        appLanguage = "en-us";
-
-        mbSignLanguageMode = isSignLanguageMode();
-        if (appLanguage.startsWith("en") == false) {
-            mbSignLanguageMode = false;
-        }
-
-        Log.i(TAG, "appLanguage : " + appLanguage + ", mbSignLanguageMode : " + mbSignLanguageMode);
-
-        checkExternalData();
-        setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.library_icon_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-
-
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        final CustomViewPager viewPager = findViewById(R.id.pager);
-        final SectionsPagerAdapter adapter = new SectionsPagerAdapter(getFragmentManager());
-        viewPager.setAdapter(adapter);
-        viewPager.setPagingEnabled(false);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                //int position = tab.getPosition();
-                // Switch to view for this tab
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-
-        Display display = getWindowManager().getDefaultDisplay();
-        mWidth = display.getWidth(); // deprecated
-        viewWidth = mWidth / 3;
-        layouts = new ArrayList<LinearLayout>();
-        params = new LayoutParams(viewWidth, LayoutParams.WRAP_CONTENT);
-
-        viewPager.setCurrentItem(getIntent().getIntExtra("tab", 0));
-
-    }
-
-    private boolean isSignLanguageMode() {
-        boolean result = false;
-        try {
-            Context context = createPackageContext("com.maq.xprize.kitkitlauncher", 0);
-            //this seems working but Context.MODE_MULTI_PROCESS is deprecated since SDK 23. If it has problem, need to change to ContentProvider for sharing data.
-            SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
-            result = pref.getBoolean("sign_language_mode_on", false);
-
-        } catch (Exception e) {
-            Log.e(TAG, "e : " + e);
-        }
-
-        return result;
-    }
-
-    private void checkExternalData() {
-        useExternalData = true;
-        pathExternalAsset = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/assets";
-        pathExternalRaw = "/storage/emulated/0/Android/data/" + getPackageName() + "/files/en-us/res/raw";
-        Log.i(TAG, pathExternalAsset + "\n" + pathExternalRaw);
-    }
-
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 0) {
-                return VideoFragment.newInstance();
-            } else {
-                return BookFragment.newInstance();
-            }
-
-        }
-
-        @Override
-        public int getCount() {
-            // Show 2 total pages.
-            return 2;
-        }
-
-    }
-
     public static class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
         private Activity mActivity;
         private ArrayList<VideoData> mItems;
 
-        public VideoAdapter(Activity activity, ArrayList<VideoData> items) {
+        VideoAdapter(Activity activity, ArrayList<VideoData> items) {
             mActivity = activity;
             mItems = items;
         }
@@ -623,12 +595,11 @@ public class MainActivity extends KitKitLoggerActivity {
                 @Override
                 public void onClick(View v) {
 
-                    if(mItems.get(position).category.equals("tutorial")){
+                    if (mItems.get(position).category.equals("tutorial")) {
                         Uri uri = Uri.parse(mItems.get(position).filename);
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         mActivity.startActivity(intent);
-                    }
-                    else {
+                    } else {
                         Intent intent = new Intent(mActivity, VideoPlayerActivity.class);
                         intent.putExtra("videoArray", mItems);
                         intent.putExtra("libPath", pathExternalRaw);
@@ -655,11 +626,11 @@ public class MainActivity extends KitKitLoggerActivity {
             return mItems.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView mTvTitle;
-            public ImageButton mImageButton;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView mTvTitle;
+            ImageButton mImageButton;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 mTvTitle = view.findViewById(R.id.video_title);
                 mImageButton = view.findViewById(R.id.video_image_button);
@@ -671,7 +642,7 @@ public class MainActivity extends KitKitLoggerActivity {
         private Activity mActivity;
         private ArrayList<BookData> mItems;
 
-        public BookAdapter(Activity activity, ArrayList<BookData> items) {
+        BookAdapter(Activity activity, ArrayList<BookData> items) {
             mActivity = activity;
             mItems = items;
         }
@@ -741,12 +712,12 @@ public class MainActivity extends KitKitLoggerActivity {
             return mItems.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView mTvBookTitle;
-            public TextView mTvBookAuthor;
-            public ImageButton mImageButton;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView mTvBookTitle;
+            TextView mTvBookAuthor;
+            ImageButton mImageButton;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
 
                 mTvBookTitle = view.findViewById(R.id.book_title);
@@ -762,7 +733,7 @@ public class MainActivity extends KitKitLoggerActivity {
         private int mRight;
         private int mBottom;
 
-        public RecyclerViewDecoration(int left, int top, int right, int bottom) {
+        RecyclerViewDecoration(int left, int top, int right, int bottom) {
             mLeft = left;
             mTop = top;
             mRight = right;
@@ -779,15 +750,29 @@ public class MainActivity extends KitKitLoggerActivity {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    private static long mMarkTime;
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static void setMarkTime() {
-        mMarkTime = System.currentTimeMillis();
-    }
+        SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-    private static long getElapsedTime(String comment) {
-        Log.i("myLog", comment + " : " + (System.currentTimeMillis() - mMarkTime) + "msec");
-        return System.currentTimeMillis() - mMarkTime;
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position == 0) {
+                return VideoFragment.newInstance();
+            } else {
+                return BookFragment.newInstance();
+            }
+
+        }
+
+        @Override
+        public int getCount() {
+            // Show 2 total pages.
+            return 2;
+        }
+
     }
 }

@@ -2,18 +2,23 @@ package com.maq.xprize.kitkitlibrary.english;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.google.android.vending.expansion.downloader.Helpers;
 
 import java.io.File;
@@ -23,63 +28,82 @@ import java.util.zip.ZipFile;
 import kitkitschool.DownloadExpansionFile;
 import utils.Zip;
 
+import static kitkitschool.DownloadExpansionFile.xAPKS;
+
 
 public class SplashScreenActivity extends AppCompatActivity {
 
     Intent intent = null;
-    String filePath;
-    File file;
-    ZipFile zipFile;
-    Zip _zip;
-    String unzipFilePath;
+    String expansionFilePath;
+    File expansionFile;
+    ZipFile expansionZipFile;
+    Zip zipHandler;
     File packageNameDir;
+    SharedPreferences sharedPref;
+    int defaultFileVersion = 0;
+    int storedMainFileVersion;
+    int storedPatchFileVersion;
+    boolean isExtractionRequired = false;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                        != PackageManager.PERMISSION_GRANTED) {*/
-        // Permission is not granted
-        /*}*/
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            View decorView = this.getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
+        View decorView = this.getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(uiOptions);
         setContentView(R.layout.activity_splash_screen);
-        new DownloadFile().execute(null, null, null);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            sharedPref = getSharedPreferences("ExpansionFile", MODE_PRIVATE);
+            // Retrieve the stored values of main and patch file version
+            storedMainFileVersion = sharedPref.getInt(getString(R.string.mainFileVersion), defaultFileVersion);
+            storedPatchFileVersion = sharedPref.getInt(getString(R.string.patchFileVersion), defaultFileVersion);
+            isExtractionRequired = isExpansionExtractionRequired(storedMainFileVersion, storedPatchFileVersion);
+            // If main or patch file is updated, the extraction process needs to be performed again
+            if (isExtractionRequired) {
+                new DownloadFile().execute(null, null, null);
+            }
+        }
     }
 
-    /*@Override
+    @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 99: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("Permission granted");
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // If request is cancelled, the result arrays are empty.
+        if (requestCode == 1) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                sharedPref = getSharedPreferences("ExpansionFile", MODE_PRIVATE);
+                // Retrieve the stored values of main and patch file version
+                storedMainFileVersion = sharedPref.getInt(getString(R.string.mainFileVersion), defaultFileVersion);
+                storedPatchFileVersion = sharedPref.getInt(getString(R.string.patchFileVersion), defaultFileVersion);
+                isExtractionRequired = isExpansionExtractionRequired(storedMainFileVersion, storedPatchFileVersion);
+                // If main or patch file is updated, the extraction process needs to be performed again
+                if (isExtractionRequired) {
                     new DownloadFile().execute(null, null, null);
-                } else {
-                    System.out.println("Permission not granted");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    onDestroy();
                 }
+            } else {
+                Toast.makeText(this, "Permission required!", Toast.LENGTH_LONG).show();
+                finish();
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
-    }*/
+    }
+
+    private boolean isExpansionExtractionRequired(int storedMainFileVersion, int storedPatchFileVersion) {
+        for (DownloadExpansionFile.XAPKFile xf : xAPKS) {
+            // If main or patch file is updated set isExtractionRequired to true
+            if (xf.mIsMain && xf.mFileVersion != storedMainFileVersion || !xf.mIsMain && xf.mFileVersion != storedPatchFileVersion) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /* function to call the main application after extraction */
     public void toCallApplication() {
@@ -89,57 +113,83 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     public void unzipFile() {
+        int totalZipSize = getTotalExpansionFileSize();
         try {
-            filePath = getExpansionFilePath();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
-            file = new File(filePath);
-            zipFile = new ZipFile(file);
-            _zip = new Zip(zipFile, this);
-            unzipFilePath = getUnzippedExpansionFilePath();
-            packageNameDir = new File(unzipFilePath);
-            if (packageNameDir.exists()) {
-                deleteRecursive(packageNameDir);
+            for (DownloadExpansionFile.XAPKFile xf : xAPKS) {
+                if (xf.mIsMain && xf.mFileVersion != storedMainFileVersion || !xf.mIsMain && xf.mFileVersion != storedPatchFileVersion) {
+                    expansionFilePath = getExpansionFilePath(xf.mIsMain, xf.mFileVersion);
+                    expansionFile = new File(expansionFilePath);
+                    expansionZipFile = new ZipFile(expansionFile);
+                    zipHandler = new Zip(expansionZipFile, this);
+                    packageNameDir = this.getExternalFilesDir(null);
+                    if (xf.mIsMain && !packageNameDir.exists()) {
+                        packageNameDir.mkdir();
+                    }
+                    zipHandler.unzip(packageNameDir, totalZipSize, xf.mIsMain, xf.mFileVersion, sharedPref);
+                    zipHandler.close();
+                }
             }
-            packageNameDir.mkdir();
-            _zip.unzip(unzipFilePath);
-            _zip.close();
             toCallApplication();
-        } catch (IOException ie) {
-            Log.d("SplashScreenActivity", "Line 118 " + ie.getMessage());
-            unzipFile();
+        } catch (IOException e) {
+            System.out.println("Could not extract assets");
+            System.out.println("Stack trace:" + e);
         }
-        Log.d("SplashScreenActivity", "Line 121");
-        return;
     }
 
-    /*public static boolean isRequiredUnzipExpansionFile(SharedPreferences prefs) {
-        return prefs.getInt(EXPANSION_FILE_VERSION_KEY_NAME, 0) != DownloadExpansionFile.xAPK.mFileVersion;
-    }*/
-
-    void deleteRecursive(File dirPath) {
-        if (dirPath.isDirectory())
-            for (File child : dirPath.listFiles())
-                deleteRecursive(child);
-
-        dirPath.delete();
+    public boolean isStorageSpaceAvailable() {
+        long totalExpansionFileSize = 0;
+        File internalStorageDir = Environment.getDataDirectory();
+        for (DownloadExpansionFile.XAPKFile xf : xAPKS) {
+            if (xf.mIsMain && xf.mFileVersion != storedMainFileVersion || !xf.mIsMain && xf.mFileVersion != storedPatchFileVersion) {
+                totalExpansionFileSize = xf.mFileSize;
+            }
+        }
+        return totalExpansionFileSize < internalStorageDir.getFreeSpace();
     }
 
-    public static String getUnzippedExpansionFilePath() {
-//        return getContext().getExternalFilesDir(null) + File.separator;
-        return "/storage/emulated/0/Android/data/com.maq.xprize.kitkitlibrary.english/files/";
+    public int getTotalExpansionFileSize() {
+        int totalExpansionFileSize = 0;
+        ZipFile zipFile;
+        try {
+            for (DownloadExpansionFile.XAPKFile xf : xAPKS) {
+                if (xf.mIsMain && xf.mFileVersion != storedMainFileVersion || !xf.mIsMain && xf.mFileVersion != storedPatchFileVersion) {
+                    expansionFilePath = getExpansionFilePath(xf.mIsMain, xf.mFileVersion);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
+                    expansionFile = new File(expansionFilePath);
+                    zipFile = new ZipFile(expansionFile);
+                    totalExpansionFileSize += zipFile.size();
+                }
+            }
+        } catch (IOException ie) {
+            System.out.println("Couldn't get total expansion file size");
+            System.out.println("Stacktrace: " + ie);
+        }
+        return totalExpansionFileSize;
     }
 
-    public String getExpansionFilePath() {
-
-        return Environment.getExternalStorageDirectory().toString() + APKExpansionSupport.EXP_PATH + Helpers.getPackageName(this) + File.separator +
-                Helpers.getExpansionAPKFileName(this, DownloadExpansionFile.xAPK.mIsMain, DownloadExpansionFile.xAPK.mFileVersion);
+    public String getExpansionFilePath(boolean isMain, int fileVersion) {
+        return getObbDir() + File.separator + Helpers.getExpansionAPKFileName(this, isMain, fileVersion);
     }
 
     private class DownloadFile extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... sUrl) {
-            Log.d("SplashScreenActivity", "Line 143");
-            unzipFile();
+            if (isStorageSpaceAvailable()) {
+                unzipFile();
+            } else {
+                SplashScreenActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(SplashScreenActivity.this, "Insufficient storage space! Please free up your storage to use this application.", Toast.LENGTH_LONG).show();
+                        // Call finish after the toast message disappears
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                SplashScreenActivity.this.finish();
+                            }
+                        }, Toast.LENGTH_LONG);
+                    }
+                });
+            }
             return null;
         }
     }

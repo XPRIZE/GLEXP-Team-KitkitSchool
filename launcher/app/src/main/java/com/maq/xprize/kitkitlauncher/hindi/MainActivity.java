@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -63,24 +64,14 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
     public static final String UPLOAD_TIME_RECORD_FILE = "upload_time.txt";
     public static final String PATH_IMAGE_LOG_WRITING_BOARD = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "writingboard" + File.separator + "log_image" + File.separator;
     public static final String PATH_IMAGE_LOG_SEA_WORLD = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "sea_world" + File.separator + "images" + File.separator;
-    private static final long logCooldownTimeInMillis = 5 * 60 * 1000; // 5 minutes
-    private static final long timeUpdateRetryTimeInMillis = 1 * 60 * 1000; // 1 minute
-    private static final long timeUpdateCooldownTimeInMillis = 60 * 60 * 1000; // 60 minutes
     public static String TAG = "MainActivity";
     public static String PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=";
-    private static Thread ftpConnector = null;
     private static Thread logUploader = null;
     private static Thread imageUploader = null;
-    private static PackageManager manager;
-    private final int MSG_SUCCESS = 2;
     private final int MSG_UPLOAD_IMAGE = 100;
-    private final int MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD = 101;
-    private final int MSG_UPLOAD_LOG_IMAGE_SEA_WORLD = 102;
     Rect mTempRect = new Rect();
     BroadcastReceiver receiver;
     private FtpClient ftpclient = null;
-    private long lastLogSentTimeInMillis = 0;
-    private long nextTimeUpdateInMillis = 0;
     private Context cntx = null;
     private Button mTitle;
     private TextView mTvUserName;
@@ -90,7 +81,6 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
 
         }
     };
-    private List<AppDetail> apps;
     private View.OnTouchListener mBlockViewTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -110,13 +100,13 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
 
         public void handleMessage(android.os.Message msg) {
 
+            int MSG_SUCCESS = 2;
+            int MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD = 101;
+            int MSG_UPLOAD_LOG_IMAGE_SEA_WORLD = 102;
             if (msg.what == 0) {
-// try upload
+                // try upload
                 uploadLogs();
-            } else if (msg.what == 1) {
             } else if (msg.what == MSG_SUCCESS) {
-//Toast.makeText(MainActivity.this, "Uploaded Successfully!",
-//        Toast.LENGTH_LONG).show();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -124,24 +114,13 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                         Log.i(TAG, "ftp disconnect : " + result);
                     }
                 }).start();
-
-            } else if (msg.what == 3) {
-//Toast.makeText(MainActivity.this, "Disconnected Successfully!",
-//        Toast.LENGTH_LONG).show();
             } else if (msg.what == MSG_UPLOAD_IMAGE) {
                 uploadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath(), "drawing", 20, MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD);
-
             } else if (msg.what == MSG_UPLOAD_LOG_IMAGE_WRITING_BOARD) {
                 uploadImages(PATH_IMAGE_LOG_WRITING_BOARD, "writingboard", 0, MSG_UPLOAD_LOG_IMAGE_SEA_WORLD);
-
             } else if (msg.what == MSG_UPLOAD_LOG_IMAGE_SEA_WORLD) {
                 uploadImages(PATH_IMAGE_LOG_SEA_WORLD, "seaworld", 100, MSG_SUCCESS);
-
-            } else {
-//Toast.makeText(MainActivity.this, "Unable to Perform Action! : " + msg.what,
-//        Toast.LENGTH_LONG).show();
             }
-
         }
 
     };
@@ -153,9 +132,6 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
             bundle.putSerializable("userobject", "ABOUT");
             dialog.setArguments(bundle);
             dialog.show(getFragmentManager(), "PasswordDialogFragment");
-
-// for test
-//            Util.copyDBFileToSDCard(MainActivity.this);
         }
     };
     private Runnable mRunnableUserName = new Runnable() {
@@ -207,7 +183,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         File[] result = folder.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isDirectory() == false) {
+                if (!pathname.isDirectory()) {
                     return false;
                 }
 
@@ -227,7 +203,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         File[] files = folder.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isDirectory() == true) {
+                if (pathname.isDirectory()) {
                     return false;
                 }
 
@@ -264,7 +240,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
 
         try {
             File folder = new File(destFolderPath);
-            if (folder.exists() == false) {
+            if (!folder.exists()) {
                 folder.mkdirs();
             }
 
@@ -309,7 +285,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
             return false;
         }
         File parent = new File(file.getParent());
-        if (parent.exists() == false) {
+        if (!parent.exists()) {
             parent.mkdirs();
         }
 
@@ -331,8 +307,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
 
     public static String getCurrentDisplayTime() {
         SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String result = dayTime.format(new Date(System.currentTimeMillis()));
-        return result;
+        return dayTime.format(new Date(System.currentTimeMillis()));
     }
 
     public static void deleteImageZipFiles() {
@@ -343,7 +318,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         File[] files = new File(imagePath + File.separator + TEMP_ZIP_FOLDER_NAME).listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
-                if (file.exists() == true) {
+                if (file.exists()) {
                     file.delete();
                 }
             }
@@ -358,74 +333,45 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         cntx = getBaseContext();
         Util.setScale(this, findViewById(R.id.main_content));
 
-        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-
-            if (!Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Please give my app this permission!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
-            } else {
-                *//*Util.disableStatusBar(this);*//*
-            }
-        } else {
-            *//*Util.disableStatusBar(this);*//*
-        }*/
-
         loadApps();
 
-        String mainAppPackageName = "com.maq.xprize.kitkitschool.hindi";
-        final File mainAppFlagFile = new File("/storage/emulated/0/Android/data/" + mainAppPackageName + "/files/.success.txt");
+        final String mainAppPackageName = "com.maq.xprize.kitkitschool.hindi";
         ImageButton todoSchoolButton = findViewById(R.id.button_todoschool);
 
         todoSchoolButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (gotoVideoPlayer() == false) {
-                    try {
-                        Intent i = new Intent(Intent.ACTION_MAIN);
-                        SharedPreferences prefs = getSharedPreferences("किटकिट स्कूल - Kitkit School", Context.MODE_PRIVATE);
-                        if (!mainAppFlagFile.exists()) {
-                            i.setComponent(new ComponentName("com.maq.xprize.kitkitschool.hindi", "org.cocos2dx.cpp.SplashScreenActivity"));
-                            startActivity(i);
-                        } else {
-                            i.setComponent(new ComponentName("com.maq.xprize.kitkitschool.hindi", "org.cocos2dx.cpp.AppActivity"));
-                            startActivity(i);
-                        }
-                    } catch (Exception e) {
-                        Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                        i.putExtra("video", "main_app_demo_video");
-                        startActivity(i);
-                        Toast.makeText(MainActivity.this, "Click the install button to download this learning module", Toast.LENGTH_LONG).show();
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    }
+                try {
+                    Intent i = new Intent(Intent.ACTION_MAIN);
+                    i.setComponent(new ComponentName(mainAppPackageName, "org.cocos2dx.cpp.AppActivity"));
+                    startActivity(i);
+                } catch (Exception e) {
+                    Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                    i.putExtra("video", "main_app_demo_video");
+                    startActivity(i);
+                    Toast.makeText(MainActivity.this, "Click the install button to download this learning module", Toast.LENGTH_LONG).show();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }
         });
 
-        String libraryAppPackageName = "com.maq.xprize.kitkitlibrary.english";
-        final File libraryAppFlagFile = new File("/storage/emulated/0/Android/data/" + libraryAppPackageName + "/files/.success.txt");
+        final String libraryAppPackageName = "com.maq.xprize.kitkitlibrary.english";
         ImageButton libraryButton = findViewById(R.id.button_library);
+
         libraryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (gotoVideoPlayer() == false) {
-                    if (view.isEnabled()) {
-//                    Intent i = manager.getLaunchIntentForPackage("com.maq.xprize.kitkitlibrary.english");
-                        try {
-                            Intent i = new Intent(Intent.ACTION_MAIN);
-                            if (!libraryAppFlagFile.exists()) {
-                                i.setComponent(new ComponentName("com.maq.xprize.kitkitlibrary.english", "com.maq.xprize.kitkitlibrary.english.SplashScreenActivity"));
-                            } else {
-                                i.setComponent(new ComponentName("com.maq.xprize.kitkitlibrary.english", "com.maq.xprize.kitkitlibrary.english.SelectActivity"));
-                            }
-                            startActivity(i);
-                        } catch (Exception e) {
-                            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                            i.putExtra("video", "library_app_demo");
-                            startActivity(i);
-                            Toast.makeText(MainActivity.this, "Click the install button to download this Library app", Toast.LENGTH_LONG).show();
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
+                if (view.isEnabled()) {
+                    try {
+                        Intent i = new Intent(Intent.ACTION_MAIN);
+                        i.setComponent(new ComponentName(libraryAppPackageName, "com.maq.xprize.kitkitlibrary.english.SelectActivity"));
+                        startActivity(i);
+                    } catch (Exception e) {
+                        Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                        i.putExtra("video", "library_app_demo");
+                        startActivity(i);
+                        Toast.makeText(MainActivity.this, "Click the install button to download this Library app", Toast.LENGTH_LONG).show();
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 }
             }
@@ -435,11 +381,9 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         toolsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (gotoVideoPlayer() == false) {
-                    if (view.isEnabled()) {
-                        Intent i = new Intent(MainActivity.this, ToolsActivity.class);
-                        startActivity(i);
-                    }
+                if (view.isEnabled()) {
+                    Intent i = new Intent(MainActivity.this, ToolsActivity.class);
+                    startActivity(i);
                 }
             }
         });
@@ -460,9 +404,6 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         displayCurrentUser();
 
         ftpclient = new FtpClient();
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//        registerReceiver(_batteryinfo, ifilter);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -567,14 +508,14 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         }
 
         TextView textViewCoinNum = findViewById(R.id.textView_numCoin);
-        textViewCoinNum.setText(String.format("%d", currentUser.getNumStars()));
+        textViewCoinNum.setText(String.format(Locale.US, "%d", currentUser.getNumStars()));
 
         displayCurrentUser();
     }
 
     private void loadApps() {
-        manager = getPackageManager();
-        apps = new ArrayList<AppDetail>();
+        PackageManager manager = getPackageManager();
+        List<AppDetail> apps = new ArrayList<AppDetail>();
 
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -595,24 +536,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         return false;
     }
 
-    private void connectToSNTPServer(final String server, final boolean updateCooldown) {
-        KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
-
-        new SntpUpdater(logger) {
-            protected void onPostExecute(Boolean result) {
-                if (!result) {
-                    return;
-                }
-                if (updateCooldown) {
-                    nextTimeUpdateInMillis = System.currentTimeMillis() + timeUpdateCooldownTimeInMillis;
-                }
-                logger.putSntpResult(server, this.now, this.snow);
-            }
-        }.execute(server);
-    }
-
     private void uploadLogs() {
-// NB(xenosoz, 2018): Duplication alert! I saw the code below in both MainActivity and SettingActivity. [1/2]
 
         if (logUploader != null) return;
 
@@ -624,7 +548,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                     String documentsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
                     String logPath = documentsPath + "/logs";
 
-// 2017.12.20 yongsoo : It does not matter if it fails
+                    // 2017.12.20 yongsoo : It does not matter if it fails
                     ftpclient.ftpChangeDirectory("sda1/");
 
                     File[] logs = new File(logPath).listFiles((FileFilter) new WildcardFileFilter(Arrays.asList("*.txt", "*.zip")));
@@ -633,10 +557,10 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                         status = ftpclient.ftpUpload(
                                 log.getPath(),
                                 log.getName(), "remote/", cntx);
-                        if (status == true) {
+                        if (status) {
                             try {
                                 status = ftpclient.mFTPClient.changeToParentDirectory();
-                                if (status == false) {
+                                if (!status) {
                                     break;
                                 }
                             } catch (Exception e) {
@@ -649,9 +573,8 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                         }
                     }
 
-                    if (status == true) {
+                    if (status) {
                         Log.d(TAG, "Upload success");
-                        lastLogSentTimeInMillis = System.currentTimeMillis();
                         handler.sendEmptyMessage(MSG_UPLOAD_IMAGE);
                     } else {
                         Log.d(TAG, "Upload failed");
@@ -676,9 +599,9 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                     String tempZipFolder = imagePath + File.separator + TEMP_ZIP_FOLDER_NAME;
                     File uploadTimeFile = null;
 
-                    if (writeFile(getCurrentDisplayTime(), tempZipFolder + File.separator + UPLOAD_TIME_RECORD_FILE) == true) {
+                    if (writeFile(getCurrentDisplayTime(), tempZipFolder + File.separator + UPLOAD_TIME_RECORD_FILE)) {
                         uploadTimeFile = new File(tempZipFolder + File.separator + UPLOAD_TIME_RECORD_FILE);
-                        if (uploadTimeFile.exists() == false) {
+                        if (!uploadTimeFile.exists()) {
                             uploadTimeFile = null;
                         }
                     }
@@ -693,9 +616,9 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                                 }
 
                                 String zipFileName = Build.SERIAL + "_" + userFolder.getName() + "_" + type + ".zip";
-                                if (compressZip(tempZipFolder, zipFileName, images) == true) {
+                                if (compressZip(tempZipFolder, zipFileName, images)) {
                                     status = uploadFtpImageFile(new File(tempZipFolder + File.separator + zipFileName));
-                                    if (status == false) {
+                                    if (!status) {
                                         break;
                                     }
                                 }
@@ -703,7 +626,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                         }
                     }
 
-                    if (status == true) {
+                    if (status) {
                         Log.d(TAG, "uploadImages (" + type + ") - Upload success");
                         imageUploader = null;
                         handler.sendEmptyMessage(nextMsgSuccess);
@@ -725,7 +648,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
                 file.getPath(),
                 file.getName(), "remote/", cntx);
 
-        if (result == true) {
+        if (result) {
             try {
                 result = ftpclient.mFTPClient.changeToParentDirectory();
             } catch (Exception e) {
@@ -738,22 +661,6 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
 
     private void displayCurrentUser() {
         Util.displayUserName(this, mTvUserName);
-    }
-
-    private boolean gotoVideoPlayer() {
-//        User user = ((LauncherApplication)getApplication()).getDbHandler().getCurrentUser();
-//
-//        if (user.isFinishLauncherTutorial() == false) {
-//            user.setFinishLauncherTutorial(true);
-//            ((LauncherApplication)getApplication()).getDbHandler().updateUser(user);
-//
-//            Intent i = new Intent(MainActivity.this, VideoPlayerActivity.class);
-//            startActivity(i);
-//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//            return true;
-//        }
-
-        return false;
     }
 
     private void setDefaultPreference() {
