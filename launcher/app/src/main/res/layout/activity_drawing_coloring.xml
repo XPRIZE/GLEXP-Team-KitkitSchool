@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/drawingpad_background"
+    tools:context="com.maq.xprize.drawingcoloring.activity.DrawingColoringActivity">
+
+    <ImageView
+        android:id="@+id/v_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
+        android:background="@drawable/selector_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/v_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="322px"
+        android:layout_marginTop="32px"
+        android:src="@drawable/selector_drawing_bg_select"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/v_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="78px"
+        android:layout_marginTop="12px"
+        android:src="@drawable/selector_save"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.maq.xprize.drawingcoloring.view.base.LockableScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="319px"
+        android:layout_height="0px"
+        android:layout_marginBottom="0px"
+        android:layout_marginLeft="0px"
+        android:layout_marginTop="242px"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/layout_pen_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layout_pen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_select_pen_effect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </FrameLayout>
+    </com.maq.xprize.drawingcoloring.view.base.LockableScrollView>
+
+    <FrameLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:layout_marginBottom="40px"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="120px"
+        android:layout_marginTop="254px"
+        android:background="@drawable/drawingpad_paper_white_"
+        android:paddingBottom="12px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/scrollView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <FrameLayout
+            android:id="@+id/layout_drawing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.maq.xprize.drawingcoloring.view.ViewDrawingColoring
+                android:id="@+id/v_drawing_coloring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/iv_coloring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_save_effect"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:layout_marginBottom="40px"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="120px"
+        android:layout_marginTop="264px"
+        android:paddingBottom="12px"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/scrollView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+</android.support.constraint.ConstraintLayout>

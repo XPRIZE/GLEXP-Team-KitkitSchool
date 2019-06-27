@@ -1,14 +1,12 @@
 package com.maq.xprize.kitkitlauncher.hindi;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +21,7 @@ import com.maq.kitkitProvider.KitkitDBHandler;
 import com.maq.kitkitProvider.User;
 import com.maq.kitkitlogger.KitKitLogger;
 import com.maq.kitkitlogger.KitKitLoggerActivity;
+import com.maq.xprize.drum.activity.DrumActivity;
 
 /**
  * Created by ingtellect on 1/3/17.
@@ -96,18 +95,16 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
                     packageName = "com.maq.xprize.drum";
-
                     try {
-                        //Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.drum");
-                        Intent i = new Intent(Intent.ACTION_MAIN);
-                        i.setComponent(new ComponentName("com.maq.xprize.drum", "com.maq.xprize.drum.activity.MainActivity"));
-                        startActivity(i);
+//                    Calling Drum's main activity
+                        Intent intent = new Intent(ToolsActivity.this, DrumActivity.class);
+                        startActivity(intent);
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drum", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Drum: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Drum Intent Error:" + e);
+                        e.printStackTrace();
                     }
-
                 } else {
                     unlock(tv);
                 }
@@ -129,18 +126,16 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.marimba";
                     try {
-                        //Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.marimba");
-                        Intent i = new Intent(Intent.ACTION_MAIN);
-                        i.setComponent(new ComponentName("com.maq.xprize.marimba", "com.maq.xprize.marimba.activity.MainActivity"));
-                        startActivity(i);
+//                    Calling Marimba's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.marimba.activity.MainActivity.class);
+                        startActivity(intent);
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_marimba", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Marimba: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Marimba Intent Error:" + e);
+                        e.printStackTrace();
                     }
-
                 } else {
                     unlock(tv);
                 }
@@ -161,17 +156,15 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.blackboard";
                     try {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.setComponent(new ComponentName("com.maq.xprize.blackboard", "com.maq.xprize.blackboard.activity.MainActivity"));
+//                    Calling Black Board's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.blackboard.activity.MainActivity.class);
                         startActivity(intent);
-                        //Intent i = getPackageManager().getLaunchIntentForPackage("com.enuma.blackboard");
-                        //startActivity(i);
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_blackboard", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Blackboard: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Black Board Intent Error:" + e);
+                        e.printStackTrace();
                     }
                 } else {
                     unlock(tv);
@@ -193,17 +186,15 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.drawingcoloring";
                     try {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.putExtra("LANGUAGE", getAppLanguage());
-                        intent.setClassName("com.maq.xprize.drawingcoloring", "com.maq.xprize.drawingcoloring.activity.DrawingActivity");
+//                    Calling Drawing's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.drawingcoloring.activity.DrawingActivity.class);
                         startActivity(intent);
-
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_drawing", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Drawing: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Drawing Intent Error:" + e);
+                        e.printStackTrace();
                     }
                 } else {
                     unlock(tv);
@@ -226,17 +217,15 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.drawingcoloring";
                     try {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.putExtra("LANGUAGE", getAppLanguage());
-                        intent.setClassName("com.maq.xprize.drawingcoloring", "com.maq.xprize.drawingcoloring.activity.ColoringActivity");
+//                    Calling Coloring's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.drawingcoloring.activity.ColoringActivity.class);
                         startActivity(intent);
-
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_coloring", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Drawing: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Coloring Intent Error:" + e);
+                        e.printStackTrace();
                     }
                 } else {
                     unlock(tv);
@@ -254,15 +243,15 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.xprize_gallery";
                     try {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.setComponent(new ComponentName("com.maq.xprize.xprize_gallery", "com.maq.xprize.xprize_gallery.activity.MainActivity"));
+//                  Calling Gallery's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.kitkitlauncher.hindi.activity.GalleryActivity.class);
                         startActivity(intent);
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_album", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Gallery: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Gallery Intent Error:" + e);
+                        e.printStackTrace();
                     }
                 } else {
                     unlock(tv);
@@ -288,7 +277,8 @@ public class ToolsActivity extends KitKitLoggerActivity {
                         KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
                         logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
                     } catch (Exception e) {
-                        redirectPopup(packageName, "Sea World: किटकिट स्कूल - Kitkit School module");
+                        Log.e("ToolsActivity", "Sea World Intent Error:" + e);
+                        e.printStackTrace();
                     }
 
                 }
@@ -305,20 +295,16 @@ public class ToolsActivity extends KitKitLoggerActivity {
                 }
                 ToolsAppView tv = (ToolsAppView) v;
                 if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.writingboard";
-                    if (gotoVideoPlayerForWritingBoard() == false) {
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.setComponent(new ComponentName("com.maq.xprize.writingboard", "com.maq.xprize.writingboard.activity.MainActivity"));
-                            intent.putExtra("LANGUAGE", getAppLanguage());
-                            startActivity(intent);
-                            KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
-                            logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
-                        } catch (Exception e) {
-                            redirectPopup(packageName, "Writing Board: किटकिट स्कूल - Kitkit School module");
-                        }
+                    try {
+//                    Calling Writing Board's main activity
+                        Intent intent = new Intent(ToolsActivity.this, com.maq.xprize.writingboard.activity.MainActivity.class);
+                        startActivity(intent);
+                        KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
+                        logger.logEvent("ToolsActivity", "start_writing_board", "", 0);
+                    } catch (Exception e) {
+                        Log.e("ToolsActivity", "Writing Board Intent Error:" + e);
+                        e.printStackTrace();
                     }
-
                 } else {
                     unlock(tv);
                 }
@@ -329,28 +315,6 @@ public class ToolsActivity extends KitKitLoggerActivity {
         Typeface f = Typeface.createFromAsset(getAssets(), "TodoMainCurly.ttf");
         textViewCoinNum.setTypeface(f);
 
-    }
-
-    private void redirectPopup(final String packageName, final String appTitle) {
-
-        new AlertDialog.Builder(this)
-                .setTitle("Download " + appTitle)
-                .setMessage(getString(R.string.dialog_message))
-                .setPositiveButton("Continue",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PLAYSTORE_URL + packageName)));
-                            }
-                        })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create()
-                .show();
     }
 
     @Override
@@ -397,29 +361,7 @@ public class ToolsActivity extends KitKitLoggerActivity {
         textViewNumCoin.setText(String.format("%d", currentUser.getNumStars()));
 
         ToolsAppView drawing = findViewById(R.id.app_drawing);
-//        if (currentUser.isUnlockDrawing()) {
-//            drawing.setUnlocked(true);
-//            drawing.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 300) {
-//                drawing.setEnable(true);
-//            } else {
-//                drawing.setEnable(false);
-//            }
-//        }
-
         ToolsAppView coloring = findViewById(R.id.app_coloring);
-//        if (currentUser.isUnlockColoring()) {
-//            coloring.setUnlocked(true);
-//            coloring.setEnable(true);
-//        } else {
-//            if (currentUser.getNumStars() >= 500) {
-//                coloring.setEnable(true);
-//            } else {
-//                coloring.setEnable(false);
-//            }
-//        }
-
         ToolsAppView album = findViewById(R.id.app_album);
         if (drawing.isUnlocked() || coloring.isUnlocked()) {
             album.setUnlocked(true);

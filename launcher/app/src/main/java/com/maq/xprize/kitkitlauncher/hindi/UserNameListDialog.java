@@ -63,8 +63,6 @@ public class UserNameListDialog extends Dialog {
         });
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-
     public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
         @Override

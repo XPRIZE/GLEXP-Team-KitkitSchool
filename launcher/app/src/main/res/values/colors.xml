@@ -7,4 +7,37 @@
     <color name="colorCreditText">#f7f7f7</color>
     <color name="coinNumberText">#FDDB68</color>
     <color name="coinNumberTextDisabled">#D9D9D9</color>
+    <color name="pressed_effect">#33000000</color>
+
+    <color name="color_0">#ffffff</color>
+    <color name="color_1">#373737</color>
+    <color name="color_2">#727272</color>
+
+    <color name="color_3">#883e0f</color>
+    <color name="color_4">#e11b2a</color>
+    <color name="color_5">#fb8517</color>
+
+    <color name="color_6">#f9b025</color>
+    <color name="color_7">#ffdc14</color>
+    <color name="color_8">#a2ec11</color>
+
+    <color name="color_9">#498514</color>
+    <color name="color_10">#22da82</color>
+    <color name="color_11">#27cff3</color>
+
+    <color name="color_12">#369ce6</color>
+    <color name="color_13">#1c57d7</color>
+    <color name="color_14">#5b1ace</color>
+
+    <color name="color_15">#951bd8</color>
+    <color name="color_16">#d71db8</color>
+    <color name="color_17">#f397d6</color>
+
+    <color name="bg_color_0">#ffffff</color>
+    <color name="bg_color_1">#a3ec11</color>
+    <color name="bg_color_2">#e21b2b</color>
+    <color name="bg_color_3">#369ce6</color>
+    <color name="bg_color_4">#ffdc14</color>
+    <color name="bg_color_5">#373737</color>
+
 </resources>

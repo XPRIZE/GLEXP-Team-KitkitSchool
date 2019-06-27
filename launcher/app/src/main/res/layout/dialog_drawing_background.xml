@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="2500px"
+    android:layout_height="1500px"
+    tools:layout_editor_absoluteX="0px"
+    tools:layout_editor_absoluteY="0px">
+
+    <ImageView
+        android:id="@+id/iv_background"
+        android:layout_width="2336px"
+        android:layout_height="1304px"
+        android:src="@drawable/drawingpad_popup_window"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16px"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="16px"
+        android:layout_marginTop="16px"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_background"
+        app:layout_constraintRight_toRightOf="@+id/iv_background"
+        app:layout_constraintTop_toTopOf="@+id/iv_background">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:gravity="center"
+                    android:text="@string/white"
+                    android:textColor="#592f00"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_green"
+                    android:gravity="center"
+                    android:text="@string/green"
+                    android:textColor="#592f00"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_red"
+                    android:gravity="center"
+                    android:text="@string/red"
+                    android:textColor="#592f00"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60px"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_blue"
+                    android:gravity="center"
+                    android:text="@string/blue"
+                    android:textColor="#592f00"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_yellow"
+                    android:gravity="center"
+                    android:text="@string/yellow"
+                    android:textColor="#592f00"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <com.maq.xprize.drawingcoloring.view.base.TodoSchoolV3TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_black"
+                    android:gravity="center"
+                    android:text="@string/black"
+                    android:textColor="@android:color/white"
+                    android:textSize="80px" />
+
+                <View
+                    android:id="@+id/v_bg_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/v_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/selector_popup_close"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+        android:layout_marginBottom="1168px"
+        android:layout_marginLeft="2210px"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_background" />
+
+</android.support.constraint.ConstraintLayout>

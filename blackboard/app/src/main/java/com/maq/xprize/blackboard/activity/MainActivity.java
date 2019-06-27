@@ -5,7 +5,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Point size = Util.getWindowSize(this);
         if (size.x <= 1280) {
-            setContentView(R.layout.activity_main_s);
+            setContentView(R.layout.activity_main_s_blackboard);
 
         } else {
-            setContentView(R.layout.activity_main);
+            setContentView(R.layout.activity_main_blackboard);
         }
 
         setImmersiveMode();

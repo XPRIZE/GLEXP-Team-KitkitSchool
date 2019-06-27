@@ -122,16 +122,7 @@ public class SntpClient {
             // TODO: validate originateTime == requestTime.
             checkValidServerReply(leap, mode, stratum, transmitTime);
             long roundTripTime = responseTicks - requestTicks - (transmitTime - receiveTime);
-            // receiveTime = originateTime + transit + skew
-            // responseTime = transmitTime + transit - skew
-            // clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime))/2
-            //             = ((originateTime + transit + skew - originateTime) +
-            //                (transmitTime - (transmitTime + transit - skew)))/2
-            //             = ((transit + skew) + (transmitTime - transmitTime - transit + skew))/2
-            //             = (transit + skew - transit + skew)/2
-            //             = (2 * skew)/2 = skew
             long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime))/2;
-            //EventLogTags.writeNtpSuccess(address.toString(), roundTripTime, clockOffset);
             if (DBG) {
                 Log.d(TAG, "round trip: " + roundTripTime + "ms, " +
                         "clock offset: " + clockOffset + "ms");
@@ -142,14 +133,12 @@ public class SntpClient {
             mNtpTimeReference = responseTicks;
             mRoundTripTime = roundTripTime;
         } catch (Exception e) {
-            //EventLogTags.writeNtpFailure(address.toString(), e.toString());
             if (DBG) Log.d(TAG, "request time failed: " + e);
             return false;
         } finally {
             if (socket != null) {
                 socket.close();
             }
-            //TrafficStats.setThreadStatsTag(oldTag);
         }
         return true;
     }

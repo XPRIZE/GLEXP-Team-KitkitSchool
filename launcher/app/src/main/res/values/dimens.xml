@@ -9,4 +9,8 @@
     <dimen name="start_margin">11dp</dimen>
     <dimen name="setting_height">200px</dimen>
     <dimen name="setting_edit_height">135px</dimen>
+    <dimen name="pen_normal_margin_top">12px</dimen>
+    <dimen name="pen_normal_margin_left">-108px</dimen>
+    <dimen name="pen_normal_margin_top_s">6px</dimen>
+    <dimen name="pen_normal_margin_left_s">-54px</dimen>
 </resources>

@@ -27,31 +27,6 @@ public class LauncherApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        SharedPreferences preferences = getSharedPreferences("sharedpreference", Context.CONTEXT_IGNORE_SECURITY);
-//
-//        String installId = preferences.getString("installId","");
-//        if (installId.isEmpty()) {
-//            installId = getRandomUUID();
-//            SharedPreferences.Editor editor = preferences.edit();
-//            editor.putString("installId", installId);
-//            editor.commit();
-//        }
-
-
-//        SharedPreferences preferences = getSharedPreferences("sharedPref",Context.MODE_PRIVATE);
-//
-//        int versionCode = BuildConfig.VERSION_CODE;
-//        int lastVersion = preferences.getInt("launcherVersion", 0);
-//        String sharedLang = preferences.getString("appLanguage", "");
-//
-//        if ((lastVersion < versionCode) || (sharedLang.isEmpty())) {
-//            String lang = getString(R.string.defaultLanguage);
-//            SharedPreferences.Editor editor = preferences.edit();
-//            editor.putString("appLanguage",lang);
-//            editor.putInt("launcherVersion", versionCode);
-//            editor.apply();
-//        }
-
         SharedPreferences preferences = getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
         String lang = getString(R.string.defaultLanguage);
         SharedPreferences.Editor editor = preferences.edit();
