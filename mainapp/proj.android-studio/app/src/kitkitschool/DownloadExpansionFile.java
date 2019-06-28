@@ -47,8 +47,8 @@ public class DownloadExpansionFile extends Activity implements IDownloaderClient
     public static final XAPKFile[] xAPKS = {
             new XAPKFile(
                     true, // true signifies a main file
-                    15, // the version of the APK that the file was uploaded
-                    1392492954L // the length of the file in bytes
+                    16, // the version of the APK that the file was uploaded
+                    1392449762L // the length of the file in bytes
             )
     };
     private static final String LOG_TAG = "LVLDownloader";
