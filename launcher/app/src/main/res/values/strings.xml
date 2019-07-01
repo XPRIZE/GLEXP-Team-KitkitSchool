@@ -70,4 +70,6 @@
     <string name="red">Red</string>
     <string name="black">Black</string>
 
+    <string name="defaultLanguage">en-US</string>
+
 </resources>

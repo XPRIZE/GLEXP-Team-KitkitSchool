@@ -41,8 +41,8 @@ public class User {
         this._openLibrary = DEFAULT_OPEN_LIBRARY;
         this._openTools = DEFAULT_OPEN_TOOLS;
         this._unlockFishBowl = false;
-        this._unlockWritingBoard = false;
-        this._finishWritingBoardTutorial = false;
+        this._unlockWritingBoard = true;
+        this._finishWritingBoardTutorial = true;
     }
 
     public User(int id, String username, int stars) {
@@ -60,8 +60,8 @@ public class User {
         this._openLibrary = DEFAULT_OPEN_LIBRARY;
         this._openTools = DEFAULT_OPEN_TOOLS;
         this._unlockFishBowl = false;
-        this._unlockWritingBoard = false;
-        this._finishWritingBoardTutorial = false;
+        this._unlockWritingBoard = true;
+        this._finishWritingBoardTutorial = true;
     }
 
     public User(String productname, int stars) {
@@ -78,97 +78,136 @@ public class User {
         this._openLibrary = DEFAULT_OPEN_LIBRARY;
         this._openTools = DEFAULT_OPEN_TOOLS;
         this._unlockFishBowl = false;
-        this._unlockWritingBoard = false;
-        this._finishWritingBoardTutorial = false;
-    }
-
-    public void setID(int id) {
-        this._id = id;
+        this._unlockWritingBoard = true;
+        this._finishWritingBoardTutorial = true;
     }
 
     public int getID() {
         return this._id;
     }
 
-    public void setUserName(String username) {
-        this._username = username;
+    public void setID(int id) {
+        this._id = id;
     }
 
     public String getUserName() {
         return this._username;
     }
 
-    public void setNumStars(int stars) {
-        this._numStars = stars;
+    public void setUserName(String username) {
+        this._username = username;
     }
 
     public int getNumStars() {
         return this._numStars;
     }
 
-    public void setFinishTutorial(boolean unlock) { this._finishTutorial = unlock; }
+    public void setNumStars(int stars) {
+        this._numStars = stars;
+    }
 
-    public boolean isFinishTutorial() {return true; /*this._finishTutorial;*/}
+    public boolean isFinishTutorial() {
+        return true; /*this._finishTutorial;*/
+    }
 
-    public void setUnlockDrum(boolean unlock) { this._unlockDrum = unlock; }
+    public void setFinishTutorial(boolean unlock) {
+        this._finishTutorial = unlock;
+    }
 
-    public boolean isUnlockDrum() {return this._unlockDrum;}
+    public boolean isUnlockDrum() {
+        return this._unlockDrum;
+    }
 
-    public void setUnlockMarimba(boolean unlock) { this._unlockMarimba = unlock; }
+    public void setUnlockDrum(boolean unlock) {
+        this._unlockDrum = unlock;
+    }
 
-    public boolean isUnlockMarimba() {return this._unlockMarimba;}
+    public boolean isUnlockMarimba() {
+        return this._unlockMarimba;
+    }
 
-    public void setUnlockDrawing(boolean unlock) { this._unlockDrawing = unlock; }
+    public void setUnlockMarimba(boolean unlock) {
+        this._unlockMarimba = unlock;
+    }
 
-    public boolean isUnlockDrawing() {return this._unlockDrawing;}
+    public boolean isUnlockDrawing() {
+        return this._unlockDrawing;
+    }
 
-    public void setUnlockColoring(boolean unlock) { this._unlockColoring = unlock; }
+    public void setUnlockDrawing(boolean unlock) {
+        this._unlockDrawing = unlock;
+    }
 
-    public boolean isUnlockColoring() {return this._unlockColoring;}
+    public boolean isUnlockColoring() {
+        return this._unlockColoring;
+    }
 
+    public void setUnlockColoring(boolean unlock) {
+        this._unlockColoring = unlock;
+    }
 
-    public void setUnlockBlackboard(boolean unlock) { this._unlockBlackboard = unlock; }
+    public boolean isUnlockBlackboard() {
+        return this._unlockBlackboard;
+    }
 
-    public boolean isUnlockBlackboard() {return this._unlockBlackboard;}
+    public void setUnlockBlackboard(boolean unlock) {
+        this._unlockBlackboard = unlock;
+    }
 
-    public void setFinishLauncherTutorial(boolean unlock) { this._finishLauncherTutorial = unlock; }
+    public boolean isFinishLauncherTutorial() {
+        return this._finishLauncherTutorial;
+    }
 
-    public boolean isFinishLauncherTutorial() {return this._finishLauncherTutorial;}
-
-    public void setDisplayName(String name) {
-        _displayName = name;
+    public void setFinishLauncherTutorial(boolean unlock) {
+        this._finishLauncherTutorial = unlock;
     }
 
     public String getDisplayName() {
         return _displayName;
     }
 
-    public void setOpenLibrary(boolean open) {
-        _openLibrary = open;
+    public void setDisplayName(String name) {
+        _displayName = name;
     }
 
     public boolean isOpenLibrary() {
         return _openLibrary;
     }
 
-    public void setOpenTools(boolean open) {
-        _openTools = open;
+    public void setOpenLibrary(boolean open) {
+        _openLibrary = open;
     }
 
     public boolean isOpenTools() {
         return _openTools;
     }
 
-    public void setUnlockFishBowl(boolean unlock) { this._unlockFishBowl = unlock; }
+    public void setOpenTools(boolean open) {
+        _openTools = open;
+    }
 
-    public boolean isUnlockFishBowl() {return this._unlockFishBowl;}
+    public boolean isUnlockFishBowl() {
+        return this._unlockFishBowl;
+    }
 
-    public void setUnlockWritingBoard(boolean unlock) { this._unlockWritingBoard = unlock; }
+    public void setUnlockFishBowl(boolean unlock) {
+        this._unlockFishBowl = unlock;
+    }
 
-    public boolean isUnlockWritingBoard() {return this._unlockWritingBoard;}
+    public boolean isUnlockWritingBoard() {
+        return this._unlockWritingBoard;
+    }
 
-    public void setFinishWritingBoardTutorial(boolean unlock) { this._finishWritingBoardTutorial = unlock; }
+    public void setUnlockWritingBoard(boolean unlock) {
+        this._unlockWritingBoard = unlock;
+    }
 
-    public boolean isFinishWritingBoardTutorial() {return this._finishWritingBoardTutorial;}
+    public boolean isFinishWritingBoardTutorial() {
+        return this._finishWritingBoardTutorial;
+    }
+
+    public void setFinishWritingBoardTutorial(boolean unlock) {
+        this._finishWritingBoardTutorial = unlock;
+    }
 
 }

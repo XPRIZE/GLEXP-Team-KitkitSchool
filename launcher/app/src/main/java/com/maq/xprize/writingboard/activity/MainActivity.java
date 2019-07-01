@@ -71,13 +71,13 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras != null) {
-                mAppLanguage = extras.getString("LANGUAGE", "sw-TZ").toLowerCase();
+                mAppLanguage = extras.getString("LANGUAGE", "en-US").toLowerCase();
             }
         }
 
         Log.i("mAppLanguage : " + mAppLanguage);
         if (mAppLanguage.isEmpty()) {
-            mAppLanguage = "sw-tz";
+            mAppLanguage = "en-us";
         }
 
         setImmersiveMode();
