@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -12,15 +13,15 @@ android {
         versionName "3.1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    
+
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
         abortOnError false
     }
-    
-	signingConfigs {
+
+    signingConfigs {
         debug {
             storeFile file('../debug.keystore')
             storePassword "android"
@@ -37,7 +38,7 @@ android {
         }
     }
 
-	productFlavors {
+    productFlavors {
 
         englishUS {
 
@@ -47,7 +48,7 @@ android {
 
         }
     }
-	
+
     buildTypes {
         release {
             minifyEnabled false
@@ -71,6 +72,7 @@ android {
 }
 
 dependencies {
+    compile 'com.google.firebase:firebase-core:16.0.4'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

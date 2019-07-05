@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.maq.kitkitProvider.KitkitDBHandler;
 import com.maq.kitkitProvider.User;
 import com.maq.kitkitlogger.KitKitLogger;
@@ -75,6 +76,7 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
     private Context cntx = null;
     private Button mTitle;
     private TextView mTvUserName;
+    private FirebaseAnalytics mFirebaseAnalytics;
     private WifiReceiver _wifiInfo = new WifiReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -332,6 +334,9 @@ public class MainActivity extends KitKitLoggerActivity implements PasswordDialog
         Util.hideSystemUI(this);
         cntx = getBaseContext();
         Util.setScale(this, findViewById(R.id.main_content));
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         loadApps();
 

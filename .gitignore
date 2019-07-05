@@ -98,6 +98,9 @@ bookviewer/cocos2d/*
 mainapp/cocos2d/*
 !mainapp/cocos2d/readme.txt
 
+mainapp/firebase_cpp_sdk/*
+!mainapp/firebase_cpp_sdk/readme.txt
+
 seaworld/cocos2d/*
 !seaworld/cocos2d/readme.txt
 
@@ -109,3 +112,7 @@ mainapp/Resources/*
 !mainapp/Resources/readme.txt
 
 maqpublisher.keystore
+
+# google-services
+mainapp/proj.android-studio/app/google-services.json
+launcher/app/google-services.json
