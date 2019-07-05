@@ -51,14 +51,14 @@ Scene* LetterMatchingScene::createScene(int levelID)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
-    
+
     // 'layer' is an autorelease object
     auto layer = LetterMatchingScene::create();
     layer->setLevel(levelID);
-    
+
     // add layer as a child to scene
     scene->addChild(layer);
-    
+
     // return the scene
     return scene;
 }
@@ -69,17 +69,17 @@ bool LetterMatchingScene::init()
     {
         return false;
     }
-    
-    
+
+
     _zOrder = Z_ORDER_DEFAULT;
-    
+
     auto winSize = getContentSize();
-    
+
     auto bg = Sprite::create("NumberMatching/Images/matching_bg_bigger.jpg");
     bg->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     bg->setPosition(winSize/2);
     addChild(bg);
-    
+
     _gameNode = Node::create();
     auto gameSize = Size(2560, 1800);
     _gameNode->setContentSize(gameSize);
@@ -88,19 +88,19 @@ bool LetterMatchingScene::init()
     _gameNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _gameNode->setPosition(winSize/2);
     addChild(_gameNode);
-    
+
     // Back Button
     auto backButton = TodoSchoolBackButton::create();
     backButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     backButton->setPosition(Vec2(25, winSize.height-25));
     addChild(backButton);
-    
+
     // Progress Bar
     _progressBar = ProgressIndicator::create();
     _progressBar->setPosition(Vec2(winSize.width/2, winSize.height - _progressBar->getContentSize().height));
     _progressBar->setCurrent(_currentProblemID - _currentWorksheet.beginProblemID() + 1);
     addChild(_progressBar);
-    
+
     // Next Button
     const auto normalColor = Color3B(92, 46, 28);
     const auto highlightColor = Color3B(255, 241, 217);
@@ -131,16 +131,16 @@ bool LetterMatchingScene::init()
     });
     _nextButton->setVisible(false);
     addChild(_nextButton);
-    
 
-    
+
+
     return true;
 }
 
 void LetterMatchingScene::onEnter()
 {
     Layer::onEnter();
-    
+
     auto lang = LanguageManager::getInstance()->getCurrentLanguageTag();
     auto data = LevelData::defaultData();
     auto sheet = data.randomSheetFor(lang, _currentLevelID, &_currentSheetID);
@@ -162,14 +162,14 @@ void LetterMatchingScene::setLevel(int levelID) {
 void LetterMatchingScene::onStart()
 {
     _nextTransition = false;
-    
+
     auto problem = _currentWorksheet.problemByID(_currentProblemID);
     _currentProblem = problem;
 
     _nextButton->setVisible(false);
     _currentLevelMaxCardCount = (int)problem.size();
     _progressBar->setCurrent(_currentProblemID - _currentWorksheet.beginProblemID() + 1);
-    
+
     _defaultScaleFactor = 0.8f;
     _upScaleFactor = 0.9f;
     _matchCount = 0;
@@ -179,9 +179,9 @@ void LetterMatchingScene::onStart()
 void LetterMatchingScene::onSolve()
 {
     GameSoundManager::getInstance()->playEffectSound(SOLVE_EFFECT_SOUND);
-    
+
     _progressBar->setCurrent(_currentProblemID - _currentWorksheet.beginProblemID() + 1, true);
-    
+
     if (_currentProblemID + 1 == _currentWorksheet.endProblemID())
     {
         CompletePopup::create()->show(1.0f, [](){
@@ -249,7 +249,7 @@ void LetterMatchingScene::initCardList()
         auto cardB = createMatchingCard(++_zOrder, selected[i*2+1],
                                         _currentProblemID, pieceInfo.pieceID, 2,
                                         pieceInfo.imageNameB);
-        
+
         // NB(xenosoz, 2016): It seems some LetterMatching resources are in NumberMatching folder
         //   for some reason. I'll just follow that legacy in this time. We need a hero.
         SoundEffect sound;
@@ -282,94 +282,94 @@ LetterMatchingCard* LetterMatchingScene::createMatchingCard(int zOrder, Point po
 
     card->defaultScale = _defaultScaleFactor;
     bindingEvents(card);
-    
+
     return card;
 }
 
 void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
 {
-    
+
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
-    
+
     listener->onTouchBegan = [this, card](Touch* touch, Event* event) {
-        
+
         Point touchPoint = touch->getLocation();
         Point viewPoint = _gameNode->convertToNodeSpace(touchPoint);
-        
+
         if (card->isTouched) return false;
         if (card->isMatchDone) return false;
         if (!card->isTouchedIn(viewPoint)) return false;
-        
+
         card->isTouched = true;
-        
+
         card->runAction(ScaleTo::create(0.1f, _upScaleFactor));
         _gameNode->reorderChild(card, ++_zOrder);
         return true;
-        
+
     };
-    
+
     listener->onTouchMoved = [this, card](Touch* touch, Event* event) {
-        
+
         card->setPosition(card->getPosition() + touch->getDelta());
-        
+
         if (card->isLinked) {
             if (!shouldKeepAsPair(card->linkedTarget, card)) {
                 card->linkedTarget->setLink(nullptr);
                 card->setLink(nullptr);
             }
         } else {
-            
-            
+
+
             for (auto other : matchingCardList) {
                 if (other == card) continue;
                 if (other->isLinked) continue;
                 if (other->isMatchDone) continue;
-                
+
                 if (other->id == card->id) {
-                    
+
                     if (shouldBecomePair(other, card)) {
                         other->runAction(EaseElasticOut::create(ScaleTo::create(0.3f, _upScaleFactor)));
                         other->setLink(card);
                         card->setLink(other);
                         _gameNode->reorderChild(other, ++_zOrder);
                         _gameNode->reorderChild(card, ++_zOrder);
-                        
+
                     }
                 }
             }
         }
     };
-    
-    
+
+
     listener->onTouchEnded =  [this, card](Touch* touch, Event* event) {
         card->stopParticle();
         card->isTouched = false;
-        
+
         if (card->isLinked && !card->isMatchDone) {
             auto other = card->linkedTarget;
-            
+
             other->stopParticle();
-            
-            
+
+
             card->isMatchDone = true;
             other->isMatchDone = true;
-            
+
             auto moveTo = MoveTo::create(0.4f, other->getPosition());
-            
+
             card->runAction(Sequence::create(EaseElasticOut::create(moveTo), CallFunc::create([=](){
                 other->setPosition(Vec2::ONE * 9999.0f);
             }), nullptr));
-            
+
             card->runAction(Sequence::create(DelayTime::create(0.3f), EaseBackIn::create(ScaleTo::create(0.3f, _upScaleFactor)), nullptr));
-            
+
             card->runAction(Sequence::create(DelayTime::create(0.3f), EaseExponentialIn::create(FadeOut::create(0.3f)), nullptr));
-            
+
             card->runAction(Sequence::create(DelayTime::create(0.3f),CallFunc::create([=](){
                 card->matchSound.play();
 
                 this->addStarParticle(card);
-                
+
                 card->setPosition(Vec2::ONE * 9999.0f);
                 _matchCount++;
                 if (_matchCount == _currentLevelMaxCardCount)
@@ -379,7 +379,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
                     }), nullptr));
                 }
             }), nullptr));
-            
+
             // NB(xenosoz, 2018): Log for future analysis (#1/2)
             auto workPath = [this] {
                 stringstream ss;
@@ -388,7 +388,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
-            
+
             StrictLogManager::shared()->game_Peek_Answer("LetterMatching", workPath,
                                                          TodoUtil::itos(card->id),
                                                          TodoUtil::itos(other->id));
@@ -401,7 +401,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
             card->runAction(rescaleAction);
 
             this->stompByNode(card);
-            
+
             // NB(xenosoz, 2018): Log for future analysis (#2/2)
             auto workPath = [this] {
                 stringstream ss;
@@ -410,7 +410,7 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
                 ss << "/" << "work-" << _currentProblemID;
                 return ss.str();
             }();
-            
+
             StrictLogManager::shared()->game_Peek_Answer("LetterMatching", workPath,
                                                          TodoUtil::itos(card->id),
                                                          "None");
@@ -418,20 +418,20 @@ void LetterMatchingScene::bindingEvents(LetterMatchingCard *card)
         }
     };
 
-    
+
     listener->onTouchCancelled = [this, card](Touch* touch, Event* event) {
-        
+
         card->isTouched = false;
-        
+
         if (card->isLinked) {
             card->linkedTarget->setLink(nullptr);
             card->setLink(nullptr);
         }
     };
-    
-    
+
+
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, card);
-    
+
 
 }
 
@@ -451,14 +451,14 @@ Point LetterMatchingScene::safePointForBoundary(Point point)
     // NB(xenosoz, 2017): Move point inside of the safe boundary (regarding the polar coordinates)
     Rect boardRect = Rect(Point(0.f, 0.f), _gameNode->getContentSize());
     Size cardSize = LetterMatchingCard::defaultSize();
-    
+
     float alpha = .2f;
     float beta = .1f;
     Rect safeRect = Rect(cardSize.width * alpha,
                          cardSize.height * beta,
                          boardRect.size.width - cardSize.width * alpha * 2,
                          boardRect.size.height - cardSize.height * beta * 2);
-    
+
     float dist = Point(safeRect.getMidX(), safeRect.getMidY()).distance(point);
     float theta = atan2(point.y - safeRect.getMidY(),
                         point.x - safeRect.getMidX());
@@ -466,12 +466,12 @@ Point LetterMatchingScene::safePointForBoundary(Point point)
     float rx = (safeRect.size.width / 2.f) / cos(theta);
     float ry = (safeRect.size.height / 2.f) / sin(theta);
     float r = min(abs(rx), abs(ry));
-    
+
     if (dist <= r) {
         // NB(xenosoz, 2017): Point is already in the safe area.
         return point;
     }
-    
+
     if (abs(rx) < abs(ry)) {
         // NB(xenosoz, 2017): Hit the vertical wall
         int sign = ((rx > 0) - (rx < 0));
@@ -493,7 +493,7 @@ void LetterMatchingScene::stompByNode(Node* node)
 
     for (auto card : matchingCardList) {
         if (!card || card == node || card->isMatchDone) { continue; }
-        
+
         auto nodePos = node->getPosition();
         auto cardPos = card->getPosition();
         auto dir = (cardPos - nodePos).getNormalized();
@@ -503,7 +503,7 @@ void LetterMatchingScene::stompByNode(Node* node)
             dir.x = cos(theta);
             dir.y = sin(theta);
         }
-        
+
         float r = [&] {
             auto _ = LetterMatchingCard::defaultSize();
             return min(_.width/2.f, _.height/2.f);
@@ -514,7 +514,7 @@ void LetterMatchingScene::stompByNode(Node* node)
         auto d_1 = (d_0 * d_0) / (4 * r) + r;
         auto nextPos = nodePos + (dir * d_1 * 1.7f);
         nextPos = this->safePointForBoundary(nextPos);
-        
+
         if (card->stompAction != nullptr)
         {
             card->stopAction(card->stompAction);

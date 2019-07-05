@@ -13,6 +13,7 @@
 #include "../Utils/SpellingMainDepot.h"
 #include <Common/Controls/TodoSchoolBackButton.hpp>
 #include <Managers/StrictLogManager.h>
+#include <Managers/VoiceMoldManager.h>
 
 #include "CCAppController.hpp"
 
@@ -123,18 +124,18 @@ bool SpellingScene::init() {
     
     clearInternals();
     refreshChildNodes();
-    
+
     return true;
 };
 
 
 void SpellingScene::clearInternals() {
+    _spellingWordSound=" ";
     SoundForWord = SoundEffect::emptyEffect();
 
     TheProblem.OnValueUpdate = [this](Problem&) {
         refreshChildNodes();
-        SoundForWord = (MainDepot().soundForWord(TheProblem().Word) ||
-                        MainDepot().soundForCardBirth());
+        _spellingWordSound=TheProblem().Word;
     };
 }
 
@@ -383,7 +384,8 @@ void SpellingScene::openingWordSound() {
     auto Delay = TheProblem().SoundDuration + .5f;
 
     Vector<FiniteTimeAction*> Actions;
-    Actions.pushBack(CallFunc::create([this] { SoundForWord.play(); }));
+    Actions.pushBack(CallFunc::create([this] {
+        VoiceMoldManager::shared()->speak(_spellingWordSound); }));
     Actions.pushBack(DelayTime::create(Delay));
     Actions.pushBack(CallFunc::create(Next));
     runAction(Sequence::create(Actions));
@@ -415,7 +417,7 @@ void SpellingScene::closingWordSound() {
     Actions.pushBack(DelayTime::create(.5f));
     Actions.pushBack(CallFunc::create([this] {
         SHOW_SL_VIDEO_IF_ENABLED("common/temp_video_short.mp4");
-        SoundForWord.play();
+       VoiceMoldManager::shared()->speak(_spellingWordSound);
     }));
     Actions.pushBack(DelayTime::create(Delay));
     Actions.pushBack(CallFunc::create(Next));

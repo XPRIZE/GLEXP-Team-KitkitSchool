@@ -7,13 +7,13 @@
 //
 
 
+#include <Managers/VoiceMoldManager.h>
 #include "SpellingWordImage.h"
 #include "../Utils/SpellingMainDepot.h"
 #include "Common/Components/TargetTouchBody.h"
 
 
 BEGIN_NS_SPELLING
-
 
 namespace {
     Size contentSize() { return Size(1111.f, 820.f); }
@@ -38,6 +38,7 @@ bool WordImage::init() {
 }
 
 void WordImage::clearInternals() {
+    _speakSpellingWord = "";
     setContentSize(contentSize());
     setCascadeOpacityEnabled(true);
     SoundForWord = SoundEffect::emptyEffect();
@@ -45,7 +46,7 @@ void WordImage::clearInternals() {
 
     TheProblem.OnValueUpdate = [this](Problem&) {
         refreshChildNodes();
-        SoundForWord = MainDepot().soundForWord(TheProblem().Word);
+       _speakSpellingWord= TheProblem().Word ;
     };
 }
 
@@ -89,12 +90,11 @@ void WordImage::refreshChildNodes() {
         return It;
     }();
 }
-
+//Implementation of tts for spelling word image
 void WordImage::playWordSound() {
     if (preventNewSoundEffectWhilePlaying() && IsSoundPlaying) { return; }
-
-    SoundForWord.stop();
-    SoundForWord.play();
+   VoiceMoldManager::shared()->speak(" ");  //To clear internals
+   VoiceMoldManager::shared()->speak(_speakSpellingWord);
     IsSoundPlaying = true;
 
     auto A = Sequence::create(DelayTime::create(TheProblem().SoundDuration),

@@ -16,6 +16,7 @@
 #include "Common/Controls/TodoSchoolBackButton.hpp"
 #include <Common/Controls/CompletePopup.hpp>
 #include <Common/Basic/SoundEffect.h>
+#include <Managers/VoiceMoldManager.h>
 #include "Common/Sounds/CommonSound.hpp"
 #include "Utils/TodoUtil.h"
 
@@ -393,10 +394,8 @@ void WordMachineScene::onWheelsStop()
 {
     std::string resPath = "WordMachine/WordCards/";
     auto sound = resPath + _currentProblem.sound;
-    GameSoundManager::getInstance()->preloadEffect(sound);
-    
     scheduleOnce([sound, this](float){  // Sound delay
-        GameSoundManager::getInstance()->playEffectSound(sound);
+        VoiceMoldManager::shared()->speak(_currentProblem.sound);
         showImageCard();
     }, 0.7, "WheelWord");
 }
@@ -495,8 +494,9 @@ void WordMachineScene::showImageCard()
         tb->setPosition(panelSize/2);
         tb->setTag(0);
         target->addChild(tb);
-
+         _speakMachineWord=" ";
         auto audioPath = resPath + _currentProblem.sound;
+        _speakMachineWord=_currentProblem.sound;
         target->setPosition(Vec2(panelSize/2) + Vec2(0, panelSize.height));
         auto tbCallFunc = [this, target, alter, audioPath, tb, ab]() {
             tb->addClickEventListener([this, target, alter, audioPath, ab](Ref* btn) {
@@ -512,7 +512,7 @@ void WordMachineScene::showImageCard()
                 
                 target->runAction(Sequence::create(DelayTime::create(0.5),
                                                    CallFunc::create([audioPath](){
-                    GameSoundManager::getInstance()->playEffectSound(audioPath);
+                  VoiceMoldManager::shared()->speak(_speakMachineWord);  //Implementation of TTS for this module
                     
                 }),
                                                    DelayTime::create(1.5),

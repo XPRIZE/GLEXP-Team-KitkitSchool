@@ -143,8 +143,8 @@ void EggQuizScene::createSingleDigitNumbersView() {
     questionBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     questionBox->setPosition(_gameNode->getContentSize().width/2,468);
     _gameNode->addChild(questionBox);
-    
-    createSmallSpeakerView(soundsPath+_problem.questionOption1);
+
+    createSmallSpeakerView(_problem.questionOption1);
     
     vector<Sprite*> stones;
     for (int i=0; i<_answerInt; i++) {
@@ -186,7 +186,7 @@ void EggQuizScene::createRecognizeNumberView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName(soundsNumberPath + _problem.answer);
+    speaker->setFileName( _problem.answer);
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
@@ -215,7 +215,7 @@ void EggQuizScene::create2DigitNumbersView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    if (_problem.questionOption1!="") createSmallSpeakerView(soundsPath+_problem.questionOption1);
+    if (_problem.questionOption1!="") createSmallSpeakerView(_problem.questionOption1);
     
     {
         vector<Sprite*> stones;
@@ -299,7 +299,7 @@ void EggQuizScene::createBiggerAndSmallerView() {
         buttonSize = Size(1148,516);
     }
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    createSmallSpeakerView(_problem.questionOption5);
     
     auto label = TodoUtil::createLabel(_problem.questionOption4, 100, Size::ZERO, FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -601,7 +601,7 @@ void EggQuizScene::createBiggestAndSmallestView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption3);
+    createSmallSpeakerView(_problem.questionOption3);
     
     auto label = TodoUtil::createLabel(_problem.questionOption2, 128, Size::ZERO, FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -635,7 +635,7 @@ void EggQuizScene::createCompareNumberMagnitudesView() {
     _gameNode->addChild(questionBox);
 
     auto speaker = Speaker::create(SpeakerSize::Small);
-    speaker->setFileName(soundsPath+_problem.questionOption3);
+    speaker->setFileName(_problem.questionOption3);
     speaker->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     speaker->setPosition(_gameSize.width/2-1032-200/2,1311+220/2);
     _gameNode->addChild(speaker);
@@ -696,7 +696,7 @@ void EggQuizScene::createUseMagnitudeSymbolsView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption4);
+    createSmallSpeakerView(_problem.questionOption4);
 
     auto label = TodoUtil::createLabel(_problem.questionOption3, 100, Size::ZERO, FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
@@ -740,7 +740,7 @@ void EggQuizScene::createShapesView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption3);
+    createSmallSpeakerView(_problem.questionOption3);
     
     auto label = TodoUtil::createLabel(_problem.questionOption2, 100, Size::ZERO, FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -805,7 +805,7 @@ void EggQuizScene::create3DigitNumbersView() {
     questionBox->setPosition(_gameSize.width/2-44-1136/2,100);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption1);
+    createSmallSpeakerView(_problem.questionOption1);
 
     float posX = 0;
     float posY = 0;
@@ -1029,7 +1029,7 @@ void EggQuizScene::createWordProblemView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,468);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption2);
+    createSmallSpeakerView(_problem.questionOption2);
         
     auto label = TodoUtil::createLabel(_problem.questionOption1, 68, Size(1945,0), FONT_BOLD, FONT_COLOR);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
@@ -1069,7 +1069,7 @@ void EggQuizScene::createSoundonlyWordView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName(soundsPath + _problem.questionOption5);
+    speaker->setFileName( _problem.questionOption5);
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
@@ -1086,7 +1086,7 @@ void EggQuizScene::createWordWordView() {
     _gameNode->addChild(questionBox);
     
     if (!_problem.questionOption5.empty()) {
-        createSmallSpeakerView(soundsPath+_problem.questionOption5);
+        createSmallSpeakerView(_problem.questionOption5);
     }
     
     Label* questionLabel = TodoUtil::createLabel(_problem.questionOption2, 224, Size::ZERO, FONT_NORMAL, FONT_COLOR);
@@ -1144,7 +1144,7 @@ void EggQuizScene::createSentenceWordView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    createSmallSpeakerView(_problem.questionOption5);
 
     if (_problem.questionOption2.back() == '.'|| _problem.questionOption2.back() == '?'|| _problem.questionOption2.back() == '!'|| _problem.questionOption2.back() == '_') {
         questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_NORMAL, FONT_COLOR, TextHAlignment::CENTER);
@@ -1166,7 +1166,7 @@ void EggQuizScene::createSentenceSentenceView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,860);
     _gameNode->addChild(questionBox);
 
-    createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    createSmallSpeakerView(_problem.questionOption5);
 
     if (_problem.questionOption2.back() == '.'|| _problem.questionOption2.back() == '?'|| _problem.questionOption2.back() == '"'|| _problem.questionOption2.back() == '_') {
         questionLabel = TodoUtil::createLabelMultilineToFitWidth(_problem.questionOption2, 100, Size(1600,600), FONT_NORMAL, FONT_COLOR, TextHAlignment::CENTER);
@@ -1187,7 +1187,7 @@ void EggQuizScene::createImageSentenceView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,860);
     _gameNode->addChild(questionBox);
 
-    createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    createSmallSpeakerView(_problem.questionOption5);
     
     auto image = Sprite::create(imagesPath+_problem.questionOption2);
     image->setPosition(questionBox->getContentSize()/2);
@@ -1208,7 +1208,7 @@ void EggQuizScene::createSoundonlySentenceView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName(soundsPath + _problem.questionOption5);
+    speaker->setFileName( _problem.questionOption5);
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
@@ -1236,13 +1236,13 @@ void EggQuizScene::createParagraphSentenceView() {
             auto soundFiles = TodoUtil::split(_problem.questionOption5, ',');
             vector<string> outputV;
             for (auto it : soundFiles) {
-                outputV.push_back(soundsPath+it);
+                outputV.push_back(it);
             }
             createSmallSpeakerView(ProblemBank::getInstance()->getJoinString(outputV), Vec2(_gameSize.width/2+200+35, 1237));
             questionLabelWeight += 140;
 
         } else {
-            createSmallSpeakerView(soundsPath+_problem.questionOption5);
+            createSmallSpeakerView(_problem.questionOption5);
             paragraphWeight -= 120;
         }
     }
@@ -1280,7 +1280,7 @@ void EggQuizScene::createImageseqSentenceView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,860);
     _gameNode->addChild(questionBox);
 
-    if (!_problem.questionOption5.empty()) createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    if (!_problem.questionOption5.empty()) createSmallSpeakerView(_problem.questionOption5);
     if (_problem.questionOption3.empty()) _problem.questionOption3 = "?";
     vector<string> sequenceV;
     sequenceV.push_back(_problem.questionOption2);
@@ -1300,7 +1300,7 @@ void EggQuizScene::createImageseqImageView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
 
-    if (!_problem.questionOption5.empty()) createSmallSpeakerView(soundsPath+_problem.questionOption5);
+    if (!_problem.questionOption5.empty()) createSmallSpeakerView(_problem.questionOption5);
 
     if (_problem.questionOption3.empty()) _problem.questionOption3 = "?";
     vector<string> sequenceV;
@@ -1326,7 +1326,7 @@ void EggQuizScene::createOrderingSentenceView() {
     _gameNode->addChild(title);
     
     auto speaker = Speaker::create(SpeakerSize::Small);
-    speaker->setFileName(soundsPath+_problem.questionOption2);
+    speaker->setFileName(_problem.questionOption2);
     speaker->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     speaker->setPosition(_gameSize.width/2-1032+20, 1311);
     _gameNode->addChild(speaker);
@@ -1405,7 +1405,7 @@ void EggQuizScene::createListeningcompSentenceView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName(soundsPath + _problem.questionOption1);
+    speaker->setFileName( _problem.questionOption1);
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);

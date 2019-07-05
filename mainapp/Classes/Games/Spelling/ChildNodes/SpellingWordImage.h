@@ -26,6 +26,7 @@ public:
 public:
     CREATE_FUNC(WordImage);
     bool init() override;
+    std::string _speakSpellingWord; //Variable for getting tts sound while clicking on image
 
 private:
     void clearInternals();
