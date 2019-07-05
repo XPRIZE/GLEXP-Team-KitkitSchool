@@ -47,8 +47,8 @@ public class AppActivity extends Cocos2dxActivity {
 
     public static AppActivity _activity;
     public static String _launchString;
-    private Cocos2dxGLSurfaceView _glSurfaceView;
     private static String TAG = "BookTestActivity";
+    private Cocos2dxGLSurfaceView _glSurfaceView;
 
     public static String getDocumentsPath() {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
@@ -77,32 +77,52 @@ public class AppActivity extends Cocos2dxActivity {
                     public void run() {
                         Log.d("AppActivity", "sendToBack onUIThread 2 - booktest");
                         _activity.moveTaskToBack(true);
-//                        _activity.finish();
                     }
                 });
             }
         });
     }
 
-    public  boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
-                return true;
-            } else {
+    public static void staticSetFullScreen() {
+        _activity.hideSystemUIOnUIThread();
 
-                Log.v(TAG,"Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                return false;
-            }
+    }
+
+    public static void logEvent(String eventString) {
+
+        KitKitLogger logger = ((BookApplication) _activity.getApplication()).getLogger();
+        logger.logEvent(eventString);
+    }
+
+    public static String getConfig(SharedPreferences pref, String key, String defaultValue) {
+        String rtn = defaultValue;
+        try {
+            rtn = pref.getString(key, defaultValue);
+        } catch (Exception ignored) {
+
         }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
-            return true;
+        return rtn;
+    }
+
+    public static void setConfig(SharedPreferences pref, String key, String val) {
+        try {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(key, val);
+            editor.apply();
+        } catch (Exception ignored) {
+
         }
     }
 
+    public void isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,15 +143,6 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-//        Intent intent = getIntent();
-//
-//        if (intent.hasExtra("book")) {
-//            _launchString = intent.getStringExtra("book");
-//            Log.d("AppActivity", "onCreate has book extra - " + _launchString);
-//        }
-
-
     }
 
     public Cocos2dxGLSurfaceView onCreateView() {
@@ -146,7 +157,6 @@ public class AppActivity extends Cocos2dxActivity {
 
         return _glSurfaceView;
     }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -191,42 +201,11 @@ public class AppActivity extends Cocos2dxActivity {
         });
     }
 
-    public static void staticSetFullScreen() {
-        _activity.hideSystemUIOnUIThread();
-
-    }
-
-    public static void logEvent(String eventString) {
-
-        KitKitLogger logger = ((BookApplication) _activity.getApplication()).getLogger();
-        logger.logEvent(eventString);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-        }
-    }
-
-    public static String getConfig(SharedPreferences pref, String key, String defaultValue) {
-        String rtn = defaultValue;
-        try {
-            rtn = pref.getString(key, defaultValue);
-        } catch (Exception e) {
-
-        }
-        return rtn;
-    }
-
-    public static void setConfig(SharedPreferences pref, String key, String val) {
-        try {
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(key, val);
-            editor.commit();
-        } catch (Exception e) {
-
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
         }
     }
 }

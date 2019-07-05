@@ -45,7 +45,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.maq.xprize.kitkitschool.hindi.RETURN_BY_VOICE_ENGINE_A" />
-
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

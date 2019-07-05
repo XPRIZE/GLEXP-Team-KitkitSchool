@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white">
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+        <LinearLayout
+            android:id="@+id/btn_close_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="right|center_vertical"
+            android:layout_gravity="top"
+            app:layout_heightPercent="10%">
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/libray_icon_close"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
+
+        <com.maq.xprize.kitkitlibrary.english.TutorialVideoPopupView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_heightPercent="85%"
+            android:layout_below="@+id/btn_close_wrapper">
+
+        </com.maq.xprize.kitkitlibrary.english.TutorialVideoPopupView>
+    </android.support.percent.PercentRelativeLayout>
+
+
+
+</RelativeLayout>

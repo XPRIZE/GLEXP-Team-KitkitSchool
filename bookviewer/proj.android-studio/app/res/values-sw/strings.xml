@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">KitkitBookViewer</string>
+    <string name="app_name">Kitkit School Library</string>
+    <string name="description">Media Controls</string>
+    <string name="tab_video">VIDEOS</string>
+    <string name="tab_book">BOOKS</string>
+    <string name="button_next">Next</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_more">More</string>
+    <string name="button_less">Less</string>
+    <string name="title_activity_splash_screen" translatable="false">SplashScreenActivity</string>
+    <string name="content_extraction" translatable="false">यह प्रक्रिया केवल एक बार की जाएगी। इसमें १० मिनट तक का समय लग सकता है।</string>
+    <string name="content_extraction_english" translatable="false">This process will be done only once. It can take up to 10 minutes.</string>
+    <string name="mainFileVersion" translatable="false">mainFileVersion</string>
+    <string name="patchFileVersion" translatable="false">patchFileVersion</string>
 </resources>
