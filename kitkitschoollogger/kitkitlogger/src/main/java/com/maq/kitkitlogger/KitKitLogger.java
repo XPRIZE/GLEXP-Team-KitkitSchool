@@ -35,6 +35,8 @@ import java.util.zip.ZipOutputStream;
 
 public class KitKitLogger {
     private static final String TAG = "KitkitLogger";
+    // NB(xenosoz, 2018): SNTP cache.
+    Map<String, SntpResult> _sntpCache = new HashMap<>();
     private File basePath;
     private String appName;
     private String shortAppName;
@@ -43,12 +45,40 @@ public class KitKitLogger {
     //private String androidId;
     private String serialNumber;
     private String macAddress;
-
-
-    // NB(xenosoz, 2018): SNTP cache.
-    Map<String, SntpResult> _sntpCache = new HashMap<>();
-
     private KitkitDBHandler dbHandler;
+
+    public KitKitLogger(String appName, Context ctnx) {
+        this.appName = appName;
+        int pos;
+        if ((pos = appName.lastIndexOf('.')) != -1) {
+            this.shortAppName = appName.substring(pos + 1);
+        } else
+            this.shortAppName = appName;
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" + "logs");
+        } else {
+            basePath = new File(Environment.getExternalStorageDirectory() + "/Documents" + "/" + "logs");
+        }
+
+        if (!basePath.exists()) {
+            basePath.mkdirs();
+        }
+        _ctnx = ctnx;
+        //androidId = Settings.Secure.getString(_ctnx.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        serialNumber = Build.SERIAL;
+
+        // add mac address to serial number, for devices with the same serial numbers (e.g., MPGIO, Joy, etc...)
+        macAddress = getMacAddr().replace(":", "");
+
+        serialNumber = serialNumber + "_" + macAddress;
+
+
+        //Log.d(TAG,appName+ " installId : " + installId);
+        dbHandler = new KitkitDBHandler(_ctnx);
+    }
 
     public static String getMacAddr() {
         try {
@@ -64,7 +94,7 @@ public class KitKitLogger {
                 StringBuilder res1 = new StringBuilder();
                 for (byte b : macBytes) {
                     // res1.append(Integer.toHexString(b & 0xFF) + ":");
-                    res1.append(String.format("%02X:",b));
+                    res1.append(String.format("%02X:", b));
                 }
 
                 if (res1.length() > 0) {
@@ -78,83 +108,11 @@ public class KitKitLogger {
         return "";
     }
 
-    public KitKitLogger(String appName, Context ctnx) {
-        this.appName = appName;
-        int pos;
-        if ( (pos = appName.lastIndexOf('.')) != -1) {
-            this.shortAppName = appName.substring(pos+1);
-        }
-        else
-            this.shortAppName = appName;
-
-
-//        try {
-//            Context launcherContext = ctnx.createPackageContext("com.maq.xprize.kitkitlauncher.hindi", Context.MODE_PRIVATE);
-//            SharedPreferences prefs = launcherContext.getSharedPreferences("sharedpreference",Context.MODE_PRIVATE);
-//            installId = prefs.getString("installId","");
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
-        //basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" + installId);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            basePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/" +"logs");
-        } else {
-            basePath = new File(Environment.getExternalStorageDirectory() + "/Documents" + "/" +"logs");
-        }
-
-        if(!basePath.exists()){
-            basePath.mkdirs();
-        }
-        _ctnx = ctnx;
-        //androidId = Settings.Secure.getString(_ctnx.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        serialNumber = Build.SERIAL;
-
-        // add mac address to serial number, for devices with the same serial numbers (e.g., MPGIO, Joy, etc...)
-        macAddress = getMacAddr().replace(":", "");
-
-        serialNumber = serialNumber + "_" + macAddress;
-
-
-
-        //Log.d(TAG,appName+ " installId : " + installId);
-        dbHandler = new KitkitDBHandler(_ctnx);
-    }
-
-    public void tagScreen(String screenName) {
-        try {
-            JSONObject eventValue = new JSONObject();
-            eventValue.put("category", screenName);
-//            eventValue.put("timestamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
-            eventValue.put("action","tagScreen");
-            logEvent(eventValue.toString());
-        }
-        catch (JSONException ex) {
-            ex.printStackTrace();
-            Log.e(TAG,ex.getMessage());
-        }
-    }
-
-    public void logEvent(String category, String action, String label, double value) {
-        try {
-            JSONObject eventValue = new JSONObject();
-//            eventValue.put("timestamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
-            eventValue.put("category",category);
-            eventValue.put("action",action);
-            eventValue.put("label",label);
-            eventValue.put("value",value);
-            logEvent(eventValue.toString());
-        }
-        catch (JSONException ex) {
-            ex.printStackTrace();
-            Log.e(TAG,ex.getMessage());
-        }
-    }
-
     public static String intToLei(int n) {
         // NB(xenosoz, 2018): Length encoded integer
-        if (n == 0) { return "A"; }
+        if (n == 0) {
+            return "A";
+        }
         return (n < 0 ? "-" : "") + (char) ('B' + (int) Math.log10(Math.abs(n))) + n;
     }
 
@@ -163,11 +121,44 @@ public class KitKitLogger {
         int mul = 1;
         int p = 0;
 
-        if (lei.startsWith("-")) { mul = -Math.abs(mul); p = 1; }
-        if ("A".equals(lei.substring(p))) { return mul * 0; }
+        if (lei.startsWith("-")) {
+            mul = -Math.abs(mul);
+            p = 1;
+        }
+        if ("A".equals(lei.substring(p))) {
+            return mul * 0;
+        }
 
         p += 1;
         return Integer.valueOf(lei.substring(p)).intValue();
+    }
+
+    public void tagScreen(String screenName) {
+        try {
+            JSONObject eventValue = new JSONObject();
+            eventValue.put("category", screenName);
+//            eventValue.put("timestamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
+            eventValue.put("action", "tagScreen");
+            logEvent(eventValue.toString());
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+            Log.e(TAG, ex.getMessage());
+        }
+    }
+
+    public void logEvent(String category, String action, String label, double value) {
+        try {
+            JSONObject eventValue = new JSONObject();
+//            eventValue.put("timestamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
+            eventValue.put("category", category);
+            eventValue.put("action", action);
+            eventValue.put("label", label);
+            eventValue.put("value", value);
+            logEvent(eventValue.toString());
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+            Log.e(TAG, ex.getMessage());
+        }
     }
 
     public String normAppName() {
@@ -181,13 +172,12 @@ public class KitKitLogger {
     }
 
     private byte[] readAllBytes(File f) {
-        byte[] b = new byte[(int)f.length()];
+        byte[] b = new byte[(int) f.length()];
         try {
             FileInputStream fis = new FileInputStream(f);
             fis.read(b);
-        }
-        catch (Exception e) {
-            Log.e(TAG,e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
         return b;
     }
@@ -207,8 +197,7 @@ public class KitKitLogger {
             eventJson.put("3.snow", sr.snow);
 
             logEvent(eventJson.toString());
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         }
 
@@ -217,7 +206,9 @@ public class KitKitLogger {
 
     public int logSntpUpdateTo(BufferedWriter bw) {
         int resultId = -1;
-        if (bw == null) { return resultId; }
+        if (bw == null) {
+            return resultId;
+        }
 
         for (SntpResult sr : dbHandler.getSntpResults()) {
             if (resultId < sr.id) {
@@ -226,9 +217,15 @@ public class KitKitLogger {
 
             SntpResult cache = _sntpCache.get(sr.serverSpec);
 
-            if (cache != null && !cache.serverSpec.equals(sr.serverSpec)) { cache = null; }
-            if (cache != null && cache.now != sr.now) { cache = null; }
-            if (cache != null && !cache.snow.equals(sr.snow)) { cache = null; }
+            if (cache != null && !cache.serverSpec.equals(sr.serverSpec)) {
+                cache = null;
+            }
+            if (cache != null && cache.now != sr.now) {
+                cache = null;
+            }
+            if (cache != null && !cache.snow.equals(sr.snow)) {
+                cache = null;
+            }
             if (cache != null) {
                 // NB(xenosoz, 2018): Cache value exists, no update. -> quit.
                 continue;
@@ -250,11 +247,9 @@ public class KitKitLogger {
                 //logJson.put("user", dbHandler.getCurrentUsername());
 
                 bw.write(logJson.toString() + "\n");
-            }
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
             }
 
@@ -272,8 +267,7 @@ public class KitKitLogger {
         if (!logPath.exists()) {
             try {
                 logPath.createNewFile();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
         }
 
@@ -288,7 +282,7 @@ public class KitKitLogger {
             JSONObject logJson = new JSONObject();
 
             logJson.put("appName", shortAppName);
-            logJson.put("timeStamp", (double)(Calendar.getInstance().getTimeInMillis() / 1000));
+            logJson.put("timeStamp", (double) (Calendar.getInstance().getTimeInMillis() / 1000));
             logJson.put("event", eventJson);
             logJson.put("sntp", id);
 
@@ -300,8 +294,7 @@ public class KitKitLogger {
             logJson.put("user", user);
             bw.write(logJson.toString() + "\n");
             bw.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
 
@@ -322,8 +315,12 @@ public class KitKitLogger {
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 String filename = files[i].getName();
-                if (!filename.startsWith(header)) { continue; }
-                if (!filename.endsWith(zipFooter)) { continue; }
+                if (!filename.startsWith(header)) {
+                    continue;
+                }
+                if (!filename.endsWith(zipFooter)) {
+                    continue;
+                }
 
                 int num = leiToInt(filename.split("\\.")[2]);
                 if (num > lastNum) {
@@ -345,8 +342,7 @@ public class KitKitLogger {
                 zipOS.closeEntry();
             }
             zipOS.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
 
@@ -359,9 +355,9 @@ public class KitKitLogger {
         PackageManager manager = _ctnx.getPackageManager();
         PackageInfo info = null;
         try {
-            info = manager.getPackageInfo (_ctnx.getPackageName(), 0);
+            info = manager.getPackageInfo(_ctnx.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e2) {
-            Log.e(TAG,e2.getMessage());
+            Log.e(TAG, e2.getMessage());
         }
         String model = Build.MODEL;
         if (!model.startsWith(Build.MANUFACTURER))
@@ -374,23 +370,22 @@ public class KitKitLogger {
         String fullName = documentsPath + "/crashlog." + normAppName() + ".txt";
 
         // Extract to file.
-        File file = new File (fullName);
+        File file = new File(fullName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG, e.getMessage());
             }
         }
         InputStreamReader reader = null;
         FileWriter writer = null;
-        try
-        {
+        try {
             // For Android 4.0 and earlier, you will get all app's log output, so filter it to
             // mostly limit it to your app's output.  In later versions, the filtering isn't needed.
             String cmd = (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) ?
-                    "logcat -d -v time "+appName+":v dalvikvm:v System.err:v *:s" :
+                    "logcat -d -v time " + appName + ":v dalvikvm:v System.err:v *:s" :
                     "logcat -d -v time";
 
             // get input stream
@@ -399,25 +394,22 @@ public class KitKitLogger {
 
             // write output stream
             writer = new FileWriter(file);
-            writer.write("Android version: " +  Build.VERSION.SDK_INT + "\n");
+            writer.write("Android version: " + Build.VERSION.SDK_INT + "\n");
             writer.write("Device: " + model + "\n");
             writer.write("App name: " + appName);
             writer.write("App version: " + (info == null ? "(null)" : info.versionCode) + "\n");
 
             char[] buffer = new char[10000];
-            do
-            {
-                int n = reader.read (buffer, 0, buffer.length);
+            do {
+                int n = reader.read(buffer, 0, buffer.length);
                 if (n == -1)
                     break;
-                writer.write (buffer, 0, n);
+                writer.write(buffer, 0, n);
             } while (true);
 
             reader.close();
             writer.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             if (writer != null)
                 try {
                     writer.close();
@@ -432,7 +424,7 @@ public class KitKitLogger {
                 }
 
             // You might want to write a failure message to the log here.
-            Log.e(TAG, "Kitkit logger failed to write crash log + \n"+e.getMessage());
+            Log.e(TAG, "Kitkit logger failed to write crash log + \n" + e.getMessage());
             return null;
         }
 

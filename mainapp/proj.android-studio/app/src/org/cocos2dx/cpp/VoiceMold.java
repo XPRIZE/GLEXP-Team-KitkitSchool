@@ -1,15 +1,10 @@
 /**
  * VoiceMold.java -- Wrap[TextToSpeechWrapper] (=tts-wrapper-wrapper).
- *
+ * <p>
  * NB(xenosoz, 2018): Date created: 26 Feb, 2018
  */
 
 package org.cocos2dx.cpp;
-
-import java.io.File;
-import java.lang.String;
-import java.util.HashMap;
-import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +13,10 @@ import android.content.pm.ResolveInfo;
 import android.media.MediaMetadataRetriever;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class VoiceMold {
@@ -44,8 +43,7 @@ public class VoiceMold {
             for (ResolveInfo info : list) {
                 Log.d("Info", info.toString());
             }
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             Log.d("Error", e.toString());
         }
     }
@@ -112,12 +110,10 @@ public class VoiceMold {
                 (new File(filename)).delete();
 
                 return ms.floatValue() / 1000.f;
-            }
-            else {
+            } else {
                 Log.e("voice-engine-a", "synthesizeToFile failed");
             }
-        }
-        catch (Exception e) {  // XXX
+        } catch (Exception e) {  // XXX
             Log.e("voice-engine-a", e.toString());
         }
 

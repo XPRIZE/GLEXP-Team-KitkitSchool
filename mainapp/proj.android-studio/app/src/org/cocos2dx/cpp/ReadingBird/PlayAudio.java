@@ -30,11 +30,26 @@ public class PlayAudio {
     private int mCurrentPosition;
     private boolean mbExternalAudioFile = false;
     private String mExternalPath = "";
+    private Visualizer.OnDataCaptureListener mOnDataCaptureListener = new Visualizer.OnDataCaptureListener() {
+        @Override
+        public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
+        }
+
+        @Override
+        public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
+            onPlayVolume(Recognizer.getVolume(fft, fft.length));
+        }
+    };
+
     public PlayAudio(Activity activity, boolean bExternalAudioFile, String externalPath) {
         mActivity = activity;
         mbExternalAudioFile = bExternalAudioFile;
         mExternalPath = externalPath;
     }
+
+    public static native void onStop();
+
+    public static native void onPlayVolume(int volume);
 
     public void playPCM(String filePath) {
         if (mThread != null) {
@@ -45,7 +60,7 @@ public class PlayAudio {
         mCurrentPosition = 0;
 
         if (mAudioTrack == null) {
-            int outfrequency = (int)(SAMPLE_RATE * AUDIO_TRACK_PITCH);
+            int outfrequency = (int) (SAMPLE_RATE * AUDIO_TRACK_PITCH);
             int channelConfiguration = AudioFormat.CHANNEL_OUT_MONO;
             int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
@@ -62,7 +77,7 @@ public class PlayAudio {
 //            enhancer.setEnabled(true);
         }
 
-        Log.i( "play : " + mFilePath);
+        Log.i("play : " + mFilePath);
 
         mThread = new PlayThread();
         mThread.start();
@@ -87,15 +102,14 @@ public class PlayAudio {
             mVisualizerMediaPlayer.setDataCaptureListener(mOnDataCaptureListener, Visualizer.getMaxCaptureRate() / 2, false, true);
         }
 
-        Log.i( "play : " + mFilePath);
+        Log.i("play : " + mFilePath);
 
         try {
             mMediaPlayer.reset();
 
-            if (mbExternalAudioFile == false)
-            {
+            if (mbExternalAudioFile == false) {
                 if (mFilePath.startsWith("localized") == true) {
-                    AssetFileDescriptor assetFileDescriptor =mActivity.getAssets().openFd(mFilePath);
+                    AssetFileDescriptor assetFileDescriptor = mActivity.getAssets().openFd(mFilePath);
                     mMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
                     assetFileDescriptor.close();
 
@@ -175,9 +189,6 @@ public class PlayAudio {
 
     }
 
-    public static native void onStop();
-    public static native void onPlayVolume(int volume);
-
     private final class PlayThread extends Thread {
         public void run() {
             mbPlaying = true;
@@ -239,15 +250,4 @@ public class PlayAudio {
 
         }
     }
-
-    private Visualizer.OnDataCaptureListener mOnDataCaptureListener = new Visualizer.OnDataCaptureListener() {
-        @Override
-        public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
-        }
-
-        @Override
-        public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-            onPlayVolume(Recognizer.getVolume(fft, fft.length));
-        }
-    };
 }

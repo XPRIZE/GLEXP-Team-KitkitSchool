@@ -7,6 +7,7 @@ import java.util.Map;
 public class PhonemesSimilarity {
     private static Map<String, String> gNeighborPhonemes = new HashMap<>();
     private static String gDebugMessage = "";
+
     private static void init() {
         gNeighborPhonemes.put("aa", "aa ah er ao ae");
         gNeighborPhonemes.put("ae", "ae eh er ah");
@@ -66,7 +67,7 @@ public class PhonemesSimilarity {
             }
         } else {
             if (s1List.size() >= 10) {
-                if ((int)(s1List.size() * 1.5f) <= s2List.size()) {
+                if ((int) (s1List.size() * 1.5f) <= s2List.size()) {
                     gDebugMessage += "too many pronunciation";
                     return 0;
                 }
@@ -93,7 +94,7 @@ public class PhonemesSimilarity {
         }
 
         gDebugMessage += "intersection : " + intersection;
-        return (2 * intersection.size()) / (double)(s1Size + s2Size);
+        return (2 * intersection.size()) / (double) (s1Size + s2Size);
     }
 
     private static ArrayList<String> getPhonemesList(String phonemes) {

@@ -25,23 +25,21 @@ public class KitKitLoggerActivity extends Activity {
     private static final String TAG = "KitKitLoggerActivity";
     protected String appLanguage;
 
-    public String getAppLanguage() { return appLanguage; }
+    public String getAppLanguage() {
+        return appLanguage;
+    }
 
-    public  boolean isStoragePermissionGranted() {
+    public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
                 return true;
             } else {
 
-                Log.v(TAG,"Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
+        } else { //permission is automatically granted on sdk<23 upon installation
             return true;
         }
     }
@@ -62,30 +60,23 @@ public class KitKitLoggerActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-        }
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         try {
-            //Context launcherContext = newBase.createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
-//            Changed the package of Gallery app to "com.maq.xprize.kitkitlauncher.hindi"
-            Context launcherContext = newBase.createPackageContext("com.maq.xprize.kitkitlauncher.hindi", 0);
+            Context launcherContext = newBase.createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
             SharedPreferences pref = launcherContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
-            //appLanguage = pref.getString("appLanguage", newBase.getString(R.string.defaultLanguage));
             appLanguage = pref.getString("appLanguage", "en-US");
 
             String[] splitLang = appLanguage.split("-");
             String lang = splitLang[0];
-            String region = splitLang.length>1 ? splitLang[1] : "";
+            String region = splitLang.length > 1 ? splitLang[1] : "";
 
             Locale newLocale = new Locale(lang, region);
             Context context = KitkitContextWrapper.wrap(newBase, newLocale);
             super.attachBaseContext(context);
-        }
-        catch (PackageManager.NameNotFoundException ne) {
+        } catch (PackageManager.NameNotFoundException ne) {
             Log.e(TAG, ne.toString());
             super.attachBaseContext(newBase);
         }
@@ -112,11 +103,11 @@ public class KitKitLoggerActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
         try {
             //Context context = createPackageContext("todoschoollauncher.enuma.com.todoschoollauncher",0);
-//            Changed the package of Gallery app to "com.maq.xprize.kitkitlauncher.hindi"
-            Context context = createPackageContext("com.maq.xprize.kitkitlauncher.hindi", 0);
+//            Changed the package of Gallery app to "org.cocos2dx.cpp.kitkitlauncher.hindi"
+            Context context = createPackageContext("com.maq.xprize.kitkitschool.hindi", 0);
             //this seems working but Context.MODE_MULTI_PROCESS is deprecated since SDK 23. If it has problem, need to change to ContentProvider for sharing data.
             SharedPreferences pref = context.getSharedPreferences("sharedPref", Context.MODE_MULTI_PROCESS);
             //String sharedLang = pref.getString("appLanguage", getString(R.string.defaultLanguage));
@@ -124,8 +115,7 @@ public class KitKitLoggerActivity extends Activity {
             if (appLanguage != null && !appLanguage.equals(sharedLang)) {
                 restartApp();
             }
-        }
-        catch (PackageManager.NameNotFoundException ne) {
+        } catch (PackageManager.NameNotFoundException ne) {
             Log.e(TAG, ne.toString());
         }
 

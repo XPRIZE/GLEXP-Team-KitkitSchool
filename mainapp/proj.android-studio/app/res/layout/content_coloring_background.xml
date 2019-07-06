@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteX="0px"
+    tools:layout_editor_absoluteY="0px">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16px"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="16px"
+        android:layout_marginTop="16px"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/layout_bg_0"
+                android:layout_width="630px"
+                android:layout_height="474px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layout_bg_1"
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layout_bg_2"
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60px"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/layout_bg_3"
+                android:layout_width="630px"
+                android:layout_height="474px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layout_bg_4"
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layout_bg_5"
+                android:layout_width="630px"
+                android:layout_height="474px"
+                android:layout_marginLeft="60px">
+
+                <ImageView
+                    android:id="@+id/iv_bg_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/drawingpad_painting_paperoption_white"
+                    android:padding="12px"
+                    android:scaleType="fitCenter" />
+
+                <View
+                    android:id="@+id/v_bg_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:background="@drawable/selector_pressed_effect_drawing" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

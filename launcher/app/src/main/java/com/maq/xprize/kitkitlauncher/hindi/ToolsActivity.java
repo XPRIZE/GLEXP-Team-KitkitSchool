@@ -259,32 +259,6 @@ public class ToolsActivity extends KitKitLoggerActivity {
             }
         });
 
-        ToolsAppView fishBowl = findViewById(R.id.app_fish_bowl);
-        fishBowl.setItem("fish_bowl", getString(R.string.fish_bowl), "tools_image_icon_sea_world", "tools_image_icon_sea_world_disabled", "0");
-        fishBowl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!v.isEnabled()) {
-                    return;
-                }
-                ToolsAppView tv = (ToolsAppView) v;
-                if (tv.isUnlocked()) {
-                    packageName = "com.maq.xprize.FB";
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.setComponent(new ComponentName("com.maq.xprize.FB", "org.cocos2dx.cpp.AppActivity"));
-                        startActivity(intent);
-                        KitKitLogger logger = ((LauncherApplication) getApplication()).getLogger();
-                        logger.logEvent("ToolsActivity", "start_fish_bowl", "", 0);
-                    } catch (Exception e) {
-                        Log.e("ToolsActivity", "Sea World Intent Error:" + e);
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        });
-
         ToolsAppView writingBoard = findViewById(R.id.app_writing_board);
         writingBoard.setItem("writingboard", getString(R.string.writing_board), "tools_image_icon_writing_board", "tools_image_icon_writing_board_disabled", "200");
         writingBoard.setOnClickListener(new View.OnClickListener() {
@@ -369,17 +343,6 @@ public class ToolsActivity extends KitKitLoggerActivity {
         } else {
             album.setUnlocked(false);
             album.setEnable(false);
-        }
-
-        ToolsAppView fishBowl = findViewById(R.id.app_fish_bowl);
-        if (currentUser.isUnlockFishBowl()) {
-            fishBowl.setUnlocked(true);
-            fishBowl.setEnable(true);
-
-        } else {
-            fishBowl.setUnlocked(false);
-            fishBowl.setEnable(false);
-
         }
 
         ToolsAppView writingBoard = findViewById(R.id.app_writing_board);

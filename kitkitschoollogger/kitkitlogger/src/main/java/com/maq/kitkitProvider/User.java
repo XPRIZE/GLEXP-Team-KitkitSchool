@@ -107,7 +107,7 @@ public class User {
     }
 
     public boolean isFinishTutorial() {
-        return true; /*this._finishTutorial;*/
+        return true;
     }
 
     public void setFinishTutorial(boolean unlock) {

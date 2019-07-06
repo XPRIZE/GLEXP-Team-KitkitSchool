@@ -5,7 +5,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
-    buildToolsVersion "25.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.maq.xprize.kitkitschool.hindi"
@@ -143,4 +143,12 @@ dependencies {
 //    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
 //    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
     compile 'com.android.support.constraint:constraint-layout:1.1.3'
+//    Used by Launcher
+    compile 'com.android.support:appcompat-v7:28.0.0'
+    compile 'com.android.support:design:28.0.0'
+//    Used by Gallery app
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile files('libs/commons-net-3.6.jar')
+    compile files('libs/commons-io-2.5.jar')
+    compile 'org.apmem.tools:layouts:1.10@aar'
 }

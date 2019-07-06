@@ -67,12 +67,6 @@
                     android:layout_margin="@dimen/tools_padding" />
 
                 <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
-                    android:id="@+id/app_fish_bowl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/tools_padding" />
-
-                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_writing_board"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

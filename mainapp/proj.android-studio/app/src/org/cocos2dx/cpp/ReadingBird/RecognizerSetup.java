@@ -8,7 +8,15 @@ import edu.cmu.pocketsphinx.Config;
 import edu.cmu.pocketsphinx.Decoder;
 
 public class RecognizerSetup {
+    static {
+        System.loadLibrary("pocketsphinx_jni");
+    }
+
     private final Config config;
+
+    private RecognizerSetup(Config config) {
+        this.config = config;
+    }
 
     public static RecognizerSetup defaultSetup() {
         return new RecognizerSetup(Decoder.defaultConfig());
@@ -16,10 +24,6 @@ public class RecognizerSetup {
 
     public static RecognizerSetup setupFromFile(File configFile) {
         return new RecognizerSetup(Decoder.fileConfig(configFile.getPath()));
-    }
-
-    private RecognizerSetup(Config config) {
-        this.config = config;
     }
 
     public Recognizer getRecognizer() throws IOException {
@@ -35,7 +39,7 @@ public class RecognizerSetup {
     }
 
     public RecognizerSetup setSampleRate(int rate) {
-        return this.setFloat("-samprate", (double)rate);
+        return this.setFloat("-samprate", (double) rate);
     }
 
     public RecognizerSetup setRawLogDir(File dir) {
@@ -43,7 +47,7 @@ public class RecognizerSetup {
     }
 
     public RecognizerSetup setKeywordThreshold(float threshold) {
-        return this.setFloat("-kws_threshold", (double)threshold);
+        return this.setFloat("-kws_threshold", (double) threshold);
     }
 
     public RecognizerSetup setBoolean(String key, boolean value) {
@@ -64,9 +68,5 @@ public class RecognizerSetup {
     public RecognizerSetup setString(String key, String value) {
         this.config.setString(key, value);
         return this;
-    }
-
-    static {
-        System.loadLibrary("pocketsphinx_jni");
     }
 }
