@@ -24,7 +24,6 @@
 USING_NS_CC;
 
 using namespace cocos2d::ui;
-std::string _speakMachineWord;
 class WordMachineScene : Layer
 {
 public:
