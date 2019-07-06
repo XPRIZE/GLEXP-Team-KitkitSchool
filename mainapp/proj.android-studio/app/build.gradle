@@ -11,8 +11,8 @@ android {
         applicationId "com.maq.xprize.kitkitschool.hindi"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
-        versionCode 16
-        versionName "3.1.6"
+        versionCode 17
+        versionName "3.2.0"
 
         lintOptions {
             abortOnError false

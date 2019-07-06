@@ -10,8 +10,8 @@ android {
         applicationId "com.maq.xprize.booktest"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 4
-        versionName "3.0.1"
+        versionCode 5
+        versionName "3.2.0"
 
         externalNativeBuild {
             ndkBuild {
@@ -38,6 +38,13 @@ android {
                 }
             }
         }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 
     sourceSets {

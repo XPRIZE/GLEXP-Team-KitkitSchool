@@ -108,7 +108,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     /* function to call the main application after extraction */
     public void toCallApplication() {
-        intent = new Intent("android.intent.action.LAUNCHER");
+        intent = new Intent(SplashScreenActivity.this, SelectActivity.class);
         startActivity(intent);
         finish();
     }
