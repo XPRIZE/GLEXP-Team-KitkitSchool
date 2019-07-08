@@ -855,7 +855,7 @@ void EggQuizScene::createNumberIdentificationDragView() {
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
     
-    createSmallSpeakerView(soundsNumberPath+_problem.answer);
+    createSmallSpeakerView(_problem.answer);
         
     Size slotSize = Slot::create(SlotSize::Small)->getContentSize();
     float space = 44;
