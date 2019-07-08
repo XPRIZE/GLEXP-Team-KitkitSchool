@@ -5,6 +5,7 @@
 //  Created by Jaehun Jung on 29/08/2018.
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "EggQuizScene.hpp"
 #include "PushButton.hpp"
 #include "DragButton.hpp"
@@ -2008,6 +2009,7 @@ float EggQuizScene::getMinFontSize(vector<string> labels, float fontSize, Size b
 void EggQuizScene::onExit() {
     LOGFN();
     Layer::onExit();
+    VoiceMoldManager::shared()->speak(" "); //To stop TTS
 }
 
 void EggQuizScene::resetTryCountFishTest() {
