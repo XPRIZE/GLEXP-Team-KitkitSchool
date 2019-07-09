@@ -118,7 +118,7 @@ Install all the APKs, then start the Kitkit Launcher to explorer.
 
 
 # Trademarks
-Kitkit School, name and logo, and Enuma are trademarks of Enuma, Inc. The Apache License 2.0 under which Kitkit School software is released does not grant any license or right to use the trademarks. Please see Guidelines for Trademarks to learn more about the terms. (hyperlink to our website “Legal – Kitkit School” page)
+Kitkit School, name and logo, and Enuma are trademarks of Enuma, Inc. The Apache License 2.0 under which Kitkit School software is released does not grant any license or right to use the trademarks. Please see [Guidelines for Trademarks](http://kitkitschool.com/legal-kitkit/) to learn more about the terms. 
 
 Kitkit and Enuma are trademarks of Enuma, Inc., registered in the U.S. and other countries. 
 
@@ -128,9 +128,6 @@ Kitkit and Enuma are trademarks of Enuma, Inc., registered in the U.S. and other
 Do you have questions about the code, content or data? Please reach out to the [Global Learning XPRIZE Community](http://community.xprize.org/learning).
 
 
-<br>
-<br>
-
-<p align=center>Copyright 2018 Enuma, Inc</p>
+### Copyright 2018 Enuma, Inc
 Licensed under the Apache License 2.0 and the Creative Commons Attribution International 4.0 License (the “Licenses”); you may not use these files except in compliance with the Licenses. 
 
