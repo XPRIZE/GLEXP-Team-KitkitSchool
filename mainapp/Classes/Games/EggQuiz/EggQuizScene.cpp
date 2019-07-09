@@ -26,8 +26,39 @@
 BEGIN_NS_EGGQUIZ;
 
 static int _tryCountFishTest;
-
-Scene* EggQuizScene::createScene(string course, string level)
+ // Function and declaration for number to words conversion
+    string one[] = { "", "one ", "two ", "three ", "four ",
+                     "five ", "six ", "seven ", "eight ",
+                     "nine ", "ten ", "eleven ", "twelve ",
+                     "thirteen ", "fourteen ", "fifteen ",
+                     "sixteen ", "seventeen ", "eighteen ",
+                     "nineteen "
+    };
+    string ten[] = { "", "", "twenty ", "thirty ", "forty ",
+                     "fifty ", "sixty ", "seventy ", "eighty ",
+                     "ninety "
+    };
+    string numToWords(int n, string s)//Function used by convert to words
+    {
+        string str = "";
+        if (n > 19)
+            str += ten[n / 10] + one[n % 10];
+        else
+            str += one[n];
+        if (n)
+            str += s;
+        return str;
+    }
+    string convertToWords(int n) //Function for convertToWords
+    {
+        string word;
+        word += numToWords(((n / 100) % 10), "hundred ");
+        if (n > 100 && n % 100)
+            word += "and ";
+        word += numToWords((n % 100), "");
+        return word;
+    }
+    Scene* EggQuizScene::createScene(string course, string level)
 {
     
     auto scene = Scene::create();
@@ -179,7 +210,6 @@ void EggQuizScene::createSingleDigitNumbersView() {
 }
 
 void EggQuizScene::createRecognizeNumberView() {
-    
     auto questionBox = Scale9Sprite::create(partsPath+"pretest-questionbox.png");
     questionBox->setPreferredSize(Size(2360,800));
     questionBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -187,7 +217,7 @@ void EggQuizScene::createRecognizeNumberView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName( _problem.answer);
+    speaker->setFileName( convertToWords(TodoUtil::stoi(_problem.answer)));
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
@@ -848,13 +878,11 @@ void EggQuizScene::create3DigitNumbersView() {
 }
 
 void EggQuizScene::createNumberIdentificationDragView() {
-    
     auto questionBox = Scale9Sprite::create(partsPath+"pretest-questionbox.png");
     questionBox->setPreferredSize(Size(2360,800));
     questionBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     questionBox->setPosition(_gameNode->getContentSize().width/2,680);
     _gameNode->addChild(questionBox);
-    
     createSmallSpeakerView(_problem.answer);
         
     Size slotSize = Slot::create(SlotSize::Small)->getContentSize();
