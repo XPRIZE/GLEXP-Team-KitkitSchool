@@ -395,7 +395,7 @@ void LanguageManager::initLocalizationMap()
     _localizationMapEnglish["NumberPuzzle"] = "â¢wØæØô¢ ·UUUè ÂãðçÜØæ¡" + delm + "Number Blocks"; // संख्यायों की पहेलियाँ
     _localizationMapSwahili["NumberPuzzle"] = "Fumbo la Nambari";
 
-    _localizationMapEnglish["Arrange the numbers in order from smallest to largest"] = "ÀôÅè âð Üð·UUUUÚ ÕÇ¸è ¥¢·UUUU ·ðUUU RUUUU× ×ð¢ â¢wØæ¥ô¢ ·UUUè RUUUU×Õh ·UUUUÚð¢|"; // छोटी से लेकर बड़ी अंक के क्रम में संख्याओं की क्रमबद्ध करें|
+    _localizationMapEnglish["Arrange the numbers in order from smallest to largest"] = "ÀôÅUè âð Üð·¤ÚU ÕÇ¸è ¥´·¤ ·Ô¤ R¤× ×ð´ â´\u0081Øæ¥ô´ ·¤è R¤×Õh ·¤ÚUð´|"; // छोटी से लेकर बड़ी अंक के क्रम में संख्याओं की क्रमबद्ध करें|
     _localizationMapSwahili["Arrange the numbers in order from smallest to largest"] = "panga kwa mpangilio kutoka ndogo zaidi kwenda kubwa zaidi";
 
     _localizationMapEnglish["Largest number"] = "âÕâð ÕÇ¸è â¢wØæ"; // सबसे बड़ी संख्या
