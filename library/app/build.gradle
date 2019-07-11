@@ -1,16 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "library.todoschool.enuma.com.todoschoollibrary"
+        applicationId "com.maq.xprize.kitkitlibrary.english"
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 28
+        versionCode 11
+        versionName "3.1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
     signingConfigs {
         debug {
             storeFile file('../debug.keystore')
@@ -27,6 +35,7 @@ android {
             }
         }
     }
+	
     buildTypes {
         release {
             minifyEnabled false
@@ -54,19 +63,19 @@ android {
         }
 
         everything {
-            res.srcDirs          = ['../localized/sw-TZ/res', '../localized/en-US/res']
-            assets.srcDirs       = ['../localized/sw-TZ/assets', '../localized/en-US/assets']
+            res.srcDirs = ['../localized/sw-TZ/res', '../localized/en-US/res']
+            assets.srcDirs = ['../localized/sw-TZ/assets', '../localized/en-US/assets']
         }
 
 
         englishUS {
-            res.srcDirs          = ['../localized/en-US/res']
-            assets.srcDirs       = ['../localized/en-US/assets']
+            res.srcDirs = ['../localized/en-US/res']
+            assets.srcDirs = ['../localized/en-US/assets']
         }
 
         swahili {
-            res.srcDirs          = ['../localized/sw-TZ/res']
-            assets.srcDirs       = ['../localized/sw-TZ/assets']
+            res.srcDirs = ['../localized/sw-TZ/res']
+            assets.srcDirs = ['../localized/sw-TZ/assets']
         }
     }
 
@@ -93,6 +102,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support.constraint:constraint-layout:1.1.3'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -103,7 +113,8 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     testCompile 'junit:junit:4.12'
     compile project(':kitkitlogger')
+    compile project(path: ':downloader_library')
+    compile project(path: ':zip_file')
     //englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
     //swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
 }
-

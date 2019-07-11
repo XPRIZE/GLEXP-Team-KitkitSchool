@@ -78,7 +78,6 @@ private:
 
 };
 
-
 struct AnimalPuzzleLevelStruct {
     string text;
     string backgroundFilename;

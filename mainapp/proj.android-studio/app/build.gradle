@@ -1,17 +1,25 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
-    buildToolsVersion "25.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.enuma.xprize"
+        applicationId "com.maq.xprize.kitkitschool.hindi"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
-        versionCode 30
-        versionName "1.1.20180327.en_US"
+        versionCode 17
+        versionName "3.2.0"
+
+        lintOptions {
+            abortOnError false
+        }
+        aaptOptions {
+            cruncherEnabled = false
+        }
 
         externalNativeBuild {
             ndkBuild {
@@ -19,22 +27,21 @@ android {
                     // skip the NDK Build step if PROP_NDK_MODE is none
                     targets 'MyGame'
                     arguments 'NDK_TOOLCHAIN_VERSION=4.9'
-                    arguments 'APP_PLATFORM=android-'+PROP_APP_PLATFORM
-                    
+                    arguments 'APP_PLATFORM=android-' + PROP_APP_PLATFORM
+
                     def module_paths = [project.file("../../cocos2d").absolutePath,
                                         project.file("../../cocos2d/cocos").absolutePath,
                                         project.file("../../cocos2d/external").absolutePath]
                     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                         // should use '/'
-                        module_paths = module_paths.collect {it.replaceAll('\\\\', '/')}
+                        module_paths = module_paths.collect { it.replaceAll('\\\\', '/') }
                         arguments 'NDK_MODULE_PATH=' + module_paths.join(";")
-                    }
-                    else {
+                    } else {
                         arguments 'NDK_MODULE_PATH=' + module_paths.join(':')
                     }
-                    
+
                     arguments '-j' + Runtime.runtime.availableProcessors()
-                    abiFilters.addAll(PROP_APP_ABI.split(':').collect{it as String})
+                    abiFilters.addAll(PROP_APP_ABI.split(':').collect { it as String })
                 }
             }
         }
@@ -126,11 +133,22 @@ android {
 }
 
 dependencies {
+    compile 'com.google.firebase:firebase-core:16.0.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':libcocos2dx')
     compile project(':pocketsphinx-aar')
     compile project(':models')
     compile project(':kitkitlogger')
+    compile project(path: ':downloader_library')
 //    englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
 //    swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
+    compile 'com.android.support.constraint:constraint-layout:1.1.3'
+//    Used by Launcher
+    compile 'com.android.support:appcompat-v7:28.0.0'
+    compile 'com.android.support:design:28.0.0'
+//    Used by Gallery app
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile files('libs/commons-net-3.6.jar')
+    compile files('libs/commons-io-2.5.jar')
+    compile 'org.apmem.tools:layouts:1.10@aar'
 }

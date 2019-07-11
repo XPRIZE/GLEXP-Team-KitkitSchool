@@ -57,9 +57,9 @@ const string resourcePath = "SentenceBridge/";
 
 const Size gameSize = Size(2560, 1800);
 
-//const string fontName = "fonts/TodoSchoolV2.ttf";
+//const string fontName = "fonts/chanakya.ttf";
 //const string fontName = "fonts/AndikaNewBasic-B.ttf";
-const string fontName = "fonts/andika-r.ttf";
+const string fontName = "fonts/mukta-bold.ttf";
 const float fontSize = 140;
 const float fontSize_ch = 100;
 const bool gameDebug = false;

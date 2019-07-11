@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2B2E33"
     android:orientation="vertical"
-    tools:context="todoschoollauncher.enuma.com.todoschoollauncher.MainActivity">
+    tools:context="com.maq.xprize.kitkitlauncher.hindi.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -125,6 +126,13 @@
                     android:textColor="@android:color/white"
                     android:textSize="60px" />
             </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
         </FrameLayout>
 
         <LinearLayout
@@ -244,7 +252,6 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/launcher_mode_tool_shadow_overlay" />
             </FrameLayout>
-
 
         </LinearLayout>
 

@@ -25,6 +25,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.util.Log;
+
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -32,33 +33,81 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Wrapper for {@link TextToSpeech} with some handy test functionality.
  */
 public class TextToSpeechWrapper {
-    private static final String LOG_TAG = "TextToSpeechServiceTest";
     public static final String MOCK_TTS_ENGINE = "com.android.cts.stub";
     //public static final String FREE_TO_USE_TTS_ENGINE = "com.svox.pico";
     //public static final String FREE_TO_USE_TTS_ENGINE = "com.example.android.ttsengine";
     public static final String FREE_TO_USE_TTS_ENGINE = "com.enuma.voice_engine_a";
-    private boolean _goodEngine = false;
-    private boolean _energetic = false;
-
+    private static final String LOG_TAG = "TextToSpeechServiceTest";
+    /**
+     * maximum time to wait for tts to be initialized
+     */
+    private static final int TTS_INIT_MAX_WAIT_TIME = 30 * 1000;
+    /**
+     * maximum time to wait for speech call to be complete
+     */
+    private static final int TTS_SPEECH_MAX_WAIT_TIME = 5 * 1000;
     private final Context mContext;
     private final String mLocale;
-    private TextToSpeech mTts;
     private final InitWaitListener mInitListener;
     private final UtteranceWaitListener mUtteranceListener;
-    /** maximum time to wait for tts to be initialized */
-    private static final int TTS_INIT_MAX_WAIT_TIME = 30 * 1000;
-    /** maximum time to wait for speech call to be complete */
-    private static final int TTS_SPEECH_MAX_WAIT_TIME = 5 * 1000;
+    private boolean _goodEngine = false;
+    private boolean _energetic = false;
+    private TextToSpeech mTts;
 
     private TextToSpeechWrapper(Context context, String locale) {
         mContext = context;
         mLocale = locale;
         mInitListener = new InitWaitListener();
         mUtteranceListener = new UtteranceWaitListener();
+    }
+
+    public static TextToSpeechWrapper createTextToSpeechWrapper(Context context, String locale)
+            throws InterruptedException {
+        TextToSpeechWrapper wrapper = new TextToSpeechWrapper(context, locale);
+        if (wrapper.initTts(FREE_TO_USE_TTS_ENGINE)) {
+            return wrapper;
+        } else {
+            return null;
+        }
+    }
+
+    public static TextToSpeechWrapper createTextToSpeechMockWrapper(Context context, String locale)
+            throws InterruptedException {
+        TextToSpeechWrapper wrapper = new TextToSpeechWrapper(context, locale);
+        if (wrapper.initTts(MOCK_TTS_ENGINE)) {
+            return wrapper;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Determines if given file path is a valid, playable music file.
+     */
+    public static boolean isSoundFile(String filePath) {
+        // use media player to play the file. If it succeeds with no exceptions, assume file is
+        //valid
+        MediaPlayer mp = null;
+        try {
+            mp = new MediaPlayer();
+            mp.setDataSource(filePath);
+            mp.prepare();
+            mp.start();
+            mp.stop();
+            return true;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Exception while attempting to play music file", e);
+            return false;
+        } finally {
+            if (mp != null) {
+                mp.release();
+            }
+        }
     }
 
     private boolean initTts() throws InterruptedException {
@@ -126,38 +175,27 @@ public class TextToSpeechWrapper {
     public TextToSpeech getTts() {
         return mTts;
     }
-    public boolean isGood() { return _goodEngine; }
-    public boolean isEnergetic() { return _energetic; }
+
+    public boolean isGood() {
+        return _goodEngine;
+    }
+
+    public boolean isEnergetic() {
+        return _energetic;
+    }
+
     public void shutdown() {
         mTts.shutdown();
     }
-    public static TextToSpeechWrapper createTextToSpeechWrapper(Context context, String locale)
-            throws InterruptedException {
-        TextToSpeechWrapper wrapper = new TextToSpeechWrapper(context, locale);
-        if (wrapper.initTts(FREE_TO_USE_TTS_ENGINE)) {
-            return wrapper;
-        } else {
-            return null;
-        }
-    }
 
-    public static TextToSpeechWrapper createTextToSpeechMockWrapper(Context context, String locale)
-            throws InterruptedException
-    {
-        TextToSpeechWrapper wrapper = new TextToSpeechWrapper(context, locale);
-        if (wrapper.initTts(MOCK_TTS_ENGINE)) {
-            return wrapper;
-        } else {
-            return null;
-        }
-    }
     /**
      * Listener for waiting for TTS engine initialization completion.
      */
     private static class InitWaitListener implements OnInitListener {
         private final Lock mLock = new ReentrantLock();
-        private final Condition mDone  = mLock.newCondition();
+        private final Condition mDone = mLock.newCondition();
         private Integer mStatus = null;
+
         public void onInit(int status) {
             mLock.lock();
             try {
@@ -167,6 +205,7 @@ public class TextToSpeechWrapper {
                 mLock.unlock();
             }
         }
+
         public boolean waitForInit() throws InterruptedException {
             long timeOutNanos = TimeUnit.MILLISECONDS.toNanos(TTS_INIT_MAX_WAIT_TIME);
             mLock.lock();
@@ -183,12 +222,13 @@ public class TextToSpeechWrapper {
             }
         }
     }
+
     /**
      * Listener for waiting for utterance completion.
      */
     private static class UtteranceWaitListener implements OnUtteranceCompletedListener {
         private final Lock mLock = new ReentrantLock();
-        private final Condition mDone  = mLock.newCondition();
+        private final Condition mDone = mLock.newCondition();
         private final HashSet<String> mCompletedUtterances = new HashSet<String>();
 
         public void onUtteranceCompleted(String utteranceId) {
@@ -215,29 +255,6 @@ public class TextToSpeechWrapper {
                 return true;
             } finally {
                 mLock.unlock();
-            }
-        }
-    }
-    /**
-     * Determines if given file path is a valid, playable music file.
-     */
-    public static boolean isSoundFile(String filePath) {
-        // use media player to play the file. If it succeeds with no exceptions, assume file is
-        //valid
-        MediaPlayer mp = null;
-        try {
-            mp = new MediaPlayer();
-            mp.setDataSource(filePath);
-            mp.prepare();
-            mp.start();
-            mp.stop();
-            return true;
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception while attempting to play music file", e);
-            return false;
-        } finally {
-            if (mp != null) {
-                mp.release();
             }
         }
     }

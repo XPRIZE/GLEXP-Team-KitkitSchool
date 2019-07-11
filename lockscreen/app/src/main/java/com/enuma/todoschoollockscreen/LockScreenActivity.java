@@ -19,7 +19,7 @@ import android.text.format.Time;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.enuma.kitkitlogger.KitKitLoggerActivity;
+import com.maq.kitkitlogger.KitKitLoggerActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

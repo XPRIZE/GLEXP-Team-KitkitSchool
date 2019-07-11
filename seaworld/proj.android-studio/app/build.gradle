@@ -5,13 +5,16 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
     buildToolsVersion "25.0.0"
-
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     defaultConfig {
-        applicationId "com.enuma.xprize.FB"
+        applicationId "com.maq.xprize.FB"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0.1"
 
         externalNativeBuild {
             ndkBuild {
@@ -101,5 +104,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libcocos2dx')
-    compile project(':kitkitlogger-release')
+    compile project(path: ':kitkitlogger')
 }

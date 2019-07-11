@@ -74,7 +74,7 @@ void CoinTab::setCoinLabel(int num)
     }
     auto size = this->getContentSize();
     
-    _coinLabel = TodoUtil::createLabel(TodoUtil::itos(num), 70, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B::WHITE);
+    _coinLabel = TodoUtil::createLabel(TodoUtil::itos(num), 70, Size::ZERO, "fonts/mukta-bold.ttf", Color4B::WHITE);
     _coinLabel->setPosition(size/2);
     this->addChild(_coinLabel);
     

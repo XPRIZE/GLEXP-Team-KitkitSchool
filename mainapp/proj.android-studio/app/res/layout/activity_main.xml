@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2B2E33"
+    android:orientation="vertical"
+    tools:context="org.cocos2dx.cpp.kitkitlauncher.hindi.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="168px"
+        android:background="@drawable/launcher_topbar"
+        android:elevation="8px">
+
+        <TextView
+            android:id="@+id/textView_currentUserId"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:layout_toLeftOf="@+id/launcher_title_button"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/user_default_id"
+            android:textColor="#FDDB68"
+            android:textSize="60px" />
+
+        <Button
+            android:id="@+id/launcher_title_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="@string/launcher_title"
+            android:textColor="#878787"
+            android:textSize="70px" />
+
+        <ImageView
+            android:id="@+id/imageView_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20px"
+            android:layout_toLeftOf="@+id/textView_numCoin"
+            android:background="@android:color/transparent"
+            android:padding="0px"
+            android:src="@drawable/tools_image_icon_coin" />
+
+        <TextView
+            android:id="@+id/textView_numCoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40px"
+            android:textColor="#FDDB68"
+            android:textSize="60px" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="60px"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:padding="0px"
+                android:scaleType="fitXY"
+                android:src="@drawable/launcher_mode_game_shadow" />
+
+            <ImageButton
+                android:id="@+id/button_todoschool"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="6px"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:padding="0px"
+                android:scaleType="fitXY"
+                android:src="@drawable/launcher_mode_game" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_kitkitschool_logo_phase03" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="50px"
+                android:gravity="bottom|center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/launcher_icon_game"
+                    android:drawablePadding="10px"
+                    android:gravity="center_vertical"
+                    android:text="@string/start"
+                    android:textColor="@android:color/white"
+                    android:textSize="60px" />
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="60px"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_marginBottom="30px"
+                android:layout_weight="1028"
+                android:padding="0px">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="6px"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_library_shadow" />
+
+                <ImageButton
+                    android:id="@+id/button_library"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="6px"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_library" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/launcher_icon_library"
+                        android:gravity="center"
+                        android:text="@string/library"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/overlay_library"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:alpha="0.7"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_library_shadow_overlay" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_marginTop="30px"
+                android:layout_weight="340"
+                android:elevation="2px">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_tool_shadow" />
+
+                <ImageButton
+                    android:id="@+id/button_tool"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="6px"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_tool" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/launcher_icon_tool"
+                        android:gravity="center"
+                        android:text="@string/tools"
+                        android:textColor="@android:color/white"
+                        android:textSize="60px" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/overlay_tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:alpha="0.7"
+                    android:background="@android:color/transparent"
+                    android:padding="0px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/launcher_mode_tool_shadow_overlay" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--<android.support.v4.view.ViewPager-->
+    <!--android:id="@+id/container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/fab"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="end|bottom"-->
+    <!--android:layout_margin="@dimen/fab_margin"-->
+    <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
+
+</LinearLayout>

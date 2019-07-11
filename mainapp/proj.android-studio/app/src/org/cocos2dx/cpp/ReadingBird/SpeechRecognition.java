@@ -25,6 +25,52 @@ public class SpeechRecognition {
     private Recognizer mSpeechRecognizer;
     private Decoder mDecoder;
     private String mOriginalPhone;
+    private RecognizerListener mRecognitionListener = new RecognizerListener() {
+        public void onBeginningOfSpeech() {
+            Log.i(TAG, "onBeginningOfSpeech");
+        }
+
+        public void onEndOfSpeech() {
+            Log.i(TAG, "onEndOfSpeech");
+        }
+
+        public void onVolume(int volume) {
+            Log.i(TAG, "volume : " + volume);
+            onRecordVolume(volume);
+        }
+
+        public void onResult(Hypothesis var1) {
+            Log.i(TAG, "onResult : " + mOriginalPhone);
+
+            if (var1 == null) {
+                onRecordScore(0);
+                return;
+            }
+
+            if (mOriginalPhone.isEmpty()) {
+                onRecordScore(100);
+                return;
+            }
+
+            String speech = var1.getHypstr();
+            int score = (int) (PhonemesSimilarity.diceCoefficient(mOriginalPhone, speech) * 100);
+            Log.i(TAG, "estimation : " + PhonemesSimilarity.getDebugMessage() + "\nscore : " + score);
+            onRecordScore(score);
+        }
+
+        public void onError(Exception var1) {
+            Log.i(TAG, "onError");
+        }
+
+        public void onTimeout() {
+            Log.i(TAG, "onTimeout");
+            mSpeechRecognizer.stop();
+        }
+    };
+
+    public static native void onRecordVolume(int volume);
+
+    public static native void onRecordScore(int score);
 
     public void setup(Activity activity) {
         makeRootFolder();
@@ -125,53 +171,4 @@ public class SpeechRecognition {
             }
         }
     }
-
-    public static native void onRecordVolume(int volume);
-    public static native void onRecordScore(int score);
-
-    private RecognizerListener mRecognitionListener = new RecognizerListener() {
-        public void onBeginningOfSpeech() {
-            Log.i(TAG, "onBeginningOfSpeech");
-        }
-
-        public void onEndOfSpeech() {
-            Log.i(TAG, "onEndOfSpeech");
-        }
-
-        public void onVolume(int volume)
-        {
-            Log.i(TAG, "volume : " + volume);
-            onRecordVolume(volume);
-        }
-
-        public void onResult(Hypothesis var1) {
-            Log.i(TAG, "onResult : " + mOriginalPhone);
-
-            if (var1 == null)
-            {
-                onRecordScore(0);
-                return;
-            }
-
-            if (mOriginalPhone.isEmpty())
-            {
-                onRecordScore(100);
-                return;
-            }
-
-            String speech = var1.getHypstr();
-            int score = (int) (PhonemesSimilarity.diceCoefficient(mOriginalPhone, speech) * 100);
-            Log.i(TAG, "estimation : " + PhonemesSimilarity.getDebugMessage() + "\nscore : " + score);
-            onRecordScore(score);
-        }
-
-        public void onError(Exception var1) {
-            Log.i(TAG, "onError");
-        }
-
-        public void onTimeout() {
-            Log.i(TAG,"onTimeout");
-            mSpeechRecognizer.stop();
-        }
-    };
 }

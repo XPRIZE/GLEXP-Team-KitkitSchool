@@ -1,0 +1,73 @@
+<resources>
+    <string name="content_extraction" translatable="false">यह प्रक्रिया केवल एक बार की जाएगी। इसमें १० मिनट तक का समय लग सकता है।</string>
+    <string name="content_extraction_english" translatable="false">This process will be done only once. It can take up to 10 minutes.</string>
+    <string name="tools_activity_title">More apps</string>
+    <string name="user_default_id">user0</string>
+    <string name="launcher_title">किटकिट स्कूल</string>
+    <string name="btn_setting">Settings</string>
+    <string name="btn_credit">Credit</string>
+    <string name="about_activity_title">About</string>
+    <string name="enuma_info">Enuma, Inc.\nhttp://enuma.com\nxpsupport@enuma.com</string>
+    <string name="password">Password</string>
+    <string name="cancel">Cancel</string>
+    <string name="go_setting">Go to Android Settings</string>
+    <string name="enter_password">Enter password</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="start">\tStart\nशुरू करो</string>
+    <string name="install">Install</string>
+    <string name="library">Library\nपुस्तकालय</string>
+    <string name="tools">Tools\nउपकरण</string>
+    <string name="btn_upload">Upload logs</string>
+    <string name="btn_clear_appdata">Clear app data</string>
+    <string name="setting_activity_title">Settings</string>
+    <string name="btn_pretest">Pre-test</string>
+    <string name="btn_posttest">Post-test</string>
+    <string name="select_language">Select language</string>
+    <string name="btn_changeLanguage">Change language</string>
+    <string name="select_user">Select user</string>
+    <string name="unlock_all">Unlock all</string>
+    <string name="add_100_stars">Add 100 coins</string>
+    <string name="add_1000_stars">Add 1000 coins</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="review_mode">Review Mode</string>
+    <string name="sign_language_mode">Sign Language Mode</string>
+    <string name="btn_administration">Administration</string>
+    <string name="tablet_number">Tablet number</string>
+    <string name="user_name">User name</string>
+    <string name="administration_activity_title">Administration</string>
+    <string name="submit">SUBMIT</string>
+    <string name="cancel2">CANCEL</string>
+    <string name="enter">ENTER</string>
+    <string name="number">number</string>
+    <string name="defaultLanguage">en-US</string>
+    <string name="drums">Drums\nढोल</string>
+    <string name="marimba">Xylophone\nमरिम्बा</string>
+    <string name="drawing">Drawing\nचित्रकारी</string>
+    <string name="coloring">Coloring\nरंग भरे</string>
+    <string name="camera">Camera\nकैमरा</string>
+    <string name="album">Album\nएल्बम</string>
+    <string name="blackboard">Black Board\nश्यामपट्ट</string>
+    <string name="writing_board">Writing Board\nबोर्ड लेखन</string>
+
+    <string name="select_user_no">Select user number</string>
+    <string name="select_tablet_no">Select tablet number</string>
+    <string name="user_no">User No.</string>
+    <string name="name">name</string>
+    <string name="username_activity_title">User name</string>
+    <string name="username_list">[ User name list ]</string>
+    <string name="rename">Rename</string>
+    <string name="dialog_message" translatable="false">Install this application to enable this module in music and arts section.\nसंगीत और कला अनुभाग में इस मॉड्यूल को शुरू करने के लिए इस एप्लिकेशन को इंस्टॉल करें।</string>
+    <string name="title_drawing">Drawing</string>
+    <string name="title_coloring">Coloring</string>
+
+    <string name="white">White</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="yellow">Yellow</string>
+    <string name="red">Red</string>
+    <string name="black">Black</string>
+    <string name="mainFileVersion">mainFileVersion</string>
+    <string name="patchFileVersion">patchFileVersion</string>
+
+</resources>

@@ -101,6 +101,8 @@
 #include "CustomDirector.h"
 #include "3rdParty/CCNativeAlert.h"
 
+#include "platform/android/jni/JniHelper.h"
+
 using namespace std;
 USING_NS_CC;
 
@@ -145,6 +147,21 @@ CCAppController::~CCAppController() {
 
     CC_SAFE_DELETE(_playTimer);
     
+}
+
+// JNI function to set the parameter "current_screen" in the logged events
+void firebase_setCurrentScreen(string screenName, string screenClass) {
+    JniMethodInfo t;
+    bool getInfo = JniHelper::getMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "firebase_setCurrentScreen", "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (getInfo)
+    {
+        jobject activity = JniHelper::getActivity();
+        jstring jScreenName = t.env->NewStringUTF(screenName.c_str());
+        jstring jScreenClass = t.env->NewStringUTF(screenClass.c_str());
+        t.env->CallVoidMethod(activity, t.methodID, jScreenName, jScreenClass);
+        t.env->DeleteLocalRef(jScreenName);
+        t.env->DeleteLocalRef(jScreenClass);
+    }
 }
 
 bool CCAppController::gameExists(std::string gameName)
@@ -875,8 +892,9 @@ bool CCAppController::startGame(std::string gameName, int level, std::string par
 
     //Scene* nextScene;
     std::function<Scene*(void)> creator;
-    
-    
+
+    firebase_setCurrentScreen(_currentGame, "");
+
     if (gameName == "Book") {
         if (checkOnly) return true;
         startBookScene(kBookFolder);
@@ -951,10 +969,27 @@ bool CCAppController::startGame(std::string gameName, int level, std::string par
 
 }
 
+// JNI function to log the event "playGame" after a game has been played
+void logFirebaseEvent_playGame(std::string game, int level, double duration, bool freechoice, bool completed) {
+    JniMethodInfo t;
+    bool getInfo = JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "logFirebaseEvent_playGame", "(Ljava/lang/String;IDZZ)V");
+    if (getInfo)
+    {
+        jstring jGame = t.env->NewStringUTF(game.c_str());
+        t.env->CallStaticVoidMethod(t.classID, t.methodID, jGame, level, duration, freechoice, completed);
+        t.env->DeleteLocalRef(t.classID);
+        t.env->DeleteLocalRef(jGame);
+    }
+}
+
 void CCAppController::handleGameQuit(bool bImmediately)
 {
     if (_currentGame != "") {
         double duration = _playTimer->stop();
+        // Log an event for quitting the game without finishing it
+        logFirebaseEvent_playGame(_currentGame, _currentLevel, duration, _isFreeChoice, false);
+        // Set the parameter "current_screen_name" back to NULL
+        firebase_setCurrentScreen("", "");
         _playTimer->start();
         
         if (_currentGame == "__BookView__") {
@@ -978,7 +1013,7 @@ void CCAppController::handleGameQuit(bool bImmediately)
     _currentParam = "";
     _currentLevel = 0;
     _isFreeChoice = false;
-    
+
     if (bImmediately) {
         ((CustomDirector*)Director::getInstance())->popScene();
     } else {
@@ -992,8 +1027,6 @@ void CCAppController::handleGameComplete(int result)
     //UserManager::getInstance()->setCompletedGame(_currentGame, _currentLevel);
     
     if (_currentCurrLevelID!="") {
-        UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
-        
         if (TodoUtil::endsWith(_currentCurrLevelID, StringUtils::format("_%d", CoopScene::LEVEL_SPECIAL_COURSE))) {
             int currentSpecialGame = UserManager::getInstance()->getSpecialCourseCurrentProgress(_currentCurrLevelID, _currentCurrDay);
             
@@ -1004,6 +1037,10 @@ void CCAppController::handleGameComplete(int result)
     
     
     double duration = _playTimer->stop();
+    // Log an event for finishing the game
+    logFirebaseEvent_playGame(_currentGame, _currentLevel, duration, _isFreeChoice, true);
+    // Set the parameter "current_screen_name" back to NULL
+    firebase_setCurrentScreen("", "");
     _playTimer->start();
     
     if (_currentGame == "__BookView__") {
@@ -1070,10 +1107,6 @@ void CCAppController::startBookScene(std::string bookFolder, bool replaceParent,
             auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Error"), 200, Size::ZERO, "fonts/Aileron-Regular.otf", Color4B::WHITE);
             l->setPosition(nextScene->getContentSize()/2);
             nextScene->addChild(l);
-            
-            if (_currentCurrLevelID!="") {
-                UserManager::getInstance()->setGameCleared(_currentCurrLevelID, _currentCurrDay, _currentCurrGameIndex);
-            }
             
         }
 

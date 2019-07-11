@@ -1,11 +1,12 @@
 package org.cocos2dx.cpp.ReadingBird.fftpack;
+
 /**
  * sine FFT transform with odd wave numbers.
+ *
  * @author Baoshe Zhang
  * @author Astronomical Instrument Group of University of Lethbridge.
  */
-public class RealDoubleFFT_Odd_Odd extends RealDoubleFFT_Even_Odd
-{
+public class RealDoubleFFT_Odd_Odd extends RealDoubleFFT_Even_Odd {
     /**
      * <em>norm_factor</em> can be used to normalize this FFT transform. This is because
      * a call of forward transform (<em>ft</em>) followed by a call of backward transform
@@ -18,85 +19,77 @@ public class RealDoubleFFT_Odd_Odd extends RealDoubleFFT_Even_Odd
      * factorization of <em>n</em> together with a tabulation of the trigonometric functions
      * are computed and stored.
      *
-     * @param  n  the size of a real data sequence. When <em>n</em> is a multiplication of small
-     * numbers (4, 2, 3, 5), this FFT transform is very efficient.
+     * @param n the size of a real data sequence. When <em>n</em> is a multiplication of small
+     *          numbers (4, 2, 3, 5), this FFT transform is very efficient.
      */
-    public RealDoubleFFT_Odd_Odd(int n)
-    {
+    public RealDoubleFFT_Odd_Odd(int n) {
         super(n);
     }
 
     /**
-     * Forward FFT transform of quarter wave data. It computes the coeffients in 
+     * Forward FFT transform of quarter wave data. It computes the coeffients in
      * sine series representation with only odd wave numbers.
-     * 
+     *
      * @param x an array which contains the sequence to be transformed. After FFT,
-     * <em>x</em> contains the transform coeffients.
+     *          <em>x</em> contains the transform coeffients.
      */
     @Override
-    public void ft(double x[])
-    {
+    public void ft(double x[]) {
         sinqf(ndim, x, wavetable);
     }
 
     /**
      * Backward FFT transform of quarter wave data. It is the unnormalized inverse transform
-     * of <em>ft</em>. 
+     * of <em>ft</em>.
      *
      * @param x an array which contains the sequence to be tranformed. After FFT, <em>x</em> contains
-     * the transform coeffients.
+     *          the transform coeffients.
      */
     @Override
-    public void bt(double x[])
-    {
+    public void bt(double x[]) {
         sinqb(ndim, x, wavetable);
     }
 
     /*-----------------------------------------------
    sinqf: forward sine FFT with odd wave numbers.
   ----------------------------------------------*/
-    void sinqf(int n, double x[], double wtable[])
-    {
-        int     k;
-        double  xhold;
-        int     kc, ns2;
+    void sinqf(int n, double x[], double wtable[]) {
+        int k;
+        double xhold;
+        int kc, ns2;
 
-        if(n==1) return;
-        ns2=n / 2;
-        for(k=0; k<ns2; k++)
-        {
-            kc=n-k-1;
-            xhold=x[k];
-            x[k]=x[kc];
-            x[kc]=xhold;
+        if (n == 1) return;
+        ns2 = n / 2;
+        for (k = 0; k < ns2; k++) {
+            kc = n - k - 1;
+            xhold = x[k];
+            x[k] = x[kc];
+            x[kc] = xhold;
         }
         cosqf(n, x, wtable);
-        for(k=1; k<n; k+=2) x[k]=-x[k];
-    } 
+        for (k = 1; k < n; k += 2) x[k] = -x[k];
+    }
 
     /*-----------------------------------------------
    sinqb: backward sine FFT with odd wave numbers.
   ----------------------------------------------*/
-    void sinqb(int n, double x[], double wtable[])
-    {
-        int     k;
-        double  xhold;
-        int     kc, ns2;
+    void sinqb(int n, double x[], double wtable[]) {
+        int k;
+        double xhold;
+        int kc, ns2;
 
-        if(n<=1)
-        {
-            x[0]*=4;
+        if (n <= 1) {
+            x[0] *= 4;
             return;
         }
-        ns2=n / 2;
-        for(k=1; k<n; k+=2) x[k]=-x[k];
+        ns2 = n / 2;
+        for (k = 1; k < n; k += 2) x[k] = -x[k];
         cosqb(n, x, wtable);
-        for(k=0; k<ns2; k++)
-        {
-            kc=n-k-1;
-            xhold=x[k];
-            x[k]=x[kc];
-            x[kc]=xhold;
+        for (k = 0; k < ns2; k++) {
+            kc = n - k - 1;
+            xhold = x[k];
+            x[k] = x[kc];
+            x[kc] = xhold;
         }
     } 
 

@@ -1,18 +1,26 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
-
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 28
 
-        applicationId "todoschoollauncher.enuma.com.todoschoollauncher"
-        versionCode 4
-        versionName "1.1"
+        applicationId "com.maq.xprize.kitkitlauncher.hindi"
+        versionCode 14
+        versionName "3.1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
     signingConfigs {
         debug {
             storeFile file('../debug.keystore')
@@ -40,6 +48,7 @@ android {
 
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -63,6 +72,7 @@ android {
 }
 
 dependencies {
+    compile 'com.google.firebase:firebase-core:16.0.4'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -70,13 +80,16 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    //compile 'com.jakewharton.timber:timber:4.6.0'
+//    compile 'com.jakewharton.timber:timber:4.6.0'
     testCompile 'junit:junit:4.12'
     //    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+//    Used by Gallery app
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile files('libs/commons-net-3.6.jar')
     compile files('libs/commons-io-2.5.jar')
     compile 'org.apmem.tools:layouts:1.10@aar'
     compile project(':kitkitlogger')
+    compile "com.android.support:appcompat-v7:25.0.+"
     //englishCompile project(path: ':kitkitlogger', configuration: 'englishRelease')
     //swahiliCompile project(path: ':kitkitlogger', configuration: 'swahiliRelease')
 }

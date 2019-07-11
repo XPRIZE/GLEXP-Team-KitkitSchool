@@ -31,7 +31,7 @@ using namespace std;
 
 namespace TappingSceneSpace {
 
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
     const Size gameSize = Size(2560, 1800);
 
     const Rect area1 = Rect(1280-500, 500, 1000, 500);

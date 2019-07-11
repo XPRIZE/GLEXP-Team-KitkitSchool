@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="130px"
+        android:background="#F28F22"
+        android:elevation="8px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <RelativeLayout
+            android:id="@+id/v_back"
+            android:layout_width="180px"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="60px"
+                android:background="@drawable/library_icon_back" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/username_activity_title"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+        <TextView
+            android:id="@+id/textView_currentUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30px"
+            android:maxLines="1"
+            android:text="AAA"
+            android:textColor="#ffffff"
+            android:textSize="60px" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:background="#f7f7f7"
+        android:orientation="vertical"
+        android:padding="30px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="100px"
+            android:paddingRight="100px">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="140px"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUserNo"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="100px"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:text="User No. 5"
+                    android:textColor="#6b6b6b"
+                    android:textSize="80px" />
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="0px"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:background="@drawable/rounded_line_blue"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="#6b6b6b"
+                        android:textSize="80px" />
+
+                    <RelativeLayout
+                        android:layout_width="0px"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/vRename"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="10px"
+                            android:layout_marginLeft="50px"
+                            android:layout_marginRight="50px"
+                            android:layout_marginTop="10px"
+                            android:background="@drawable/username_selector"
+                            android:gravity="center"
+                            android:text="@string/rename"
+                            android:textColor="@android:color/white"
+                            android:textSize="60px" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/vSelectUserNumber"
+                android:layout_width="1000px"
+                android:layout_height="140px"
+                android:layout_marginTop="300px"
+                android:background="@drawable/username_selector"
+                android:gravity="center"
+                android:text="@string/select_user_no"
+                android:textColor="@android:color/white"
+                android:textSize="60px" />
+
+            <TextView
+                android:id="@+id/vUserNameList"
+                android:layout_width="1000px"
+                android:layout_height="140px"
+                android:layout_marginTop="100px"
+                android:gravity="center"
+                android:text="@string/username_list"
+                android:textColor="@drawable/user_name_list_selector"
+                android:textSize="70px" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

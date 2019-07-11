@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.cocos2dx.cpp.writingboard.view.base.SwipeViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </org.cocos2dx.cpp.writingboard.view.base.SwipeViewPager>
+
+    <ImageView
+        android:id="@+id/v_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15px"
+        android:layout_marginTop="15px"
+        android:background="@drawable/selector_back_s" />
+
+    <ImageView
+        android:id="@+id/v_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:src="@drawable/selector_left_s" />
+
+    <ImageView
+        android:id="@+id/v_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/selector_right_s" />
+
+    <TextView
+        android:id="@+id/tv_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="19px"
+        android:layout_marginRight="20px"
+        android:textColor="@android:color/black"
+        android:textSize="30px" />
+
+</RelativeLayout>

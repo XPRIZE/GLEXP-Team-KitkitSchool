@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="library.todoschool.enuma.com.todoschoollibrary"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.maq.xprize.kitkitlibrary.english"
     android:installLocation="auto">
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+
     <application
-        android:name=".LibraryApplication"
+        android:name="com.maq.xprize.kitkitlibrary.english.LibraryApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
-        <activity android:name=".SelectActivity"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.maq.xprize.kitkitlibrary.english.SplashScreenActivity"
             android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="sensorLandscape">
-        </activity>
-        <!--<activity android:name=".BookDetailActivity"-->
-            <!--android:screenOrientation="landscape">-->
-        <!--</activity>-->
         <activity
-            android:name=".VideoPlayerActivity"
+            android:name="com.maq.xprize.kitkitlibrary.english.SelectActivity"
             android:screenOrientation="sensorLandscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name="com.maq.xprize.kitkitlibrary.english.MainActivity"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name="com.maq.xprize.kitkitlibrary.english.VideoPlayerActivity"
+            android:screenOrientation="sensorLandscape" />
     </application>
 
 </manifest>

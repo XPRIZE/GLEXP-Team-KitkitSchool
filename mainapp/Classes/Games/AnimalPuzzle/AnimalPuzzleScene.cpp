@@ -13,6 +13,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 
 #include "Managers/LanguageManager.hpp"
@@ -36,7 +37,7 @@ using namespace std;
 namespace AnimalPuzzleSceneSpace {
 
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     const string resourcePath = "AnimalPuzzle/";
     
@@ -52,7 +53,7 @@ namespace AnimalPuzzleSceneSpace {
     SoundEffect solveEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Counting_Win.m4a"); }
 
     
-    const string fontName = "fonts/TodoSchoolV2.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     const bool gameDebug = false;
     
     
@@ -493,12 +494,10 @@ void AnimalPuzzleScene::loadData(int level)
     }
 }
 
-
+ // implementation of tts for this module
 void AnimalPuzzleScene::playSound(string name)
 {
-    string path = "Games/AnimalPuzzle/Sound/"+name;
-    
-    GameSoundManager::getInstance()->playEffectSound(path);
+    VoiceMoldManager::shared()->speak(name);
 }
 
 void AnimalPuzzleScene::loadDurationsheet() {

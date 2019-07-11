@@ -35,10 +35,8 @@ public:
     void preload();
     void play();
     void playLoop();
-    //void pause();  // XXX: Not implemented.
     void stop();
     //void unload();  // XXX: Not implemented.
-
     // NB(xenosoz, 2016): Sugars
     SoundEffect& preloaded();
     SoundEffect& operator&&(SoundEffect& RHS);

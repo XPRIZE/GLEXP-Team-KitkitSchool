@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".BookDetailActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title"
+            android:textColor="#ffffff"
+            android:textSize="30sp"/>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:background="@drawable/roundedrect"
+        android:elevation="3dp"
+        android:layout_margin="41dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:padding="0px"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1020"/>
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1362">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginTop="46dp"
+                android:layout_marginBottom="28dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/book_title_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="40sp"
+                    android:textColor="#212121"
+                    android:text="The Jungle Book"/>
+                <TextView
+                    android:id="@+id/book_author_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:textSize="16sp"
+                    android:textColor="#616161"
+                    android:text="Author Rudyard Kipling"/>
+                <TextView
+                    android:id="@+id/book_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#616161"
+                    android:text="Public Domain\nIllustration: Jerry Pinkney\nCreative Commons 4.0"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:background="@drawable/book_stroke">
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/book_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#616161"
+                    android:text="The stories are fables, using animals in an anthropomorphic manner to give moral lessons. A principal character is the boy or &quot;man-cub&quot; Mowgli, who is raised in the jungle by wolves. Other characters include Shere Khan the tiger and Babloo the bear."/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom|end">
+                    <Button
+                        android:layout_width="204dp"
+                        android:layout_height="52dp"
+                        android:textSize="22sp"
+                        android:text="Read"
+                        android:textColor="#fff"
+                        android:background="@color/colorPrimary"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -160,14 +160,14 @@ void CoopScene::confirmReset()
     auto pSize = Size(500, 500);
     auto popup = PopupBase::create(this, pSize);
     
-    auto textedit = ui::TextField::create("password to reset", "fonts/OpenSans-Bold.ttf", 50);
+    auto textedit = ui::TextField::create("password to reset", "fonts/mukta-bold.ttf", 50);
     textedit->setPosition(Vec2(pSize.width*0.5, pSize.height*0.7));
     popup->addChild(textedit);
     
     {
         auto btn = ui::Button::create();
         btn->setTitleText("Cancel");
-        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleFontName("fonts/mukta-bold.ttf");
         btn->setTitleColor(Color3B::WHITE);
         btn->setTitleFontSize(50);
         
@@ -183,7 +183,7 @@ void CoopScene::confirmReset()
     {
         auto btn = ui::Button::create();
         btn->setTitleText("Reset");
-        btn->setTitleFontName("fonts/OpenSans-Bold.ttf");
+        btn->setTitleFontName("fonts/mukta-bold.ttf");
         btn->setTitleColor(Color3B::WHITE);
         btn->setTitleFontSize(50);
         
@@ -243,7 +243,7 @@ void CoopScene::setupCoop()
     
     auto labelText = LanguageManager::getInstance()->getLocalizedString((this->_coopType== CT_LITERACY) ? "English" : "Math");
     
-    auto label = TodoUtil::createLabel(labelText, 62, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+    auto label = TodoUtil::createLabel(labelText, 100, Size::ZERO, "fonts/chanakya.ttf", Color4B(255, 252, 219, 255));
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     label->setPosition(panel->getContentSize()/2);
     panel->addChild(label);
@@ -273,7 +273,7 @@ void CoopScene::setupCoop()
     auto onFinishTurnLight = [this, category](Room* room) {
         if (room->bird->getCategoryLevel() == 6) {
             if (_rooms.size() > LEVEL_FISH_PRESENT && !UserManager::getInstance()->getFishPresentLightOn(category)) {
-                _rooms[LEVEL_FISH_PRESENT]->turnLight(true, true);
+                _rooms[LEVEL_FISH_PRESENT]->turnLight(false, false);
                 UserManager::getInstance()->setFishPresentLightOn(category);
             }
         }
@@ -492,7 +492,7 @@ void CoopScene::setupDebug()
         }
     } else {
         
-        Label* versionTitle = Label::createWithTTF(UserManager::getInstance()->getAppVersion(), "fonts/OpenSans-Bold.ttf", 42);
+        Label* versionTitle = Label::createWithTTF(UserManager::getInstance()->getAppVersion(), "fonts/mukta-bold.ttf", 42);
         versionTitle->setTextColor(Color4B::WHITE);
         versionTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
         versionTitle->setPosition(Vec2(30, debugViewSize.height/2));
@@ -743,11 +743,6 @@ void CoopScene::onEnterTransitionDidFinish()
                     UserManager::getInstance()->setDayCleared(levelID, i+1);
                     auto day = i+1;
                     auto dayCur = cur->getDayCurriculum(day);
-                    if (dayCur) {
-                        for (int j=0; j<=dayCur->numGames; j++) {
-                            UserManager::getInstance()->setGameCleared(cur->levelID, day, j);
-                        }
-                    }
                 }
             }
             case PretestProgressType::fail:
@@ -1155,7 +1150,7 @@ void Room::setupRoom(LevelCurriculum &cur)
         panel->setPosition(panelPos);
         this->addChild(panel);
         
-        auto panelLabel = TodoUtil::createLabel(TodoUtil::itos(cur.categoryLevel), 70, Size::ZERO, "fonts/TodoMainCurly.ttf", Color4B(255, 252, 219, 255));
+        auto panelLabel = TodoUtil::createLabel(TodoUtil::itos(cur.categoryLevel), 70, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(255, 252, 219, 255));
         panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         panelLabel->setPosition(panel->getContentSize()/2+Size(0, -5));
         panel->addChild(panelLabel);
@@ -1289,10 +1284,6 @@ void Room::turnLight(bool turnOn, bool animate)
 }
 
 bool Room::isEnableFishPresent() {
-    if (!UserManager::getInstance()->isFishPresentEnable(levelID)) {
-        return false;
-    }
-
-    return true;
+   return false;
 }
 

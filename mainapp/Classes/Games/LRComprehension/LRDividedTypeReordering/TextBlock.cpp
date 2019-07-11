@@ -68,7 +68,7 @@ void TextBlock::initAsBlock(std::string text)
     addChild(_face);
     
     float labelCorrectionX = 80.f;
-    auto label = TodoUtil::createLabel(text, 50, Size::ZERO, FONT_ANDIKA_REGULAR, Color4B(56, 56, 56, 255));
+    auto label = TodoUtil::createLabel(text, 50, Size::ZERO, FONT_MUKTA_BOLD, Color4B(56, 56, 56, 255));
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     
     float scaleFactor = MIN((wordBlockSize.width - labelCorrectionX * 2) / label->getContentSize().width, 1.0f);

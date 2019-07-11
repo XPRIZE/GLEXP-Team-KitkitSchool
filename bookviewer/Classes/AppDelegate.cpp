@@ -69,11 +69,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    std::string devicePath = "/sdcard/KitkitSchool/";
-    if (FileUtils::getInstance()->isFileExist(devicePath + "cache.txt")) {
-        FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
-    }
-    
+    std::string devicePath = "/storage/emulated/0/Android/data/com.maq.xprize.kitkitschool.hindi/files/";
+    FileUtils::getInstance()->setDefaultResourceRootPath(devicePath);
+
 #endif
 
     Scene* scene;

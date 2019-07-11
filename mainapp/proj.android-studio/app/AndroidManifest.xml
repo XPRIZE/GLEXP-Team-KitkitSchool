@@ -1,47 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.enuma.xprize">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    package="com.maq.xprize.kitkitschool.hindi"
+    android:installLocation="preferExternal">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-feature android:glEsVersion="0x00020000" />
-    <supports-screens android:anyDensity="true"
-        android:smallScreens="true"
-        android:normalScreens="true"
+
+    <supports-screens
+        android:anyDensity="true"
         android:largeScreens="true"
-        android:xlargeScreens="true"/>
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
     <application
         android:name="org.cocos2dx.cpp.KitkitSchoolApplication"
-        android:label="@string/app_name"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher">
-        
+        android:icon="@mipmap/ic_launcher"
+        android:launchMode="singleTask"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true" >
+        <activity
+            android:name="org.cocos2dx.cpp.SplashScreenActivity"
+            android:screenOrientation="sensorLandscape">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <!-- Tell Cocos2dxActivity the name of our .so -->
-        <meta-data android:name="android.app.lib_name"
-                   android:value="MyGame" />
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="MyGame" />
 
         <activity
             android:name="org.cocos2dx.cpp.AppActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="sensorLandscape"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.enuma.xprize.RETURN_BY_VOICE_ENGINE_A" />
+                <action android:name="com.maq.xprize.kitkitschool.hindi.RETURN_BY_VOICE_ENGINE_A" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
-    </application>
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.ToolsActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.AboutActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.CreditActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.SettingActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.UserNameActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.VideoPlayerActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.AdministrationActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="org.cocos2dx.cpp.drum.activity.DrumActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="org.cocos2dx.cpp.marimba.activity.MainActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.blackboard.activity.MainActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.drawingcoloring.activity.DrawingColoringActivity"
+            android:label="@string/title_drawing"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.drawingcoloring.activity.ColoringActivity"
+            android:label="@string/title_coloring"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.drawingcoloring.activity.DrawingActivity"
+            android:label="@string/title_drawing"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.activity.GalleryActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.activity.SlideActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.cocos2dx.cpp.writingboard.activity.MainActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.LockScreenReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.PowerConnectionReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.cocos2dx.cpp.kitkitlauncher.hindi.WifiReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="com.maq.kitkitProvider.KitkitProvider"
+            android:authorities="com.maq.provider.KitkitContentProvider.hindi"
+            android:exported="true" />
+
+    </application>
 
 </manifest>

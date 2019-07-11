@@ -30,67 +30,61 @@
                 android:layout_gravity="fill_horizontal"
                 android:orientation="horizontal">
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_drum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_marimba"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_blackboard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_drawing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_coloring"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_album"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
-                    android:id="@+id/app_fish_bowl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/tools_padding" />
-
-                <todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView
+                <com.maq.xprize.kitkitlauncher.hindi.ToolsAppView
                     android:id="@+id/app_writing_board"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/tools_padding" />
 
-                <!--<todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView-->
+                <!--<com.maq.kitkitlauncher.hindiaq.kitkitlauncher.com.maq.kitkitlauncher.hindi.ToolsAppView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_marginEnd="@dimen/tools_padding"-->
                 <!--android:alpha="0"/>-->
 
-                <!--<todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView-->
+                <!--<com.maq.kitkitlauncher.hindiaq.kitkitlauncher.com.maq.kitkitlauncher.hindi.ToolsAppView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_marginEnd="@dimen/tools_padding"-->
                 <!--android:alpha="0"/>-->
 
-                <!--<todoschoollauncher.enuma.com.todoschoollauncher.ToolsAppView-->
+                <!--<com.maq.kitkitlauncher.hindiaq.kitkitlauncher.com.maq.kitkitlauncher.hindi.ToolsAppView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_marginEnd="@dimen/tools_padding"-->

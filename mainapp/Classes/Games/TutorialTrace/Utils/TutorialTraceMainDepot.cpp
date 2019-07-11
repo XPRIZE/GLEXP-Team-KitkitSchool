@@ -19,7 +19,7 @@ string MainDepot::assetPrefix() const {
 }
 
 string MainDepot::defaultFont() const {
-    return "fonts/TodoSchoolV2.ttf";
+    return "fonts/mukta-bold.ttf";
 }
 
 Size MainDepot::windowSize() const {

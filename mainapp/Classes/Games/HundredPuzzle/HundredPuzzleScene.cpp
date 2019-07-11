@@ -36,7 +36,7 @@ namespace HundredPuzzleSceneSpace {
   //  const char* dropEffect = "Counting/panelput.m4a";
     
     
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/mukta-bold.ttf";
     const Size gameSize = Size(2560, 1800);
     //const Size boardSize = Size(1000, 1000);
     const Size unitSize = Size(138, 138);

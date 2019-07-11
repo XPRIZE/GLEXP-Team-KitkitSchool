@@ -9,6 +9,7 @@
  ****************************************************************************************/
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#include <Managers/VoiceMoldManager.h>
 #include "WhatIsThisCard.h"
 
 #include "ui/CocosGUI.h"
@@ -84,7 +85,7 @@ bool STTopCard::init()
 			textNode->addChild(sprite, 0, "BGWrong");
 		}
 
-		if (auto label = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 130))
+		if (auto label = Label::createWithTTF("", "fonts/mukta-bold.ttf", 130))
 		{
 			label->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));
@@ -94,7 +95,7 @@ bool STTopCard::init()
 			textNode->addChild(label, 1, "labelBig");
 		}
 
-		if (auto label = Label::createWithTTF("", "fonts/TodoSchoolV2.ttf", 100))
+		if (auto label = Label::createWithTTF("", "fonts/mukta-bold.ttf", 100))
 		{
 			label->setAlignment(TextHAlignment::LEFT, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));
@@ -167,7 +168,7 @@ void STTopCard::SetCard(const WhatIsThisCardData & data, const CardType & cardTy
 			textNode->setVisible(true);
             textNode->removeChildByName("label1");
 
-            auto label1 = TodoUtil::createLabel(data.answer, 120, Size(2038,0), "fonts/TodoSchoolV2.ttf", Color4B(81, 53, 24, 230), TextHAlignment::CENTER);
+            auto label1 = TodoUtil::createLabel(data.answer, 120, Size(2038,0), "fonts/mukta-bold.ttf", Color4B(81, 53, 24, 230), TextHAlignment::CENTER);
             label1->setName("label1");
             textNode->addChild(label1);
             
@@ -301,7 +302,7 @@ bool STDownCard::init()
 			textNode->addChild(sprite, 0, "BGWrong");
 		}
 
-		if (auto label = Label::createWithTTF("Hello World", "fonts/TodoSchoolV2.ttf", 82))
+		if (auto label = Label::createWithTTF("Hello World", "fonts/mukta-bold.ttf", 82))
 		{
 			label->setAlignment(TextHAlignment::LEFT, TextVAlignment::CENTER);
 			label->setTextColor(Color4B(81, 53, 24, 230));
@@ -446,7 +447,7 @@ void STDownCard::Flip(const bool& success, const std::function<void()>& cbf)
 		float scale = _cardType == CardType::Image ? 1.1f : 1.05f;
 		actions.pushBack(Spawn::create(EaseOut::create(ScaleTo::create(FLIP_TIME, scale, scale), 1.5), EaseOut::create(MoveBy::create(FLIP_TIME / 2.f, Vec2(0, 0.f)), 2.f), nullptr));
 		if (!_soundFile.empty())
-			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/" + _soundFile); }));
+			actions.pushBack(CallFunc::create([this] { VoiceMoldManager::shared()->speak(_soundFile); })); // implementation of tts for this module
 		actions.pushBack(DelayTime::create(MAX(WAIT_TIME, _soundDuration)));
 	}
 	else
@@ -492,7 +493,7 @@ void STDownCard::Fail(const bool & hit, const std::function<void()>& cbf)
 		actions.pushBack(CallFunc::create([] { GameSoundManager::getInstance()->playEffectSound("WhatIsThis/Sounds/SFX_Wood_Incorrect.m4a"); }));
 
 		if (!_soundFile.empty())
-			actions.pushBack(CallFunc::create([this] { GameSoundManager::getInstance()->playEffectSoundVoiceOnly("WhatIsThis/Sounds/" + _soundFile); }));
+			actions.pushBack(CallFunc::create([this] {   VoiceMoldManager::shared()->speak(_soundFile); }));// tts implementation for this module
 		actions.pushBack(DelayTime::create(MAX(WAIT_TIME, _soundDuration)));
 
 		Node* targetNode = nullptr;

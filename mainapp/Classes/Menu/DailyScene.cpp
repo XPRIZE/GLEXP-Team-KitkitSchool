@@ -42,7 +42,8 @@ namespace DailySceneSpace {
     
     const Size viewSize = Size(2560, 1800);
     
-    const string defaultFont = "fonts/TodoMainCurly.ttf";
+    const string defaultFont = "fonts/mukta-bold.ttf";
+    const string hindiFont = "fonts/chanakya.ttf";
     const string folder = "MainScene/DailyScene/";
     
     const Color4B whiteColor = Color4B(255, 252, 236, 255);
@@ -1036,7 +1037,7 @@ void DailyScene::showFreechoicePopup(std::string gameName, int maxPlayable, int 
         popup->addChild(panel);
         
 //        auto l = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size::ZERO, defaultFont, Color4B(255, 210, 74, 255));
-        auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size(900,0), defaultFont, Color4B(255, 210, 74, 255));
+        auto l = TodoUtil::createLabelMultilineToFit(LanguageManager::getInstance()->getLocalizedString(gameName), 70, Size(900,0), hindiFont, Color4B(255, 210, 74, 255));
         l->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
         l->setPosition(panel->getContentSize()/2);
         panel->addChild(l);
@@ -1088,7 +1089,7 @@ void DailyScene::showFreechoicePopup(std::string gameName, int maxPlayable, int 
                             folder+"daily_freechoice_popup_level_done.png",
                             folder+"daily_freechoice_popup_level_unavailable.png");
             
-            b->setEnabled(gameLevel<=maxPlayable);
+            b->setEnabled(true);
             b->setPosition(Vec2(x, y));
             popup->addChild(b);
             if (i%10==9) {
@@ -1099,7 +1100,7 @@ void DailyScene::showFreechoicePopup(std::string gameName, int maxPlayable, int 
             }
             
             
-            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 50, Size::ZERO, defaultFont, Color4B::WHITE);
+            auto l = TodoUtil::createLabel(TodoUtil::itos(i+1), 100, Size::ZERO, defaultFont, Color4B::WHITE);
             l->setPosition(b->getContentSize()/2 + Size(2, -6));
             b->addChild(l);
             

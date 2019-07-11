@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "SimpleAudioEngine.h"
 #include "ShapeMatchingScene.hpp"
 #include "cocostudio/CocoStudio.h"
@@ -47,7 +48,7 @@ namespace ShapeMatching
     string soundPathForShape(const string& shapeName)
     {
         stringstream ss;
-        ss << "ShapeMatching/Sound/" << shapeName << ".m4a";
+        ss <<  shapeName ;
         return ss.str();
     }
     
@@ -166,7 +167,7 @@ bool ShapeMatchingScene::init()
     //    _nextButton->loadTextures("ShapeMatching/Images/matchgame_next_inactivated.png", "ShapeMatching/Images/matchgame_next_activated.png");
     //    _nextButton->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     //    _nextButton->setPosition(Vec2(winSize.width - _nextButton->getContentSize().width - 40, _nextButton->getContentSize().height + 30));
-    //    _nextButton->setTitleFontName("fonts/TodoSchoolV2.ttf");
+    //    _nextButton->setTitleFontName("fonts/chanakya.ttf");
     //    _nextButton->setTitleFontSize(80.f);
     //    _nextButton->setTitleColor(normalColor);
     //    _nextButton->setTitleText(nextButtonTitle());
@@ -542,9 +543,7 @@ void ShapeMatchingScene::bindingEvents(ShapeMatchingCard* card)
             auto fileNameVec = TodoUtil::split(card->matchSound, '/');
             auto playFileName = fileNameVec.back();
             if (_duration.count(playFileName)) duration = _duration[playFileName];
-
-            
-            GameSoundManager::getInstance()->playEffectSound(card->matchSound);
+          VoiceMoldManager::shared()->speak(card->matchSound); //tts implementation for htis module
             
             auto other = card->linkedTarget;
             

@@ -155,7 +155,7 @@ private:
     
     ProgressIndicator *_progressBar;
 
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
 };
 
 #endif /* FishTankScene_h */

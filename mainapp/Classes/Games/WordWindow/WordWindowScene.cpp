@@ -4,6 +4,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <Managers/VoiceMoldManager.h>
 #include "ui/CocosGUI.h"
 #include "Managers/LanguageManager.hpp"
 #include "Managers/UserManager.hpp"
@@ -16,10 +17,9 @@
 
 using namespace cocos2d::ui;
 using namespace std;
-
 namespace WordWindowSceneSpace
 {
-    const char* defaultFont = "fonts/TodoSchoolV2.ttf";
+    const char* defaultFont = "fonts/chanakya.ttf";
     
     const string resourcePath = "wordwindow/";
     
@@ -30,13 +30,12 @@ namespace WordWindowSceneSpace
     SoundEffect solveEffect() { return SoundEffect("Common/Sounds/Effect/SFX_Counting_Win.m4a"); }
 
     
-    const string fontName = "fonts/andika-r.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
 	const string boldFontName = "fonts/andikanewbasic-b.ttf";
     const bool gameDebug = false;    
 }
 
 using namespace WordWindowSceneSpace;
-
 WordWindowLevelStruct::WordWindowLevelStruct()
 {
 	m_languageTag = "";
@@ -475,8 +474,8 @@ void WordWindowScene::resetPuzzle()
 
 void WordWindowScene::loadData(int level)
 {
-	string P = "Games/" + resourcePath + "wordwindow_level.tsv";
-	string S = FileUtils::getInstance()->getStringFromFile(P);
+	string P = "games/"+ resourcePath + "wordwindow_level.tsv";
+	string S = cocos2d::FileUtils::getInstance()->getStringFromFile(P);
 	auto data = TodoUtil::readTSV(S);
 	auto Lang = LanguageManager::getInstance()->getCurrentLanguageTag();
 
@@ -502,7 +501,7 @@ void WordWindowScene::loadData(int level)
 
 		s.m_problemNo = TodoUtil::stoi(row[3]);
 		s.m_sequenceType = TodoUtil::stoi(row[4]);
-		s.m_soundFilename = row[5];
+        s.m_soundFilename = row[5];
 		s.m_text = row[6];
 		for (int i = 0; i < 4; i++)
 		{
@@ -559,15 +558,12 @@ void WordWindowScene::loadData(int level)
 
 void WordWindowScene::playSoundQuestion(string name)
 {
-	//CCLOG("[WordWindowScene::playSound] %s", name.c_str());
-	if (name.empty() == true)
+	if(name.empty()==true)
 	{
 		return;
 	}
 
-    string path = "Games/WordWindow/Sound/" + name;
-    
-	GameSoundManager::getInstance()->playEffectSoundVoiceOnly(path);
+	VoiceMoldManager::shared()->speak(name); //Implementation of tts for wordwindow module
 
 	disableSoundButton();
 
@@ -578,8 +574,7 @@ void WordWindowScene::stopSoundQuestion()
 {
 	m_soundDuraton = 0.f;
 	enableSoundButton();
-
-	GameSoundManager::getInstance()->stopBGM();
+     VoiceMoldManager::shared()->speak(" ");   //To stop tts
 }
 
 void WordWindowScene::loadDurationsheet()
@@ -3065,7 +3060,7 @@ void WordWindowScene::createQuestion()
 		}
 	}
 
-	m_pLabelQuestion = TodoUtil::createLabelMultilineToFit(newText, 80.f, Size(1424.f, 800.f), fontName, Color4B::WHITE, TextHAlignment::LEFT, TextVAlignment::CENTER);
+	m_pLabelQuestion = TodoUtil::createLabelMultilineToFit(newText, 80.f, Size(1424.f, 800.f), defaultFont, Color4B::WHITE, TextHAlignment::LEFT, TextVAlignment::CENTER);
 	m_pLabelQuestion->setPosition(Vec2(749.f + (1424.f / 2.f), 901.f + (336.f / 2.f)));
 	_gameNode->addChild(m_pLabelQuestion);
 }
@@ -3735,7 +3730,7 @@ void WordWindowScene::createRightFormula()
 			}
 			else
 			{
-				xml_formula += "<font color ='#140d07' face = 'main/fonts/andika-r.ttf' size = '288'>";
+				xml_formula += "<font color ='#140d07' face = 'main/fonts/mukta-bold.ttf' size = '288'>";
 				xml_formula += vecTexts[i].m_text;
 				xml_formula += "</font>";
 			}
@@ -3749,7 +3744,7 @@ void WordWindowScene::createRightFormula()
 			}
 			else
 			{
-				xml_shadow += "<font color ='#d8bfa3' face = 'main/fonts/andika-r.ttf' size = '288'>";
+				xml_shadow += "<font color ='#d8bfa3' face = 'main/fonts/mukta-bold.ttf' size = '288'>";
 				xml_shadow += vecTexts[i].m_text;
 				xml_shadow += "</font>";
 			}

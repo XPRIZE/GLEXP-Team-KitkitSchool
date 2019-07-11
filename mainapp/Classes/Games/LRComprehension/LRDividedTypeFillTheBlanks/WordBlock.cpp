@@ -10,7 +10,7 @@
 
 namespace
 {
-    const string fontName = FONT_ANDIKA_REGULAR;
+    const string fontName = FONT_MUKTA_BOLD;
     const float fontSize = 60.f;
 }
 

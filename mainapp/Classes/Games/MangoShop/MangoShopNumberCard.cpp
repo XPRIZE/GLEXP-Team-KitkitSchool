@@ -79,7 +79,7 @@ namespace MangoShop
         body->setPosition(this->getContentSize() / 2);
         this->addChild(body);
         
-        _label = TodoUtil::createLabel(numberString, 180.f, Size::ZERO, "fonts/OpenSans-Bold.ttf", Color4B(81, 53, 24, 255 * 0.9f));
+        _label = TodoUtil::createLabel(numberString, 180.f, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(81, 53, 24, 255 * 0.9f));
         _label->setCascadeOpacityEnabled(true);
         _label->setScale(scale);
         _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);

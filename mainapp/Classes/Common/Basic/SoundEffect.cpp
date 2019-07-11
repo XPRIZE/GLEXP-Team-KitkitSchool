@@ -79,7 +79,6 @@ void SoundEffect::preload() {
 void SoundEffect::play() {
     SoundID = GameSoundManager::getInstance()->playEffectSound(EffectPath);
 }
-    
 void SoundEffect::playLoop() {
     SoundID = GameSoundManager::getInstance()->playEffectSound(EffectPath, true);
 }

@@ -28,7 +28,8 @@ namespace LevelOpenPopupSpace {
     
     const Size popupSize = Size(1626,1210);
     const string folder = "CoopScene/LevelOpenPopup/";
-    const string fontName = "fonts/TodoMainCurly.ttf";
+    const string hindiFontName = "fonts/chanakya.ttf";
+    const string fontName = "fonts/mukta-bold.ttf";
     
 }
 
@@ -105,7 +106,7 @@ void LevelOpenPopup::setup(std::string levelID)
         levelTitle = cur->levelTitle;
     }
     
-    auto panelLabel = TodoUtil::createLabel(levelTitle, 60, Size::ZERO, fontName, Color4B(255, 249, 235, 255));
+    auto panelLabel = TodoUtil::createLabel(levelTitle, 60, Size::ZERO, hindiFontName, Color4B(255, 249, 235, 255));
     panelLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     panelLabel->setPosition(panel->getContentSize()/2+Size(0, -5));
     panel->addChild(panelLabel);
@@ -132,7 +133,7 @@ void LevelOpenPopup::setup(std::string levelID)
     s2 = LanguageManager::getInstance()->getLocalizedString(s2);
     */
     {
-        auto descLabel = TodoUtil::createLabel(s1, 50, Size::ZERO, fontName, Color4B(65, 5, 5, 255), TextHAlignment::CENTER);
+        auto descLabel = TodoUtil::createLabel(s1, 50, Size::ZERO, hindiFontName, Color4B(65, 5, 5, 255), TextHAlignment::CENTER);
         descLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         descLabel->setPosition(desc->getContentSize()/2+Size(50, -30));
         desc->addChild(descLabel);
@@ -217,10 +218,10 @@ void LevelOpenPopup::setup(std::string levelID)
             defaultColor = Color4B(190, 249, 249, 249);
         }
         
-        auto startL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Start"), 75, Size::ZERO, fontName, defaultColor);
+        auto startL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Start"), 75, Size::ZERO, hindiFontName, defaultColor);
         auto startLPos = Vec2(startBtn->getContentSize()/2 + Size(0, 35));
         
-        auto coinL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("10"), 50, Size::ZERO, fontName, isEnable ? defaultColor : Color4B(190, 240, 76, 31));
+        auto coinL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("10"), 50, Size::ZERO, hindiFontName, isEnable ? defaultColor : Color4B(190, 240, 76, 31));
         
         auto coinLPos = Vec2(startBtn->getContentSize()/2 + Size(20, -40));
         
@@ -249,7 +250,7 @@ void LevelOpenPopup::setup(std::string levelID)
 
     } else {
         startBtn->loadTextures(folder+"main_button_normal.png", folder+"main_button_active.png");
-        auto startL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Start"), 70, Size::ZERO, fontName, Color4B(255, 249, 235, 255));
+        auto startL = TodoUtil::createLabel(LanguageManager::getInstance()->getLocalizedString("Start"), 70, Size::ZERO, hindiFontName, Color4B(255, 249, 235, 255));
         auto startLPos = Vec2(startBtn->getContentSize()/2 + Size(0, -2));
         
         startL->setPosition(startLPos);

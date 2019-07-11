@@ -10,6 +10,7 @@
 #include "../Utils/LetterTracingCardMainDepot.h"
 #include "Managers/GameSoundManager.h"
 #include <Managers/LanguageManager.hpp>
+#include <Managers/VoiceMoldManager.h>
 
 BEGIN_NS_LETTERTRACINGCARD
 
@@ -188,7 +189,7 @@ void Card::drawCardWithProblem(Problem* problem)
         image->setPosition(clipper->getContentSize() / 2);
         clipper->addChild(image);
 
-        label = TodoUtil::createLabel(problem->word, 200.f, Size::ZERO, "fonts/TodoSchoolV2.ttf", Color4B(81, 53, 24, 255 * 0.9f));
+        label = TodoUtil::createLabel(problem->word, 200.f, Size::ZERO, "fonts/mukta-bold.ttf", Color4B(81, 53, 24, 255 * 0.9f));
         label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         label->setPosition(backFace->getContentSize().width / 2, backFace->getContentSize().height / 2 - label->getContentSize().height / 2 - 300.f);
         if (label->getContentSize().width > backFace->getContentSize().width - 100.f)
@@ -236,7 +237,7 @@ void Card::FlipToBack()
         {
 #ifdef IMPORT_TSV_FILE_LETTER_TRACING_CARD
             auto file = MainDepot().assetPrefix() + "/Sounds/" + audioName;
-            GameSoundManager::getInstance()->playEffectSound(file);
+           VoiceMoldManager::shared()->speak(audioName);   // implementation of tts for this module
 #else
             auto file = MainDepot().assetPrefix() + "/Sounds/" + word + ".m4a";
             if (FileUtils::getInstance()->isFileExist(file)) {

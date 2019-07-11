@@ -11,7 +11,7 @@
 
 BEGIN_NS_THIRTYPUZZLE;
 
-const string defaultFont = "fonts/TodoSchoolV2.ttf";
+const string defaultFont = "fonts/mukta-bold.ttf";
 
 bool Piece::init() {
     if (!Node::init()) return false;

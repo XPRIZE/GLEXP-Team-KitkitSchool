@@ -13,6 +13,7 @@
 
 #include "CCAppController.hpp"
 #include <numeric>
+#include <Managers/VoiceMoldManager.h>
 
 BEGIN_NS_WORDTRACE
 
@@ -415,7 +416,7 @@ void WordTraceScene::beginTraceWork() {
 
     Delay += (ProgressIndex() > 1 ? DelayUnit : DelayUnit / 2.f);
     scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
-        MainDepot().soundForWord(TheTraceWork().Text).play();
+       VoiceMoldManager::shared()->speak(TheTraceWork().Text);
     }, Delay, "WordTraceScene::beginTraceWork::soundForWord");
 }
 
@@ -436,7 +437,7 @@ void WordTraceScene::beginBonusWork() {
     
     Delay += DelayUnit;
     scheduleOnce([this](float) {  // NB(xenosoz, 2016): For sound delay
-        MainDepot().soundForWord(TheTraceWork().Text).play();
+       VoiceMoldManager::shared()->speak(TheTraceWork().Text);   //Implementation of tts for wordtrace module
     }, Delay, "WordTraceScene::beginBonusWork::soundForWord");
 }
 

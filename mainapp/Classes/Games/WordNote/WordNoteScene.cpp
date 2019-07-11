@@ -24,7 +24,7 @@ BEGIN_NS_WORDNOTE;
 
 const int noteSizeX = 16;
 const int noteSizeY = 3;
-const string questionFontPath = "fonts/TodoSchoolV2.ttf";
+const string questionFontPath = "fonts/mukta-bold.ttf";
 
 Scene* WordNoteScene::createScene(int levelID)
 {
@@ -183,16 +183,15 @@ void WordNoteScene::onEnterTransitionDidFinish() {
 
 float WordNoteScene::speech(string input) {
     if (LanguageManager::getInstance()->isEnglish()) {
-        if (!_ttsAlert && CC_TARGET_PLATFORM == CC_PLATFORM_MAC) {
+       if (!_ttsAlert && CC_TARGET_PLATFORM == CC_PLATFORM_MAC) {
             _ttsAlert = true;
             NativeAlert::show("TTS engine is not supported in mac version", "", "OK");
-        } else {
+      } else {
             VoiceMoldManager::shared()->speak(input);
-        }
-        return 0.5f;
-    } else {
-        return speechWithFiles(input);
-    }
+      }
+      return 0.5f;
+    } else
+   VoiceMoldManager::shared()->speak(input);
     
 }
 
@@ -212,8 +211,7 @@ float WordNoteScene::speechWithFiles(string input, float timing) {
                 CallFunc::create([this, sd, timing](){
                 //CCLOG("timing:%f", timing);
                 //CCLOG("sound:%s", sd.word.c_str());
-                GameSoundManager::getInstance()->playEffectSound("WordNote/Sounds/"+sd.word+".m4a");
-
+         VoiceMoldManager::shared()->speak(sd.word);  // Implementation of tts in this module
             }), nullptr));
 
             duration += sd.duration-0.17f;

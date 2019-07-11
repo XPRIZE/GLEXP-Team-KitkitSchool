@@ -4,3 +4,5 @@ include ':KitkitBookViewer'
 project(':KitkitBookViewer').projectDir = new File(settingsDir, 'app')
 include ':kitkitlogger'
 project(':kitkitlogger').projectDir = new File('../../kitkitschoollogger/kitkitlogger/')
+include ':play_licensing'
+include ':downloader_library'

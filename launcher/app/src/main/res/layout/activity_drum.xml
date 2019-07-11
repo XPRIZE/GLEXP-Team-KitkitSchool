@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/drum_image_bg"
+    android:orientation="vertical"
+    tools:context="com.maq.xprize.drum.activity.DrumActivity">
+
+    <ImageView
+        android:id="@+id/iv_drum"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="88px"
+        android:scaleType="fitCenter"
+        android:src="@drawable/drum_image_drum" />
+
+    <ImageView
+        android:id="@+id/v_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
+        android:alpha="0.65"
+        android:background="@drawable/selector_back" />
+
+</RelativeLayout>
+

@@ -24,7 +24,6 @@
 USING_NS_CC;
 
 using namespace cocos2d::ui;
-
 class WordMachineScene : Layer
 {
 public:
@@ -36,7 +35,6 @@ public:
     
     static Scene* createScene(int levelID);
     virtual bool init(int levelID);
-
     CREATE_FUNC(WordMachineScene);
 
 

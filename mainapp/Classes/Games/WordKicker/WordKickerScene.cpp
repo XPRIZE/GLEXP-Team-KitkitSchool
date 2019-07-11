@@ -6,6 +6,7 @@
 //
 //
 
+#include <Managers/VoiceMoldManager.h>
 #include "WordKickerScene.hpp"
 #include "WordKicker_NodeBall.hpp"
 #include "WordKicker_NodeBirdGoalkeeper.hpp"
@@ -819,13 +820,12 @@ bool WordKickerScene::touchSpeakerButton(bool bIsKicker, bool bResetBirdMark)
 
 	if (bIsKicker)
 	{
-		_speakerSoundID = GameSoundManager::getInstance()->playEffectSound(resourcePath + "sound/" + strSoundFileName, false, 1.2f);
+		VoiceMoldManager::shared()->speak(strSoundFileName); // tts implementation for wordkicker
 		duration /= 1.2f;
 	}
 	else
 	{
-		//_speakerSoundID = GameSoundManager::getInstance()->playEffectSound(resourcePath + "sound/" + strSoundFileName);
-		GameSoundManager::getInstance()->playEffectSoundVoiceOnly("wordkicker/sound/" + strSoundFileName);
+		VoiceMoldManager::shared()->speak(strSoundFileName);
 
 	}
 
