@@ -27,35 +27,36 @@ BEGIN_NS_EGGQUIZ;
 
 static int _tryCountFishTest;
  // Function and declaration for number to words conversion
-    string one[] = { "", "one ", "two ", "three ", "four ",
+    string smallerNumberWords[] = { "", "one ", "two ", "three ", "four ",
                      "five ", "six ", "seven ", "eight ",
                      "nine ", "ten ", "eleven ", "twelve ",
                      "thirteen ", "fourteen ", "fifteen ",
                      "sixteen ", "seventeen ", "eighteen ",
                      "nineteen "
     };
-    string ten[] = { "", "", "twenty ", "thirty ", "forty ",
+    string largerNumberWords[] = { "", "", "twenty ", "thirty ", "forty ",
                      "fifty ", "sixty ", "seventy ", "eighty ",
                      "ninety "
     };
-    string numToWords(int n, string s)//Function used by convert to words
+    string numToWords(int number, string s)//Function used by convert to words
     {
-        string str = "";
-        if (n > 19)
-            str += ten[n / 10] + one[n % 10];
-        else
-            str += one[n];
-        if (n)
-            str += s;
-        return str;
+        string numberWord = "";
+        if (number > 19){
+            numberWord += largerNumberWords[number / 10] + smallerNumberWords[number % 10];}
+        else{
+            numberWord += smallerNumberWords[number];}
+
+        if (number){
+            numberWord += s;}
+        return numberWord;
     }
-    string convertToWords(int n) //Function for convertToWords
+    string convertToWords(int number) //Function for convertToWords
     {
         string word;
-        word += numToWords(((n / 100) % 10), "hundred ");
-        if (n > 100 && n % 100)
-            word += "and ";
-        word += numToWords((n % 100), "");
+        word += numToWords(((number / 100) % 10), "hundred ");
+        if (number > 100 && number % 100){
+            word += "and ";}
+        word += numToWords((number % 100), "");
         return word;
     }
     Scene* EggQuizScene::createScene(string course, string level)
@@ -217,7 +218,7 @@ void EggQuizScene::createRecognizeNumberView() {
     _gameNode->addChild(questionBox);
     
     auto speaker = Speaker::create(SpeakerSize::Big);
-    speaker->setFileName( convertToWords(TodoUtil::stoi(_problem.answer)));
+    speaker->setFileName(convertToWords(TodoUtil::stoi(_problem.answer)));
     speaker->setPosition(questionBox->getContentSize()/2);
     questionBox->addChild(speaker);
     speaker->setPressed(autoStartDelay);
