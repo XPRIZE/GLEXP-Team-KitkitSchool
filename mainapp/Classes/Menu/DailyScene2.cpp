@@ -1108,7 +1108,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
     gquiz1.insert(pair<string, string>("LineMatching", "रेखा मिलान"));
     gquiz1.insert(pair<string, string>("LRComprehension", "समझ बुझ"));
     gquiz1.insert(pair<string, string>("MangoShop", "आम की दुकान"));
-    gquiz1.insert(pair<string, string>("MathKicker", "मैथ्स किकर"));
+    gquiz1.insert(pair<string, string>("MathKicker", "Math किकर"));
     gquiz1.insert(pair<string, string>("MissingNumber", "अनुपस्तिथ संख्या"));
     gquiz1.insert(pair<string, string>("MovingInsects", "कीड़े की गिनती"));
     gquiz1.insert(pair<string, string>("MultiplicationBoard", "गुणा  पट्ट"));
@@ -1119,7 +1119,7 @@ void DailyScene2::showFreechoicePopup(std::string gameName, int maxPlayable, int
     gquiz1.insert(pair<string, string>("NumberTrain", "संख्या ट्रेन"));
     gquiz1.insert(pair<string, string>("PatternTrain", "पैटर्न ट्रेन"));
     gquiz1.insert(pair<string, string>("PlaceValue", "मान रखे"));
-    gquiz1.insert(pair<string, string>("QuickFacts", "ततुरन्त तथ्य"));
+    gquiz1.insert(pair<string, string>("QuickFacts", "तुरन्त तथ्य"));
     gquiz1.insert(pair<string, string>("ReadingBird", "पढ़ने वाला पक्षी"));
     gquiz1.insert(pair<string, string>("SentenceBridge", "वाक्यों का पुल"));
     gquiz1.insert(pair<string, string>("SentenceMaker", "वाक्य बनाने वाला"));
