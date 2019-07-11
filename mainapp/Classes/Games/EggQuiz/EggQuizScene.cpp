@@ -39,7 +39,7 @@ BEGIN_NS_EGGQUIZ ;
                                   "ninety "
     };
 
-    string numToWords(int number, string s)//Function used by convert to words
+    string numToWords(int number, string toBeAppended)//Function used by convert to words
     {
         string numberWord = "";
         if (number > 19) {
@@ -49,7 +49,7 @@ BEGIN_NS_EGGQUIZ ;
         }
 
         if (number) {
-            numberWord += s;
+            numberWord += toBeAppended;
         }
         return numberWord;
     }
