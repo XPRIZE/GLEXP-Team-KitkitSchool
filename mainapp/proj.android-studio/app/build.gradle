@@ -3,6 +3,14 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: 'com.android.application'
 
 android {
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a','arm64-v8a','x86'
+            universalApk false
+        }
+    }
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
     buildToolsVersion "25.0.3"
 
