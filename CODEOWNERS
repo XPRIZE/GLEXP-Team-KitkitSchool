@@ -1,0 +1,6 @@
+# See https://help.github.com/en/articles/about-code-owners
+
+# These owners will be the default owners for everything in the repo. Unless a later match takes precedence, 
+# @XPRIZE/glexp-team-kitkit-school, @XPRIZE/xprize-staff and @@XPRIZE/maq-software will be requested for review when 
+# someone opens a pull request.
+*       @XPRIZE/glexp-team-kitkit-school @XPRIZE/xprize-staff @XPRIZE/maq-software
